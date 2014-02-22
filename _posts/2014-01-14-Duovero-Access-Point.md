@@ -1,15 +1,16 @@
 ---
 layout: post
-title: Gumstix Duovero Access Point
+title: Duovero Access Point
 date: 2014-01-14 20:44:00
-categories: linux gumstix duovero
+categories: gumstix duovero
+tags: [gumstix, duovero, linux, wifi, access point, hostap]
 ---
 
-The [Gumstix Duovero Zephyr][gumstix-duovero] come with a built-in Wifi/Bluetooth radio. The radio supports AP mode of operation. What follows are some steps to get that working.
+The [Gumstix Duovero Zephyr][gumstix-duovero] come with a built-in Wifi/Bluetooth radio. The radio supports AP mode of operation.
 
-The Zephyr uses a Marvell SD8787 radio connected through an SDIO bus.
+The Zephyr uses a Marvell SD8787 radio attached to the SDIO bus.
 
-The **mwifiex** and **mwifiex_sdio** modules are available in Linux 3.6 which is the default kernel recommended by Gumstix for the Duovero boards.
+The **mwifiex** and **mwifiex_sdio** modules are available in Linux 3.6 which is the default kernel for the Duovero boards.
 
 The Marvell drivers require the **sd8787_uapsta.bin** binary firmware.
 
@@ -104,7 +105,7 @@ Make sure to grab the interfaces file for **/etc/network/interfaces**. That sets
 
  
 
-If you connect to the AP, you should then be able to ssh into the Duovero.
+If you connect to the AP with a client you should get an IP and then be able to ssh into the Duovero.
  
 
 I enabled some basic **netfilter** modules in the kernel, so I could do a basic NAT router test
@@ -114,16 +115,13 @@ I enabled some basic **netfilter** modules in the kernel, so I could do a basic 
     root@duovero:~# iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
     root@duovero:~# iptables -A FORWARD -i uap0 -j ACCEPT
 
-And after that a laptop using the Duovero AP was able to ping hosts on the lan that the Duovero was connected to through the **eth0** interface. So that seems to be working.
+After that a laptop using the Duovero AP was able to ping hosts on the lan that the Duovero was connected to through the **eth0** interface. So that seems to be working.
 
+The dhcp server is not providing a DNS server to clients. Edit **/etc/dhcpd.conf** if you want to change that.
 
-I connected some more clients to the Duovero AP. They could all communicate fine with the AP, but they could not talk to each other. I don't know if this is intentional client isolation by the mwifiex driver or Marvell firmware. Or if it's a problem with the way I built hostapd.
+I connected some more clients to the Duovero AP. They could all communicate fine with the AP, but they could not talk to each other. This is probably intentional [wireless client isolation][wireless-isolation] by the mwifiex driver or Marvell firmware. Some additional routing would need to be done by the Duovero in order to support client-to-client communication.
 
-
-A lot more testing needs to be done.
-
-
-I think most of the tools to create a proper AP are installed. There is definitely more work on the startup scripts to have a functioning AP out of the box.
+More work needs to be done on the startup scripts and firewall to have a proper routing AP out of the box, but I think most of the tools are there.
 
 
 [gumstix-duovero]: https://store.gumstix.com/index.php/products/355/
@@ -135,3 +133,4 @@ I think most of the tools to create a proper AP are installed. There is definite
 [hostapd-patch]: https://github.com/Pansenti/meta-pansenti/tree/master/recipes-connectivity/hostapd
 [pansenti-ap-image]: https://github.com/Pansenti/meta-pansenti/blob/master/recipes-pansenti/images/pansenti-ap-image.bb
 [duovero-ap]: http://pansenti.com/duovero-ap/
+[wireless-isolation]: http://www.wirelessisolation.com/

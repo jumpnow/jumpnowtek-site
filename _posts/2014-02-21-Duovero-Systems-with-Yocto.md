@@ -1,27 +1,27 @@
 ---
 layout: post
-title: Building Gumstix Duovero Systems with Yocto
+title: Building Duovero Systems with Yocto
 description: "Building customized systems for Gumstix Duovero using tools from the Yocto Project"
 date: 2014-02-21 12:58:00
-categories: linux gumstix duovero yocto
+categories: gumstix duovero
 tags: [linux, gumstix, duovero, yocto]
 ---
 
-Some notes for building custom BSP images for Gumstix® Duoveros using tools from the Yocto Project.
+The results from these instructions are generic developer systems targeting C/C++ and Qt programmers. You will likely want to modify them for any particular project. 
 
-These are developer systems targeting C/C++ and Qt programmers. You will want to modify them for any particular project.
+There is no X11 and no desktop installed on any of these systems. The embedded Qt images can be used to run GUI applications using the -qws switch. 
 
-There is no X11 and no desktop installed on any of these systems.
+The Linux 3.6 kernel comes from the Linux mainline with some patches from Gumstix and a few of my own.
 
-The Linux kernel is 3.6 from mainline using some patches from Gumstix and a few of my own patches. 
+The Yocto version is 1.5.1 (Poky 10.0.1), the [dora] branch.
 
-The current Yocto Project version I'm using for the Duoveros is 1.5.1 (Poky 10.0.1), the [dora] branch.
+The images are **sysvinit** based not **systemd**. I am using the **systemd-udev v206** package instead of the stand-alone **udev v182** package because I've found it to be more reliable when it comes to loading binary firmware for the Duovero wifi/bluetooth radio.
 
-## Ubuntu Packages
+### Ubuntu Packages
 
-I've settled on Ubuntu workstations exclusively for now. Currently I'm using a 13.04 and 13.10 64-bit system.  I previously used Fedora without problems. I'm sure other distros will work.
+I've settled on Ubuntu workstations as my build platforms for now. Currently I'm using a 13.04 and 13.10 64-bit systems.
 
-You'll need at least the following packages on your Ubuntu workstation.
+You'll need at least the following packages installed
 
     build-essential
     git
@@ -39,37 +39,29 @@ You'll also want to change the default Ubuntu shell from **dash** to **bash** by
  
     dpkg-reconfigure dash
 
-## Clone the dependency repositories
+### Clone the dependency repositories
 
-### Poky
-
-Use the [dora] branch
+First the main Yocto project **poky** repository
 
     scott@hex:~ git clone git://git.yoctoproject.org/poky.git poky-dora
     scott@hex:~$ cd ~/poky-dora
     scott@hex:~/poky-dora$ git checkout -b dora origin/dora
 
-### meta-openembedded
-
-Use the [dora] branch.
+Next the **meta-openembedded** repository
 
     scott@hex:~/poky-dora$ git clone git://git.openembedded.org/meta-openembedded
     scott@hex:~/poky-dora$ cd meta-openembedded
     scott@hex:~/poky-dora/meta-openembedded$ git checkout -b dora origin/dora
     scott@hex:~/poky-dora/meta-openembedded$ cd ..
 
-### meta-gumstix
-
-Use the [dora] branch
+The **meta-gumstix** repository
 
     scott@hex:~/poky-dora$ git clone git://github.com/gumstix/meta-gumstix
     scott@hex:~/poky-dora$ cd meta-gumstix
     scott@hex:~/poky-dora/meta-gumstix$ git checkout -b dora origin/dora
     scott@hex:~/poky-dora/meta-gumstix$ cd ..
 
-### meta-duovero
-
-Use the [master] branch. Create a separate **~/duovero subdirectory** first.
+Finally the **meta-duovero** repository
 
     scott@hex:~/poky-dora$ cd ..
     scott@hex:~$ mkdir duovero
@@ -77,13 +69,15 @@ Use the [master] branch. Create a separate **~/duovero subdirectory** first.
     scott@hex:~/duovero$ git clone git://github.com/scottellis/meta-duovero
 
 
-The **meta-duovero/README.md** file has the last commits from the dependency repositories that I tested. You can always checkout those commits explicitly.
+I put the **meta-duovero** repository in a different sub-directory because while the first 3 repositories can be shared, the **meta-duovero** repository may or may not be Duovero specific. I am not testing it with anything other then Duoveros.
 
-### Create a build directory
+The **meta-duovero/README.md** file has the last commits from the dependency repositories that I tested. You can always checkout those commits explicitly if you run into problems.
 
-Some of the following are the conventions that I use. They don't have to be followed explicitly. All the paths to the meta-layers are configurable.
+### Initialize the build directory
+
+Much of the following are only the conventions that I use. They don't have to be followed explicitly. All the paths to the meta-layers are configurable.
  
-First setup a build directory. I tend to do this on a per board and/or per project basis just to keep straight the different projects I'm working on and so I can quickly switch between projects. For this example I'll put the build directory under **~/duovero/**
+First setup a build directory. I tend to do this on a per board and/or per project basis just to keep straight the different projects I'm working on and so I can quickly switch between projects. For this example I'll put the build directory under **~/duovero/** with the **meta-duovero** layer.
 
     scott@hex:~$ cd ~/poky-dora
     scott@hex:~/poky-dora$ source oe-init-build-env ~/duovero/build
@@ -103,11 +97,11 @@ We want to replace those with the templates in the **meta-duovero/conf** directo
 
 ### Edit bblayers.conf
 
-In **bblayers.conf** file replace the path **/home/scott** with the appropriate path to the meta-layer repositories on your system.
+In **bblayers.conf** file replace **${HOME}** with the appropriate path to the meta-layer repositories on your system if you modified any of the above instructions when cloning. 
 
 ### Edit local.conf
 
-The variables you want to customize are the following:
+The variables you may want to customize are the following:
 
     BB_NUMBER_THREADS
     PARALLEL_MAKE
@@ -152,7 +146,7 @@ The default location is **~/duovero/build/sstate-cache**.
 Specify your workstations type, i686 for 32-bit or x86_64 for 64-bit systems.
 
  
-## Run the build
+### Run the build
 
 You need to source the environment every time you want to run a build. The **oe-init-build-env** when run a second time will not overwrite your customized conf files.
 
@@ -183,8 +177,6 @@ There are a few custom images available in the meta-duovero layer. The recipes f
     duovero-console-image.bb
     duovero-qte-image.bb
 
-
-The images are **sysvinit** not **systemd**. I am using the **systemd-udev v206** package instead of the stand-alone **udev v182** package because I've found it to be more reliable when it comes to loading binary firmware for the Duovero radios.
 
 #### duovero-console-image
 
@@ -220,7 +212,7 @@ And then continue with the full build.
     scott@hex:~/duovero/build$ bitbake duovero-console-image
 
  
-### Copying images to an SD card
+### Copying the binaries to an SD card
 
 After the build completes, the bootloader, kernel and rootfs image files can be found in **TMPDIR/deploy/images/duovero/**.
 
