@@ -9,13 +9,13 @@ tags: [linux, gumstix, duovero, yocto]
 
 The results from these instructions are generic developer systems targeting C/C++ and Qt programmers. You will likely want to modify them for any particular project. 
 
-There is no X11 and no desktop installed on any of these systems. The embedded Qt images can be used to run GUI applications using the -qws switch. 
+There is no X11 and no desktop installed on any of these systems. The embedded Qt images can be used to run GUI applications using the **-qws** switch. 
 
 The Linux 3.6 kernel comes from the Linux mainline with some patches from Gumstix and a few of my own.
 
 The Yocto version is 1.5.1 (Poky 10.0.1), the [dora] branch.
 
-The images are **sysvinit** based not **systemd**. I am using the **systemd-udev v206** package instead of the stand-alone **udev v182** package because I've found it to be more reliable when it comes to loading binary firmware for the Duovero wifi/bluetooth radio.
+The images are **sysvinit** based not **systemd**. I am using the **systemd-udev** package instead of the stand-alone **udev** package because I've found it to be more reliable when it comes to loading binary firmware for the Duovero wifi/bluetooth radio.
 
 ### Ubuntu Packages
 
@@ -35,9 +35,11 @@ You'll need at least the following packages installed
     libncurses5-dev
     u-boot-tools
 
-You'll also want to change the default Ubuntu shell from **dash** to **bash** by running this command
+You'll also want to change the default Ubuntu shell from **dash** to **bash** by running this command from a shell
  
     dpkg-reconfigure dash
+
+Choose bash when prompted.
 
 ### Clone the dependency repositories
 
@@ -77,23 +79,23 @@ The **meta-duovero/README.md** file has the last commits from the dependency rep
 
 Much of the following are only the conventions that I use. They don't have to be followed explicitly. All the paths to the meta-layers are configurable.
  
-First setup a build directory. I tend to do this on a per board and/or per project basis just to keep straight the different projects I'm working on and so I can quickly switch between projects. For this example I'll put the build directory under **~/duovero/** with the **meta-duovero** layer.
+First setup a build directory. I tend to do this on a per board and/or per project basis so I can quickly switch between projects. For this example I'll put the build directory under **~/duovero/** with the **meta-duovero** layer.
 
     scott@hex:~$ cd ~/poky-dora
     scott@hex:~/poky-dora$ source oe-init-build-env ~/duovero/build
-    scott@hex:~/duovero/build$ ls
-    conf
 
+You always need this command to setup the environment before using **bitbake**. If you only have one build environment, you can put it in your **~/.bashrc**. I tend to always run it manually.
+ 
 ### Customize the conf files
 
-The oe-init-build-env script generated some generic scripts in the **build/conf** directory.
-We want to replace those with the templates in the **meta-duovero/conf** directory.
+The **oe-init-build-env** script generated some generic configuration files in the **build/conf** directory. You want to replace those with the conf-samples in the **meta-duovero/conf** directory.
 
-	scott@hex:~/duovero/build$ cp ~/duovero/meta-duovero/conf/local.conf.sample \
+	scott@hex:~/duovero/build$ cp ~/duovero/meta-duovero/conf/local.conf-sample \
       conf/local.conf
-    scott@hex:~/duovero/build$ cp ~/duovero/meta-duovero/conf/bblayers.conf.sample \
+    scott@hex:~/duovero/build$ cp ~/duovero/meta-duovero/conf/bblayers.conf-sample \
       conf/bblayers.conf
 
+You generally only have to edit these files once.
 
 ### Edit bblayers.conf
 
@@ -103,13 +105,14 @@ In **bblayers.conf** file replace **${HOME}** with the appropriate path to the m
 
 The variables you may want to customize are the following:
 
-    BB_NUMBER_THREADS
-    PARALLEL_MAKE
-    TMPDIR
-    DL_DIR
-    SSTATE_DIR
-    SDKMACHINE
+- BB\_NUMBER\_THREADS
+- PARALLEL\_MAKE
+- TMPDIR
+- DL\_DIR
+- SSTATE\_DIR
+- SDKMACHINE
 
+The defaults should work, but I always make some adjustment.
 
 ##### BB\_NUMBER\_THREADS
 
@@ -121,13 +124,13 @@ Set to the number of cores on your build machine.
 
 ##### TMPDIR
 
-This is where temporary build files and the final build executables will end up. Expect at least 35GB to be required. You probably want at least 50GB available.
+This is where temporary build files and the final build binaries will end up. Expect at least 35GB to be required. You probably want at least 50GB available.
 
-The default location if left commented will be **~/duovero/build/tmp**. I usually put my TMPDIRs on dedicated partitions and often on another disk from the workstation O/S.
+The default location if left commented will be **~/duovero/build/tmp**. If I'm not working in a VM, I usually put my TMPDIRs on dedicated partitions. Occasionally something will come up where you'll need to delete the entire **TMPDIR**. The sequence unmount/mkfs/remount is much faster then deleting a 30+ GB directory. 
 
 If you specify an alternate location as I do in the example conf file make sure the directory is writable by the user running the build. Also because of some rpath issues with gcc, the TMPDIR path cannot be too short or the gcc build will fail. I haven't determined exactly how short is too short, but something like **/oe26** is too short and **/oe26/tmp-poky-dora-build** is long enough.
 
-If you use the default location, the TMPDIR path is long enough.
+If you use the default location, the TMPDIR path is already long enough.
      
 ##### DL_DIR
 
@@ -143,7 +146,7 @@ The default location is **~/duovero/build/sstate-cache**.
  
 ##### SDK_MACHINE
 
-Specify your workstations type, i686 for 32-bit or x86_64 for 64-bit systems.
+Specify your workstations type, **i686** for 32-bit or **x86_64** for 64-bit systems.
 
  
 ### Run the build
@@ -235,10 +238,11 @@ You only have to format the SD card once.
 
 #### /media/card
 
-You will need to create a mount point on your workstation for the copy scripts to use. You only have to do this once.
+You will need to create a mount point on your workstation for the copy scripts to use.
 
     scott@hex:~$ sudo mkdir /media/card
 
+You only have to create this directory once.
 
 #### copy_boot.sh
 
@@ -266,12 +270,12 @@ The script accepts an optional command line argument for the image type, either 
 
 The script also accepts a **hostname** argument if you want the host name to be something other then the default **duovero**.
 
-The hostname affects the name that the device will use with avahi and the SyntroLCam stream name explained below.
+Here's an example of how you'd run **copy_rootfs.sh**
 
-Here's an example of how you'd run copy_rootfs.sh
     scott@hex:~/duovero/meta-duovero/scripts$ ./copy_rootfs.sh sdc console
 
-Or
+or
+
     scott@hex:~/duovero/meta-duovero/scripts$ ./copy_rootfs.sh sdc qte duo1
 
 The copy scripts will **NOT** unmount partitions automatically. If the partition that is supposed to be the on the SD card is already mounted, the script will complain and abort. This is for safety, mine mostly, since I run these scripts many times a day on different machines and the SD cards show up in different places.
