@@ -34,7 +34,7 @@ android and ti-omap kernel developers.
 
 It's difficult to get information about the Duovero PMIC, the [TWL6030][twl6030].
 The full programming reference manual is not publicly available the way it is
-for the TWL4030 that the OMAP3 boards use.
+for the TWL4030.
 
 This [manual][swcs045c] has some information about the RTC. The
 **REAL-TIME CLOCK** section starting on page 32 has some information about the
@@ -85,14 +85,15 @@ TWL4030 for the Overo kernels.
 
 ### Init scripts
 
-You need some additional software to ensure that the system time gets restored
-from the RTC value on startup and that the RTC gets set to system time on
-shutdown.
+You need some additional userland software to ensure that
+
+- system time gets restored from the RTC value on startup
+- the RTC gets set to system time on shutdown
 
 With Yocto built systems the **busybox-hwclock** package adds an init.d script
-to do this. The script is called **/etc/init.d/hwclock.sh**.
+to do this. 
 
-You probably want to include this package in your image recipe.
+The script is called **/etc/init.d/hwclock.sh**.
 
 
 [duovero]: https://store.gumstix.com/index.php/category/43/
