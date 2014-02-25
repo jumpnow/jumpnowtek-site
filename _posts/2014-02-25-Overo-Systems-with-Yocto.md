@@ -1,26 +1,29 @@
 ---
 layout: post
-title: Building Duovero Systems with Yocto
-description: "Building customized systems for Gumstix Duovero using tools from the Yocto Project"
-date: 2014-02-21 12:58:00
-categories: gumstix duovero
-tags: [linux, gumstix, duovero, yocto]
+title: Building Overo Systems with Yocto
+description: "Building customized systems for Gumstix Overo using tools from the Yocto Project"
+date: 2014-02-25 09:17:00
+categories: gumstix overo
+tags: [linux, gumstix, overo, yocto]
 ---
 
 These instructions are for building generic developer systems for [Gumstix
-Duovero][duovero] boards with a focus on C/C++ and Qt programmers. You will
+Overo][overo] boards with a focus on C/C++ and Qt programmers. You will
 almost certainly want to modify the contents of the images for any particular
 project. 
 
 There is no X11 and no desktop installed on any of these systems. The embedded
 Qt images can be used to run GUI applications using the **-qws** switch. 
 
-The Linux 3.6 kernel comes from the Linux mainline with some patches from
-Gumstix and a few of my own.
+The Linux 3.5 kernel comes from the Linux mainline with some patches from
+Gumstix. If you want to use the McBSP controller of the Overo with custom
+hardware, you will want to change your kernel version to 3.2. Otherwise, the 
+default 3.5 kernel is probably what you want. The kernel version can be changed
+in the **local.conf** configuration file explained below. 
 
 The Yocto version is 1.5.1 (Poky 10.0.1), the [dora] branch.
 
-**sysvinit** is used for the init system, not **systemd**. 
+**sysvinit** is used for the init system, not **systemd**.
 
 **systemd-udev** is the udev daemon. I have found it more reliable then the
 older **udev** particularly when loading binary firmware.
@@ -72,19 +75,19 @@ The **meta-gumstix** repository
     scott@hex:~/poky-dora/meta-gumstix$ git checkout -b dora origin/dora
     scott@hex:~/poky-dora/meta-gumstix$ cd ..
 
-Finally the **meta-duovero** repository
+Finally the **meta-overo** repository
 
     scott@hex:~/poky-dora$ cd ..
-    scott@hex:~$ mkdir duovero
-    scott@hex:~$ cd duovero
-    scott@hex:~/duovero$ git clone git://github.com/jumpnow/meta-duovero
+    scott@hex:~$ mkdir overo
+    scott@hex:~$ cd overo
+    scott@hex:~/overo$ git clone git://github.com/jumpnow/meta-overo
 
 
-I put the **meta-duovero** repository in a different sub-directory because while
-the first 3 repositories can be shared, the **meta-duovero** repository may or
-may not be Duovero specific. I am only testing this repository with Duoveros.
+I put the **meta-overo** repository in a different sub-directory because while
+the first 3 repositories can be shared, the **meta-overo** repository may or
+may not be Overo specific. I am only testing this repository with Overos.
 
-The **meta-duovero/README.md** file has the last commits from the dependency
+The **meta-overo/README.md** file has the last commits from the dependency
 repositories that I tested. You can always checkout those commits explicitly if
 you run into problems.
 
@@ -95,10 +98,10 @@ be followed explicitly. All the paths to the meta-layers are configurable.
  
 First setup a build directory. I tend to do this on a per board and/or per
 project basis so I can quickly switch between projects. For this example I'll
-put the build directory under **~/duovero/** with the **meta-duovero** layer.
+put the build directory under **~/overo/** with the **meta-overo** layer.
 
     scott@hex:~$ cd ~/poky-dora
-    scott@hex:~/poky-dora$ source oe-init-build-env ~/duovero/build
+    scott@hex:~/poky-dora$ source oe-init-build-env ~/overo/build
 
 You always need this command to setup the environment before using **bitbake**.
 If you only have one build environment, you can put it in your **~/.bashrc**.
@@ -108,11 +111,11 @@ I work on more then one system so tend to always run it manually.
 
 The **oe-init-build-env** script generated some generic configuration files in
 the **build/conf** directory. You want to replace those with the conf-samples
-in the **meta-duovero/conf** directory.
+in the **meta-overo/conf** directory.
 
-	scott@hex:~/duovero/build$ cp ~/duovero/meta-duovero/conf/local.conf-sample \
+	scott@hex:~/overo/build$ cp ~/overo/meta-overo/conf/local.conf-sample \
       conf/local.conf
-    scott@hex:~/duovero/build$ cp ~/duovero/meta-duovero/conf/bblayers.conf-sample \
+    scott@hex:~/overo/build$ cp ~/overo/meta-overo/conf/bblayers.conf-sample \
       conf/bblayers.conf
 
 You generally only have to edit these files once.
@@ -134,6 +137,10 @@ The variables you may want to customize are the following:
 - SSTATE\_DIR
 - SDKMACHINE
 
+Optional
+
+- PREFERRED\_VERSION\_linux-gumstix
+
 The defaults should work, but I always make some adjustment.
 
 ##### BB\_NUMBER\_THREADS
@@ -149,7 +156,7 @@ Set to the number of cores on your build machine.
 This is where temporary build files and the final build binaries will end up.
 Expect to use at least 35GB. You probably want at least 50GB available.
 
-The default location if left commented will be **~/duovero/build/tmp**. If I'm
+The default location if left commented will be **~/overo/build/tmp**. If I'm
 not working in a VM, I usually put my TMPDIRs on dedicated partitions.
 Occasionally something will come up where you'll need to delete the entire 
 **TMPDIR**. For those occasions the sequence unmount/mkfs/remount is much
@@ -159,30 +166,40 @@ If you specify an alternate location as I do in the example conf file make sure
 the directory is writable by the user running the build. Also because of some
 **rpath** issues with gcc, the TMPDIR path cannot be too short or the gcc build
 will fail. I haven't determined exactly how short is too short, but something
-like **/oe26** is too short and **/oe26/tmp-poky-dora-build** is long enough.
+like **/oe19** is too short and **/oe19/tmp-poky-dora-build** is long enough.
 
 If you use the default location, the TMPDIR path is already long enough.
      
-##### DL_DIR
+##### DL\_DIR
 
 This is where the downloaded source files will be stored. You can share this
 among configurations and build files so I created a general location for this
 outside my home directory. Make sure the build user has write permission to the
 directory you decide on.
 
-The default directory will be **~/duovero/build/sources**.
+The default directory will be **~/overo/build/sources**.
 
-##### SSTATE_DIR
+##### SSTATE\_DIR
 
 This is another Yocto build directory that can get pretty big, greater then 5GB.
 I often put this somewhere else other then my home directory as well.
 
-The default location is **~/duovero/build/sstate-cache**.
+The default location is **~/overo/build/sstate-cache**.
  
-##### SDK_MACHINE
+##### SDK\_MACHINE
 
 Specify your workstations type, **i686** for 32-bit or **x86_64** for 64-bit
 systems.
+
+##### PREFERRED\_VERSION\_linux-gumstix
+
+If you plan to write a custom driver for the McBSP controller, you'll need to
+drop back to the 3.2 kernel, the last that supported out-of-tree access to the
+platform mcbsp driver. 
+
+Uncomment this line
+
+    # PREFERRED\_VERSION\_linux-gumstix = "3.2"
 
  
 ### Run the build
@@ -192,7 +209,7 @@ You need to source the environment every time you want to run a build. The
 conf files.
 
     scott@hex:~$ cd ~/poky-dora
-    scott@hex:~$ source oe-init-build-env ~/duovero/build
+    scott@hex:~$ source oe-init-build-env ~/overo/build
 
     ### Shell environment set up for builds. ###
 
@@ -212,8 +229,8 @@ conf files.
 Those 'Common targets' may or may not build successfully. I have never tried
 them.
 
-There are a few custom images available in the meta-duovero layer. The recipes
-for these image can be found in **meta-duovero/images/**
+There are a few custom images available in the meta-overo layer. The recipes
+for these image can be found in **meta-overo/images/**
 
     console-image.bb
     qte-image.bb
@@ -240,7 +257,7 @@ as the headers and libraries for doing Syntro development on the board.
 
 To build the **console-image** run the following command
 
-    scott@hex:~/duovero/build$ bitbake console-image
+    scott@hex:~/overo/build$ bitbake console-image
 
 You may run into build errors related to packages that failed to download or
 sometimes out of order builds. The easy solution is to clean the build for the
@@ -248,20 +265,20 @@ failed package and rerun the build again.
 
 For instance if the build for **zip** failed for some reason, I would run this.
 
-    scott@hex:~/duovero/build$ bitbake -c cleansstate zip
-    scott@hex:~/duovero/build$ bitbake zip
+    scott@hex:~/overo/build$ bitbake -c cleansstate zip
+    scott@hex:~/overo/build$ bitbake zip
 
 And then continue with the full build.
 
-    scott@hex:~/duovero/build$ bitbake console-image
+    scott@hex:~/overo/build$ bitbake console-image
 
  
 ### Copying the binaries to an SD card
 
 After the build completes, the bootloader, kernel and rootfs image files can be
-found in **TMPDIR/deploy/images/duovero/**.
+found in **TMPDIR/deploy/images/overo/**.
 
-The **meta-duovero/scripts** directory has some helper scripts to format and
+The **meta-overo/scripts** directory has some helper scripts to format and
 copy the files to a microSD card.
 
 #### mk2parts.sh
@@ -277,8 +294,8 @@ It doesn't matter if some partitions from the SD card are mounted. The
 
 BE CAREFUL with this script. It will format any disk on your workstation.
 
-    scott@hex:~$ cd ~/duovero/meta-duovero/scripts
-    scott@hex:~/duovero/meta-duovero/scripts$ sudo ./mk2parts.sh sdc
+    scott@hex:~$ cd ~/overo/meta-overo/scripts
+    scott@hex:~/overo/meta-overo/scripts$ sudo ./mk2parts.sh sdc
 
 You only have to format the SD card once.
 
@@ -301,15 +318,15 @@ environment variable called **OETMP**.
 
 For instance, if I had this in the local.conf
 
-    TMPDIR = "/oe26/tmp-poky-dora-build"
+    TMPDIR = "/oe19/tmp-poky-dora-build"
 
 Then I would export this environment variable before running copy_boot.sh
 
-    scott@hex:~/duovero/meta-duovero/scripts$ export OETMP=/oe26/tmp-poky-dora-build
+    scott@hex:~/overo/meta-overo/scripts$ export OETMP=/oe19/tmp-poky-dora-build
 
 Then run the copy_boot.sh script passing the location of SD card
 
-    scott@hex:~/duovero/meta-duovero/scripts$ ./copy_boot.sh sdc
+    scott@hex:~/overo/meta-overo/scripts$ ./copy_boot.sh sdc
 
 #### copy_rootfs.sh
 
@@ -319,15 +336,15 @@ The script accepts an optional command line argument for the image type, either
 **console** or **qte**. The default is **console**.
 
 The script also accepts a **hostname** argument if you want the host name to be
-something other then the default **duovero**.
+something other then the default **overo**.
 
 Here's an example of how you'd run **copy_rootfs.sh**
 
-    scott@hex:~/duovero/meta-duovero/scripts$ ./copy_rootfs.sh sdc console
+    scott@hex:~/overo/meta-overo/scripts$ ./copy_rootfs.sh sdc console
 
 or
 
-    scott@hex:~/duovero/meta-duovero/scripts$ ./copy_rootfs.sh sdc qte duo1
+    scott@hex:~/overo/meta-overo/scripts$ ./copy_rootfs.sh sdc qte overo
 
 The copy scripts will **NOT** unmount partitions automatically. If the partition
 that is supposed to be the on the SD card is already mounted, the script will 
@@ -340,10 +357,9 @@ a second SD card that I just inserted.
 
     scott@hex:~$ sudo umount /dev/sdc1
     scott@hex:~$ sudo umount /dev/sdc2
-    scott@hex:~$ export OETMP=/oe26/tmp-poky-dora-build
-    scott@hex:~$ cd duovero/meta-duovero/scripts
-    scott@hex:~/duovero/meta-duovero/scripts$ ./copy_boot.sh sdc
-    scott@hex:~/duovero/meta-duovero/scripts$ ./copy_rootfs.sh sdc console duo2
+    scott@hex:~$ export OETMP=/oe19/tmp-poky-dora-build
+    scott@hex:~$ cd overo/meta-overo/scripts
+    scott@hex:~/overo/meta-overo/scripts$ ./copy_boot.sh sdc
+    scott@hex:~/overo/meta-overo/scripts$ ./copy_rootfs.sh sdc console overo2
 
-
-[duovero]: https://store.gumstix.com/index.php/category/43/
+[overo]: https://store.gumstix.com/index.php/category/33/
