@@ -78,7 +78,9 @@ Finally the **meta-duovero** repository
     scott@hex:~$ mkdir duovero
     scott@hex:~$ cd duovero
     scott@hex:~/duovero$ git clone git://github.com/jumpnow/meta-duovero
-
+    scott@hex:~/duovero$ cd meta-duovero
+    scott@hex:~/duovero/meta-duovero$ git checkout -b dora origin/dora
+    scott@hex:~/duovero/meta-duovero$ cd ..
 
 I put the **meta-duovero** repository in a different sub-directory because while
 the first 3 repositories can be shared, the **meta-duovero** repository may or
@@ -207,6 +209,7 @@ conf files.
         meta-ide-support
 
     You can also run generated qemu images with a command like 'runqemu qemux86'
+    scott@hex:~/duovero/build$
 
 
 Those 'Common targets' may or may not build successfully. I have never tried

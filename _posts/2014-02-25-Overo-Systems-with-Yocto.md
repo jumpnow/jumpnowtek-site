@@ -81,7 +81,9 @@ Finally the **meta-overo** repository
     scott@hex:~$ mkdir overo
     scott@hex:~$ cd overo
     scott@hex:~/overo$ git clone git://github.com/jumpnow/meta-overo
-
+    scott@hex:~/overo$ cd meta-overo
+    scott@hex:~/overo/meta-overo$ git checkout -b dora origin/dora
+    scott@hex:~/overo/meta-overo$ cd ..
 
 I put the **meta-overo** repository in a different sub-directory because while
 the first 3 repositories can be shared, the **meta-overo** repository may or
@@ -199,7 +201,7 @@ platform mcbsp driver.
 
 Uncomment this line
 
-    # PREFERRED\_VERSION\_linux-gumstix = "3.2"
+    # PREFERRED_VERSION_linux-gumstix = "3.2"
 
  
 ### Run the build
@@ -224,7 +226,7 @@ conf files.
         meta-ide-support
 
     You can also run generated qemu images with a command like 'runqemu qemux86'
-
+    scott@hex:~/overo/build$
 
 Those 'Common targets' may or may not build successfully. I have never tried
 them.
