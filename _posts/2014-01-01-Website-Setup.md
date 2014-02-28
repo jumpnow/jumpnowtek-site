@@ -21,7 +21,7 @@ Clone the website
 
     scott@host:~$ clone git://github.com/jumpnow/jumpnowtek-site
 
-Build the site
+Optional build the site (the deploy script below will also do a build)
 
     scott@host:~$ cd jumpnowtek-site
     scott@host:~/jumpnowtek-site$ jekyll build

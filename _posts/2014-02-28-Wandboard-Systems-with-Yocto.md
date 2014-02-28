@@ -120,9 +120,9 @@ The **oe-init-build-env** script generated some generic configuration files in
 the **build/conf** directory. You want to replace those with the conf-samples
 in the **meta-wandboard/conf** directory.
 
-	scott@hex:~/wandboard/build$ cp ~/overo/meta-wandboard/conf/local.conf-sample \
+	scott@hex:~/wandboard/build$ cp ~/wandboard/meta-wandboard/conf/local.conf-sample \
       conf/local.conf
-    scott@hex:~/wandboard/build$ cp ~/overo/meta-wandboard/conf/bblayers.conf-sample \
+    scott@hex:~/wandboard/build$ cp ~/wandboard/meta-wandboard/conf/bblayers.conf-sample \
       conf/bblayers.conf
 
 You generally only have to edit these files once.
@@ -218,7 +218,7 @@ conf files.
         meta-ide-support
 
     You can also run generated qemu images with a command like 'runqemu qemux86'
-    scott@hex:~/overo/build$
+    scott@hex:~/wandboard/build$
 
 Those 'Common targets' may or may not build successfully. I have never tried
 them.
@@ -288,8 +288,8 @@ It doesn't matter if some partitions from the SD card are mounted. The
 
 BE CAREFUL with this script. It will format any disk on your workstation.
 
-    scott@hex:~$ cd ~/overo/meta-wandboard/scripts
-    scott@hex:~/overo/meta-wandboard/scripts$ sudo ./mk2parts.sh sdc
+    scott@hex:~$ cd ~/wandboard/meta-wandboard/scripts
+    scott@hex:~/wandboard/meta-wandboard/scripts$ sudo ./mk2parts.sh sdc
 
 You only have to format the SD card once.
 
