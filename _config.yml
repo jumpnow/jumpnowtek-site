@@ -2,4 +2,4 @@ name: Jumpnow Technologies
 markdown: redcarpet
 pygments: true
 permalink: none
-exclude: [scripts]
+exclude: [scripts, nginx]
