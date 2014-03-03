@@ -160,6 +160,44 @@ You can always reset the repository to the starting commit this way
     HEAD is now at d35902c defconfig: Small updates to easy demos
 
 
+Create an environment script like the following to point to the Yocto built
+cross-compiler tools. **TMPDIR** comes from the setting in your 
+**build/conf/local.conf**
+
+    --- wandboard-yocto-env.sh ---
+    MACHINE=wandboard-quad
+    TMPDIR=/oe21/tmp-poky-dora-build
+
+    SYSROOTSDIR=${OETMP}/sysroots
+    STAGEDIR=${SYSROOTSDIR}/`uname -m`-linux/usr
+
+    export KERNELDIR=${SYSROOTSDIR}/${MACHINE}/usr/src/kernel
+
+    PATH=${STAGEDIR}/bin:${STAGEDIR}/bin/cortexa9hf-vfp-neon-poky-linux-gnueabi:${PATH}
+
+    unset CFLAGS CPPFLAGS CXXFLAGS LDFLAGS
+
+    export ARCH="arm"
+    export CROSS_COMPILE="arm-poky-linux-gnueabi-"
+
+
+The kernel config used by Yocto for the wandboards is generated from several
+**defconfig** files in the meta-fsl-arm layers. It's easiest just to grab the
+final **.config** from the build directory.
+
+Using the same **TMPDIR**, copy the .config file to the source directory
+
+    scott@hex:~/linux-wandboard$ cp <TMPDIR>/work/wandboard_quad-poky-linux-gnueabi/linux-wandboard/3.0.35-r0/git/.config .config
+
+
+Then the following commands will build the uImage kernel and modules.
+
+    make oldconfig (or make menuconfig)
+    make include/linux/version.h
+    make uImage
+    make modules
+
+
 [wandboard-org]: http://www.wandboard.org/
 [yocto-project]: https://www.yoctoproject.org/
 [yocto-wandboard]: /wandboard/Wandboard-Systems-with-Yocto.html
