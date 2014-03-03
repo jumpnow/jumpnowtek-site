@@ -17,13 +17,12 @@ I don't want to use bitbake during development because that's a pretty
 slow process.
 
 But I will be using the cross-compiler and other tools that Yocto has already
-built.
+built and when I'm done with development I will create a patch for use with
+Yocto.
 
-And when I'm done I will create a patch for use with the Yocto build system.
-
-The Linux kernel I am using comes from the Freescale 
-[meta-fsl-arm-extra][meta-fsl-arm-extra-dora] layer.
-I am using the **[dora]** branch of the Yocto and Freescale meta-layers.
+The Linux kernel that is running now is built from rules in the Freescale 
+[meta-fsl-arm-extra][meta-fsl-arm-extra-dora] layer. I am using the **[dora]**
+branch of both the Yocto and Freescale meta-layers.
 
 The default kernel version is **3.0.35**. 
 
@@ -46,9 +45,11 @@ And this directory
 Inside [linux-wandboard.inc][linux-wandboard-inc] you can find the URL for the
 Linux source.
  
+    ...
     SRC_URI = "git://github.com/wandboard-org/linux.git \
                file://defconfig \
     "
+    ...
 
 So the first thing is to clone this repository.
 
@@ -59,12 +60,11 @@ This will take a little while.
 The recipe file [linux-wandboard_3.0.35.bb][linux-wandboard-3-0-35-bb] has the
 commit that we want to use
 
+    ...
     # Wandboard branch - based on 4.0.0 from Freescale git
     SRCREV = "d35902c77a077a25e4dfedc6aac11ba49c52c586"
     LOCALVERSION = "-4.0.0-wandboard"
-
-I want commit **d35902c** from the **SRCREV** value in 
-**linux-wandboard_3.0.35.bb**.
+    ...
 
 I'm going to call my new branch **[work]** just to keep things simple.
 
@@ -81,8 +81,8 @@ A quick check that I'm on the correct commit
      821af75 Wandboard : Add support for edm framwork
 
 To get the kernel source to the same state as what is currently running, I need
-to apply some additional patches specified in the **linux-wandboard_3.0.35.bb**
-recipe.
+to apply some additional patches that were included in the
+**linux-wandboard_3.0.35.bb** recipe.
 
     ...
     # GPU support patches
@@ -95,8 +95,7 @@ recipe.
     file://0006-ENGR00265130-gpu-Correct-section-mismatch-in-gpu-ker.patch"
     ...
 
-Here's one way to go about it. I already have the **meta-fsl-arm-extra**
-repository on the filesystem.
+Here's one way to go about it
 
     scott@hex:~/linux-wandboard$ git am ~/poky-dora/meta-fsl-arm-extra/recipes-kernel/linux/linux-wandboard-3.0.35/*.patch
 
@@ -120,7 +119,7 @@ repository on the filesystem.
     Applying: ENGR00265130 gpu:Correct section mismatch in gpu kernel driver
     Applying: drm/vivante: Add ":00" sufix in returned bus Id
 
-Here's a check of the latest commits now
+A check of the latest commits after the patches
 
     scott@hex:/oe25/linux-wandboard$ git log --oneline | head -15
     60f7201 drm/vivante: Add ":00" sufix in returned bus Id
@@ -140,23 +139,22 @@ Here's a check of the latest commits now
     929768a wandboard: modify mipi-csi to ipu mux setting
 
 In this case, the patches were **not** applied in the same order as the Yocto
- build would have done it.
+build would have done it.
  
 The **drm-vivante-Add-00...** patch got applied last instead of first because 
-of the alpha-numeric ordering. This could potentially be a problem and the patch
-apply would fail.
+of the alpha-numeric ordering. This could potentially be a problem. You'll know
+it if the patch command fails.
 
-In this case it was okay since the **drm-vivante-Add-00...** patch did not 
-touch a file any of the other patches did. 
+In this case it was okay.
 
-Some alternatives to apply this list of patches would be 
+Some alternatives to apply the list of patches in the correct order would be 
 
 1. Apply the patches one at a time manually
 2. Use quilt after first creating a **series** file with the correct ordering 
 
 It's easy to experiment. 
 
-You can reset the repository to the starting commit this way
+You can always reset the repository to the starting commit this way
 
     scott@hex:~/linux-wandboard$ git reset --hard d35902c
     HEAD is now at d35902c defconfig: Small updates to easy demos
