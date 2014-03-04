@@ -181,21 +181,30 @@ cross-compiler tools. **TMPDIR** comes from the setting in your
     export CROSS_COMPILE="arm-poky-linux-gnueabi-"
 
 
-The kernel config used by Yocto for the wandboards is generated from several
-**defconfig** files in the meta-fsl-arm layers. It's easiest just to grab the
-final **.config** from the build directory.
+The default Wandboard kernel config in the **meta-fsl-arm-extra** repository is
+not convenient for direct use. (Not every option is supplied so you'll have to
+wade through questions when running 'make oldconfig'). I find it easiest to
+just grab the final **.config** from the Yocto build directory. This will also
+ensure you pick up any kernel 'configuration fragments'.
 
-Using the same **TMPDIR**, copy the .config file to the source directory
+Using the same **TMPDIR**, copy the **.config** file to the source directory
 
     scott@hex:~/linux-wandboard$ cp <TMPDIR>/work/wandboard_quad-poky-linux-gnueabi/linux-wandboard/3.0.35-r0/git/.config .config
 
 
-Then the following commands will build the uImage kernel and modules.
+After that, the following commands will build the uImage kernel and modules.
 
     make oldconfig (or make menuconfig)
     make include/linux/version.h
     make uImage
     make modules
+
+You can add a **-j<some-number>** argument to make to speed things up.
+
+For example
+
+    make -j4 uImage
+    make -j4 modules
 
 
 [wandboard-org]: http://www.wandboard.org/
