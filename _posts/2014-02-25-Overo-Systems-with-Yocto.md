@@ -12,25 +12,25 @@ Overo][overo] boards with a focus on C/C++ and Qt programmers. You will
 almost certainly want to modify the contents of the images for any particular
 project. 
 
-There is no X11 and no desktop installed on any of these systems. The embedded
-Qt images can be used to run GUI applications using the **-qws** switch. 
+There is no `X11` and no desktop installed on any of these systems. The 
+`embedded Qt` images can be used to run GUI applications with the `-qws` switch. 
 
-The Linux 3.5 kernel comes from the Linux mainline with some patches from
-Gumstix. If you want to use the McBSP controller of the Overo with custom
-hardware, you will want to change your kernel version to 3.2. Otherwise, the 
-default 3.5 kernel is probably what you want. The kernel version can be changed
-in the **local.conf** configuration file explained below. 
+The Linux `3.5` kernel comes from the Linux mainline with some patches from
+Gumstix. If you want to use the `McBSP` controller of the Overo with custom
+hardware, you will want to change your kernel version to `3.2`. Otherwise, the 
+default `3.5` kernel is probably what you want. The kernel version can be changed
+in the `local.conf` configuration file explained below. 
 
-The Yocto version is 1.5.1 (Poky 10.0.1), the [dora] branch.
+The Yocto version is `1.5.1` the `[dora]` branch.
 
-**sysvinit** is used for the init system, not **systemd**.
+`sysvinit` is used for the init system, not `systemd`.
 
-**systemd-udev** is the udev daemon. I have found it more reliable then the
-older **udev** particularly when loading binary firmware.
+`systemd-udev` is the udev daemon. I have found it more reliable then the
+older `udev` particularly when loading binary firmware.
 
 ### Ubuntu Packages
 
-I'm using Ubuntu 13.10 64-bit workstations for the build systems.
+I'm using `Ubuntu 13.10` 64-bit workstations for the build systems.
 
 You'll need at least the following packages installed
 
@@ -46,7 +46,7 @@ You'll need at least the following packages installed
     libncurses5-dev
     u-boot-tools
 
-You'll also want to change the default Ubuntu shell from **dash** to **bash**
+You'll also want to change the default Ubuntu shell from `dash` to `bash`
 by running this command from a shell
  
     dpkg-reconfigure dash
@@ -55,27 +55,27 @@ Choose bash when prompted.
 
 ### Clone the dependency repositories
 
-First the main Yocto project **poky** repository
+First the main Yocto project `poky` repository
 
     scott@hex:~ git clone git://git.yoctoproject.org/poky.git poky-dora
     scott@hex:~$ cd ~/poky-dora
     scott@hex:~/poky-dora$ git checkout -b dora origin/dora
 
-Next the **meta-openembedded** repository
+The `meta-openembedded` repository
 
     scott@hex:~/poky-dora$ git clone git://git.openembedded.org/meta-openembedded
     scott@hex:~/poky-dora$ cd meta-openembedded
     scott@hex:~/poky-dora/meta-openembedded$ git checkout -b dora origin/dora
     scott@hex:~/poky-dora/meta-openembedded$ cd ..
 
-The **meta-gumstix** repository
+The `meta-gumstix` repository
 
     scott@hex:~/poky-dora$ git clone git://github.com/gumstix/meta-gumstix
     scott@hex:~/poky-dora$ cd meta-gumstix
     scott@hex:~/poky-dora/meta-gumstix$ git checkout -b dora origin/dora
     scott@hex:~/poky-dora/meta-gumstix$ cd ..
 
-Finally the **meta-overo** repository
+Finally the `meta-overo` repository
 
     scott@hex:~/poky-dora$ cd ..
     scott@hex:~$ mkdir overo
@@ -85,11 +85,11 @@ Finally the **meta-overo** repository
     scott@hex:~/overo/meta-overo$ git checkout -b dora origin/dora
     scott@hex:~/overo/meta-overo$ cd ..
 
-I put the **meta-overo** repository in a different sub-directory because while
-the first 3 repositories can be shared, the **meta-overo** repository may or
+I put the `meta-overo` repository in a different sub-directory because while
+the first 3 repositories can be shared, the `meta-overo` repository may or
 may not be Overo specific. I am only testing this repository with Overos.
 
-The **meta-overo/README.md** file has the last commits from the dependency
+The `meta-overo/README.md` file has the last commits from the dependency
 repositories that I tested. You can always checkout those commits explicitly if
 you run into problems.
 
@@ -100,20 +100,20 @@ be followed explicitly. All the paths to the meta-layers are configurable.
  
 First setup a build directory. I tend to do this on a per board and/or per
 project basis so I can quickly switch between projects. For this example I'll
-put the build directory under **~/overo/** with the **meta-overo** layer.
+put the build directory under `~/overo/` with the `meta-overo` layer.
 
     scott@hex:~$ cd ~/poky-dora
     scott@hex:~/poky-dora$ source oe-init-build-env ~/overo/build
 
-You always need this command to setup the environment before using **bitbake**.
-If you only have one build environment, you can put it in your **~/.bashrc**.
+You always need this command to setup the environment before using `bitbake`.
+If you only have one build environment, you can put it in your `~/.bashrc`.
 I work on more then one system so tend to always run it manually.
  
 ### Customize the conf files
 
-The **oe-init-build-env** script generated some generic configuration files in
-the **build/conf** directory. You want to replace those with the conf-samples
-in the **meta-overo/conf** directory.
+The `oe-init-build-env` script generated some generic configuration files in
+the `build/conf` directory. You want to replace those with the conf-samples
+in the `meta-overo/conf` directory.
 
 	scott@hex:~/overo/build$ cp ~/overo/meta-overo/conf/local.conf-sample \
       conf/local.conf
@@ -124,7 +124,7 @@ You generally only have to edit these files once.
 
 ### Edit bblayers.conf
 
-In **bblayers.conf** file replace **${HOME}** with the appropriate path to the
+In `bblayers.conf` file replace `${HOME}` with the appropriate path to the
 meta-layer repositories on your system if you modified any of the above
 instructions when cloning. 
 
@@ -158,19 +158,19 @@ Set to the number of cores on your build machine.
 This is where temporary build files and the final build binaries will end up.
 Expect to use at least 35GB. You probably want at least 50GB available.
 
-The default location if left commented will be **~/overo/build/tmp**. If I'm
+The default location if left commented will be `~/overo/build/tmp`. If I'm
 not working in a VM, I usually put my TMPDIRs on dedicated partitions.
 Occasionally something will come up where you'll need to delete the entire 
-**TMPDIR**. For those occasions the sequence unmount/mkfs/remount is much
+`TMPDIR`. For those occasions the sequence unmount/mkfs/remount is much
 faster then deleting a 35+ GB directory. 
 
 If you specify an alternate location as I do in the example conf file make sure
 the directory is writable by the user running the build. Also because of some
-**rpath** issues with gcc, the TMPDIR path cannot be too short or the gcc build
+`rpath` issues with gcc, the TMPDIR path cannot be too short or the gcc build
 will fail. I haven't determined exactly how short is too short, but something
-like **/oe19** is too short and **/oe19/tmp-poky-dora-build** is long enough.
+like `/oe19` is too short and `/oe19/tmp-poky-dora-build` is long enough.
 
-If you use the default location, the TMPDIR path is already long enough.
+If you use the default location, the `TMPDIR` path is already long enough.
      
 ##### DL\_DIR
 
@@ -179,18 +179,18 @@ among configurations and build files so I created a general location for this
 outside my home directory. Make sure the build user has write permission to the
 directory you decide on.
 
-The default directory will be **~/overo/build/sources**.
+The default directory will be `~/overo/build/sources`.
 
 ##### SSTATE\_DIR
 
 This is another Yocto build directory that can get pretty big, greater then 5GB.
 I often put this somewhere else other then my home directory as well.
 
-The default location is **~/overo/build/sstate-cache**.
+The default location is `~/overo/build/sstate-cache`.
  
 ##### SDK\_MACHINE
 
-Specify your workstations type, **i686** for 32-bit or **x86_64** for 64-bit
+Specify your workstations type, `i686` for 32-bit or `x86_64` for 64-bit
 systems.
 
 ##### PREFERRED\_VERSION\_linux-gumstix
@@ -207,7 +207,7 @@ Uncomment this line
 ### Run the build
 
 You need to source the environment every time you want to run a build. The 
-**oe-init-build-env** when run a second time will not overwrite your customized
+`oe-init-build-env` when run a second time will not overwrite your customized
 conf files.
 
     scott@hex:~$ cd ~/poky-dora
@@ -231,8 +231,8 @@ conf files.
 Those 'Common targets' may or may not build successfully. I have never tried
 them.
 
-There are a few custom images available in the meta-overo layer. The recipes
-for these image can be found in **meta-overo/images/**
+There are a few custom images available in the `meta-overo` layer. The recipes
+for these image can be found in `meta-overo/images/`
 
     console-image.bb
     qte-image.bb
@@ -251,13 +251,14 @@ installed programs are
 
 #### qte-image
 
-This image includes the **console-image** and adds Qt 4.8.5 embedded
-with the associated development headers and qmake.
+This image includes the `console-image` and adds `Qt 4.8.5` embedded
+with the associated development headers and `qmake`.
 
-This image also includes the **SyntroCore** and **SyntroLCam** binaries as well
-as the headers and libraries for doing Syntro development on the board.
+This image also includes the [SyntroCore][syntrocore] and [SyntroLCam][syntrolcam]
+binaries as well as the headers and libraries for doing `Syntro` development
+on the board.
 
-To build the **console-image** run the following command
+To build the `console-image` run the following command
 
     scott@hex:~/overo/build$ bitbake console-image
 
@@ -265,7 +266,7 @@ You may run into build errors related to packages that failed to download or
 sometimes out of order builds. The easy solution is to clean the build for the
 failed package and rerun the build again.
 
-For instance if the build for **zip** failed for some reason, I would run this.
+For instance if the build for `zip` failed for some reason, I would run this.
 
     scott@hex:~/overo/build$ bitbake -c cleansstate zip
     scott@hex:~/overo/build$ bitbake zip
@@ -278,9 +279,9 @@ And then continue with the full build.
 ### Copying the binaries to an SD card
 
 After the build completes, the bootloader, kernel and rootfs image files can be
-found in **TMPDIR/deploy/images/overo/**.
+found in `TMPDIR/deploy/images/overo/`.
 
-The **meta-overo/scripts** directory has some helper scripts to format and
+The `meta-overo/scripts` directory has some helper scripts to format and
 copy the files to a microSD card.
 
 #### mk2parts.sh
@@ -289,10 +290,10 @@ This script will partition an SD card with the minimal 2 partitions required
 for the boards.
 
 Insert the microSD into your workstation and note where it shows up. You may
-have to look at your syslog. I'll assume **/dev/sdc** for this example.
+have to look at your syslog. I'll assume `/dev/sdc` for this example.
 
 It doesn't matter if some partitions from the SD card are mounted. The 
-**mk2parts.sh** script will unmount them.
+`mk2parts.sh` script will unmount them.
 
 BE CAREFUL with this script. It will format any disk on your workstation.
 
@@ -315,18 +316,18 @@ You only have to create this directory once.
 This script copies the bootloader (MLO, u-boot) and Linux kernel (uImage) to
 the boot partition of the SD card.
 
-This script needs to know the **TMPDIR** to find the binaries. It looks for an
-environment variable called **OETMP**.
+This script needs to know the `TMPDIR` to find the binaries. It looks for an
+environment variable called `OETMP`.
 
-For instance, if I had this in the local.conf
+For instance, if I had this in the `local.conf`
 
     TMPDIR = "/oe19/tmp-poky-dora-build"
 
-Then I would export this environment variable before running copy_boot.sh
+Then I would export this environment variable before running `copy_boot.sh`
 
     scott@hex:~/overo/meta-overo/scripts$ export OETMP=/oe19/tmp-poky-dora-build
 
-Then run the copy_boot.sh script passing the location of SD card
+Then run the `copy_boot.sh` script passing the location of SD card
 
     scott@hex:~/overo/meta-overo/scripts$ ./copy_boot.sh sdc
 
@@ -335,12 +336,12 @@ Then run the copy_boot.sh script passing the location of SD card
 This script copies files to the root file system partition of the SD card.
 
 The script accepts an optional command line argument for the image type, either
-**console** or **qte**. The default is **console**.
+`console` or `qte`. The default is `console`.
 
-The script also accepts a **hostname** argument if you want the host name to be
-something other then the default **overo**.
+The script also accepts a `hostname` argument if you want the host name to be
+something other then the default `overo`.
 
-Here's an example of how you'd run **copy_rootfs.sh**
+Here's an example of how you'd run `copy_rootfs.sh`
 
     scott@hex:~/overo/meta-overo/scripts$ ./copy_rootfs.sh sdc console
 
@@ -365,3 +366,5 @@ a second SD card that I just inserted.
     scott@hex:~/overo/meta-overo/scripts$ ./copy_rootfs.sh sdc console overo2
 
 [overo]: https://store.gumstix.com/index.php/category/33/
+[syntrocore]: https://github.com/Syntro/SyntroCore
+[syntrolcam]: https://github.com/Syntro/SyntroLCam

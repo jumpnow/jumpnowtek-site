@@ -21,10 +21,10 @@ built and when I'm done with development I will create a patch for use with
 Yocto.
 
 The Linux kernel that is running now is built from rules in the Freescale 
-[meta-fsl-arm-extra][meta-fsl-arm-extra-dora] layer. I am using the **[dora]**
+[meta-fsl-arm-extra][meta-fsl-arm-extra-dora] layer. I am using the `[dora]`
 branch of both the Yocto and Freescale meta-layers.
 
-The default kernel version is **3.0.35**. 
+The default kernel version is `3.0.35`. 
 
 This can be found out by first looking at the 
 [meta-fsl-arm-extra/conf/machine/wandboard-quad.conf][wandboard-quad-conf]
@@ -66,7 +66,7 @@ commit that we want to use
     LOCALVERSION = "-4.0.0-wandboard"
     ...
 
-I'm going to call my new branch **[work]** just to keep things simple.
+I'm going to call my new branch `[work]` just to keep things simple.
 
     scott@hex:~/linux-wandboard$ git checkout -b work d35902c
     Switched to a new branch 'work'
@@ -82,7 +82,7 @@ A quick check that I'm on the correct commit
 
 To get the kernel source to the same state as what is currently running, I need
 to apply some additional patches that were included in the
-**linux-wandboard_3.0.35.bb** recipe.
+```linux-wandboard_3.0.35.bb``` recipe.
 
     ...
     # GPU support patches
@@ -150,7 +150,7 @@ In this case it was okay.
 Some alternatives to apply the list of patches in the correct order would be 
 
 1. Apply the patches one at a time manually
-2. Use quilt after first creating a **series** file with the correct ordering 
+2. Use quilt after first creating a `series` file with the correct ordering 
 
 It's easy to experiment. 
 
@@ -161,8 +161,8 @@ You can always reset the repository to the starting commit this way
 
 
 Create an environment script like the following to point to the Yocto built
-cross-compiler tools. **TMPDIR** comes from the setting in your 
-**build/conf/local.conf**
+cross-compiler tools. ```TMPDIR``` comes from the setting in your 
+```build/conf/local.conf```
 
     --- wandboard-yocto-env.sh ---
     MACHINE=wandboard-quad
@@ -181,13 +181,13 @@ cross-compiler tools. **TMPDIR** comes from the setting in your
     export CROSS_COMPILE="arm-poky-linux-gnueabi-"
 
 
-The default Wandboard kernel config in the **meta-fsl-arm-extra** repository is
+The default Wandboard kernel config in the `meta-fsl-arm-extra` repository is
 not convenient for direct use. (Not every option is supplied so you'll have to
 wade through questions when running 'make oldconfig'). I find it easiest to
-just grab the final **.config** from the Yocto build directory. This will also
+just grab the final `.config` from the Yocto build directory. This will also
 ensure you pick up any kernel 'configuration fragments'.
 
-Using the same **TMPDIR**, copy the **.config** file to the source directory
+Using the same `TMPDIR`, copy the `.config` file to the source directory
 
     scott@hex:~/linux-wandboard$ cp <TMPDIR>/work/wandboard_quad-poky-linux-gnueabi/linux-wandboard/3.0.35-r0/git/.config .config
 
@@ -199,7 +199,7 @@ After that, the following commands will build the uImage kernel and modules.
     make uImage
     make modules
 
-You can add a **-j<some-number>** argument to make to speed things up.
+You can add a `-jN` argument to make to speed things up.
 
 For example
 
