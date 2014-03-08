@@ -91,7 +91,7 @@ If you want a full Duovero rootfs image recipe, you can use this
 a `dhcp server` and the `iptables` utility.
 
 If you just want to try out some binaries, you can find them at 
-[jumpnowtek.com/duovero][duovero-binaries].
+[jumpnowtek.com/downloads/duovero][duovero-binaries].
 
 ### Configuration
 
