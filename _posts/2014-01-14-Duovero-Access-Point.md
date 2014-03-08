@@ -273,6 +273,6 @@ to get a project started.
 [a6cc060]: http://w1.fi/cgit/hostap/commit/?id=a6cc0602dd62f4b2ea02556ddcfd6baf9cd6289d
 [hostapd-patch]: https://github.com/jumpnow/meta-duovero/tree/dora/recipes-connectivity/hostapd
 [console-image]: https://github.com/jumpnow/meta-duovero/blob/dora/images/console-image.bb
-[duovero-binaries]: http://jumpnowtek.com/duovero/
+[duovero-binaries]: http://jumpnowtek.com/downloads/duovero/
 [hostapd-conf]: http://hostap.epitest.fi/cgit/hostap/plain/hostapd/hostapd.conf
 [wireless-isolation]: http://www.wirelessisolation.com/
