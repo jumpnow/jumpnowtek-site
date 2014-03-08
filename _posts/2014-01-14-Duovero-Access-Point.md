@@ -74,21 +74,21 @@ You can check the firmware version by looking at the boot log
 
  
 The standard Linux software for access point management is [hostapd][hostapd].
+
 I'm using the `[dylan]` branch of Yocto to build the Duovero system.
-[Instructions are here][yocto-duovero].
+[Instructions are here][yocto-duovero]. There is a recipe for `hostapd v1.0` 
+in the `meta-openembedded` repo called `hostap-daemon`, but it doesn't work
+with the Duovero.
 
-There is a recipe for `hostapd v1.0` in the `meta-openembedded` repo called 
-`hostap-daemon`, but it doesn't work with the Duovero.
-
-I have new recipe for a more current `hostapd v2.0` build in this
+I have new recipe for a more recent `hostapd v2.0` build in this
 [meta-duovero][meta-duovero] layer. I had to back out one [patch][a6cc060] to
-the hostapd source to get it to work with the Duovero `uap0` interface. 
+the hostapd source to get it to work with the Duovero. 
 
 You can find the recipe with [patch here][hostapd-patch].
 
 If you want a full Duovero rootfs image recipe, you can use this
 [console-image.bb][console-image]. It includes some useful AP tools like
-a `dhcp server`, `iptables` and the `bridge-utils` package.
+a `dhcp server` and the `iptables` utility.
 
 If you just want to try out some binaries, you can find them at 
 [jumpnowtek.com/duovero][duovero-binaries].
