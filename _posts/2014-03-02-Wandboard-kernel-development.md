@@ -209,7 +209,7 @@ For example
 
 [wandboard-org]: http://www.wandboard.org/
 [yocto-project]: https://www.yoctoproject.org/
-[yocto-wandboard]: /wandboard/Wandboard-Systems-with-Yocto.html
+[yocto-wandboard]: http://www.jumpnowtek.com/wandboard/Wandboard-Systems-with-Yocto.html
 [meta-fsl-arm-extra-dora]: https://github.com/Freescale/meta-fsl-arm-extra/tree/dora
 [wandboard-quad-conf]: https://github.com/Freescale/meta-fsl-arm-extra/blob/dora/conf/machine/wandboard-quad.conf
 [recipes-linux-kernel]: https://github.com/Freescale/meta-fsl-arm-extra/tree/dora/recipes-kernel/linux
