@@ -210,7 +210,7 @@ whatever address you gave `uap0`.
 I enabled some basic `netfilter` modules in the kernel. Enough so that I could
 do some basic `NAT` routing
 
-The first thing is to enable packet forwarding on the `Duovero`
+The first thing is to enable packet forwarding in the kernel
 
     root@duovero:~# sysctl -w net.ipv4.ip_forward=1
 
@@ -242,8 +242,8 @@ And forward the incoming `uap0` traffic
 
     root@duovero:~# iptables -A FORWARD -i uap0 -j ACCEPT
 
-After that clients using the Duovero AP should be able to browse the network
-that eth0 is attached to and the Internet as well if a valid `nameserver` was
+After that clients using the Duovero AP should be able to see the network
+that eth0 is attached to and browse the Internet if a valid `nameserver` was
 given by the `dhcp server`.
 
 
