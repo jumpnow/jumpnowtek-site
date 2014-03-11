@@ -1,15 +1,19 @@
 server {
 	listen 80 default_server;
 
-	root /var/www;
-	index index.html;
-
 	server_name jekyll.jumpnow;
 
 	location / {
+		root /var/www;
+		index index.html;
 		# First attempt to serve request as file, then
 		# as directory, then fall back to displaying a 404.
 		try_files $uri $uri/ /index.html;
+	}
+
+	location /downloads/ {
+		root /public/;
+		autoindex on;
 	}
 }
 
