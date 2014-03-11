@@ -92,8 +92,8 @@ you run into problems.
 
 ### Initialize the build directory
 
-Much of the following are only the conventions that I use. They don't have to
-be followed explicitly. All the paths to the meta-layers are configurable.
+Much of the following are only the conventions that I use. All of the paths to
+the meta-layers are configurable.
  
 First setup a build directory. I tend to do this on a per board and/or per
 project basis so I can quickly switch between projects. For this example I'll
