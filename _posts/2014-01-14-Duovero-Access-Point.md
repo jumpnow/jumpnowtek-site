@@ -238,9 +238,6 @@ Add a basic `NAT routing` rule using the `eth0` interface
 
     root@duovero:~# iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 
-And forward the incoming `uap0` traffic
-
-    root@duovero:~# iptables -A FORWARD -i uap0 -j ACCEPT
 
 After that clients using the Duovero AP should be able to see the network
 that eth0 is attached to and browse the Internet if a valid `nameserver` was
