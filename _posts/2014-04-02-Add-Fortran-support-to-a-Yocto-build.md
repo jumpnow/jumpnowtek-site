@@ -7,12 +7,15 @@ categories: linux yocto
 tags: [linux, yocto, fortran]
 ---
 
-I'm not a `Fortran` developer and being asked to add support for `Fortran`
-to a `Yocto` built project is a rare thing.
+Being asked to add support for `Fortran` is a rare thing. I am not a `Fortran`
+developer.
 
-Here are some notes before I forget.
+Here are some notes while it's still fresh.
 
-### Build
+This is was done using tools from the [Yocto Project][yocto] version *1.5.1*,
+the `[dora]` branch.
+
+## Build
 
 #### local.conf
 
@@ -51,7 +54,7 @@ You should do this before building the first time or you'll just have to
 wait for it a second time. The `gcc-runtime` modification will force a
 recompile of `gcc` leading to a rebuild of almost everything else.
 
-### Testing
+## Testing
 
 I grabbed some `Fortran` test code from the WikiBooks 
 [Fortran/Fortran examples][fortran-wikibook-examples] page.
@@ -96,7 +99,7 @@ work.
     --- set-fortran-env.sh ---
     export STAGEDIR=$OETMP/sysroots/`uname -m`-linux/usr
 
-    export PATH=${STAGEDIR}/bin:${STAGEDIR}/bin/armv7a-vfp-neon-poky-linux-gnueabi:/bin:/usr/bin:/sbin:/usr/sbin
+    export PATH=${STAGEDIR}/bin:${STAGEDIR}/bin/armv7a-vfp-neon-poky-linux-gnueabi:${PATH}
 
     unset CFLAGS CPPFLAGS CXXFLAGS LDFLAGS
 
@@ -157,7 +160,7 @@ So it goes like this
 
 Copy the `fsum` executable to the target board and it should run.
 
-
+[yocto]: https://www.yoctoproject.org/
 [fortran-wikibook-examples]: http://en.wikibooks.org/wiki/Fortran/Fortran_examples
 [summations-example]: http://en.wikibooks.org/wiki/Fortran/Fortran_examples#Summations_with_a_DO_loop
 [overo]: https://store.gumstix.com/index.php/category/33/
