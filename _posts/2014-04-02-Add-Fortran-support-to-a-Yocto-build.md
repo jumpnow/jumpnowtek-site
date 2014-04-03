@@ -99,7 +99,11 @@ work.
     --- set-fortran-env.sh ---
     export STAGEDIR=$OETMP/sysroots/`uname -m`-linux/usr
 
+    # soft-float
     export PATH=${STAGEDIR}/bin:${STAGEDIR}/bin/armv7a-vfp-neon-poky-linux-gnueabi:${PATH}
+
+    # hard-float
+    # export PATH=${STAGEDIR}/bin:${STAGEDIR}/bin/cortexa8hf-vfp-neon-poky-linux-gnueabi:${PATH}
 
     unset CFLAGS CPPFLAGS CXXFLAGS LDFLAGS
 
