@@ -48,7 +48,7 @@ by running this command from a shell
  
     dpkg-reconfigure dash
 
-Choose bash when prompted.
+Choose no to dash when prompted.
 
 ### Clone the dependency repositories
 
@@ -58,21 +58,19 @@ First the main Yocto project `poky` repository
     scott@hex:~$ cd ~/poky-dora
     scott@hex:~/poky-dora$ git checkout -b dora origin/dora
 
-The `meta-openembedded` repository
+Then the supporting `meta-openembedded` repository
 
     scott@hex:~/poky-dora$ git clone git://git.openembedded.org/meta-openembedded
     scott@hex:~/poky-dora$ cd meta-openembedded
     scott@hex:~/poky-dora/meta-openembedded$ git checkout -b dora origin/dora
     scott@hex:~/poky-dora/meta-openembedded$ cd ..
 
-The `meta-gumstix` repository
+I keep these repositories separated since they can be shared between projects
+and different boards.
 
-    scott@hex:~/poky-dora$ git clone git://github.com/gumstix/meta-gumstix
-    scott@hex:~/poky-dora$ cd meta-gumstix
-    scott@hex:~/poky-dora/meta-gumstix$ git checkout -b dora origin/dora
-    scott@hex:~/poky-dora/meta-gumstix$ cd ..
+### Clone the meta-duovero repository
 
-Finally the `meta-duovero` repository
+Create a subdirectory for the `meta-duovero` repository before cloning
 
     scott@hex:~/poky-dora$ cd ..
     scott@hex:~$ mkdir duovero
@@ -81,10 +79,6 @@ Finally the `meta-duovero` repository
     scott@hex:~/duovero$ cd meta-duovero
     scott@hex:~/duovero/meta-duovero$ git checkout -b dora origin/dora
     scott@hex:~/duovero/meta-duovero$ cd ..
-
-I put the `meta-duovero` repository in a different sub-directory because while
-the first 3 repositories can be shared, the `meta-duovero` repository may or
-may not be Duovero specific. I am only testing this repository with Duoveros.
 
 The `meta-duovero/README.md` file has the last commits from the dependency
 repositories that I tested. You can always checkout those commits explicitly if
@@ -305,11 +299,11 @@ environment variable called `OETMP`.
 
 For instance, if I had this in the `local.conf`
 
-    TMPDIR = "/oe26/tmp-poky-dora-build"
+    TMPDIR = "/oe9/tmp-poky-dora-build"
 
 Then I would export this environment variable before running `copy_boot.sh`
 
-    scott@hex:~/duovero/meta-duovero/scripts$ export OETMP=/oe26/tmp-poky-dora-build
+    scott@hex:~/duovero/meta-duovero/scripts$ export OETMP=/oe9/tmp-poky-dora-build
 
 Then run the `copy_boot.sh` script passing the location of SD card
 
@@ -344,7 +338,7 @@ a second SD card that I just inserted.
 
     scott@hex:~$ sudo umount /dev/sdc1
     scott@hex:~$ sudo umount /dev/sdc2
-    scott@hex:~$ export OETMP=/oe26/tmp-poky-dora-build
+    scott@hex:~$ export OETMP=/oe9/tmp-poky-dora-build
     scott@hex:~$ cd duovero/meta-duovero/scripts
     scott@hex:~/duovero/meta-duovero/scripts$ ./copy_boot.sh sdc
     scott@hex:~/duovero/meta-duovero/scripts$ ./copy_rootfs.sh sdc console duo2
