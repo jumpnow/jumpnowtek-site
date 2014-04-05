@@ -24,7 +24,16 @@ interfaces, `mlan0` and `uap0`.
 The `mlan0` interface is used for client `managed` and `ad-hoc` mode connections.
 
 The `uap0` interface is for `access point` mode.
- 
+
+--- 
+#### Note
+
+With [commit d82b49b][gumstix-disable-uap-patch] Gumstix disabled the `uap0`
+interface from their Duovero kernels. You will need to remove this patch from
+your kernel recipe if you are using `meta-gumstix` or you can use the 
+`meta-duovero` layer described below.
+
+---
 
 The system should look something like this running on a 
 [Gumstix Parlor][gumstix-parlor] expansion board
@@ -261,6 +270,7 @@ This is a pretty simple `access point` implementation, but it should be enough
 to get a project started.
 
 [gumstix-duovero]: https://store.gumstix.com/index.php/products/355/
+[gumstix-disable-uap-patch]: https://github.com/gumstix/meta-gumstix/commit/d82b49bfbbd4e35271ab928f1217636f86725d95
 [gumstix-parlor]: https://store.gumstix.com/index.php/products/287/
 [hostapd]: http://wireless.kernel.org/en/users/Documentation/hostapd
 [yocto-duovero]: http://www.jumpnowtek.com/gumstix/duovero/Duovero-Systems-with-Yocto.html
