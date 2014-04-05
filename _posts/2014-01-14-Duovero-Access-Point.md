@@ -266,7 +266,7 @@ be done by the Duovero in order to support client-to-client communication.
 
 #### Summary
 
-This is a pretty simple `access point` implementation, but it should be enough
+This is a pretty simple access point implementation, but it should be enough
 to get a project started.
 
 [gumstix-duovero]: https://store.gumstix.com/index.php/products/355/
