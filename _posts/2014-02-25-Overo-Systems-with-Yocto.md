@@ -51,7 +51,7 @@ by running this command from a shell
  
     dpkg-reconfigure dash
 
-Choose bash when prompted.
+Choose no to dash when prompted.
 
 ### Clone the dependency repositories
 
@@ -61,21 +61,19 @@ First the main Yocto project `poky` repository
     scott@hex:~$ cd ~/poky-dora
     scott@hex:~/poky-dora$ git checkout -b dora origin/dora
 
-The `meta-openembedded` repository
+Then the supporting `meta-openembedded` repository
 
     scott@hex:~/poky-dora$ git clone git://git.openembedded.org/meta-openembedded
     scott@hex:~/poky-dora$ cd meta-openembedded
     scott@hex:~/poky-dora/meta-openembedded$ git checkout -b dora origin/dora
     scott@hex:~/poky-dora/meta-openembedded$ cd ..
 
-The `meta-gumstix` repository
+I keep these repositories separated since they can be shared between projects
+and different boards.
 
-    scott@hex:~/poky-dora$ git clone git://github.com/gumstix/meta-gumstix
-    scott@hex:~/poky-dora$ cd meta-gumstix
-    scott@hex:~/poky-dora/meta-gumstix$ git checkout -b dora origin/dora
-    scott@hex:~/poky-dora/meta-gumstix$ cd ..
+### Clone the meta-duovero repository
 
-Finally the `meta-overo` repository
+Create a subdirectory for the `meta-overo` repository before cloning
 
     scott@hex:~/poky-dora$ cd ..
     scott@hex:~$ mkdir overo
@@ -85,9 +83,6 @@ Finally the `meta-overo` repository
     scott@hex:~/overo/meta-overo$ git checkout -b dora origin/dora
     scott@hex:~/overo/meta-overo$ cd ..
 
-I put the `meta-overo` repository in a different sub-directory because while
-the first 3 repositories can be shared, the `meta-overo` repository may or
-may not be Overo specific. I am only testing this repository with Overos.
 
 The `meta-overo/README.md` file has the last commits from the dependency
 repositories that I tested. You can always checkout those commits explicitly if
@@ -141,7 +136,7 @@ The variables you may want to customize are the following:
 
 Optional
 
-- PREFERRED\_VERSION\_linux-gumstix
+- PREFERRED\_VERSION\_linux-stable
 
 The defaults should work, but I always make some adjustment.
 
@@ -168,7 +163,7 @@ If you specify an alternate location as I do in the example conf file make sure
 the directory is writable by the user running the build. Also because of some
 `rpath` issues with gcc, the TMPDIR path cannot be too short or the gcc build
 will fail. I haven't determined exactly how short is too short, but something
-like `/oe19` is too short and `/oe19/tmp-poky-dora-build` is long enough.
+like `/oe7` is too short and `/oe7/tmp-poky-dora-build` is long enough.
 
 If you use the default location, the `TMPDIR` path is already long enough.
      
@@ -193,7 +188,7 @@ The default location is `~/overo/build/sstate-cache`.
 Specify your workstations type, `i686` for 32-bit or `x86_64` for 64-bit
 systems.
 
-##### PREFERRED\_VERSION\_linux-gumstix
+##### PREFERRED\_VERSION\_linux-stable
 
 If you plan to write a custom driver for the McBSP controller, you'll need to
 drop back to the 3.2 kernel, the last that supported out-of-tree access to the
@@ -201,7 +196,7 @@ platform mcbsp driver.
 
 Uncomment this line
 
-    # PREFERRED_VERSION_linux-gumstix = "3.2"
+    # PREFERRED_VERSION_linux-stable = "3.2"
 
  
 ### Run the build
@@ -321,11 +316,11 @@ environment variable called `OETMP`.
 
 For instance, if I had this in the `local.conf`
 
-    TMPDIR = "/oe19/tmp-poky-dora-build"
+    TMPDIR = "/oe7/tmp-poky-dora-build"
 
 Then I would export this environment variable before running `copy_boot.sh`
 
-    scott@hex:~/overo/meta-overo/scripts$ export OETMP=/oe19/tmp-poky-dora-build
+    scott@hex:~/overo/meta-overo/scripts$ export OETMP=/oe7/tmp-poky-dora-build
 
 Then run the `copy_boot.sh` script passing the location of SD card
 
@@ -360,7 +355,7 @@ a second SD card that I just inserted.
 
     scott@hex:~$ sudo umount /dev/sdc1
     scott@hex:~$ sudo umount /dev/sdc2
-    scott@hex:~$ export OETMP=/oe19/tmp-poky-dora-build
+    scott@hex:~$ export OETMP=/oe7/tmp-poky-dora-build
     scott@hex:~$ cd overo/meta-overo/scripts
     scott@hex:~/overo/meta-overo/scripts$ ./copy_boot.sh sdc
     scott@hex:~/overo/meta-overo/scripts$ ./copy_rootfs.sh sdc console overo2
