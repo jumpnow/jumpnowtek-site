@@ -71,7 +71,7 @@ Then the supporting `meta-openembedded` repository
 I keep these repositories separated since they can be shared between projects
 and different boards.
 
-### Clone the meta-duovero repository
+### Clone the meta-overo repository
 
 Create a subdirectory for the `meta-overo` repository before cloning
 
