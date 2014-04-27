@@ -18,6 +18,12 @@ There is no `X11` and no desktop installed on any of these systems. The
 The Linux `3.6` kernel comes from the Linux mainline with some patches from
 Gumstix and a few of my own.
 
+The Duovero [Zephyr][duovero-zephyr] COM has a built-in Wifi/Bluetooth radio.
+The kernel and software to support both are included.
+
+The Wifi radio can be used as a `Station` or an `Access Point`. See this 
+[article][duovero-ap] for more setting up the `Duovero` as an access point.  
+
 The Yocto version is `1.5.1` the `[dora]` branch.
 
 `sysvinit` is used for the init system, not `systemd`. 
@@ -70,7 +76,7 @@ and different boards.
 
 ### Clone the meta-duovero repository
 
-Create a subdirectory for the `meta-duovero` repository before cloning
+Create a sub-directory for the `meta-duovero` repository before cloning
 
     scott@hex:~/poky-dora$ cd ..
     scott@hex:~$ mkdir duovero
@@ -128,7 +134,6 @@ The variables you may want to customize are the following:
 - TMPDIR
 - DL\_DIR
 - SSTATE\_DIR
-- SDKMACHINE
 
 The defaults should work, but I always make some adjustment.
 
@@ -155,7 +160,7 @@ If you specify an alternate location as I do in the example conf file make sure
 the directory is writable by the user running the build. Also because of some
 `rpath` issues with gcc, the `TMPDIR` path cannot be too short or the gcc build
 will fail. I haven't determined exactly how short is too short, but something
-like `/oe26` is too short and `/oe26/tmp-poky-dora-build` is long enough.
+like `/oe9` is too short and `/oe9/tmp-poky-dora-build` is long enough.
 
 If you use the default location, the `TMPDIR` path is already long enough.
      
@@ -174,11 +179,6 @@ This is another Yocto build directory that can get pretty big, greater then 5GB.
 I often put this somewhere else other then my home directory as well.
 
 The default location is `~/duovero/build/sstate-cache`.
- 
-##### SDK_MACHINE
-
-Specify your workstations type, `i686` for 32-bit or `x86_64` for 64-bit
-systems.
 
  
 ### Run the build
@@ -345,5 +345,7 @@ a second SD card that I just inserted.
 
 
 [duovero]: https://store.gumstix.com/index.php/category/43/
+[duovero-zephyr]: https://store.gumstix.com/index.php/products/355/
+[duovero-ap]: http://www.jumpnowtek.com/gumstix/duovero/Duovero-Access-Point.html
 [syntrocore]: https://github.com/Syntro/SyntroCore
 [syntrolcam]: https://github.com/Syntro/SyntroLCam

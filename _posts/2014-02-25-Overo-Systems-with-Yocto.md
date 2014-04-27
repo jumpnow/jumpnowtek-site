@@ -132,7 +132,6 @@ The variables you may want to customize are the following:
 - TMPDIR
 - DL\_DIR
 - SSTATE\_DIR
-- SDKMACHINE
 
 Optional
 
@@ -183,10 +182,6 @@ I often put this somewhere else other then my home directory as well.
 
 The default location is `~/overo/build/sstate-cache`.
  
-##### SDK\_MACHINE
-
-Specify your workstations type, `i686` for 32-bit or `x86_64` for 64-bit
-systems.
 
 ##### PREFERRED\_VERSION\_linux-stable
 
