@@ -142,7 +142,6 @@ The variables you may want to customize are the following:
 - TMPDIR
 - DL\_DIR
 - SSTATE\_DIR
-- SDKMACHINE
 
 
 The defaults should work, but I always make some adjustment.
@@ -190,11 +189,6 @@ I often put this somewhere else other then my home directory as well.
 
 The default location is `~/wandboard/build/sstate-cache`.
  
-##### SDK\_MACHINE
-
-Specify your workstations type, `i686` for 32-bit or `x86_64` for 64-bit
-systems.
-
  
 ### Run the build
 
