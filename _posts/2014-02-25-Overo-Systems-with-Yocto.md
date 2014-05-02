@@ -30,7 +30,9 @@ older `udev` particularly when loading binary firmware.
 
 ### Ubuntu Packages
 
-I'm using `Ubuntu 13.10` 64-bit workstations for the build systems.
+I'm using `Ubuntu 13.10` and `Ubuntu 14.04` 64-bit workstations for the builds.
+I've used 32-bit versions of Ubuntu in VMs without problem, though the builds
+are much slower.
 
 You'll need at least the following packages installed
 
