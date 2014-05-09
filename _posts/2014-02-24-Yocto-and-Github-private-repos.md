@@ -9,7 +9,7 @@ tags: [yocto, github, private repository]
 Make sure you have SSH keys for Github setup so that you can do this from a
 command line on the build machine
 
-    git clone git@github.com/scottellis/private-repo.git
+    git clone git@github.com:scottellis/private-repo.git
 
 
 Then the SRC_URI to use in the bitbake recipe is
