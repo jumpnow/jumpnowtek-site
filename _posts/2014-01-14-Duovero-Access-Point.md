@@ -138,7 +138,17 @@ The `hostapd` configuration file is `/etc/hostapd.conf`. There is a simple
 Replace the values for `ssid` and `wpa_passphrase`. The `wpa_passphrase` has to
 be at least 8 characters long. 
 
-An explanation for all options can be found here - [hostapd.conf][hostapd-conf].
+To create an open access point, you could use an even simpler configuration 
+like this
+
+    --- /etc/hostapd.conf ---
+    interface=uap0
+    driver=nl80211
+    channel=7
+    ssid=duovero
+
+An explanation for all of the `hostapd.conf` options can be found here - 
+[hostapd.conf][hostapd-conf].
 
 #### hostapd - /etc/default/hostapd
 
