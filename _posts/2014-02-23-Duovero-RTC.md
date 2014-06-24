@@ -101,8 +101,8 @@ The script is called **/etc/init.d/hwclock.sh**.
 [twl6030]: http://www.ti.com/product/twl6030
 [swcs045c]: http://www.farnell.com/datasheets/1481246.pdf
 [pandaboard-schematic]: http://pandaboard.org/sites/default/files/board_reference/pandaboard-ea1/panda-ea1-schematic.pdf
-[msecure-mux-patch]: https://github.com/scottellis/meta-duovero/blob/master/recipes-kernel/linux/linux-gumstix-3.6/0013-ARM-OMAP4-TWL-mux-sys_drm_msecure-as-output-for-PMIC.patch
+[msecure-mux-patch]: https://github.com/jumpnow/meta-duovero/blob/master/recipes-kernel/linux/linux-stable-3.6/0013-ARM-OMAP4-TWL-mux-sys_drm_msecure-as-output-for-PMIC.patch
 [twl6030-register-manual]: http://www.cjemicros.f2s.com/public/datasheets/TWL6030_Register_Map.pdf
 [duovero-battery]: http://www.digikey.com/product-detail/en/ML-621S%2FZTN/P007-ND/965124
-[trickle-charge-patch]: https://github.com/scottellis/meta-duovero/blob/master/recipes-kernel/linux/linux-gumstix-3.6/0014-Enable-RTC-backup-battery-charging.patch
+[trickle-charge-patch]: https://github.com/jumpnow/meta-duovero/blob/master/recipes-kernel/linux/linux-stable-3.6/0014-Enable-RTC-backup-battery-charging.patch
 [overo-trickle-charge-patch]: https://github.com/gumstix/meta-gumstix/blob/dora/recipes-kernel/linux/linux-gumstix-3.5/0007-rtc-twl-add-support-for-backup-battery-recharge.patch
