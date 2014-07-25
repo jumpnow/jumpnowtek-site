@@ -6,8 +6,6 @@ categories: yocto
 tags: [yocto, github, opkg]
 ---
 
-## Managing a Custom Opkg Repository
-
 ### Get the opkg utilities
 
      scott@octo:~$ git clone git://git.yoctoproject.org/opkg-utils

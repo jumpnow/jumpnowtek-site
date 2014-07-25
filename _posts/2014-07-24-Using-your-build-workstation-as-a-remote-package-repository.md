@@ -6,8 +6,6 @@ categories: yocto
 tags: [yocto, github, opkg]
 ---
 
-## Using a Yocto build workstation as a remote opkg repository
-
 During development of an embedded Linux system you'll frequently want to add 
 software packages that didn't make it into the initial build.
 
@@ -19,7 +17,7 @@ software packages to the embedded system
 
 1. Add the new packages to the *image* recipe, rebuild the image and do a
 complete reinstall.
-2. Build the packages with bitbake, manually copy the *.ipk files to the
+2. Build the packages with bitbake, manually copy the .ipk files to the
 target and use *opkg* to install.
 3. Configure the systems so that *opkg* on the embedded board can remotely
 access packages directly on the build workstation.
