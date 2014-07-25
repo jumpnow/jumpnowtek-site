@@ -1,3 +1,11 @@
+---
+layout: post
+title: Managing a custom opkg repository
+date: 2014-07-25 12:20:00
+categories: yocto
+tags: [yocto, github, opkg]
+---
+
 ## Managing a Custom Opkg Repository
 
 ### Get the opkg utilities

@@ -1,4 +1,12 @@
-## Using your Yocto build workstation as a remote opkg repository
+---
+layout: post
+title: Using a Yocto build workstation as a remote opkg repository
+date: 2014-07-24 18:00:00
+categories: yocto
+tags: [yocto, github, opkg]
+---
+
+## Using a Yocto build workstation as a remote opkg repository
 
 During development of an embedded Linux system you'll frequently want to add 
 software packages that didn't make it into the initial build.
