@@ -6,6 +6,9 @@ categories: yocto
 tags: [yocto, github, opkg]
 ---
 
+You might be interested in [this article][workstation-repo-post] if you are
+still in the development cycle.
+ 
 ### Get the opkg utilities
 
      scott@octo:~$ git clone git://git.yoctoproject.org/opkg-utils
@@ -159,3 +162,5 @@ Edit the file to have this for the contents
     dest root /
     lists_dir ext /var/opkg-lists
 
+
+[workstation-repo-post]: http://www.jumpnowtek.com/yocto/Using-your-build-workstation-as-a-remote-package-repository.html
