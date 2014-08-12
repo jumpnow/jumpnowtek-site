@@ -9,9 +9,9 @@ tags: [gumstix, duovero, linux, wifi, access point, hostap]
 The [Gumstix Duovero Zephyr][gumstix-duovero] come with a built-in combination 
 `wifi/bluetooth` radio. 
 
-The `wifi` radio supports operating as an `access point`.
+The wifi radio supports operating as an *access point*.
 
-The `Duovero Zephyr` uses a Marvell `SD8787` radio attached to the `SDIO` bus.
+The *Duovero Zephyr* uses a Marvell SD8787 radio attached to the SDIO bus.
 
 The `mwifiex` and `mwifiex_sdio` modules are available in Linux `3.6` which
 is the default kernel for the Duovero boards.
@@ -21,17 +21,17 @@ The Marvell drivers require the `sd8787_uapsta.bin` binary firmware.
 When you boot a Duovero with these drivers included you'll get two wireless
 interfaces, `mlan0` and `uap0`.
 
-The `mlan0` interface is used for client `managed` and `ad-hoc` mode connections.
+The `mlan0` interface is used for client *managed* and *ad-hoc* mode connections.
 
-The `uap0` interface is for `access point` mode.
+The `uap0` interface is for *access point* mode.
 
 --- 
 #### Note
 
 With [commit d82b49b][gumstix-disable-uap-patch] Gumstix disabled the `uap0`
 interface from their Duovero kernels. You will need to remove this patch from
-your kernel recipe if you are using `meta-gumstix` or you can use the 
-`meta-duovero` layer described below.
+your kernel recipe if you are using [meta-gumstix][meta-gumstix] or you can 
+use the [meta-duovero][meta-duovero] layer described below.
 
 ---
 
@@ -85,19 +85,19 @@ You can check the firmware version by looking at the boot log
 The standard Linux software for access point management is [hostapd][hostapd].
 
 I'm using the `[dora]` branch of Yocto to build the Duovero system.
-[Instructions are here][yocto-duovero]. There is a recipe for `hostapd v1.0` 
-in the `meta-openembedded` repo called `hostap-daemon`, but it doesn't work
+[Instructions are here][yocto-duovero]. There is a recipe for *hostapd v1.0* 
+in the *meta-openembedded* repo called *hostap-daemon*, but it doesn't work
 with the Duovero.
 
-I have new recipe for a more recent `hostapd v2.0` build in this
-[meta-duovero][meta-duovero] layer. I had to back out one [patch][a6cc060] to
-the hostapd source to get it to work with the Duovero. 
+I have new recipe for a more recent *hostapd v2.0* build in the
+[meta-duovero][meta-duovero] layer. I did have to back out one [patch][a6cc060]
+to the hostapd source to get it to work with the Duovero. 
 
 You can find the recipe with [patch here][hostapd-patch].
 
 If you want a full Duovero rootfs image recipe, you can use this
 [console-image.bb][console-image]. It includes some useful AP tools like
-a `dhcp server` and the `iptables` utility.
+a *dhcp server* and the *iptables* utility.
 
 If you just want to try out some binaries, you can find them at 
 [jumpnowtek.com/downloads/duovero][duovero-binaries].
@@ -135,7 +135,7 @@ The `hostapd` configuration file is `/etc/hostapd.conf`. There is a simple
     wpa_passphrase=duovero-secret
     rsn_pairwise=CCMP
 
-Replace the values for `ssid` and `wpa_passphrase`. The `wpa_passphrase` has to
+Replace the values for *ssid* and *wpa_passphrase*. The *wpa_passphrase* has to
 be at least 8 characters long. 
 
 To create an open access point, you could use an even simpler configuration 
@@ -147,12 +147,12 @@ like this
     channel=7
     ssid=duovero
 
-An explanation for all of the `hostapd.conf` options can be found here - 
+An explanation for all of the *hostapd.conf* options can be found here - 
 [hostapd.conf][hostapd-conf].
 
 #### hostapd - /etc/default/hostapd
 
-You also need to enable the `hostapd` daemon in the `/etc/default/hostapd`
+You also need to enable the *hostapd* daemon in the `/etc/default/hostapd`
 configuration file.
 
     --- /etc/default/hostapd ---
@@ -163,8 +163,8 @@ Change the `HOSTAPD_ENABLE` value to **yes**.
 
 #### dhcpd - /etc/dhcp/dhcpd.conf
 
-You probably want the `access point` to give out `dhcp` addresses. There is
-a dhcp server installed in the `console-image`. 
+You probably want the *access point* to give out *dhcp* addresses. There is
+a dhcp server installed in the *console-image*. 
 
 The main configuration file is `/etc/dhcp/dhcpd.conf`. The provided example
 assumes the `192.168.5.1` address for `uap0`.
@@ -191,7 +191,7 @@ This example configuration will give out addresses in the range
 
 #### dhcpd - /etc/default/dhcp-server
 
-Here you need to specify the interface the `dhcp server` should listen on.
+Here you need to specify the interface the *dhcp server* should listen on.
 
     --- /etc/default/dhcp-server
     INTERFACES="uap0"
@@ -216,18 +216,18 @@ This will start the services
 Or you can just reboot.
 
  
-You should now be able to connect to the Duovero `access point` with a client.
-You should get an IP address from the `dhcp server`.
+You should now be able to connect to the Duovero *access point* with a client.
+You should get an IP address from the *dhcp server*.
 
-From the client you should be able to `ssh` into the `AP` at `192.168.5.1` or
-whatever address you gave `uap0`.
+From the client you should be able to *ssh* into the *access point* at 
+`192.168.5.1` or whatever address you gave `uap0`.
 
 #### Routing
 
 --- This section is still a work in progress. ---
 
-I enabled some basic `netfilter` modules in the kernel. Enough so that I could
-do some basic `NAT` routing
+I enabled some basic *netfilter* modules in the kernel. Enough so that I could
+do some basic *NAT* routing
 
 The first thing is to enable packet forwarding in the kernel
 
@@ -253,14 +253,14 @@ To have this kernel module load at boot
     root@duovero:~# echo iptable_nat > /etc/modules
 
 
-Add a basic `NAT routing` rule using the `eth0` interface
+Add a basic *NAT routing* rule using the `eth0` interface
 
     root@duovero:~# iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 
 
 After that clients using the Duovero AP should be able to see the network
-that eth0 is attached to and browse the Internet if a valid `nameserver` was
-given by the `dhcp server`.
+that eth0 is attached to and browse the Internet if a valid *nameserver* was
+given out by the Duovero *dhcp server*.
 
 
 TODO: Add a script to load firewall rules at startup
@@ -293,4 +293,5 @@ to get a project started.
 [duovero-binaries]: http://jumpnowtek.com/downloads/duovero/
 [hostapd-conf]: http://hostap.epitest.fi/cgit/hostap/plain/hostapd/hostapd.conf
 [wireless-isolation]: http://www.wirelessisolation.com/
+[meta-gumstix]: https://github.com/gumstix/meta-gumstix
 
