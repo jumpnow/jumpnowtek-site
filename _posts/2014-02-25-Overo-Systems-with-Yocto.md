@@ -21,7 +21,7 @@ hardware, you will want to change your kernel version to `3.2`. Otherwise, the
 default `3.5` kernel is probably what you want. The kernel version can be changed
 in the `local.conf` configuration file explained below. 
 
-The Yocto version is `1.5.1` the `[dora]` branch.
+The Yocto version is `1.6.1` the `[daisy]` branch.
 
 `sysvinit` is used for the init system, not `systemd`.
 
@@ -30,9 +30,7 @@ older `udev` particularly when loading binary firmware.
 
 ### Ubuntu Packages
 
-I'm using `Ubuntu 13.10` and `Ubuntu 14.04` 64-bit workstations for the builds.
-I've used 32-bit versions of Ubuntu in VMs without problem, though the builds
-are much slower.
+I've tested `Ubuntu 14.04` 32 and 64-bit workstations for the builds.
 
 You'll need at least the following packages installed
 
@@ -59,16 +57,12 @@ Choose no to dash when prompted.
 
 First the main Yocto project `poky` repository
 
-    scott@hex:~ git clone git://git.yoctoproject.org/poky.git poky-dora
-    scott@hex:~$ cd ~/poky-dora
-    scott@hex:~/poky-dora$ git checkout -b dora origin/dora
+    scott@hex:~ git clone -b daisy git://git.yoctoproject.org/poky.git poky-daisy
 
 Then the supporting `meta-openembedded` repository
 
-    scott@hex:~/poky-dora$ git clone git://git.openembedded.org/meta-openembedded
-    scott@hex:~/poky-dora$ cd meta-openembedded
-    scott@hex:~/poky-dora/meta-openembedded$ git checkout -b dora origin/dora
-    scott@hex:~/poky-dora/meta-openembedded$ cd ..
+    scott@hex:~$ cd ~/poky-daisy
+    scott@hex:~/poky-daisy$ git clone -b daisy git://git.openembedded.org/meta-openembedded
 
 I keep these repositories separated since they can be shared between projects
 and different boards.
@@ -77,13 +71,9 @@ and different boards.
 
 Create a subdirectory for the `meta-overo` repository before cloning
 
-    scott@hex:~/poky-dora$ cd ..
-    scott@hex:~$ mkdir overo
-    scott@hex:~$ cd overo
-    scott@hex:~/overo$ git clone git://github.com/jumpnow/meta-overo
-    scott@hex:~/overo$ cd meta-overo
-    scott@hex:~/overo/meta-overo$ git checkout -b dora origin/dora
-    scott@hex:~/overo/meta-overo$ cd ..
+    scott@hex:~$ mkdir ~/overo
+    scott@hex:~$ cd ~/overo
+    scott@hex:~/overo$ git clone -b daisy git://github.com/jumpnow/meta-overo
 
 
 The `meta-overo/README.md` file has the last commits from the dependency
@@ -99,8 +89,7 @@ First setup a build directory. I tend to do this on a per board and/or per
 project basis so I can quickly switch between projects. For this example I'll
 put the build directory under `~/overo/` with the `meta-overo` layer.
 
-    scott@hex:~$ cd ~/poky-dora
-    scott@hex:~/poky-dora$ source oe-init-build-env ~/overo/build
+    scott@hex:~$ source poky-daisy/source oe-init-build-env ~/overo/build
 
 You always need this command to setup the environment before using `bitbake`.
 If you only have one build environment, you can put it in your `~/.bashrc`.
@@ -164,7 +153,7 @@ If you specify an alternate location as I do in the example conf file make sure
 the directory is writable by the user running the build. Also because of some
 `rpath` issues with gcc, the TMPDIR path cannot be too short or the gcc build
 will fail. I haven't determined exactly how short is too short, but something
-like `/oe7` is too short and `/oe7/tmp-poky-dora-build` is long enough.
+like `/oe7` is too short and `/oe7/tmp-poky-daisy-build` is long enough.
 
 If you use the default location, the `TMPDIR` path is already long enough.
      
@@ -202,8 +191,7 @@ You need to source the environment every time you want to run a build. The
 `oe-init-build-env` when run a second time will not overwrite your customized
 conf files.
 
-    scott@hex:~$ cd ~/poky-dora
-    scott@hex:~$ source oe-init-build-env ~/overo/build
+    scott@hex:~$ source poky-daisy/oe-init-build-env ~/overo/build
 
     ### Shell environment set up for builds. ###
 
@@ -313,11 +301,11 @@ environment variable called `OETMP`.
 
 For instance, if I had this in the `local.conf`
 
-    TMPDIR = "/oe7/tmp-poky-dora-build"
+    TMPDIR = "/oe7/tmp-poky-daisy-build"
 
 Then I would export this environment variable before running `copy_boot.sh`
 
-    scott@hex:~/overo/meta-overo/scripts$ export OETMP=/oe7/tmp-poky-dora-build
+    scott@hex:~/overo/meta-overo/scripts$ export OETMP=/oe7/tmp-poky-daisy-build
 
 Then run the `copy_boot.sh` script passing the location of SD card
 
@@ -352,7 +340,7 @@ a second SD card that I just inserted.
 
     scott@hex:~$ sudo umount /dev/sdc1
     scott@hex:~$ sudo umount /dev/sdc2
-    scott@hex:~$ export OETMP=/oe7/tmp-poky-dora-build
+    scott@hex:~$ export OETMP=/oe7/tmp-poky-daisy-build
     scott@hex:~$ cd overo/meta-overo/scripts
     scott@hex:~/overo/meta-overo/scripts$ ./copy_boot.sh sdc
     scott@hex:~/overo/meta-overo/scripts$ ./copy_rootfs.sh sdc console overo2

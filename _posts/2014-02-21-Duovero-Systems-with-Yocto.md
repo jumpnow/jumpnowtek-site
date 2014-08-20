@@ -24,7 +24,7 @@ The kernel and software to support both are included.
 The Wifi radio can be used as a `Station` or an `Access Point`. See this 
 [article][duovero-ap] for more setting up the `Duovero` as an access point.  
 
-The Yocto version is `1.5.1` the `[dora]` branch.
+The Yocto version is `1.6.1` the `[daisy]` branch.
 
 `sysvinit` is used for the init system, not `systemd`. 
 
@@ -33,7 +33,7 @@ older `udev` particularly when loading binary firmware.
 
 ### Ubuntu Packages
 
-I'm using `Ubuntu 13.10` 64-bit workstations for the build systems.
+I've tested `Ubuntu 14.04` 32 and 64-bit workstations for the build systems.
 
 You'll need at least the following packages installed
 
@@ -60,16 +60,12 @@ Choose no to dash when prompted.
 
 First the main Yocto project `poky` repository
 
-    scott@hex:~ git clone git://git.yoctoproject.org/poky.git poky-dora
-    scott@hex:~$ cd ~/poky-dora
-    scott@hex:~/poky-dora$ git checkout -b dora origin/dora
+    scott@hex:~ git clone -b daisy git://git.yoctoproject.org/poky.git poky-daisy
 
 Then the supporting `meta-openembedded` repository
 
-    scott@hex:~/poky-dora$ git clone git://git.openembedded.org/meta-openembedded
-    scott@hex:~/poky-dora$ cd meta-openembedded
-    scott@hex:~/poky-dora/meta-openembedded$ git checkout -b dora origin/dora
-    scott@hex:~/poky-dora/meta-openembedded$ cd ..
+    scott@hex:~$ cd poky-daisy
+    scott@hex:~/poky-daisy$ git clone -b daisy git://git.openembedded.org/meta-openembedded
 
 I keep these repositories separated since they can be shared between projects
 and different boards.
@@ -78,13 +74,9 @@ and different boards.
 
 Create a sub-directory for the `meta-duovero` repository before cloning
 
-    scott@hex:~/poky-dora$ cd ..
-    scott@hex:~$ mkdir duovero
-    scott@hex:~$ cd duovero
-    scott@hex:~/duovero$ git clone git://github.com/jumpnow/meta-duovero
-    scott@hex:~/duovero$ cd meta-duovero
-    scott@hex:~/duovero/meta-duovero$ git checkout -b dora origin/dora
-    scott@hex:~/duovero/meta-duovero$ cd ..
+    scott@hex:~$ mkdir ~/duovero
+    scott@hex:~$ cd ~/duovero
+    scott@hex:~/duovero$ git clone -b daisy git://github.com/jumpnow/meta-duovero
 
 The `meta-duovero/README.md` file has the last commits from the dependency
 repositories that I tested. You can always checkout those commits explicitly if
@@ -99,8 +91,7 @@ First setup a build directory. I tend to do this on a per board and/or per
 project basis so I can quickly switch between projects. For this example I'll
 put the build directory under `~/duovero/` with the `meta-duovero` layer.
 
-    scott@hex:~$ cd ~/poky-dora
-    scott@hex:~/poky-dora$ source oe-init-build-env ~/duovero/build
+    scott@hex:~$ source poky-daisy/oe-init-build-env ~/duovero/build
 
 You always need this command to setup the environment before using `bitbake`.
 If you only have one build environment, you can put it in your `~/.bashrc`.
@@ -160,7 +151,7 @@ If you specify an alternate location as I do in the example conf file make sure
 the directory is writable by the user running the build. Also because of some
 `rpath` issues with gcc, the `TMPDIR` path cannot be too short or the gcc build
 will fail. I haven't determined exactly how short is too short, but something
-like `/oe9` is too short and `/oe9/tmp-poky-dora-build` is long enough.
+like `/oe9` is too short and `/oe9/tmp-poky-daisy-build` is long enough.
 
 If you use the default location, the `TMPDIR` path is already long enough.
      
@@ -187,8 +178,7 @@ You need to source the environment every time you want to run a build. The
 `oe-init-build-env` when run a second time will not overwrite your customized
 conf files.
 
-    scott@hex:~$ cd ~/poky-dora
-    scott@hex:~$ source oe-init-build-env ~/duovero/build
+    scott@hex:~$ source poky-daisy/oe-init-build-env ~/duovero/build
 
     ### Shell environment set up for builds. ###
 
@@ -299,11 +289,11 @@ environment variable called `OETMP`.
 
 For instance, if I had this in the `local.conf`
 
-    TMPDIR = "/oe9/tmp-poky-dora-build"
+    TMPDIR = "/oe9/tmp-poky-daisy-build"
 
 Then I would export this environment variable before running `copy_boot.sh`
 
-    scott@hex:~/duovero/meta-duovero/scripts$ export OETMP=/oe9/tmp-poky-dora-build
+    scott@hex:~/duovero/meta-duovero/scripts$ export OETMP=/oe9/tmp-poky-daisy-build
 
 Then run the `copy_boot.sh` script passing the location of SD card
 
@@ -338,7 +328,7 @@ a second SD card that I just inserted.
 
     scott@hex:~$ sudo umount /dev/sdc1
     scott@hex:~$ sudo umount /dev/sdc2
-    scott@hex:~$ export OETMP=/oe9/tmp-poky-dora-build
+    scott@hex:~$ export OETMP=/oe9/tmp-poky-daisy-build
     scott@hex:~$ cd duovero/meta-duovero/scripts
     scott@hex:~/duovero/meta-duovero/scripts$ ./copy_boot.sh sdc
     scott@hex:~/duovero/meta-duovero/scripts$ ./copy_rootfs.sh sdc console duo2
