@@ -77,7 +77,7 @@ The full view of the Overo NAND layout is seen here from the kernel source
         },
     };
 
-The constant *NAND_BLOCK_SIZE* comes from `arch/arm/mach-omap2/common-board-devices.h`
+And from `arch/arm/mach-omap2/common-board-devices.h`
 
     #define NAND_BLOCK_SIZE  SZ_128K
 
