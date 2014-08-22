@@ -70,18 +70,132 @@ I found this [TWL6030 Register Manual][twl6030-register-manual] on a non-TI site
 From section 2.9, the **BBSPOR\_CFG** register is used to enable the RTC backup
 battery trickle charge. By default the **BB\_CHG\_EN** bit is off. 
 
-I'm using [Panasonic ML-621S/ZTN][duovero-battery] 3.0V batteries in my
-Duoveros, so I wanted the trickle charge cutoff to be at 3.0V.
+I'm using [Panasonic ML-621S/ZTN][panasonic-battery] batteries in the Duoveros, 
+so I wanted the trickle charge cutoff to be at 3.15V. These batteries accept up
+to 3.2V. Charging info is [here][battery-charging].
 
 - BB\_CHG\_EN = 1
-- BB\_SEL_1 = 0
+- BB\_SEL_1 = 1
 - BB\_SEL_0 = 0
 
 Given that, this kernel [patch][trickle-charge-patch] enables trickle charging
 the Duovero RTC backup battery.
 
+
+    diff --git a/drivers/rtc/rtc-twl.c b/drivers/rtc/rtc-twl.c
+    index 9277d94..2a9d467 100644
+    --- a/drivers/rtc/rtc-twl.c
+    +++ b/drivers/rtc/rtc-twl.c
+    @@ -163,6 +163,41 @@ static int twl_rtc_write_u8(u8 data, u8 reg)
+            return ret;
+     }
+    
+    +#define REG_BBSPOR_CFG 0xE6
+    +#define VRTC_EN_SLP_STS        (1 << 6)
+    +#define VRTC_EN_OFF_STS        (1 << 5)
+    +#define VRTC_PWEN      (1 << 4)
+    +#define BB_CHG_EN      (1 << 3)
+    +#define BB_SEL_1       (1 << 2)
+    +#define BB_SEL_0       (1 << 1)
+    +
+    +static int enable_rtc_battery_charging(void)
+    +{
+    +       int ret;
+    +       u8 data;
+    +
+    +       ret = twl_i2c_read_u8(TWL6030_MODULE_ID0, &data, REG_BBSPOR_CFG);
+    +       if (ret < 0) {
+    +               pr_err("twl_rtc: read bbspor_cfg failed: %d\n", ret);
+    +               return ret;
+    +       }
+    +
+    +       /*
+    +        * Charge battery to 3.15v
+    +        * TWL6030 Register Map, Table 224, BBSPOR_CFG Register
+    +        */
+    +       data &= ~BB_SEL_0;
+    +       data |= (BB_SEL_1 & BB_CHG_EN);
+    +
+    +       ret = twl_i2c_write_u8(TWL6030_MODULE_ID0, data, REG_BBSPOR_CFG);
+    +       if (ret < 0)
+    +               pr_err("twl_rtc: write bbspor_cfg failed: %d\n", ret);
+    +       else
+    +               pr_info("twl_rtc: enabled rtc battery charging\n");
+    +
+    +       return ret;
+    +}
+    +
+     /*
+      * Cache the value for timer/alarm interrupts register; this is
+      * only changed by callers holding rtc ops lock (or resume).
+    @@ -505,6 +540,10 @@ static int __devinit twl_rtc_probe(struct platform_device *pdev)
+            if (ret < 0)
+                    goto out1;
+    
+    +       ret = enable_rtc_battery_charging();
+    +       if (ret < 0)
+    +               dev_err(&pdev->dev, "Failed to enable rtc battery charging)\n");
+    +
+            rtc = rtc_device_register(pdev->name,
+                                      &pdev->dev, &twl_rtc_ops, THIS_MODULE);
+            if (IS_ERR(rtc)) {
+    --
+    1.8.1.2
+ 
+
 It's loosely based on a similar [patch][overo-trickle-charge-patch] to the 
 TWL4030 for the Overo kernels.
+
+So where does that *TWL6030\_MODULE\_ID0* constant come from and why is it
+needed?
+
+The `twl_i2c_read_u8()` and `twl_i2c_write_u8()` functions, in order to be more
+generic, use a *twl\_map* table to find the index into a *twl\_module* table to
+then get the correct device address to use on the I2C bus.  
+
+The *BBSPOR_CFG* register is at I2C physical address *0x48* and register address
+*0xE6*. You can get this from *section 2.9.5* of the 
+[TWL6030 Register Manual][twl6030-register-manual].
+
+*TWL6030\_MODULE\_IDO* is defined in `include/linux/i2c/twl.h`
+
+    #define TWL6030_MODULE_ID0      0x0D
+    #define TWL6030_MODULE_ID1      0x0E
+    #define TWL6030_MODULE_ID2      0x0F
+
+Which in `drivers/mfd/twl-core.c` from the *twl6030_map[]* table maps to
+
+    twl6030_map[0x0D] = { SUB_CHIP_ID0, TWL6030_BASEADD_ZERO }
+
+This results in 
+
+* sid = SUB\_CHIP\_ID0 = 0
+* base = TWL6030\_BASEADD\_ZERO = 0.
+
+The *sid* (slave id) is an index into the *twl\_modules[]* table which is a list
+of *twl\_client* structures where the actual addresses of I2C slave devices
+are kept.
+
+The *twl\_client* structures get assigned in the `twl-core` *probe()* function
+using data from the *twl4030\_platform\_data* which can eventually be traced 
+back to `arch/arm/mach-omap2/twl-common.c`.
+
+    static struct i2c_board_info __initdata omap4_i2c1_board_info[] = {
+        {
+            .addr           = 0x48,
+            .flags          = I2C_CLIENT_WAKE,
+        },
+        {
+            I2C_BOARD_INFO("twl6040", 0x4b),
+        },
+     };
+
+So *twl_module[0].address = 0x48* which is what we want.
+
+Easy enough.
+
+The initial patch I had for this was wrong. I used *TWL6030\_MODULE\_ID1*
+instead of *TWL6030\_MODULE\_ID0*. Thanks to Alex Ray for catching this.
 
 ### Init scripts
 
@@ -103,6 +217,7 @@ The script is called **/etc/init.d/hwclock.sh**.
 [pandaboard-schematic]: http://pandaboard.org/sites/default/files/board_reference/pandaboard-ea1/panda-ea1-schematic.pdf
 [msecure-mux-patch]: https://github.com/jumpnow/meta-duovero/blob/master/recipes-kernel/linux/linux-stable-3.6/0013-ARM-OMAP4-TWL-mux-sys_drm_msecure-as-output-for-PMIC.patch
 [twl6030-register-manual]: http://www.cjemicros.f2s.com/public/datasheets/TWL6030_Register_Map.pdf
-[duovero-battery]: http://www.digikey.com/product-detail/en/ML-621S%2FZTN/P007-ND/965124
+[panasonic-battery]: http://www.digikey.com/product-detail/en/ML-621S%2FZTN/P007-ND/965124
+[battery-charging]: http://industrial.panasonic.com/www-data/pdf/AAA4000/AAA4000PE17.pdf
 [trickle-charge-patch]: https://github.com/jumpnow/meta-duovero/blob/master/recipes-kernel/linux/linux-stable-3.6/0014-Enable-RTC-backup-battery-charging.patch
 [overo-trickle-charge-patch]: https://github.com/gumstix/meta-gumstix/blob/dora/recipes-kernel/linux/linux-gumstix-3.5/0007-rtc-twl-add-support-for-backup-battery-recharge.patch
