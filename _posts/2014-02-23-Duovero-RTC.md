@@ -219,5 +219,5 @@ The script is called **/etc/init.d/hwclock.sh**.
 [twl6030-register-manual]: http://www.cjemicros.f2s.com/public/datasheets/TWL6030_Register_Map.pdf
 [panasonic-battery]: http://www.digikey.com/product-detail/en/ML-621S%2FZTN/P007-ND/965124
 [battery-charging]: http://industrial.panasonic.com/www-data/pdf/AAA4000/AAA4000PE17.pdf
-[trickle-charge-patch]: https://github.com/jumpnow/meta-duovero/blob/master/recipes-kernel/linux/linux-stable-3.6/0014-Enable-RTC-backup-battery-charging.patch
+[trickle-charge-patch]: https://github.com/jumpnow/meta-duovero/blob/daisy/recipes-kernel/linux/linux-stable-3.6/0014-Enable-RTC-backup-battery-charging.patch
 [overo-trickle-charge-patch]: https://github.com/gumstix/meta-gumstix/blob/dora/recipes-kernel/linux/linux-gumstix-3.5/0007-rtc-twl-add-support-for-backup-battery-recharge.patch
