@@ -345,6 +345,20 @@ a second SD card that I just inserted.
     scott@hex:~/overo/meta-overo/scripts$ ./copy_boot.sh sdc
     scott@hex:~/overo/meta-overo/scripts$ ./copy_rootfs.sh sdc console overo2
 
+#### Package management
+
+The package manager for these systems is *opkg*. The other choices are *rpm*
+or *apt*. You can change the package manager with the *PACKAGE_CLASSES* variable
+in `local.conf`.
+
+*opkg* is the most lightweight and sufficient for any projects I've worked on.
+
+To add or upgrade packages to the Duovero system, you might be interested in
+using the build workstation as a [remote package repository][opkg-repo].
+
+
+
 [overo]: https://store.gumstix.com/index.php/category/33/
 [syntrocore]: https://github.com/Syntro/SyntroCore
 [syntrolcam]: https://github.com/Syntro/SyntroLCam
+[opkg-repo]: http://www.jumpnowtek.com/yocto/Using-your-build-workstation-as-a-remote-package-repository.html

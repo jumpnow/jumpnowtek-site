@@ -213,6 +213,7 @@ installed programs are
 
     gcc/g++ and associated build tools
     git
+    opencv
     ssh/scp server and client
     wireless support
     kernel modules
@@ -334,8 +335,21 @@ a second SD card that I just inserted.
     scott@hex:~/duovero/meta-duovero/scripts$ ./copy_rootfs.sh sdc console duo2
 
 
+#### Package management
+
+The package manager for these systems is *opkg*. The other choices are *rpm*
+or *apt*. You can change the package manager with the *PACKAGE_CLASSES* variable
+in `local.conf`.
+
+*opkg* is the most lightweight and sufficient for any projects I've worked on.
+
+To add or upgrade packages to the Duovero system, you might be interested in
+using the build workstation as a [remote package repository][opkg-repo].
+
+
 [duovero]: https://store.gumstix.com/index.php/category/43/
 [duovero-zephyr]: https://store.gumstix.com/index.php/products/355/
 [duovero-ap]: http://www.jumpnowtek.com/gumstix/duovero/Duovero-Access-Point.html
 [syntrocore]: https://github.com/Syntro/SyntroCore
 [syntrolcam]: https://github.com/Syntro/SyntroLCam
+[opkg-repo]: http://www.jumpnowtek.com/yocto/Using-your-build-workstation-as-a-remote-package-repository.html

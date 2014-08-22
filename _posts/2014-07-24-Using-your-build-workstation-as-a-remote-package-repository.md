@@ -7,28 +7,34 @@ tags: [yocto, github, opkg]
 ---
 
 During development of an embedded Linux system you'll frequently want to add 
-software packages that didn't make it into the initial build.
+software packages that didn't make it into the initial build or upgrade existing
+packages. The packages might come from external upstream project or they might
+be your own custom software.
 
 I'm using tools from the [Yocto Project][yocto] to build an embedded Linux 
 system and using [opkg][opkg] as the package manager.
 
-After the initial build, there are typically three ways I go about adding new 
-software packages to the embedded system 
+After the initial build, there are a number of ways I've used to go about adding
+new software packages to the systems 
 
 1. Add the new packages to the *image* recipe, rebuild the image and do a
-complete reinstall.
+   complete reinstall to an SD card. This is the eventual goal solution for
+   production, but it's the most time consuming during development.
+
 2. Build the packages with bitbake, manually copy the .ipk files to the
-target and use *opkg* to install.
-3. Configure the systems so that *opkg* on the embedded board can remotely
-access packages directly on the build workstation.
+   target and use *opkg* to install. Works, but not very convenient.
 
-Okay, there is a fourth method, building directly on the embedded machine.
+3. Cross-build on a workstation without using bitbake and copy the binaries
+   to the target, usually with *scp*. Works okay during development, particularly
+   with custom C/C++ projects. Doesn't work well for production. 
 
-I try to use this only for simple testing OR where I can't get a cross-build
-working with the *Yocto* tools. I prefer an automated, repeatable cross-build 
-process on a server/workstation.
+4. Build directly on the embedded machine. Okay for smaller projects OR when
+   cross-builds aren't working. Doesn't work well for production. 
 
-The third method is what this document describes.
+5. Configure the systems so that *opkg* on the embedded board can remotely
+   access packages directly on the build workstation.
+
+The last method is what this document describes.
 
 ### Find your package directory
  
