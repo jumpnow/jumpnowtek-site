@@ -15,20 +15,15 @@ project.
 There is no `X11` and no desktop installed on any of these systems. The
 `embedded Qt` images can be used to run GUI applications with the `-qws` switch. 
 
-The Linux `3.0.35` kernel comes from the [Wandboard Github][wandboard-github] 
-repository with some additional patches in the `meta-fsl-arm-extra`
-[meta-wandboard_3.0.35.bb][linux-wandboard-recipe] recipe.
+The Linux kernel version is `3.10.17`.
 
-The Yocto version is `1.5.1` the `[dora]` branch.
+The Yocto version is `1.6.1` the `[daisy]` branch.
 
-`sysvinit` is used for the init system, not `systemd`.
-
-`systemd-udev` is the udev daemon. I have found it more reliable then the
-older `udev` particularly when loading binary firmware.
+`sysvinit` is used for the init system *NOT* `systemd`.
 
 ### Ubuntu Packages
 
-I'm using `Ubuntu 13.10` 64-bit workstations for the build systems.
+I've tested `Ubuntu 14.04` 64-bit workstations for the build.
 
 You'll need at least the following packages installed
 
@@ -53,46 +48,32 @@ Choose bash when prompted.
 
 ### Clone the dependency repositories
 
-First the main Yocto project `poky` repository
+The main Yocto project `poky` repository
 
-    scott@hex:~ git clone git://git.yoctoproject.org/poky.git poky-dora
-    scott@hex:~$ cd ~/poky-dora
-    scott@hex:~/poky-dora$ git checkout -b dora origin/dora
+    scott@hex:~ git clone -b daisy git://git.yoctoproject.org/poky.git poky-daisy
 
 The `meta-openembedded` repository
 
-    scott@hex:~/poky-dora$ git clone git://git.openembedded.org/meta-openembedded
-    scott@hex:~/poky-dora$ cd meta-openembedded
-    scott@hex:~/poky-dora/meta-openembedded$ git checkout -b dora origin/dora
-    scott@hex:~/poky-dora/meta-openembedded$ cd ..
+    scott@hex:~$ cd ~/poky-daisy
+    scott@hex:~/poky-daisy$ git clone -b daisy git://git.openembedded.org/meta-openembedded
 
+I like to keep the *wandboard (Freescale)* only repos in a separate sub-directory.
+
+    scott@hex:~$ mkdir ~/wandboard
+	scott@hex:~$ cd ~/wandboard
+  
 The `meta-fsl-arm` repository
 
-    scott@hex:~/poky-dora$ git clone git://github.com/Freescale/meta-fsl-arm
-    scott@hex:~/poky-dora$ cd meta-fsl-arm
-    scott@hex:~/poky-dora/meta-fsl-arm$ git checkout -b dora origin/dora
-    scott@hex:~/poky-dora/meta-fsl-arm$ cd ..
+    scott@hex:~/wandboard$ git clone -b daisy git://github.com/Freescale/meta-fsl-arm
 
 The `meta-fsl-arm-extra` repository
 
-    scott@hex:~/poky-dora$ git clone git://github.com/Freescale/meta-fsl-arm-extra
-    scott@hex:~/poky-dora$ cd meta-fsl-arm-extra
-    scott@hex:~/poky-dora/meta-fsl-arm-extra$ git checkout -b dora origin/dora
-    scott@hex:~/poky-dora/meta-fsl-arm-extra$ cd ..
+    scott@hex:~/wandboard$ git clone -b daisy git://github.com/Freescale/meta-fsl-arm-extra
 
-Finally the `meta-wandboard` repository
+My `meta-wandboard` repository
 
-    scott@hex:~/poky-dora$ cd ..
-    scott@hex:~$ mkdir wandboard
-    scott@hex:~$ cd wandboard
-    scott@hex:~/wandboard$ git clone git://github.com/jumpnow/meta-wandboard
-    scott@hex:~/wandboard$ cd meta-wandboard
-    scott@hex:~/wandboard/meta-wandboard$ git checkout -b dora origin/dora
-    scott@hex:~/wandboard/meta-wandboard$ cd ..
+    scott@hex:~/wandboard$ git clone -b daisy git://github.com/jumpnow/meta-wandboard
 
-I put the `meta-wandboard` repository in a different sub-directory because while
-the first 3 repositories can be shared, the `meta-wandboard` repository may or
-may not be Wandboard specific. I am only testing this repository with Wandboards.
 
 The `meta-wandboard/README.md` file has the last commits from the dependency
 repositories that I tested. You can always checkout those commits explicitly if
@@ -107,8 +88,7 @@ First setup a build directory. I tend to do this on a per board and/or per
 project basis so I can quickly switch between projects. For this example I'll
 put the build directory under `~/wandboard/` with the `meta-wandboard` layer.
 
-    scott@hex:~$ cd ~/poky-dora
-    scott@hex:~/poky-dora$ source oe-init-build-env ~/wandboard/build
+    scott@hex:~$ source poky-daisy/oe-init-build-env ~/wandboard/build
 
 You always need this command to setup the environment before using `bitbake`.
 If you only have one build environment, you can put it in your `~/.bashrc`.
@@ -169,7 +149,7 @@ If you specify an alternate location as I do in the example conf file make sure
 the directory is writable by the user running the build. Also because of some
 `rpath` issues with gcc, the `TMPDIR` path cannot be too short or the gcc build
 will fail. I haven't determined exactly how short is too short, but something
-like `/oe20` is too short and `/oe20/tmp-poky-dora-build` is long enough.
+like `/oe20` is too short and `/oe20/tmp-poky-daisy-build` is long enough.
 
 If you use the default location, the `TMPDIR` path is already long enough.
      
@@ -196,7 +176,7 @@ You need to source the environment every time you want to run a build. The
 `oe-init-build-env` when run a second time will not overwrite your customized
 conf files.
 
-    scott@hex:~$ cd ~/poky-dora
+    scott@hex:~$ cd ~/poky-daisy
     scott@hex:~$ source oe-init-build-env ~/wandboard/build
 
     ### Shell environment set up for builds. ###
@@ -231,6 +211,7 @@ installed programs are
 
     gcc/g++ and associated build tools
     git
+    opencv
     ssh/scp server and client
     wireless support
     kernel modules
@@ -307,11 +288,11 @@ environment variable called `OETMP`.
 
 For instance, if I had this in the `local.conf`
 
-    TMPDIR = "/oe20/tmp-poky-dora-build"
+    TMPDIR = "/oe20/tmp-poky-daisy-build"
 
 Then I would export this environment variable before running `copy_boot.sh`
 
-    scott@hex:~/wandboard/meta-wandboard/scripts$ export OETMP=/oe20/tmp-poky-dora-build
+    scott@hex:~/wandboard/meta-wandboard/scripts$ export OETMP=/oe20/tmp-poky-daisy-build
 
 Then run the `copy_boot.sh` script passing the location of SD card
 
@@ -346,7 +327,7 @@ a second SD card that I just inserted.
 
     scott@hex:~$ sudo umount /dev/sdc1
     scott@hex:~$ sudo umount /dev/sdc2
-    scott@hex:~$ export OETMP=/oe20/tmp-poky-dora-build
+    scott@hex:~$ export OETMP=/oe20/tmp-poky-daisy-build
     scott@hex:~$ cd wandboard/meta-wandboard/scripts
     scott@hex:~/wandboard/meta-wandboard/scripts$ ./copy_boot.sh sdc
     scott@hex:~/wandboard/meta-wandboard/scripts$ ./copy_rootfs.sh sdc console wandq2
@@ -354,6 +335,6 @@ a second SD card that I just inserted.
 
 [wandboard]: http://www.wandboard.org/
 [wandboard-github]: https://github.com/wandboard-org
-[linux-wandboard-recipe]: https://github.com/Freescale/meta-fsl-arm-extra/blob/master/recipes-kernel/linux/linux-wandboard_3.0.35.bb
+[linux-wandboard-recipe]: https://github.com/Freescale/meta-fsl-arm-extra/blob/daisy/recipes-kernel/linux/linux-wandboard_3.10.17.bb
 [syntrocore]: https://github.com/Syntro/SyntroCore
 [syntrolcam]: https://github.com/Syntro/SyntroLCam
