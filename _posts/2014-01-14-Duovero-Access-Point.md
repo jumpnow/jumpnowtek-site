@@ -6,20 +6,17 @@ categories: gumstix duovero
 tags: [gumstix, duovero, linux, wifi, access point, hostap]
 ---
 
-The [Gumstix Duovero Zephyr][gumstix-duovero] come with a built-in combination 
-`wifi/bluetooth` radio. 
+The [Gumstix Duovero Zephyr][gumstix-duovero] come with a built-in combination `wifi/bluetooth` radio. 
 
 The wifi radio supports operating as an *access point*.
 
 The *Duovero Zephyr* uses a Marvell SD8787 radio attached to the SDIO bus.
 
-The `mwifiex` and `mwifiex_sdio` modules are available in Linux `3.6` which
-is the default kernel for the Duovero boards.
+The `mwifiex` and `mwifiex_sdio` modules are available in Linux `3.6` which is the default kernel for the Duovero boards.
 
 The Marvell drivers require the `sd8787_uapsta.bin` binary firmware.
 
-When you boot a Duovero with these drivers included you'll get two wireless
-interfaces, `mlan0` and `uap0`.
+When you boot a Duovero with these drivers included you'll get two wireless interfaces, `mlan0` and `uap0`.
 
 The `mlan0` interface is used for client *managed* and *ad-hoc* mode connections.
 
@@ -28,15 +25,11 @@ The `uap0` interface is for *access point* mode.
 --- 
 #### Note
 
-With [commit d82b49b][gumstix-disable-uap-patch] Gumstix disabled the `uap0`
-interface from their Duovero kernels. You will need to remove this patch from
-your kernel recipe if you are using [meta-gumstix][meta-gumstix] or you can 
-use the [meta-duovero][meta-duovero] layer described below.
+With [commit d82b49b][gumstix-disable-uap-patch] Gumstix disabled the `uap0` interface from their Duovero kernels. You will need to remove this patch from your kernel recipe if you are using [meta-gumstix][meta-gumstix] or you can use the [meta-duovero][meta-duovero] layer described below.
 
 ---
 
-The system should look something like this running on a 
-[Gumstix Parlor][gumstix-parlor] expansion board
+The system should look something like this running on a [Gumstix Parlor][gumstix-parlor] expansion board
 
     root@duovero:~# ifconfig -a
     eth0  Link encap:Ethernet  HWaddr 00:15:C9:28:F8:95
@@ -84,23 +77,15 @@ You can check the firmware version by looking at the boot log
  
 The standard Linux software for access point management is [hostapd][hostapd].
 
-I'm using the `[dora]` branch of Yocto to build the Duovero system.
-[Instructions are here][yocto-duovero]. There is a recipe for *hostapd v1.0* 
-in the *meta-openembedded* repo called *hostap-daemon*, but it doesn't work
-with the Duovero.
+I'm using the `[dora]` branch of Yocto to build the Duovero system. [Instructions are here][yocto-duovero]. There is a recipe for *hostapd v1.0* in the *meta-openembedded* repo called *hostap-daemon*, but it doesn't work with the Duovero.
 
-I have new recipe for a more recent *hostapd v2.0* build in the
-[meta-duovero][meta-duovero] layer. I did have to back out one [patch][a6cc060]
-to the hostapd source to get it to work with the Duovero. 
+I have new recipe for a more recent *hostapd v2.0* build in the [meta-duovero][meta-duovero] layer. I did have to back out one [patch][a6cc060] to the hostapd source to get it to work with the Duovero. 
 
 You can find the recipe with [patch here][hostapd-patch].
 
-If you want a full Duovero rootfs image recipe, you can use this
-[console-image.bb][console-image]. It includes some useful AP tools like
-a *dhcp server* and the *iptables* utility.
+If you want a full Duovero rootfs image recipe, you can use this [console-image.bb][console-image]. It includes some useful AP tools like a *dhcp server* and the *iptables* utility.
 
-If you just want to try out some binaries, you can find them at 
-[jumpnowtek.com/downloads/duovero][duovero-binaries].
+If you just want to try out some binaries, you can find them at [jumpnowtek.com/downloads/duovero][duovero-binaries].
 
 ### Configuration
 
@@ -108,9 +93,7 @@ You will need to customize a few configuration files for your own use.
 
 #### uap0 - /etc/network/interfaces
 
-In the `/etc/network/interfaces` file, you need to configure the `uap0`
-interface. I you uncomment the example already there, `uap0` will have an IP
-address of `192.168.5.1`.
+In the `/etc/network/interfaces` file, you need to configure the `uap0` interface. I you uncomment the example already there, `uap0` will have an IP address of `192.168.5.1`.
 
     --- /etc/network/interfaces ---
     ...
@@ -122,8 +105,7 @@ address of `192.168.5.1`.
 
 #### hostapd - /etc/hostapd.conf
  
-The `hostapd` configuration file is `/etc/hostapd.conf`. There is a simple
-`WPA/WPA2` example that you can modify.
+The `hostapd` configuration file is `/etc/hostapd.conf`. There is a simple `WPA/WPA2` example that you can modify.
 
     --- /etc/hostapd.conf ---
     interface=uap0
@@ -135,11 +117,9 @@ The `hostapd` configuration file is `/etc/hostapd.conf`. There is a simple
     wpa_passphrase=duovero-secret
     rsn_pairwise=CCMP
 
-Replace the values for *ssid* and *wpa_passphrase*. The *wpa_passphrase* has to
-be at least 8 characters long. 
+Replace the values for *ssid* and *wpa_passphrase*. The *wpa_passphrase* has to be at least 8 characters long. 
 
-To create an open access point, you could use an even simpler configuration 
-like this
+To create an open access point, you could use an even simpler configuration like this
 
     --- /etc/hostapd.conf ---
     interface=uap0
@@ -147,13 +127,11 @@ like this
     channel=7
     ssid=duovero
 
-An explanation for all of the *hostapd.conf* options can be found here - 
-[hostapd.conf][hostapd-conf].
+An explanation for all of the *hostapd.conf* options can be found here - [hostapd.conf][hostapd-conf].
 
 #### hostapd - /etc/default/hostapd
 
-You also need to enable the *hostapd* daemon in the `/etc/default/hostapd`
-configuration file.
+You also need to enable the *hostapd* daemon in the `/etc/default/hostapd` configuration file.
 
     --- /etc/default/hostapd ---
 	HOSTAPD_ENABLE=yes
@@ -163,11 +141,9 @@ Change the `HOSTAPD_ENABLE` value to **yes**.
 
 #### dhcpd - /etc/dhcp/dhcpd.conf
 
-You probably want the *access point* to give out *dhcp* addresses. There is
-a dhcp server installed in the *console-image*. 
+You probably want the *access point* to give out *dhcp* addresses. There is a dhcp server installed in the *console-image*. 
 
-The main configuration file is `/etc/dhcp/dhcpd.conf`. The provided example
-assumes the `192.168.5.1` address for `uap0`.
+The main configuration file is `/etc/dhcp/dhcpd.conf`. The provided example assumes the `192.168.5.1` address for `uap0`.
  
     --- /etc/dhcp/dhcpd.conf
 
@@ -186,8 +162,7 @@ assumes the `192.168.5.1` address for `uap0`.
         range 192.168.5.100 192.168.5.120;
     }
 
-This example configuration will give out addresses in the range
-`192.168.5.100 - 192.168.5.120`.
+This example configuration will give out addresses in the range `192.168.5.100 - 192.168.5.120`.
 
 #### dhcpd - /etc/default/dhcp-server
 
@@ -197,8 +172,7 @@ Here you need to specify the interface the *dhcp server* should listen on.
     INTERFACES="uap0"
 
 
-After making all of the configuration changes, you can restart the systems
-manually. 
+After making all of the configuration changes, you can restart the systems manually. 
 
 This will stop the applicable services
 
@@ -216,11 +190,9 @@ This will start the services
 Or you can just reboot.
 
  
-You should now be able to connect to the Duovero *access point* with a client.
-You should get an IP address from the *dhcp server*.
+You should now be able to connect to the Duovero *access point* with a client. You should get an IP address from the *dhcp server*.
 
-From the client you should be able to *ssh* into the *access point* at 
-`192.168.5.1` or whatever address you gave `uap0`.
+From the client you should be able to *ssh* into the *access point* at `192.168.5.1` or whatever address you gave `uap0`.
 
 #### Routing
 
@@ -258,26 +230,24 @@ Add a basic *NAT routing* rule using the `eth0` interface
     root@duovero:~# iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 
 
-After that clients using the Duovero AP should be able to see the network
-that eth0 is attached to and browse the Internet if a valid *nameserver* was
-given out by the Duovero *dhcp server*.
+After that clients using the Duovero AP should be able to see the network that eth0 is attached to and browse the Internet if a valid *nameserver* was given out by the Duovero *dhcp server*.
 
 
 TODO: Add a script to load firewall rules at startup
 
-#### Client isolation
+#### Client Isolation
 
-I connected some more clients to the Duovero AP. They could all communicate fine
-with the AP, but they could **not** talk to each other. 
+I connected some more clients to the Duovero AP. They could all communicate fine with the AP, but they could **not** talk to each other. 
 
-This is probably intentional [wireless client isolation][wireless-isolation] by
-the `mwifiex` driver or Marvell firmware. Some additional routing would need to
-be done by the Duovero in order to support client-to-client communication.
+This is probably intentional [wireless client isolation][wireless-isolation] by the `mwifiex` driver or Marvell firmware. Some additional routing would need to be done by the Duovero in order to support client-to-client communication.
+
+#### Max Clients
+
+A user on the [Gumstix Mailing List][gumstix-mailing-list] posted that 10 clients was the maximum the AP driver was accepting. I have not verified.
 
 #### Summary
 
-This is a pretty simple access point implementation, but it should be enough
-to get a project started.
+This is a pretty simple access point implementation, but it should be enough to get a project started.
 
 [gumstix-duovero]: https://store.gumstix.com/index.php/products/355/
 [gumstix-disable-uap-patch]: https://github.com/gumstix/meta-gumstix/commit/d82b49bfbbd4e35271ab928f1217636f86725d95
@@ -294,4 +264,4 @@ to get a project started.
 [hostapd-conf]: http://hostap.epitest.fi/cgit/hostap/plain/hostapd/hostapd.conf
 [wireless-isolation]: http://www.wirelessisolation.com/
 [meta-gumstix]: https://github.com/gumstix/meta-gumstix
-
+[gumstix-mailing-list]: http://gumstix.8.x6.nabble.com/max-clients-supported-with-duovero-zephyr-as-access-point-td4969406.html

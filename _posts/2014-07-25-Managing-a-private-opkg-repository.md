@@ -6,8 +6,7 @@ categories: yocto
 tags: [yocto, github, opkg]
 ---
 
-You might be interested in [this article][workstation-repo-post] if you are
-still in the development cycle.
+You might be interested in [this article][workstation-repo-post] if you are still in the development cycle.
  
 ### Get the opkg utilities
 

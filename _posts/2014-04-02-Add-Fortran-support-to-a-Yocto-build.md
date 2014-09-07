@@ -7,13 +7,11 @@ categories: linux yocto
 tags: [linux, yocto, fortran]
 ---
 
-Being asked to add support for `Fortran` is a rare thing. I am not a `Fortran`
-developer.
+Being asked to add support for `Fortran` is a rare thing. I am not a `Fortran` developer.
 
 Here are some notes while it's still fresh.
 
-This is was done using tools from the [Yocto Project][yocto] version *1.5.1*,
-the `[dora]` branch.
+This is was done using tools from the [Yocto Project][yocto] version *1.5.1*, the `[dora]` branch.
 
 ## Build
 
@@ -50,21 +48,17 @@ Add these to your image recipe
      "
      ...
 
-You should do this before building the first time or you'll just have to
-wait for it a second time. The `gcc-runtime` modification will force a
-recompile of `gcc` leading to a rebuild of almost everything else.
+You should do this before building the first time or you'll just have to wait for it a second time. The `gcc-runtime` modification will force a recompile of `gcc` leading to a rebuild of almost everything else.
 
 ## Testing
 
-I grabbed some `Fortran` test code from the WikiBooks 
-[Fortran/Fortran examples][fortran-wikibook-examples] page.
+I grabbed some `Fortran` test code from the WikiBooks [Fortran/Fortran examples][fortran-wikibook-examples] page.
 
 I'm using the [Summations with a DO loop][summations-example] example.
 
 #### Native compile and run
 
-Copy the example code to the target board (I'm using a [Gumstix Overo][overo])
-and compile it with this command
+Copy the example code to the target board (I'm using a [Gumstix Overo][overo]) and compile it with this command
 
     root@overo:~# ls
     sum.f90
@@ -93,8 +87,7 @@ Here's a run
 
 #### Cross-compile
 
-Setup an environment pointed at the cross-build tools. A script like this will
-work.
+Setup an environment pointed at the cross-build tools. A script like this will work.
 
     --- set-fortran-env.sh ---
     export STAGEDIR=$OETMP/sysroots/`uname -m`-linux/usr
@@ -111,13 +104,11 @@ work.
     export CROSS_COMPILE="arm-poky-linux-gnueabi-"
     --- end set-fortran-env.sh ---
 
-Before sourcing that file, export an `OETMP` environment variable that is the
-same as the Yocto `build/conf/local.conf` `TMPDIR` variable.
+Before sourcing that file, export an `OETMP` environment variable that is the same as the Yocto `build/conf/local.conf` `TMPDIR` variable.
 
     export OETMP=/oe8/tmp-poky-dora-build
 
-The default location for `TMPDIR` is `<project>/build/tmp`. But `local.conf` is
-where it comes from.
+The default location for `TMPDIR` is `<project>/build/tmp`. But `local.conf` is where it comes from.
 
 After that, a `Makefile` like the following will work
 
@@ -137,7 +128,7 @@ After that, a `Makefile` like the following will work
 
 So it goes like this
 
-    scott@octo:~/morpho/fortran$ ls -l
+    scott@octo:~/<project>/fortran$ ls -l
     total 8
     drwxrwxr-x 2 scott scott 4096 Apr  2 11:06 fsum
     -rwxrwxr-x 1 scott scott  270 Apr  2 10:56 set-fortran-env.sh
@@ -146,16 +137,16 @@ So it goes like this
 
     scott@octo:~/<project>/fortran$ source set-fortran-env.sh
 
-    scott@octo:~/morpho/fortran$ cd fsum
-    scott@octo:~/morpho/fortran/fsum$ ls -l
+    scott@octo:~/<project>/fortran$ cd fsum
+    scott@octo:~/<project>/fortran/fsum$ ls -l
     total 8
     -rw-rw-r-- 1 scott scott 215 Apr  2 10:58 Makefile
     -rw-rw-r-- 1 scott scott 460 Apr  2 10:13 sum.f90
 
-    scott@octo:~/morpho/fortran/fsum$ make
+    scott@octo:~/<project>/fortran/fsum$ make
     arm-poky-linux-gnueabi-gfortran sum.f90 -o fsum
 
-    scott@octo:~/morpho/fortran/fsum$ ls -l
+    scott@octo:~/<project>/fortran/fsum$ ls -l
     total 20
     -rwxrwxr-x 1 scott scott 12098 Apr  2 11:08 fsum
     -rw-rw-r-- 1 scott scott   215 Apr  2 10:58 Makefile

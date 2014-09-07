@@ -6,11 +6,9 @@ categories: gumstix overo
 tags: [gumstix, overo, gstreamerl webcams, ffmpegcolorspace]
 ---
 
-If you’ve ever tried piping video from a USB webcam into the Overo DSP for h.264 encoding you know you need a colorspace element between the camera and the TI
-encoder due to incompatible formats.
+If you’ve ever tried piping video from a USB webcam into the Overo DSP for h.264 encoding you know you need a colorspace element between the camera and the TI encoder due to incompatible formats.
 
-The **ffmpegcolorspace** element is expensive, more so then it seems it ought
-to be for the simple transformation required.
+The **ffmpegcolorspace** element is expensive, more so then it seems it ought to be for the simple transformation required.
 
 - Webcam output: YUY2 (PIX\_FMT\_YUV422)
 - TI encoder input: UYVY (PIX\_FMT\_UYVY422)
@@ -25,9 +23,7 @@ Here’s what the formats look like
 
 It should be pretty easy.
 
-The inefficiency comes from the ffmpegcolorspace imgconvert.c not having an
-explicit custom handler for this particular conversion. So the conversion ends
-up going through an intermediate step.
+The inefficiency comes from the ffmpegcolorspace imgconvert.c not having an explicit custom handler for this particular conversion. So the conversion ends up going through an intermediate step.
 
 
     PIX_FMT_YUV422 -> PIX_FMT_YUV422P -> PIX_FMT_UYVY422
@@ -73,8 +69,7 @@ Here is the GStreamer pipeline that is running.
       ! udpsink host=192.168.10.3 port=4000
 
 
-The patch for gstreamer-0.10 can be found [here][colorspace-repo] as well as
-the Yocto recipe append.
+The patch for gstreamer-0.10 can be found [here][colorspace-repo] as well as the Yocto recipe append.
 
 
 [new-handler]: https://github.com/scottellis/colorspace/blob/master/gst/add-yuv422-to-uyvy422-conversion.patch

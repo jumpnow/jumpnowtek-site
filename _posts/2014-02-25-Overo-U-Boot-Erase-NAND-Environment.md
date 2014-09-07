@@ -7,17 +7,13 @@ categories: gumstix overo
 tags: [linux, gumstix, overo, u-boot]
 ---
 
-If you upgrade the [bootloader][uboot] on your [Gumstix Overo][overo], it is
-a good idea to also erase the old [U-Boot environment][uboot-env] in NAND flash
-when you first boot the new system.
+If you upgrade the [bootloader][uboot] on your [Gumstix Overo][overo], it is a good idea to also erase the old [U-Boot environment][uboot-env] in NAND flash when you first boot the new system.
 
-A common problem is errors when the old environment tries to reference functions
-that have been renamed or no longer exist in the new bootloader.
+A common problem is errors when the old environment tries to reference functions that have been renamed or no longer exist in the new bootloader.
 
 This only applies to Gumstix COMs that have NAND flash.
 
-To erase the NAND, setup a console connection, boot the board and stop the boot
-during the U-Boot countdown.
+To erase the NAND, setup a console connection, boot the board and stop the boot during the U-Boot countdown.
 
 Run the following command
 
@@ -30,8 +26,7 @@ Run the following command
 Then reset power on the board.
 
 
-Those magic numbers **240000** and **20000** come from a config file in the
-U-Boot source
+Those magic numbers **240000** and **20000** come from a config file in the U-Boot source
 
     --- excerpt from include/configs/omap3_overo.h ---
     #define CONFIG_ENV_IS_IN_NAND

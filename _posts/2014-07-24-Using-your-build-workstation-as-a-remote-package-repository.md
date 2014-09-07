@@ -6,45 +6,31 @@ categories: yocto
 tags: [yocto, github, opkg]
 ---
 
-During development of an embedded Linux system you'll frequently want to add 
-software packages that didn't make it into the initial build or upgrade existing
-packages. The packages might come from external upstream project or they might
-be your own custom software.
+During development of an embedded Linux system you'll frequently want to add software packages that didn't make it into the initial build or upgrade existing packages. The packages might come from external upstream project or they might be your own custom software.
 
-I'm using tools from the [Yocto Project][yocto] to build an embedded Linux 
-system and using [opkg][opkg] as the package manager.
+I'm using tools from the [Yocto Project][yocto] to build an embedded Linux system and using [opkg][opkg] as the package manager.
 
-After the initial build, there are a number of ways I've used to go about adding
-new software packages to the systems 
+After the initial build, there are a number of ways I've used to go about adding new software packages to the systems 
 
-1. Add the new packages to the *image* recipe, rebuild the image and do a
-   complete reinstall to an SD card. This is the eventual goal solution for
-   production, but it's the most time consuming during development.
+1. Add the new packages to the *image* recipe, rebuild the image and do a complete reinstall to an SD card. This is the eventual goal solution for production, but it's the most time consuming during development.
 
-2. Build the packages with bitbake, manually copy the .ipk files to the
-   target and use *opkg* to install. Works, but not very convenient.
+2. Build the packages with bitbake, manually copy the .ipk files to the target and use *opkg* to install. Works, but not very convenient.
 
-3. Cross-build on a workstation without using bitbake and copy the binaries
-   to the target, usually with *scp*. Works okay during development, particularly
-   with custom C/C++ projects. Doesn't work well for production. 
+3. Cross-build on a workstation without using bitbake and copy the binaries to the target, usually with *scp*. Works okay during development, particularly with custom C/C++ projects. Doesn't work well for production. 
 
-4. Build directly on the embedded machine. Okay for smaller projects OR when
-   cross-builds aren't working. Doesn't work well for production. 
+4. Build directly on the embedded machine. Okay for smaller projects OR when cross-builds aren't working. Doesn't work well for production.
 
-5. Configure the systems so that *opkg* on the embedded board can remotely
-   access packages directly on the build workstation.
+5. Configure the systems so that *opkg* on the embedded board can remotely access packages directly on the build workstation.
 
 The last method is what this document describes.
 
 ### Find your package directory
  
-So assuming you've already built a system image with *Yocto*, you can find
-the installer files for packages you have already built in
+So assuming you've already built a system image with *Yocto*, you can find the installer files for packages you have already built in
 
     $(TMPDIR)/deploy/ipk
 
-where *$(TMPDIR)* comes from `build/conf/local.conf` or if it is not defined
-in `local.conf` it defaults to `build/tmp`. 
+where *$(TMPDIR)* comes from `build/conf/local.conf` or if it is not defined in `local.conf` it defaults to `build/tmp`. 
 
 For this example, the *$(TMPDIR)* is `/oe7/dart/tmp-poky-dora-build`.
 
@@ -66,14 +52,11 @@ The package install files are in three sub-directories
     cortexa9hf-vfp-neon/
     dart/
 
-*Yocto* has already created a *Package* manifest file for *opkg* in each of 
-these directories.
+*Yocto* has already created a *Package* manifest file for *opkg* in each of these directories.
 
-What I'm calling the *architecture* and *machine* directories will depend 
-on the system you are building for and the compiler options you choose.
+What I'm calling the *architecture* and *machine* directories will depend on the system you are building for and the compiler options you choose.
 
-For this example I'm building a [Variscite OMAP4 Dart][dart-board] system with
-hard-floating point enabled.
+For this example I'm building a [Variscite OMAP4 Dart][dart-board] system with hard-floating point enabled.
 
 The *architecture* directory is `cortexa9hf-vfp-neon/`.
 
@@ -154,8 +137,7 @@ Replacing `192.168.10.8` with the IP of your build workstation.
 
 First run an *opkg* update. 
 
-Updates are not cached, so after a reboot you must run an update again first 
-before running other *opkg* commands.
+Updates are not cached, so after a reboot you must run an update again first before running other *opkg* commands.
 
     root@dart:~# opkg update
     Downloading http://192.168.10.8/all/Packages.gz.
@@ -169,8 +151,7 @@ before running other *opkg* commands.
     Updated list of available packages in /var/lib/opkg/dart.
 
 
-Install a package (assumes you've bitbaked *inetutils* and have not already
-installed *rsh*)
+Install a package (assumes you've bitbaked *inetutils* and have not already installed *rsh*)
 
     root@dart:~# opkg install inetutils-rsh
     Installing inetutils-rsh (1.9.1-r1) to root...
@@ -191,23 +172,19 @@ Run updates
     root@dart:~# opkg upgrade
 
 
-Help with the *opkg* commands can be found by running *opkg* without any 
-arguments.
+Help with the *opkg* commands can be found by running *opkg* without any arguments.
 
 ### Refreshing the Package manifests
 
-When you build or rebuild a package with *bitbake* on the build machine, the
-*Package* manifests are NOT automatically updated.
+When you build or rebuild a package with *bitbake* on the build machine, the *Package* manifests are NOT automatically updated.
 
 The *Package* manifests will be updated if you build an *image* recipe.
 
-Until the *Package* manifests are updated, you won't see new packages on the
-embedded machine.
+Until the *Package* manifests are updated, you won't see new packages on the embedded machine.
 
 Here's an example
 
-I rebuilt the *opkg-collateral* recipe after making the changes described
-in the next section.
+I rebuilt the *opkg-collateral* recipe after making the changes described in the next section.
 
 The original *PR* was `-r2` and after the change `-r3`.
 
@@ -260,8 +237,7 @@ And if I run an upgrade now
     Collected errors:
      * resolve_conffiles: Existing conffile /etc/opkg/opkg.conf is different from the conffile in the new package. The new conffile will be placed at /etc/opkg/opkg.conf-opkg.
 
-The error is only because I manually modified `/etc/opkg/opkg.conf` and *opkg*
-will not overwrite my changes.
+The error is only because I manually modified `/etc/opkg/opkg.conf` and *opkg* will not overwrite my changes.
 
 
 ### opkg-collateral recipe
