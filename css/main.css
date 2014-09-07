@@ -129,8 +129,8 @@ a:visited { color: #555; }
 
 /* standard */
 .post pre {
-  border: 1px solid #ddd;
-  background-color: #eef;
+  border: 1px solid #e0e0e0;
+  background-color: #f4f4f4;
   padding: 0 .4em;
 }
 
@@ -139,8 +139,8 @@ a:visited { color: #555; }
 }
 
 .post code {
-  border: 1px solid #ddd;
-  background-color: #eef;
+  border: 1px solid #e0e0e0;
+  background-color: #f4f4f4;
   padding: 0 .2em;
 }
 
