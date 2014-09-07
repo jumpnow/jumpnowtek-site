@@ -7,9 +7,7 @@ categories: overo
 tags: [overo, linux, yocto, kernel development]
 ---
 
-Assuming you are using Yocto to build your [Gumstix Overo][gumstix] system, 
-here's how you might go about adding a *simple* patch to your kernel.
-There are alternative workflows for more involved kernel changes.
+Assuming you are using Yocto to build your [Gumstix Overo][gumstix] system, here's how you might go about adding a *simple* patch to your kernel. There are alternative workflows for more involved kernel changes.
 
 I'm using [Yocto][yocto-project] and this [meta-overo][meta-overo] repository.
 
@@ -18,11 +16,9 @@ Instructions for using this *meta-layer* can be found [here][using-meta-overo]
 The kernel is `3.5.7`.
 
 The patch used in the example here is taken from a question on the 
-[gumstix mailing list][spi-mailing-list-thread] to change the priority of the
-SPI worker thread. Used only because it's a simple one-line change to one file.
+[gumstix mailing list][spi-mailing-list-thread] to change the priority of the SPI worker thread. I'm using it only because it's a simple one-line change.
 
-Find your *TMPDIR*, either defined in `build/conf/local.conf` or defaulting
-to `build/tmp`.
+Find your *TMPDIR*, either defined in `build/conf/local.conf` or defaulting to `build/tmp`.
 
 Change to the directory of the kernel source
 
@@ -75,8 +71,7 @@ Copy the patch file to the *meta-layer* where the kernel *recipe* can find it
     $ cp 0001-add-RT-priority-to-spi-worker-thread.patch \
         ~/overo/meta-overo/recipes-kernel/linux/linux-stable-3.5
 
-Since there are already a number of kernel patches in that directory, rename 
-the new patch file to keep things tidy.
+Since there are already a number of kernel patches in that directory, rename the new patch file to keep things tidy.
 
     $ cd ~/overo/meta-overo/recipes-kernel/linux/linux-stable-3.5
 
@@ -118,8 +113,7 @@ Rebuild the image
     $ bitbake console-image
 
 
-If the change worked, as a final step you probably want to go back and commit
-the new patch and the kernel recipe change in the *meta-layer* repository.
+If the change worked, as a final step you probably want to go back and commit the new patch and the kernel recipe change in the *meta-layer* repository.
 
     $ cd ~/overo/meta-overo
 
