@@ -1,5 +1,8 @@
 name: Jumpnow Technologies 
-markdown: redcarpet
-pygments: true
+markdown: kramdown
+highlighter: rouge
 permalink: none
 exclude: [scripts, nginx]
+
+kramdown:
+    input: GFM
