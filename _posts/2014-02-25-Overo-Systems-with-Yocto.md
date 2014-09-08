@@ -73,7 +73,7 @@ Much of the following are only the conventions that I use. All of the paths to t
  
 First setup a build directory. I tend to do this on a per board and/or per project basis so I can quickly switch between projects. For this example I'll put the build directory under `~/overo/` with the `meta-overo` layer.
 
-    scott@hex:~$ source poky-daisy/source oe-init-build-env ~/overo/build
+    scott@hex:~$ source poky-daisy/oe-init-build-env ~/overo/build
 
 You always need this command to setup the environment before using `bitbake`. If you only have one build environment, you can put it in your `~/.bashrc`. I work on more then one system so tend to always run it manually.
  
