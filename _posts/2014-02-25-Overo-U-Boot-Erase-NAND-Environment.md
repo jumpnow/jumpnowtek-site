@@ -15,7 +15,7 @@ This only applies to Gumstix COMs that have NAND flash.
 
 To erase the NAND, setup a console connection, boot the board and stop the boot during the U-Boot countdown.
 
-Run the following command
+At the u-boot command prompt, run the following
 
     Overo # nand erase 240000 20000
 
@@ -23,7 +23,25 @@ Run the following command
     Erasing at 0x240000 -- 100% complete.
     OK
 
-Then reset power on the board.
+Then reset the board and stop in u-boot again
+
+    Overo # reset
+
+At this point, the environment in u-boot is coming from the one built into u-boot when it was compiled. You should have gotten a scary error like this telling you so
+
+    *** Warning - bad CRC, using default environment
+
+To avoid this message you can save the current *in-memory* environment to NAND this way
+
+    Overo # saveenv
+
+Then either reset again like this
+
+    Overo # reset
+
+or just finish booting
+
+    Overo # boot
 
 
 Those magic numbers **240000** and **20000** come from a config file in the U-Boot source
@@ -38,8 +56,9 @@ Those magic numbers **240000** and **20000** come from a config file in the U-Bo
     #define CONFIG_ENV_ADDR                 SMNAND_ENV_OFFSET
 
 
+(128 << 10) = 131072 = 0x20000
 
-The full view of the Overo NAND layout is seen here from the kernel source
+The full view of the Overo NAND layout is seen here from the Linux kernel source
 
     --- excerpt from arch/arm/mach-omap2/board-overo.c
 
@@ -77,6 +96,11 @@ And from `arch/arm/mach-omap2/common-board-devices.h`
     #define NAND_BLOCK_SIZE  SZ_128K
 
 SZ_128K = 131072 = 0x20000
+
+
+If you are booting from an SD card, you are usually only using the *uboot environment* section of the NAND. 
+
+The other pieces *MLO (xloader)*, *u-boot*, *kernel* and *rootfs* typically all come from the SD card when you are using one.
 
 
 [overo]: https://store.gumstix.com/index.php/category/33/
