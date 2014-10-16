@@ -7,7 +7,7 @@ categories: freebsd
 tags: [freebsd, arm]
 ---
 
-Some notes on running [FreeBSD][freebsd] on ARM boards. Just getting started so any problems are probably my fault.
+Some of my initial notes on running [FreeBSD][freebsd] on ARM boards. I'm just getting started so any silly procedures I'm documenting here will likely improve as I learn my way around.
 
 *FreeBSD* already runs on a number of [arm boards][freebsd-arm].
 
@@ -19,7 +19,7 @@ In particular, a lot of the boards I have laying around are already supported
 * [pandaboard][pandaboard]
 * beagleboard
 
-Gumstix [Duovero][duovero] and [Overo][overo] support would be really great. Maybe a future project.
+Gumstix [Duovero][duovero] and [Overo][overo] support would be really great. Maybe a future project...
 
 
 ## Initial Goal
@@ -39,7 +39,7 @@ Secondary
 * spi
 * bluetooth
 
-Not important
+Not important for me
 
 * displays
 * audio
@@ -272,6 +272,38 @@ Make it the default (probably a more standard way)
 
     root@wandboard:/usr/ports/lang/python27 # python --version
     Python 2.7.8
+
+Proceeding like this, I eventually ended up with this package list
+
+    root@wandboard:~ # pkg info
+    ca_root_nss-3.17.1             The root certificate bundle from the Mozilla Project
+    dialog4ports-0.1.5_2           Console Interface to configure ports
+    gettext-0.18.3.1_1             GNU gettext package
+    glib-2.36.3_4                  Some useful routines of C programming (current stable version)
+    gmake-3.82_2                   GNU version of 'make' utility
+    gmake-lite-3.82                Minimalist version of gnu make
+    help2man-1.43.3_1              Automatically generating simple manual pages from program output
+    icu-53.1                       International Components for Unicode (from IBM)
+    indexinfo-0.2                  Utility to regenerate the GNU info page index
+    iperf-2.0.5                    Tool to measure maximum TCP and UDP bandwidth
+    jpeg-8_5                       IJG's jpeg compression utilities
+    libffi-3.0.13_2                Foreign Function Interface
+    libiconv-1.14_4                Character set conversion library
+    libv4l-0.8.8_2                 Video4Linux library
+    pcre-8.35_1                    Perl Compatible Regular Expressions library
+    perl5-5.16.3_11                Practical Extraction and Report Language
+    pkg-1.3.8_2                    Package manager
+    pkgconf-0.9.7                  Utility to help to configure compiler and linker flags
+    python27-2.7.8_5               Interpreted object-oriented programming language
+    qt5-buildtools-5.2.1_1         Qt build tools
+    qt5-core-5.2.1_2               Qt core non-graphical module
+    qt5-network-5.2.1_1            Qt network module
+    qt5-qmake-5.2.1_1              Qt Makefile generator
+    readline-6.3.8                 Library for editing command lines as they are typed
+    texinfo-5.2.20140808           Typeset documentation system with multiple format output
+    v4l_compat-1.0.20120501_1      Video4Linux IOCTL header files
+    webcamd-3.17.0.6               Port of Linux USB webcam and DVB drivers into userspace
+
 
 
 [freebsd]: http://www.freebsd.org
