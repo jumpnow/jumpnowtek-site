@@ -7,7 +7,7 @@ categories: freebsd
 tags: [freebsd, arm, wandboard]
 ---
 
-Some initial notes getting started [FreeBSD][freebsd] on ARM boards.
+I've been waiting to try out [FreeBSD][freebsd] on ARM boards and finally have some downtime.
 
 *FreeBSD* already supports a number of [arm boards][freebsd-arm].
 
@@ -19,12 +19,16 @@ In particular, a lot of the boards I have laying around are supported
 * [pandaboard][pandaboard]
 * beagleboard
 
-Unfortunately no Gumstix [Duovero][duovero] or [Overo][overo].
+Unfortunately no Gumstix [Duovero][duovero] or [Overo][overo] at this time.
 
 
 ## Quick start
 
-The [FreeBSD][freebsd] site has some pre-built [binaries][freebsd-download] for a number of boards. I'm going to start with the development *11.0* binaries. *10.0* is the current *FreeBSD* production version.
+The [FreeBSD][freebsd] site has some pre-built [binaries][freebsd-download]. 
+
+I'm going to be testing with the *11.0* development branch of FreeBSD (*CURRENT*). 
+
+*10.0* is the FreeBSD *STABLE* branch (what I'm running on my [PC-BSD][pcbsd] laptop).
 
 Working from a nix machine and choosing a quad-core [wandboard][wandboard] as the first test...
 
@@ -130,7 +134,61 @@ Kick it to update once
 TODO: Use *ntp* instead for continuous time updates
 
 
-Next up, building some *ports*...
+### Now with an RPi
+
+Download, unzip and copy to an SD card
+
+    $ wget ftp://ftp.freebsd.org/pub/FreeBSD/snapshots/arm/armv6/ISO-IMAGES/11.0/FreeBSD-11.0-CURRENT-arm-armv6-RPI-B.img.bz2
+
+    $ bunzip2 FreeBSD-11.0-CURRENT-arm-armv6-RPI-B.img.bz2
+
+    $ sudo dd if=FreeBSD-11.0-CURRENT-arm-armv6-RPI-B.img of=/dev/sdb bs=4M
+
+I'm using a [Sparkfun FTDI Basic Breakout][ftdi] board to get a USB serial console
+
+    RPI      FTDI
+    P1-06    GND
+    P1-08    RX
+    P1-10    TX
+
+And with an ethernet cable connected, here's the initial [boot log][rpi-boot-log].
+
+    root@raspberry-pi:/etc/ssh # ifconfig -a
+    lo0: flags=8049<UP,LOOPBACK,RUNNING,MULTICAST> metric 0 mtu 16384
+            options=600003<RXCSUM,TXCSUM,RXCSUM_IPV6,TXCSUM_IPV6>
+            inet6 ::1 prefixlen 128
+            inet6 fe80::1%lo0 prefixlen 64 scopeid 0x1
+            inet 127.0.0.1 netmask 0xff000000
+            nd6 options=21<PERFORMNUD,AUTO_LINKLOCAL>
+    ue0: flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST> metric 0 mtu 1500
+            options=80001<RXCSUM,LINKSTATE>
+            ether b8:27:eb:12:73:e8
+            inet 192.168.10.106 netmask 0xffffff00 broadcast 192.168.10.255
+            media: Ethernet autoselect (100baseTX <full-duplex>)
+            status: active
+            nd6 options=29<PERFORMNUD,IFDISABLED,AUTO_LINKLOCAL>
+
+The network is up and an *ssh* server is running.
+
+To allow root *ssh* logins, I'm adding a password to root and modifying `/etc/ssh/sshd_config` the way I did with the *wandboard*.
+
+NOTE: For the RPi, something is wrong with the console terminal settings and I can't use *vi*.
+
+The change we need for *sshd* is simple though and *sed* can be used instead
+
+    root@raspberry-pi:~ # sed -i .bak 's/^#PermitRootLogin no/PermitRootLogin yes/' /etc/ssh/sshd_config
+
+    root@raspberry-pi:~ # service sshd restart
+
+After that, *ssh* root logins work and *vi* is functional from an *ssh* session.
+
+TODO: Look into the console terminal problem with the RPi.
+
+Setting up the timezone and date using *ntpdate* works the same as with the *wandboard*.
+
+### Next
+
+Next up, building some [ports][ports] ... 
 
 
 [freebsd]: http://www.freebsd.org
@@ -142,6 +200,8 @@ Next up, building some *ports*...
 [pandaboard]: http://www.pandaboard.org/
 [overo]: https://store.gumstix.com/index.php/category/33/
 [duovero]: https://store.gumstix.com/index.php/category/43/
-[openbsd]: http://www.openbsd.org
+[pcbsd]: http://www.pcbsd.org/
 [freebsd-boot-log]: https://gist.github.com/scottellis/1f9439f8ddd4fb87718e
-
+[ftdi]: https://www.sparkfun.com/products/9873
+[rpi-boot-log]: https://gist.github.com/scottellis/8f19c93c72afca2bf1b7
+[ports]: http://www.freebsd.org/ports/
