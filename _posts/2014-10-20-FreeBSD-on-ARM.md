@@ -1,10 +1,10 @@
 ---
 layout: post
-title: Getting started with FreeBSD on ARM
-description: "Some initial notes on running FreeBSD on a Wandboard-Quad"
+title: FreeBSD on ARM
+description: "Running FreeBSD on some ARM boards"
 date: 2014-09-30 10:30:00
 categories: freebsd
-tags: [freebsd, arm, wandboard]
+tags: [freebsd, arm, wandboard, raspberry pi]
 ---
 
 I've been waiting to try out [FreeBSD][freebsd] on ARM boards and finally have some downtime.
