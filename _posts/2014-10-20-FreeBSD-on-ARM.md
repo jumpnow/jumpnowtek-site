@@ -1,17 +1,15 @@
 ---
 layout: post
 title: FreeBSD on ARM
-description: "Running FreeBSD on some ARM boards"
+description: "Running FreeBSD on ARM SOC boards"
 date: 2014-09-30 10:30:00
 categories: freebsd
 tags: [freebsd, arm, wandboard, raspberry pi]
 ---
 
-I've been waiting to try out [FreeBSD][freebsd] on ARM boards and finally have some downtime.
+*FreeBSD* supports a number of [arm boards][freebsd-arm].
 
-*FreeBSD* already supports a number of [arm boards][freebsd-arm].
-
-In particular, a lot of the boards I have laying around are supported
+In particular, some of the boards I have are supported
 
 * [wandboard][wandboard]
 * [beaglebone black][beagleboard] and white
@@ -19,18 +17,17 @@ In particular, a lot of the boards I have laying around are supported
 * [pandaboard][pandaboard]
 * beagleboard
 
-Unfortunately no Gumstix [Duovero][duovero] or [Overo][overo] at this time.
-
-
-## Quick start
 
 The [FreeBSD][freebsd] site has some pre-built [binaries][freebsd-download]. 
 
-I'm going to be testing with the *11.0* development branch of FreeBSD (*CURRENT*). 
+I'm going to be testing with *FreeBSD 11.0*, the *CURRENT* branch. 
 
-*10.0* is the FreeBSD *STABLE* branch (what I'm running on my [PC-BSD][pcbsd] laptop).
+*FreeBSD 10.0* is the *STABLE* branch.
 
-Working from a nix machine and choosing a quad-core [wandboard][wandboard] as the first test...
+
+## Wandboard
+
+I'm choosing a quad-core [wandboard][wandboard] as the first test and working from a Linux workstation
 
 Download a *wandboard* image
 
@@ -44,7 +41,7 @@ Copy it to a microSD card (assuming the SD card shows up at */dev/sdb*)
 
     ~/freebsd$ sudo dd if=FreeBSD-11.0-CURRENT-arm-armv6-WANDBOARD-QUAD.img of=/dev/sdb bs=4M
 
-Insert into a *wandboard-quad* with serial console access (1152008N1) 
+Insert into a *wandboard-quad* with serial console connected (1152008N1) 
 
 Here is the [boot log][freebsd-boot-log].
 
@@ -64,7 +61,7 @@ A nice feature is that the filesystem got expanded to fill the SD card during th
     tmpfs             5.0M    4.0K    5.0M     0%    /var/tmp
 
 
-Not much running other then *dhcpclient* and *sshd*.
+Not much running other then [dhclient(8)][dhclient] and [sshd(8)][sshd].
 
     root@wandboard:~ # ps -ax
     PID TT  STAT      TIME COMMAND
@@ -99,7 +96,7 @@ Not much running other then *dhcpclient* and *sshd*.
 
 ### SSH Login
 
-A running *ssh* server is a convenience for me since I almost always install one. To disable the *ssh* server, you would change this line in `/etc/rc.conf`
+A running *ssh* server is a convenience since it's almost always the first thing I install. If you didn't want [sshd(8)][sshd] running at startup, you would change this line in [rc.conf(5)][rc.conf] in `/etc`
 
     sshd_enable="YES"
 
@@ -113,9 +110,9 @@ To get in with root, you can do this
 
     root@wandboard:~ # service sshd restart
 
-And you should be able to ssh in as *root*.
+And you should be able to log in over ssh in as *root*.
 
-Or you could add another user.
+Or you could add another non-root user.
 
 ### Date/time
 
@@ -123,18 +120,57 @@ Set the timezone
 
     root@wandboard:~ # cp /usr/share/zoneinfo/EST5EDT /etc/localtime
 
-The *ntpdate* daemon will set time on startup. Enable it in `/etc/rc.conf`
+Since the *wandboards* have no battery backup for system time, we'll want to start an [ntpd(8)][ntpd] daemon. To do this add some entries to the [rc.conf(5)][rc.conf] file
 
-    ntpdate_enable="YES"
+    ntpd_enable="YES"
+    ntpd_sync_on_start="YES"
 
-Kick it to update once
+And start the service
 
-    root@wandboard:~ # service ntpdate start 
+    root@wandboard:~ # service ntpd start
 
-TODO: Use *ntp* instead for continuous time updates
+Because there is no battery backup, the first update to the clock will likely be larger then *1000 seconds*. This is too much of an offset for [ntpd(8)][ntpd] and will cause it to shutdown. The `ntpd_sync_on_start` setting adds the `-g` flag to the [ntpd(8)][ntpd] arguments to allow [ntpd(8)][ntpd] to perform a onetime, very large update at startup.
+
+You can remove the line for [ntpdate(8)][ntpdate]. The service is being retired.
+
+### Static IP
+
+If you wanted a *static* ipv4 address, you could make the following changes to [rc.conf(5)][rc.conf]
+
+    - ifconfig_ffec0="DHCP"
+    + ifconfig_ffec0="inet <address> netmask <netmask>"
+    + defaultrouter="<default router address>"
+    
+For example
+
+    ifconfig_ffec0="inet 192.168.10.21 netmask 255.255.255.0"
+    defaultrouter="192.168.10.2"
+
+And then you'll probably also want to add an entry in [resolv.conf(5)][resolv.conf] for *DNS*. Here's an example for my internal lan
+
+    root@wandboard:~ # cat /etc/resolv.conf
+    search jumpnow
+    nameserver 192.168.10.2
+
+The *ffec0* portion of that *ifconfig_ffec0* entry comes from the kernel driver name for the ethernet adapter. You can see the name with [ifconfig(8)][ifconfig] 
+
+    root@wandq2:~ # ifconfig -a
+    ffec0: flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST> metric 0 mtu 1500
+            options=80008<VLAN_MTU,LINKSTATE>
+            ether 00:1f:7b:b4:03:79
+            inet 192.168.10.21 netmask 0xffffff00 broadcast 192.168.10.255
+            media: Ethernet autoselect (1000baseT <full-duplex,master>)
+            status: active
+            nd6 options=29<PERFORMNUD,IFDISABLED,AUTO_LINKLOCAL>
+    lo0: flags=8049<UP,LOOPBACK,RUNNING,MULTICAST> metric 0 mtu 16384
+            options=600003<RXCSUM,TXCSUM,RXCSUM_IPV6,TXCSUM_IPV6>
+            inet6 ::1 prefixlen 128
+            inet6 fe80::1%lo0 prefixlen 64 scopeid 0x2
+            inet 127.0.0.1 netmask 0xff000000
+            nd6 options=21<PERFORMNUD,AUTO_LINKLOCAL>
 
 
-### Now with an RPi
+### RaspberryPi
 
 Download, unzip and copy to an SD card
 
@@ -184,7 +220,7 @@ After that, *ssh* root logins work and *vi* is functional from an *ssh* session.
 
 TODO: Look into the console terminal problem with the RPi.
 
-Setting up the timezone and date using *ntpdate* works the same as with the *wandboard*.
+Setting up the timezone and date using [ntpd(8)][ntpd] works the same as with the *wandboard*.
 
 ### Next
 
@@ -198,10 +234,14 @@ Next up, building some [ports][ports] ...
 [beagleboard]: http://www.beagleboard.org/
 [rpi]: http://www.raspberrypi.org/
 [pandaboard]: http://www.pandaboard.org/
-[overo]: https://store.gumstix.com/index.php/category/33/
-[duovero]: https://store.gumstix.com/index.php/category/43/
-[pcbsd]: http://www.pcbsd.org/
 [freebsd-boot-log]: https://gist.github.com/scottellis/1f9439f8ddd4fb87718e
+[dhclient]: https://www.freebsd.org/cgi/man.cgi?query=sshd&apropos=0&sektion=8&manpath=FreeBSD+11-current&arch=default&format=html
+[sshd]: https://www.freebsd.org/cgi/man.cgi?query=sshd&apropos=0&sektion=8&manpath=FreeBSD+11-current&arch=default&format=html
+[ntpd]: https://www.freebsd.org/cgi/man.cgi?query=ntpd&apropos=0&sektion=8&manpath=FreeBSD+11-current&arch=default&format=html
+[ntpdate]: https://www.freebsd.org/cgi/man.cgi?query=ntpdate&apropos=0&sektion=8&manpath=FreeBSD+11-current&arch=default&format=html
+[rc.conf]: https://www.freebsd.org/cgi/man.cgi?query=rc.conf&apropos=0&sektion=5&manpath=FreeBSD+11-current&arch=default&format=html
+[resolv.conf]: https://www.freebsd.org/cgi/man.cgi?query=resolv.conf&apropos=0&sektion=5&manpath=FreeBSD+11-current&arch=default&format=html
+[ifconfig]: https://www.freebsd.org/cgi/man.cgi?query=ifconfig&apropos=0&sektion=8&manpath=FreeBSD+11-current&arch=default&format=html
 [ftdi]: https://www.sparkfun.com/products/9873
 [rpi-boot-log]: https://gist.github.com/scottellis/8f19c93c72afca2bf1b7
 [ports]: http://www.freebsd.org/ports/
