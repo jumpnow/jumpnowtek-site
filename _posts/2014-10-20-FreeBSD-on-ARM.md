@@ -4,7 +4,7 @@ title: FreeBSD on ARM
 description: "Running FreeBSD on ARM SOC boards"
 date: 2014-09-30 10:30:00
 categories: freebsd
-tags: [freebsd, arm, wandboard, raspberry pi]
+tags: [freebsd, arm, wandboard, raspberry pi, pandaboard]
 ---
 
 *FreeBSD* supports a number of [arm boards][freebsd-arm].
