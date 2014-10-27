@@ -27,7 +27,7 @@ I'm going to be testing with *FreeBSD 11.0*, the *CURRENT* branch.
 
 ## Wandboard
 
-I'm choosing a quad-core [wandboard][wandboard] as the first test and working from a Linux workstation
+Starting with a quad-core [wandboard][wandboard] (and working from a Linux workstation)
 
 Download a *wandboard* image
 
@@ -41,7 +41,7 @@ Copy it to a microSD card (assuming the SD card shows up at */dev/sdb*)
 
     ~/freebsd$ sudo dd if=FreeBSD-11.0-CURRENT-arm-armv6-WANDBOARD-QUAD.img of=/dev/sdb bs=4M
 
-Insert into a *wandboard-quad* with serial console connected (1152008N1) 
+Insert into a *wandboard-quad* with serial console connected through a NULL modem (1152008N1) 
 
 Here is the [boot log][freebsd-boot-log].
 
@@ -96,7 +96,9 @@ Not much running other then [dhclient(8)][dhclient] and [sshd(8)][sshd].
 
 ### SSH Login
 
-A running *ssh* server is a convenience since it's almost always the first thing I install. If you didn't want [sshd(8)][sshd] running at startup, you would change this line in [rc.conf(5)][rc.conf] in `/etc`
+A running [sshd(8)][sshd] server is a nice convenience since it's usually the first thing I install on Linux systems. 
+
+If you didn't want [sshd(8)][sshd] running at startup, you would change this line in [rc.conf(5)][rc.conf] in `/etc`
 
     sshd_enable="YES"
 
@@ -170,7 +172,7 @@ The *ffec0* portion of that *ifconfig_ffec0* entry comes from the kernel driver 
             nd6 options=21<PERFORMNUD,AUTO_LINKLOCAL>
 
 
-### RaspberryPi
+## RaspberryPi
 
 Download, unzip and copy to an SD card
 
@@ -204,11 +206,11 @@ And with an ethernet cable connected, here's the initial [boot log][rpi-boot-log
             status: active
             nd6 options=29<PERFORMNUD,IFDISABLED,AUTO_LINKLOCAL>
 
-The network is up and an *ssh* server is running.
+The network is up and an [sshd(8)][sshd] is running.
 
 To allow root *ssh* logins, I'm adding a password to root and modifying `/etc/ssh/sshd_config` the way I did with the *wandboard*.
 
-NOTE: For the RPi, something is wrong with the console terminal settings and I can't use *vi*.
+NOTE: For the RPi, something is wrong with the console terminal settings and I can't use [vi(1)][vi].
 
 The change we need for *sshd* is simple though and *sed* can be used instead
 
@@ -216,11 +218,51 @@ The change we need for *sshd* is simple though and *sed* can be used instead
 
     root@raspberry-pi:~ # service sshd restart
 
-After that, *ssh* root logins work and *vi* is functional from an *ssh* session.
+After that, *ssh* root logins work and [vi(1)][vi] is functional from an *ssh* session.
 
 TODO: Look into the console terminal problem with the RPi.
 
 Setting up the timezone and date using [ntpd(8)][ntpd] works the same as with the *wandboard*.
+
+## Pandaboard
+
+Same procedure, download and unzip an image file then copy it to an SD card
+
+    $ wget ftp://ftp.freebsd.org/pub/FreeBSD/snapshots/arm/armv6/ISO-IMAGES/11.0/FreeBSD-11.0-CURRENT-arm-armv6-PANDABOARD.img.bz2
+
+    $ bunzip2 FreeBSD-11.0-CURRENT-arm-armv6-PANDABOARD.img.bz2
+
+    $ sudo dd if=FreeBSD-11.0-CURRENT-arm-armv6-PANDABOARD.img of=/dev/sdb bs=1M
+
+Connect a serial port (115200N8, no NULL modem).
+
+Here is the initial [boot log][panda-boot-log].
+
+And some miscellaneous system info
+
+    root@pandaboard:~ # df -h
+    Filesystem        Size    Used   Avail Capacity  Mounted on
+    /dev/mmcsd0s2a    7.2G    319M    6.3G     5%    /
+    devfs             1.0K    1.0K      0B   100%    /dev
+
+    root@pandaboard:~ # sysctl -a | grep ncpu
+    hw.ncpu: 2
+
+    root@pandaboard:~ # sysctl -a | grep hw.physmem
+    hw.physmem: 1066528768
+
+After the same [sshd(8)][sshd] and [ntpd(8)][ntpd] setup and assigning a static ip
+
+    root@pandaboard:~ # ifconfig -a
+    lo0: flags=8049<UP,LOOPBACK,RUNNING,MULTICAST> metric 0 mtu 16384
+            options=600003<RXCSUM,TXCSUM,RXCSUM_IPV6,TXCSUM_IPV6>
+            inet 127.0.0.1 netmask 0xff000000
+    ue0: flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST> metric 0 mtu 1500
+            options=80001<RXCSUM,LINKSTATE>
+            ether e6:96:97:c5:88:7d
+            inet 192.168.10.22 netmask 0xffffff00 broadcast 192.168.10.255
+            media: Ethernet autoselect (100baseTX <full-duplex>)
+            status: active
 
 ### Next
 
@@ -242,6 +284,8 @@ Next up, building some [ports][ports] ...
 [rc.conf]: https://www.freebsd.org/cgi/man.cgi?query=rc.conf&apropos=0&sektion=5&manpath=FreeBSD+11-current&arch=default&format=html
 [resolv.conf]: https://www.freebsd.org/cgi/man.cgi?query=resolv.conf&apropos=0&sektion=5&manpath=FreeBSD+11-current&arch=default&format=html
 [ifconfig]: https://www.freebsd.org/cgi/man.cgi?query=ifconfig&apropos=0&sektion=8&manpath=FreeBSD+11-current&arch=default&format=html
+[vi]: https://www.freebsd.org/cgi/man.cgi?query=vi&apropos=0&sektion=1&manpath=FreeBSD+11-current&arch=default&format=html
 [ftdi]: https://www.sparkfun.com/products/9873
 [rpi-boot-log]: https://gist.github.com/scottellis/8f19c93c72afca2bf1b7
+[panda-boot-log]: https://gist.github.com/scottellis/ead64590466cb17c3eb6
 [ports]: http://www.freebsd.org/ports/
