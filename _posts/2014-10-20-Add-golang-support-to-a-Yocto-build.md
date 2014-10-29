@@ -48,7 +48,7 @@ There is an example program recipe in the *oe-meta-go* layer
 
 You can use it as a template for your own programs.
 
-I'm going to create a new image recipe to add *go-helloworld* too, but you could also just add the package too an existing image recipe's *IMAGE_INSTALL*.
+I'm going to create a new image recipe to add the *go-helloworld* package. You could also just add the package to an existing image recipe's *IMAGE_INSTALL*.
 
 I'm using an existing *console-image* recipe to configure the bulk of the system.
 
