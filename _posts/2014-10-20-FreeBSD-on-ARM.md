@@ -39,7 +39,7 @@ Unzip it
 
 Copy it to a microSD card (assuming the SD card shows up at */dev/sdb*)
 
-    ~/freebsd$ sudo dd if=FreeBSD-11.0-CURRENT-arm-armv6-WANDBOARD-QUAD.img of=/dev/sdb bs=4M
+    ~/freebsd$ sudo dd if=FreeBSD-11.0-CURRENT-arm-armv6-WANDBOARD-QUAD.img of=/dev/sdb bs=1M
 
 Insert into a *wandboard-quad* with serial console connected through a NULL modem (1152008N1) 
 
@@ -180,7 +180,7 @@ Download, unzip and copy to an SD card
 
     $ bunzip2 FreeBSD-11.0-CURRENT-arm-armv6-RPI-B.img.bz2
 
-    $ sudo dd if=FreeBSD-11.0-CURRENT-arm-armv6-RPI-B.img of=/dev/sdb bs=4M
+    $ sudo dd if=FreeBSD-11.0-CURRENT-arm-armv6-RPI-B.img of=/dev/sdb bs=1M
 
 I'm using a [Sparkfun FTDI Basic Breakout][ftdi] board to get a USB serial console
 
@@ -224,7 +224,7 @@ TODO: Look into the console terminal problem with the RPi.
 
 Setting up the timezone and date using [ntpd(8)][ntpd] works the same as with the *wandboard*.
 
-## Pandaboard
+## PandaBoard
 
 Same procedure, download and unzip an image file then copy it to an SD card
 
@@ -264,10 +264,6 @@ After the same [sshd(8)][sshd] and [ntpd(8)][ntpd] setup and assigning a static 
             media: Ethernet autoselect (100baseTX <full-duplex>)
             status: active
 
-### Next
-
-Next up, building some [ports][ports] ... 
-
 
 [freebsd]: http://www.freebsd.org
 [freebsd-download]: ftp://ftp.freebsd.org/pub/FreeBSD/snapshots/arm/armv6/ISO-IMAGES/11.0/
@@ -288,4 +284,3 @@ Next up, building some [ports][ports] ...
 [ftdi]: https://www.sparkfun.com/products/9873
 [rpi-boot-log]: https://gist.github.com/scottellis/8f19c93c72afca2bf1b7
 [panda-boot-log]: https://gist.github.com/scottellis/ead64590466cb17c3eb6
-[ports]: http://www.freebsd.org/ports/
