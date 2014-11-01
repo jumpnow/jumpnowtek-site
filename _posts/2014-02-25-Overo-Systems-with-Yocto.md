@@ -2,7 +2,7 @@
 layout: post
 title: Building Overo Systems with Yocto
 description: "Building customized systems for Gumstix Overo using tools from the Yocto Project"
-date: 2014-02-25 09:17:00
+date: 2014-11-01 11:46:00
 categories: gumstix overo
 tags: [linux, gumstix, overo, yocto]
 ---
@@ -13,7 +13,7 @@ There is no `X11` and no desktop installed on any of these systems. The `embedde
 
 The Linux `3.5` kernel comes from the Linux mainline with some patches from Gumstix. If you want to use the `McBSP` controller of the Overo with custom hardware, you will want to change your kernel version to `3.2`. Otherwise, the default `3.5` kernel is probably what you want. The kernel version can be changed in the `local.conf` configuration file explained below. 
 
-The Yocto version is `1.6.1` the `[daisy]` branch.
+The Yocto version is `1.7.0` the `[dizzy]` branch.
 
 `sysvinit` is used for the init system, not `systemd`.
 
@@ -47,12 +47,12 @@ Choose no to dash when prompted.
 
 First the main Yocto project `poky` repository
 
-    scott@hex:~ git clone -b daisy git://git.yoctoproject.org/poky.git poky-daisy
+    scott@hex:~ git clone -b dizzy git://git.yoctoproject.org/poky.git poky-dizzy
 
 Then the supporting `meta-openembedded` repository
 
-    scott@hex:~$ cd ~/poky-daisy
-    scott@hex:~/poky-daisy$ git clone -b daisy git://git.openembedded.org/meta-openembedded
+    scott@hex:~$ cd ~/poky-dizzy
+    scott@hex:~/poky-dizzy$ git clone -b dizzy git://git.openembedded.org/meta-openembedded
 
 I keep these repositories separated since they can be shared between projects and different boards.
 
@@ -62,7 +62,7 @@ Create a subdirectory for the `meta-overo` repository before cloning
 
     scott@hex:~$ mkdir ~/overo
     scott@hex:~$ cd ~/overo
-    scott@hex:~/overo$ git clone -b daisy git://github.com/jumpnow/meta-overo
+    scott@hex:~/overo$ git clone -b dizzy git://github.com/jumpnow/meta-overo
 
 
 The `meta-overo/README.md` file has the last commits from the dependency repositories that I tested. You can always checkout those commits explicitly if you run into problems.
@@ -73,7 +73,7 @@ Much of the following are only the conventions that I use. All of the paths to t
  
 First setup a build directory. I tend to do this on a per board and/or per project basis so I can quickly switch between projects. For this example I'll put the build directory under `~/overo/` with the `meta-overo` layer.
 
-    scott@hex:~$ source poky-daisy/oe-init-build-env ~/overo/build
+    scott@hex:~$ source poky-dizzy/oe-init-build-env ~/overo/build
 
 You always need this command to setup the environment before using `bitbake`. If you only have one build environment, you can put it in your `~/.bashrc`. I work on more then one system so tend to always run it manually.
  
@@ -122,7 +122,7 @@ This is where temporary build files and the final build binaries will end up. Ex
 
 The default location if left commented will be `~/overo/build/tmp`. If I'm not working in a VM, I usually put my TMPDIRs on dedicated partitions. Occasionally something will come up where you'll need to delete the entire `TMPDIR`. For those occasions the sequence unmount/mkfs/remount is much faster then deleting a 35+ GB directory. 
 
-If you specify an alternate location as I do in the example conf file make sure the directory is writable by the user running the build. Also because of some `rpath` issues with gcc, the TMPDIR path cannot be too short or the gcc build will fail. I haven't determined exactly how short is too short, but something like `/oe7` is too short and `/oe7/tmp-poky-daisy-build` is long enough. 
+If you specify an alternate location as I do in the example conf file make sure the directory is writable by the user running the build. Also because of some `rpath` issues with gcc, the TMPDIR path cannot be too short or the gcc build will fail. I haven't determined exactly how short is too short, but something like `/oe7` is too short and `/oe7/tmp-poky-dizzy-build` is long enough. 
 
 If you use the default location, the `TMPDIR` path is already long enough.
      
@@ -153,7 +153,7 @@ Uncomment this line
 You need to source the environment every time you want to run a build. The 
 `oe-init-build-env` when run a second time will not overwrite your customized conf files.
 
-    scott@hex:~$ source poky-daisy/oe-init-build-env ~/overo/build
+    scott@hex:~$ source poky-dizzy/oe-init-build-env ~/overo/build
 
     ### Shell environment set up for builds. ###
 
@@ -248,11 +248,11 @@ This script needs to know the `TMPDIR` to find the binaries. It looks for an env
 
 For instance, if I had this in the `local.conf`
 
-    TMPDIR = "/oe7/tmp-poky-daisy-build"
+    TMPDIR = "/oe7/tmp-poky-dizzy-build"
 
 Then I would export this environment variable before running `copy_boot.sh`
 
-    scott@hex:~/overo/meta-overo/scripts$ export OETMP=/oe7/tmp-poky-daisy-build
+    scott@hex:~/overo/meta-overo/scripts$ export OETMP=/oe7/tmp-poky-dizzy-build
 
 Then run the `copy_boot.sh` script passing the location of SD card
 
@@ -280,7 +280,7 @@ Here's a realistic example session where I want to copy already built images to 
 
     scott@hex:~$ sudo umount /dev/sdc1
     scott@hex:~$ sudo umount /dev/sdc2
-    scott@hex:~$ export OETMP=/oe7/tmp-poky-daisy-build
+    scott@hex:~$ export OETMP=/oe7/tmp-poky-dizzy-build
     scott@hex:~$ cd overo/meta-overo/scripts
     scott@hex:~/overo/meta-overo/scripts$ ./copy_boot.sh sdc
     scott@hex:~/overo/meta-overo/scripts$ ./copy_rootfs.sh sdc console overo2
