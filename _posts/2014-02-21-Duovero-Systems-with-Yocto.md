@@ -2,7 +2,7 @@
 layout: post
 title: Building Duovero Systems with Yocto
 description: "Building customized systems for Gumstix Duovero using tools from the Yocto Project"
-date: 2014-02-21 12:58:00
+date: 2014-11-01 16:28:00
 categories: gumstix duovero
 tags: [linux, gumstix, duovero, yocto]
 ---
@@ -17,11 +17,11 @@ The Duovero [Zephyr][duovero-zephyr] COM has a built-in Wifi/Bluetooth radio. Th
 
 The Wifi radio can be used as a `Station` or an `Access Point`. See this [article][duovero-ap] for more setting up the `Duovero` as an access point.
 
-The Yocto version is `1.6.1` the `[daisy]` branch.
+The Yocto version is `1.7.0` the `[dizzy]` branch.
 
 `sysvinit` is used for the init system, not `systemd`. 
 
-`systemd-udev v211` is the udev daemon.
+`systemd-udev v216` is the udev daemon.
 
 ### Ubuntu Packages
 
@@ -51,12 +51,12 @@ Choose no to dash when prompted.
 
 First the main Yocto project `poky` repository
 
-    scott@hex:~ git clone -b daisy git://git.yoctoproject.org/poky.git poky-daisy
+    scott@hex:~ git clone -b dizzy git://git.yoctoproject.org/poky.git poky-dizzy
 
 Then the supporting `meta-openembedded` repository
 
-    scott@hex:~$ cd poky-daisy
-    scott@hex:~/poky-daisy$ git clone -b daisy git://git.openembedded.org/meta-openembedded
+    scott@hex:~$ cd poky-dizzy
+    scott@hex:~/poky-dizzy$ git clone -b dizzy git://git.openembedded.org/meta-openembedded
 
 I keep these repositories separated since they can be shared between projects and different boards.
 
@@ -66,7 +66,7 @@ Create a sub-directory for the `meta-duovero` repository before cloning
 
     scott@hex:~$ mkdir ~/duovero
     scott@hex:~$ cd ~/duovero
-    scott@hex:~/duovero$ git clone -b daisy git://github.com/jumpnow/meta-duovero
+    scott@hex:~/duovero$ git clone -b dizzy git://github.com/jumpnow/meta-duovero
 
 The `meta-duovero/README.md` file has the last commits from the dependency repositories that I tested. You can always checkout those commits explicitly if you run into problems.
 
@@ -76,7 +76,7 @@ Much of the following are only the conventions that I use. All of the paths to t
  
 First setup a build directory. I tend to do this on a per board and/or per project basis so I can quickly switch between projects. For this example I'll put the build directory under `~/duovero/` with the `meta-duovero` layer.
 
-    scott@hex:~$ source poky-daisy/oe-init-build-env ~/duovero/build
+    scott@hex:~$ source poky-dizzy/oe-init-build-env ~/duovero/build
 
 You always need this command to setup the environment before using `bitbake`. If you only have one build environment, you can put it in your `~/.bashrc`. I work on more then one system so tend to always run it manually.
  
@@ -121,7 +121,7 @@ This is where temporary build files and the final build binaries will end up. Ex
 
 The default location if left commented will be `~/duovero/build/tmp`. If I'm not working in a VM, I usually put my `TMPDIRs` on dedicated partitions. Occasionally something will come up where you'll need to delete the entire `TMPDIR`. For those occasions the sequence unmount/mkfs/remount is much faster then deleting a 35+ GB directory. 
 
-If you specify an alternate location as I do in the example conf file make sure the directory is writable by the user running the build. Also because of some `rpath` issues with gcc, the `TMPDIR` path cannot be too short or the gcc build will fail. I haven't determined exactly how short is too short, but something like `/oe9` is too short and `/oe9/tmp-poky-daisy-build` is long enough.
+If you specify an alternate location as I do in the example conf file make sure the directory is writable by the user running the build. Also because of some `rpath` issues with gcc, the `TMPDIR` path cannot be too short or the gcc build will fail. I haven't determined exactly how short is too short, but something like `/oe9` is too short and `/oe9/tmp-poky-dizzy-build` is long enough.
 
 If you use the default location, the `TMPDIR` path is already long enough.
      
@@ -142,7 +142,7 @@ The default location is `~/duovero/build/sstate-cache`.
 
 You need to source the environment every time you want to run a build. The `oe-init-build-env` when run a second time will not overwrite your customized conf files.
 
-    scott@hex:~$ source poky-daisy/oe-init-build-env ~/duovero/build
+    scott@hex:~$ source poky-dizzyy/oe-init-build-env ~/duovero/build
 
     ### Shell environment set up for builds. ###
 
@@ -238,11 +238,11 @@ This script needs to know the `TMPDIR` to find the binaries. It looks for an env
 
 For instance, if I had this in the `local.conf`
 
-    TMPDIR = "/oe9/tmp-poky-daisy-build"
+    TMPDIR = "/oe9/tmp-poky-dizzyy-build"
 
 Then I would export this environment variable before running `copy_boot.sh`
 
-    scott@hex:~/duovero/meta-duovero/scripts$ export OETMP=/oe9/tmp-poky-daisy-build
+    scott@hex:~/duovero/meta-duovero/scripts$ export OETMP=/oe9/tmp-poky-dizzyy-build
 
 Then run the `copy_boot.sh` script passing the location of SD card
 
@@ -270,7 +270,7 @@ Here's a realistic example session where I want to copy already built images to 
 
     scott@hex:~$ sudo umount /dev/sdc1
     scott@hex:~$ sudo umount /dev/sdc2
-    scott@hex:~$ export OETMP=/oe9/tmp-poky-daisy-build
+    scott@hex:~$ export OETMP=/oe9/tmp-poky-dizzy-build
     scott@hex:~$ cd duovero/meta-duovero/scripts
     scott@hex:~/duovero/meta-duovero/scripts$ ./copy_boot.sh sdc
     scott@hex:~/duovero/meta-duovero/scripts$ ./copy_rootfs.sh sdc console duo2
