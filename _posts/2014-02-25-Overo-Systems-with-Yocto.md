@@ -17,7 +17,7 @@ The Yocto version is `1.7.0` the `[dizzy]` branch.
 
 `sysvinit` is used for the init system, not `systemd`.
 
-`systemd-udev v211` is the udev daemon.
+`systemd-udev v216` is the udev daemon.
 
 ### Ubuntu Packages
 
