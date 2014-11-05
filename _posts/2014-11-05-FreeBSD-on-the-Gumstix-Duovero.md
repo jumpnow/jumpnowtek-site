@@ -95,6 +95,7 @@ I've already experimented with the [FreeBSD ports][freebsd-ports] on several oth
 
 This is obviously the early stages, but it's pretty promising.
 
+You can download the image [here][img-download].
 
 [crochet-freebsd]: https://github.com/kientzle/crochet-freebsd
 [duovero]: https://store.gumstix.com/index.php/category/43/
@@ -107,3 +108,4 @@ This is obviously the early stages, but it's pretty promising.
 [freebsd-ports]: https://www.freebsd.org/ports/
 [wandboard]: http://www.wandboard.org/
 [crochet-duovero]: https://github.com/scottellis/crochet-freebsd/tree/duovero
+[img-download]: http://www.jumpnowtek.com/downloads/freebsd/duovero/
