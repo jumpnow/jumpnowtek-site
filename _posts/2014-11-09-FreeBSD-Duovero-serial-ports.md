@@ -7,8 +7,7 @@ categories: freebsd
 tags: [freebsd, gumstix, duovero, serial, uart]
 ---
 
-With my previous *uart* definitions in [duovero.dts][duovero-dts] I was seeing
-the following identification for the uarts
+With my previous *uart* definitions in *duovero.dts* I was seeing the following identification for the uarts
 
     root@duovero:~ # dmesg | grep uart
     uart0: <16750 or compatible> mem 0x48020000-0x480203ff irq 106 on simplebus0
@@ -16,7 +15,7 @@ the following identification for the uarts
     uart1: <ns8250> mem 0x4806c000-0x4806c3ff irq 105 on simplebus0
 
 
-After looking at some code in `sys/dev/uart/uart_dev_ti8250.c` and the other *TI* device tree files in `sys/boot/fdt/dts/arm` I made a few changes to the *uart* definitions in my Duovero device tree file.
+After looking at some code in `sys/dev/uart/uart_dev_ti8250.c` and some of the other *TI* device tree files in `sys/boot/fdt/dts/arm` I made a few changes to the *uart* definitions in my *duovero.dts* file.
 
 In particular I changed the `compatible` property to *"ti,ns16550"* and I added a `uart-device-id` property.
 
@@ -24,15 +23,17 @@ I left *uart1* and *uart4* disabled since they are not accessible using the [Duo
 
 And since I still haven't figured out how to change the *console* to be other then the first *uart*, I moved the definition for *uart3* to be first.
 
-The resulting DT file is [here][duovero-dts]
+The resulting *dts* file is [here][duovero-dts]
 
-And now the output when booting
+And now the output looks better
 
     root@duovero:~ # dmesg | grep uart
     uart0: <TI UART (16550 compatible)> mem 0x48020000-0x480203ff irq 106 on simplebus0
     uart0: console (115384,n,8,1)
     uart1: <TI UART (16550 compatible)> mem 0x4806c000-0x4806c3ff irq 105 on simplebus0
 
+
+The device tree dump
 
     root@duovero:~ # ofwdump -a
     Node 0x38:
@@ -58,6 +59,45 @@ And now the output when booting
         Node 0xc28: mmc@x4809C000
       Node 0xcac: chosen
 
+And looking a little closer at *uart3* and *uart2*
+
+    root@duovero:~ # ofwdump -p /omap4430/serial@48020000
+    Node 0x410: serial@48020000
+      compatible:
+        74 69 2c 6e 73 31 36 35 35 30 00
+        'ti,ns16550'
+      reg:
+        48 02 00 00 00 00 04 00
+      reg-shift:
+        00 00 00 02
+      interrupts:
+        00 00 00 6a
+      interrupt-parent:
+        00 00 00 01
+      clock-frequency:
+        02 dc 6c 00
+        '\^B\M-\l'
+      uart-device-id:
+        00 00 00 02
+
+    root@duovero:~ # ofwdump -p /omap4430/serial@4806c000
+    Node 0x550: serial@4806c000
+      compatible:
+        74 69 2c 6e 73 31 36 35 35 30 00
+        'ti,ns16550'
+      reg:
+        48 06 c0 00 00 00 04 00
+      reg-shift:
+        00 00 00 02
+      interrupts:
+        00 00 00 69
+      interrupt-parent:
+        00 00 00 01
+      clock-frequency:
+        02 dc 6c 00
+        '\^B\M-\l'
+      uart-device-id:
+        00 00 00 01
 
 I'm not sure why, but there are multiple `/dev` entries for each *uart*.
 
