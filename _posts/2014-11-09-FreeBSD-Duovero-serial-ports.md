@@ -122,9 +122,9 @@ I'm not sure why, but there are multiple `/dev` entries for each *uart*.
 
 `/dev/cuau1` and `/dev/ttyu1` reference *uart2*.
 
-I need to research what the difference is.
+Both seem to work the same. I need to research what the difference is.
 
-But on to a test.
+But on to a test...
 
 If I jumper `pin 15 (uart2.tx)` and `pin 17 (uart2.rx)` on the *Parlor* expansion header, I can run a simple echo program like [this][serialecho].
 
