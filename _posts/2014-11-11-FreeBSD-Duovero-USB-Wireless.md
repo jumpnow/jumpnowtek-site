@@ -11,7 +11,7 @@ It was getting painful working without a network on the FreeBSD Duovero systems 
 
 One of the changes was to go back and get the *USB Host* initialization code I deleted in  `sys/arm/ti/omap4/duovero/duovero.c` when I copied it from `head/sys/arm/ti/omap4/pandaboard/pandaboard.c`. 
 
-The Pandaboard has a built-in USB/ethernet controller that the Duovero doesn't. But the code I deleted enables the USB Host controller which is still needed for USB wifi. (I thought at the time it was only for the USB/ethernet.)
+The Pandaboard has a built-in USB/ethernet controller that the Duovero doesn't. But the code I deleted enables the USB Host controller for anything on the USB Host port. (I thought at the time it was initialization only for the USB/ethernet.)
 
 After that I needed to add some wifi drivers to the kernel.
 
@@ -19,7 +19,7 @@ I had some cheap [Edimax EW-7811Un][edimax] USB/wifi dongles I was using with [R
 
 I plugged one into my FreeBSD build workstation to see what driver loaded. [urtwn(4)][urtwn]. Then I followed the instructions to add the appropriate driver to the kernel config `sys/arm/conf/DUOVERO`.
 
-After a rebuild and with the *edimax* dongle was detected and the driver loaded.
+After a rebuild and the *edimax* dongle was detected and the driver loaded.
 
     root@duovero:~ # dmesg | grep usb
     usbus0: EHCI version 1.0
@@ -156,8 +156,7 @@ Rebuilding and booting with the *TRENDnet* plugged in and the conf files adjuste
     Last login: Tue Nov 11 15:22:19 2014 from 192.168.10.120
     FreeBSD 10.1-RC3 (GENERIC) #0 r273437: Tue Oct 21 23:55:15 UTC 2014
 
-And now that there's a network, I enabled the [sshd(8)][sshd] service and logged
-in from another host.
+And now that there's a network, I enabled the [sshd(8)][sshd] service and logged in from another host.
 
     scott@hex:~$ ssh root@192.168.10.120
     Warning: Permanently added '192.168.10.120' (ECDSA) to the list of known hosts.
