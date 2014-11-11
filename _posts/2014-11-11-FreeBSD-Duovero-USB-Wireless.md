@@ -7,11 +7,11 @@ categories: freebsd
 tags: [freebsd, gumstix, duovero, usb, wireless]
 ---
 
-It was starting to get very painful working without a network on the FreeBSD Duovero systems I've been playing with. So I took a look at what was involved to get a USB WIFI dongle working.
+It was getting painful working without a network on the FreeBSD Duovero systems I've been playing with. So I took a look at what was involved to get a USB WIFI dongle working.
 
-One of the changes was to go back and get the USB Host initialization code I originally pulled from `sys/arm/ti/omap4/duovero/duovero.c` when I copied it from `head/sys/arm/ti/omap4/pandaboard/pandaboard.c`. The Pandaboard has a built-in USB/ethernet controller that the Duovero doesn't. But the code I deleted enables the USB Host controller which is still needed for USB wifi. I thought at the time it was only for the USB/ethernet.
+One of the changes was to go back and get the *USB Host* initialization code I deleted in  `sys/arm/ti/omap4/duovero/duovero.c` when I copied it from `head/sys/arm/ti/omap4/pandaboard/pandaboard.c`. 
 
-Looking at the notes in the code, I'm unsure if this is the appropriate place to do this initialization for the Duovero. Unlike with the Pandaboard's USB/ethernet that could be used early in the boot, say for an NFS mounted rootfs, it's not that important to bring up the Duovero wifi this early. USB initialization on the Duovero could probably be done later in the kernel boot after some more internal kernel drivers are available. Something to look into later.
+The Pandaboard has a built-in USB/ethernet controller that the Duovero doesn't. But the code I deleted enables the USB Host controller which is still needed for USB wifi. (I thought at the time it was only for the USB/ethernet.)
 
 After that I needed to add some wifi drivers to the kernel.
 
@@ -40,9 +40,9 @@ After a rebuild and with the *edimax* dongle was detected and the driver loaded.
 
 Full boot log is [here][boot-log].
 
-The *Quick Start* section of the [Wireless Networking][wireless-networking] chapter of the FreeBSD handbook was all I needed for userland setup.
+The *Quick Start* section of the [Wireless Networking][wireless-networking] chapter of the [FreeBSD Handbook][freebsd-handbook] was all I needed for userland setup.
 
-The changes were to add a new [wpa_supplicant.conf(5)][wpa-supplicant.conf]
+The changes were to add a new [wpa_supplicant.conf(5)][wpa-supplicant-conf]
 
     root@duovero:~ # cat /etc/wpa_supplicant.conf
     network={
@@ -59,7 +59,7 @@ After restarting the network
 
     root@duovero:~ # service netif restart
 
-or after a reboot, the network is up.
+or after a reboot, the network came up.
 
     root@duovero:~ # ifconfig -a
     lo0: flags=8049<UP,LOOPBACK,RUNNING,MULTICAST> metric 0 mtu 16384
@@ -167,11 +167,10 @@ in from another host.
 
     root@duovero:~ #
 
-The Duovero FreeBSD systems are starting to become usable.
 
 The kernel changes can be found [here][duovero-freebsd-github].
 
-The *crochet* board file can be found [here][crochet] in the [duovero] branch.
+The *crochet* board configuration can be found [here][crochet] in the `[duovero]` branch.
 
 The latest image binary can be downloaded from [here][downloads].
 
@@ -191,3 +190,4 @@ The latest image binary can be downloaded from [here][downloads].
 [duovero-freebsd-github]: https://github.com/scottellis/duovero-freebsd
 [crochet]: https://github.com/scottellis/crochet-freebsd/tree/duovero
 [downloads]: http://www.jumpnowtek.com/downloads/freebsd/duovero/
+[freebsd-handbook]: http://www.freebsd.org/doc/en/books/handbook/
