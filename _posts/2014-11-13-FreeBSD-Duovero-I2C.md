@@ -7,9 +7,11 @@ categories: freebsd
 tags: [freebsd, gumstix, duovero, i2c]
 ---
 
-The [Gumstix Duovero][duovero] has 4 I2C buses. 
+The [Gumstix Duovero][duovero] has 4 general purpose *I2C* buses. 
 
-With the [duovero.dts][duovero-dts] I'm currently using, they show up like this
+There is a 5th *I2C* bus dedicated for use with an external power management unit, [TWL6030][twl6030] on the *Duovero*.
+
+With the [duovero.dts][duovero-dts] I'm currently using, the general purpose *I2C* buses show up like this
 
     root@duovero:~/qdac # ofwdump -a
     Node 0x38:
@@ -122,3 +124,4 @@ The changes are actually pretty minor between the *FreeBSD* and *Linux* versions
 [iicbus]: http://www.freebsd.org/cgi/man.cgi?query=iicbus&apropos=0&sektion=4&manpath=FreeBSD+11-current&arch=default&format=html
 [level-shifter]: https://www.sparkfun.com/products/12009
 [qdac-readme]: https://github.com/scottellis/qdac/blob/master/README.md
+[twl6030]: http://www.ti.com/product/twl6030
