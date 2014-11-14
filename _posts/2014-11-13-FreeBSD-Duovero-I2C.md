@@ -9,7 +9,7 @@ tags: [freebsd, gumstix, duovero, i2c]
 
 The [Gumstix Duovero][duovero] has 4 general purpose *I2C* buses. 
 
-There is a 5th *I2C* bus dedicated for use with an external power management unit, [TWL6030][twl6030] on the *Duovero*.
+There is a 5th *I2C* bus dedicated for use with an external power management unit, a [TWL6030][twl6030] on the *Duovero*.
 
 With the [duovero.dts][duovero-dts] I'm currently using, the general purpose *I2C* buses show up like this
 
