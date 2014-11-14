@@ -54,15 +54,15 @@ With the [duovero.dts][duovero-dts] I'm currently using, they show up like this
     iic3: <I2C generic I/O> on iicbus3
 
 
-The [Duovero Parlor][duovero-parlor] board only brings out one *I2C* bus to the 40-pin header, **I2C2_SCL** and **I2C2_SDA** on pins `12` and `14`.
+The [Duovero Parlor][duovero-parlor] board only brings out one *I2C* bus to the 40-pin header, **I2C2_SCL** and **I2C2_SDA** on pins **12** and **14**.
 
-The first device I chose to work with was an [MCP4728][mcp4728] 12-Bit 4-channel DAC. I already had a Duovero connected to an [MCP4728 eval board][mcp4728-evalboard] through some level shifters. I knew the hardware was good since I'd just written a Linux userland driver for the board for another project. 
+Because it was already sitting on my desk, the first device I tried was an [MCP4728][mcp4728] 12-Bit 4-channel DAC. I already had a Duovero connected to an [MCP4728 eval board][mcp4728-evalboard] through a [level shifter][level-shifter]. I knew the hardware was working since I'd just written a Linux userland driver for the board for another project. 
 
 I was only looking at porting the *FreeBSD* differences.
 
-*FreeBSD* has a utility program [i2c(8)][i2c] much like the [i2cdetect(8)][i2cdetect] utility for *Linux*. Unfortunately [i2c(8)][i2c] doesn't work with the current *OMAP4* driver for *FreeBSD*. The driver does not support the `ioctls` that [i2c(8)][i2c] wants to use, particularly **I2CSTART**.
+*FreeBSD* has a utility program [i2c(8)][i2c] much like the [i2cdetect(8)][i2cdetect] utility for *Linux*. Unfortunately [i2c(8)][i2c] doesn't work with the current *OMAP4* driver for *FreeBSD*. The driver does not support the *ioctls* that [i2c(8)][i2c] wants to use, particularly **I2CSTART**.
 
-The list of `ioctls` a FreeBSD I2C driver ought to support can be found in [iic(4)][iic]. I learned that from this [interesting article][vzaigrin-i2c-ktrace] by [Vadim Zaigrin][vzaigrin] about using [ktrace(4)][ktrace] to debug the *I2C* bus on a Raspberry Pi.
+The list of *ioctls* a FreeBSD I2C driver ought to support can be found in [iic(4)][iic]. I learned that from this [interesting article][vzaigrin-i2c-ktrace] by [Vadim Zaigrin][vzaigrin] about using [ktrace(4)][ktrace] to debug the *I2C* bus on a Raspberry Pi.
 
 
 Here's what the [kdump(4)][kdump] output looks like on the Duovero when running this command
@@ -76,23 +76,27 @@ The important lines are these repeated failures
     807 i2c      CALL  ioctl(0x3,I2CSTART,0xbffffc30)
     807 i2c      RET   ioctl -1 errno 6 Device not configured
 
-In this case, that's an indication the `ioctl` is not supported.
+In this case, that's an indication the *ioctl* is not supported.
 
 Looking at the source (`sys/arm/ti/ti_i2c.c`) the *OMAP4* driver does support **I2CRDWR**, so that's what I used.
 
 I got some [code ported][mcp4728-qdac-c] to use the **I2CRDWR** ioctls (see *qdac_write_reg()* and *qdac_read_regs()*), but still no joy communicating.
 
-I had no idea what the bus speed was at this point, but knew the *MCP4728* handled both `100 kHz` and `400 kHz` without problems.
+At this point I had no idea what *FreeBSD* was using for the *I2C* clock. I did know that the *MCP4728* worked at either *100 kHz* or *400 kHz*.
 
-I put an oscope on the `SCL` line and found the clock running at a very weird `842 kHz`.
+I put an oscope on the `SCL` line and found the clock running at *842 kHz*.
 
-Enabling `DEBUG` in the `sys/arm/ti/ti_i2c.c` driver showed that the communications were timing out waiting for a response. Not unexpected given the clock frequency.  
+Enabling **DEBUG** in the `sys/arm/ti/ti_i2c.c` driver showed that the communications were timing out waiting for a response. Not unexpected given the unusual clock frequency.  
 
-The `842 kHz` is most likely a mistake. The [iicbus(4)][iicbus] tries to set a default bus speed of **IIC_FASTEST** when it resets I2C buses. For the `OMAP4` code, the **IIC_FASTEST** was trying for `1 MHZ`, but the wrong divider values were being used.
+That *842 kHz* is most likely a mistake. The [iicbus(4)][iicbus] tries to set a default bus speed of **IIC_FASTEST** when it resets *I2C* buses. For the `OMAP4` code, the **IIC_FASTEST** was trying for *1 MHZ*, but the wrong divider values were being used.
 
-I don't think `1 MHz` is a particularly good default either, so I added a [simple patch][default-speed-patch] to make it a more reasonable `400 kHz`. The change does require a kernel rebuild.
+For reference, the formula from table 23.8 of the OMAP4 TRM is
 
-Something on my `TODO` list is try and figure out if it's possible to change the I2C bus speed from userland. I think I see how to do it from a kernel driver, but that's more then I want to try just yet. It would also be nice to be able to set the default `<clock-speed>` from a *dts* file. Another `TODO`.
+    scl = i2c_fclk / ( ( psc + 1) * ( (scll + 7) + (sclh + 5) ) )
+
+I don't think *1 MHz* is a particularly good default either, so I added a [simple patch][default-speed-patch] to make it a more reasonable *400 kHz*. The change does require a kernel rebuild.
+
+Something on my `TODO` list is try and figure out if it's possible to change the *I2C* bus speed from userland. I think I see how to do it from a kernel driver, but that's more then I want to try just yet. It would also be nice to be able to set the default `<clock-speed>` from a *dts* file. Another `TODO`.
 
 After rebuilding the kernel, the [qdac][qdac] program worked just fine. You can see some sample output in the repository `README`. 
 
@@ -116,3 +120,4 @@ The changes are actually pretty minor between the *FreeBSD* and *Linux* versions
 [mcp4728]: http://ww1.microchip.com/downloads/en/DeviceDoc/22187E.pdf
 [mcp4728-evalboard]: http://www.digikey.com/product-search/en/programmers-development-systems/evaluation-boards-digital-to-analog-converters-dacs/2622540?k=mcp4728
 [iicbus]: http://www.freebsd.org/cgi/man.cgi?query=iicbus&apropos=0&sektion=4&manpath=FreeBSD+11-current&arch=default&format=html
+[level-shifter]: https://www.sparkfun.com/products/12009
