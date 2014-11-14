@@ -98,7 +98,7 @@ I don't think *1 MHz* is a particularly good default either, so I added a [simpl
 
 Something on my `TODO` list is try and figure out if it's possible to change the *I2C* bus speed from userland. I think I see how to do it from a kernel driver, but that's more then I want to try just yet. It would also be nice to be able to set the default `<clock-speed>` from a *dts* file. Another `TODO`.
 
-After rebuilding the kernel, the [qdac][qdac] program worked just fine. You can see some sample output in the repository `README`. 
+After rebuilding the kernel, the [qdac][qdac] program worked just fine. You can see some sample output in the repository [README][qdac-readme]. 
 
 The changes are actually pretty minor between the *FreeBSD* and *Linux* versions. I could just `ifdef` them and have one [qdac][qdac] codebase, but I was too lazy today.
 
@@ -121,3 +121,4 @@ The changes are actually pretty minor between the *FreeBSD* and *Linux* versions
 [mcp4728-evalboard]: http://www.digikey.com/product-search/en/programmers-development-systems/evaluation-boards-digital-to-analog-converters-dacs/2622540?k=mcp4728
 [iicbus]: http://www.freebsd.org/cgi/man.cgi?query=iicbus&apropos=0&sektion=4&manpath=FreeBSD+11-current&arch=default&format=html
 [level-shifter]: https://www.sparkfun.com/products/12009
+[qdac-readme]: https://github.com/scottellis/qdac/blob/master/README.md
