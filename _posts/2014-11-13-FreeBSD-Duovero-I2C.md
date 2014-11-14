@@ -64,10 +64,12 @@ I was only looking at porting the *FreeBSD* differences.
 
 *FreeBSD* has a utility program [i2c(8)][i2c] much like the [i2cdetect(8)][i2cdetect] utility for *Linux*. Unfortunately [i2c(8)][i2c] doesn't work with the current *OMAP4* driver for *FreeBSD*. The driver does not support the *ioctls* that [i2c(8)][i2c] wants to use, particularly **I2CSTART**.
 
-The list of *ioctls* a FreeBSD I2C driver ought to support can be found in [iic(4)][iic]. I learned that from this [interesting article][vzaigrin-i2c-ktrace] by [Vadim Zaigrin][vzaigrin] about using [ktrace(4)][ktrace] to debug the *I2C* bus on a Raspberry Pi.
+[iic(4)][iic] shows the *ioctls* a FreeBSD I2C driver should support.
+
+I learned that from this [interesting article][vzaigrin-i2c-ktrace] by [Vadim Zaigrin][vzaigrin] about using [ktrace(1)][ktrace] to debug the *I2C* bus on a Raspberry Pi.
 
 
-Here's what the [kdump(4)][kdump] output looks like on the Duovero when running this command
+Here's what the [kdump(1)][kdump] output looks like on the Duovero when running this command
 
     root@duovero:~ # ktrace -t+ i2c -s -f /dev/iic1
 
@@ -106,22 +108,41 @@ The changes are actually pretty minor between the *FreeBSD* and *Linux* versions
 
 
 [duovero]: https://store.gumstix.com/index.php/category/43/
+
 [duovero-dts]: https://github.com/scottellis/duovero-freebsd/blob/master/sys/boot/fdt/dts/arm/duovero.dts
+
 [default-speed-patch]: https://github.com/scottellis/duovero-freebsd/blob/master/patches/omap4-i2c-default-speed.patch
+
 [duovero-parlor]: https://store.gumstix.com/index.php/products/287/
+
 [i2c]: http://www.freebsd.org/cgi/man.cgi?query=i2c&apropos=0&sektion=8&manpath=FreeBSD+11-current&arch=default&format=html
+
 [i2cdetect]: http://linux.die.net/man/8/i2cdetect
-[iic]: http://www.freebsd.org/cgi/man.cgi?query=iic&sektion=4&apropos=0&manpath=FreeBSD+11-current
+
 [vzaigrin-i2c-ktrace]: http://vzaigrin.wordpress.com/2014/04/28/working-with-i2c-in-freebsd-on-raspberry-pi/
+
 [vzaigrin]: http://vzaigrin.wordpress.com/
-[ktrace]: http://www.freebsd.org/cgi/man.cgi?query=ktrace&apropos=0&sektion=4&manpath=FreeBSD+11-current&arch=default&format=html
-[kdump]: http://www.freebsd.org/cgi/man.cgi?query=kdump&apropos=0&sektion=4&manpath=FreeBSD+11-current&arch=default&format=html
+
+[ktrace]: http://www.freebsd.org/cgi/man.cgi?query=ktrace&apropos=0&sektion=0&manpath=FreeBSD+11-current&arch=default&format=html
+
+[kdump]: http://www.freebsd.org/cgi/man.cgi?query=kdump&apropos=0&sektion=0&manpath=FreeBSD+11-current&arch=default&format=html
+
 [kdump-output]: https://gist.github.com/scottellis/460c0bb15871a9ff3843
+
 [mcp4728-qdac-c]: https://github.com/scottellis/qdac/blob/master/mcp4728-qdac.c
+
 [qdac]: https://github.com/scottellis/qdac
+
 [mcp4728]: http://ww1.microchip.com/downloads/en/DeviceDoc/22187E.pdf
+
 [mcp4728-evalboard]: http://www.digikey.com/product-search/en/programmers-development-systems/evaluation-boards-digital-to-analog-converters-dacs/2622540?k=mcp4728
+
 [iicbus]: http://www.freebsd.org/cgi/man.cgi?query=iicbus&apropos=0&sektion=4&manpath=FreeBSD+11-current&arch=default&format=html
+
 [level-shifter]: https://www.sparkfun.com/products/12009
+
 [qdac-readme]: https://github.com/scottellis/qdac/blob/master/README.md
+
 [twl6030]: http://www.ti.com/product/twl6030
+
+[iic]: http://www.freebsd.org/cgi/man.cgi?query=iic&sektion=4&apropos=0&manpath=FreeBSD+11-current
