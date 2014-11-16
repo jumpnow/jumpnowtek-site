@@ -77,9 +77,9 @@ You can check the firmware version by looking at the boot log
  
 The standard Linux software for access point management is [hostapd][hostapd].
 
-I'm using the `[dora]` branch of Yocto to build the Duovero system. [Instructions are here][yocto-duovero]. There is a recipe for *hostapd v1.0* in the *meta-openembedded* repo called *hostap-daemon*, but it doesn't work with the Duovero.
+I'm using the `[dizzy]` branch of Yocto to build the Duovero system. [Instructions are here][yocto-duovero]. There is a recipe for *hostapd v1.0* in the *meta-openembedded* repo called *hostap-daemon*, but it doesn't work with the Duovero.
 
-I have new recipe for a more recent *hostapd v2.0* build in the [meta-duovero][meta-duovero] layer. I did have to back out one [patch][a6cc060] to the hostapd source to get it to work with the Duovero. 
+I have new recipe for a more recent *hostapd v2.3* build in the [meta-duovero][meta-duovero] layer. I did have to back out one [patch][a6cc060] to the hostapd source to get it to work with the Duovero. 
 
 You can find the recipe with [patch here][hostapd-patch].
 
@@ -254,13 +254,13 @@ This is a pretty simple access point implementation, but it should be enough to 
 [gumstix-parlor]: https://store.gumstix.com/index.php/products/287/
 [hostapd]: http://wireless.kernel.org/en/users/Documentation/hostapd
 [yocto-duovero]: http://www.jumpnowtek.com/gumstix/duovero/Duovero-Systems-with-Yocto.html
-[meta-duovero]: https://github.com/jumpnow/meta-duovero/tree/dora
+[meta-duovero]: https://github.com/jumpnow/meta-duovero/tree/dizzy
 [linux-wireless]: http://comments.gmane.org/gmane.linux.kernel.wireless.general/92215
 [cgit-hostap]: http://w1.fi/cgit/hostap/
 [a6cc060]: http://w1.fi/cgit/hostap/commit/?id=a6cc0602dd62f4b2ea02556ddcfd6baf9cd6289d
-[hostapd-patch]: https://github.com/jumpnow/meta-duovero/tree/dora/recipes-connectivity/hostapd
-[console-image]: https://github.com/jumpnow/meta-duovero/blob/dora/images/console-image.bb
-[duovero-binaries]: http://jumpnowtek.com/downloads/duovero/
+[hostapd-patch]: https://github.com/jumpnow/meta-duovero/tree/dizzy/recipes-connectivity/hostapd
+[console-image]: https://github.com/jumpnow/meta-duovero/blob/dizzy/images/console-image.bb
+[duovero-binaries]: http://jumpnowtek.com/downloads/duovero/dizzy
 [hostapd-conf]: http://hostap.epitest.fi/cgit/hostap/plain/hostapd/hostapd.conf
 [wireless-isolation]: http://www.wirelessisolation.com/
 [meta-gumstix]: https://github.com/gumstix/meta-gumstix
