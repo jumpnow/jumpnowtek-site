@@ -141,8 +141,8 @@ Those output lines
 
 are just first arg == 110, second arg == 0, etc... They are not saying anything useful to anyone but the developer of the app. Fortunately with a BSD system, that's not a big deal. 
 
-1. cd `/usr/src/usr.sbin/gpioctl/gpioctl.c`
-2. Edit `/usr/src/usr.sbin/gpioctl/gpioctl.c`
+    # cd `/usr/src/usr.sbin/gpioctl`
+    # edit `gpioctl.c`
 
     --- gpioctl.c-orig      2014-11-23 13:35:17.000000000 +0000
     +++ gpioctl.c   2014-11-23 13:35:36.000000000 +0000
@@ -153,11 +153,11 @@ are just first arg == 110, second arg == 0, etc... They are not saying anything 
     -       for (i = 0; i < argc; i++)
     -               printf("%d/%s\n", i, argv[i]);
     
-            if (ctlfile == NULL)
-                    ctlfile = defctlfile;
+           if (ctlfile == NULL)
+                  ctlfile = defctlfile;
 
-3. env MAKEOBJDIR=/usr/obj make
-4. env MAKEOBJDIR=/usr/obj make install
+    # env MAKEOBJDIR=/usr/obj make
+    # env MAKEOBJDIR=/usr/obj make install
 
 Now running *gpioctl* to change values looks like this
 
