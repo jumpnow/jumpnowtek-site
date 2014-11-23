@@ -141,8 +141,8 @@ Those output lines
 
 are just first arg == 110, second arg == 0, etc... They are not saying anything useful to anyone but the developer of the app. Fortunately with a BSD system, that's not a big deal. 
 
-    # cd `/usr/src/usr.sbin/gpioctl`
-    # edit `gpioctl.c`
+    # cd /usr/src/usr.sbin/gpioctl
+    # vi gpioctl.c
 
     --- gpioctl.c-orig      2014-11-23 13:35:17.000000000 +0000
     +++ gpioctl.c   2014-11-23 13:35:36.000000000 +0000
