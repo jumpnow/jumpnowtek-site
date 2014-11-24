@@ -22,8 +22,7 @@ When you provide a speed, the FreeBSD driver will try to find the speed you aske
 
 Currently I have not been successful getting `1 MHz` to work, even with the *EEPROM* described below.
 
-But the `100 kHz` and `400 kHz` speeds are working well on the two different devices I have tried. Those two speeds cover all of the *I2C* devices I have worked with.
-
+But the `100 kHz` and `400 kHz` speeds are working well on the two different devices I have tried. Those are the common speeds used with *I2C* so this is a good improvement.
 
 You can change the *I2C* bus speed three different ways
 
