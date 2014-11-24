@@ -123,14 +123,16 @@ After connecting **gpio_127** and **gpio_112**
     root@duovero:~ # gpioctl 127
     0
 
-Using *gpioctl* would work fine in a script. Working with *GPIO* from within a C program is more typical for me.
+Using *gpioctl* would work fine in a script.
 
 #### C Programming
 
-The *gpioctl* source code provides a good example of all the features provided by the [gpio(4)][gpiobus] driver. But because I like to test these things myself, here is an ever simpler piece of code that only does *GPIO* reads and writes - [fbsd-gpio][fbsd-gpio].
+Working with *GPIO* from within a C program is more typical for me.
+
+The *gpioctl* source code provides a good example of all the features provided by the [gpio(4)][gpiobus] driver. But because I like to test these things myself, here is an simpler piece of code that only does *GPIO* reads and writes - [fbsd-gpio][fbsd-gpio].
  
 
-#### Changing gpioctl
+#### A less chatty gpioctl
 
 The output of *gpioctl* breaks the traditional UNIX [rule of silence][rule-of-silence] when it is successful. 
 
@@ -139,7 +141,11 @@ Those output lines
     0/110
     1/0
 
-are just first arg == 110, second arg == 0, etc... They are not saying anything useful to anyone but the developer of the app. Fortunately with a BSD system, that's not a big deal. 
+are just first arg == 110, second arg == 0, etc... 
+
+They are not saying anything useful to anyone but a developer working on *gpioctl* .
+
+Fortunately on a BSD system (with src installed), that's not a big deal. 
 
     # cd /usr/src/usr.sbin/gpioctl
     # vi gpioctl.c
@@ -168,7 +174,7 @@ Now running *gpioctl* to change values looks like this
     root@duovero:~ # gpioctl 110
     1
 
-
+I did submit a [bug][gpioctl-bug] about this.
 
 [duovero]: https://store.gumstix.com/index.php/category/43/
 [parlor]: https://store.gumstix.com/index.php/products/287/
@@ -177,3 +183,4 @@ Now running *gpioctl* to change values looks like this
 [gpiobus]: http://www.freebsd.org/cgi/man.cgi?query=gpio&apropos=0&sektion=0&manpath=FreeBSD+11-current&arch=default&format=html
 [fbsd-gpio]: https://github.com/scottellis/fbsd-gpio
 [rule-of-silence]: http://www.catb.org/~esr/writings/taouu/taouu.html#rule-silence
+[gpioctl-bug]: https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=195330
