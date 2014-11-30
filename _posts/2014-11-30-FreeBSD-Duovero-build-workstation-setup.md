@@ -177,7 +177,7 @@ As root
 
     root@fbsd:/usr/home/scott/crochet-freebsd # ./crochet.sh -c config-duovero.sh
 
-And example of the full build output is [here][crochet-build].
+And example of a full build output is [here][crochet-build].
 
 When it's done, you'll have an image you can [dd(1)][dd] to an SD card under `WORKDIR`. 
 
