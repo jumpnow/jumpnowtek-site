@@ -47,6 +47,8 @@ The FreeBSD arm code is progressing rapidly, so you'll want to update regularly
     scott@fbsd:~ % cd ~/src-current
 	scott@fbsd:~/src-current % svn up
 
+You probably want to delete the contents of *WORKDIR* (described below) and do a full rebuild when you update this.
+
 ### Fetch the Duovero changes
 
 I'm keeping the Duovero changes to the FreeBSD source in a repository [here][duovero-freebsd]
@@ -99,6 +101,7 @@ As root, run the following to build the FreeBSD arm cross-dev tools
 
     root@fbsd:/usr/src # make XDEV=arm XDEV_ARCH=armv6 WITH_GCC=1 WITH_GCC_BOOTSTRAP=1 WITHOUT_CLANG=1 WITHOUT_CLANG_BOOTSTRAP=1 WITHOUT_CLANG_IS_CC=1 WITHOUT_TESTS=1 xdev
 
+That's a onetime process.
 
 ### Tmpfs work directory (optional)
 
