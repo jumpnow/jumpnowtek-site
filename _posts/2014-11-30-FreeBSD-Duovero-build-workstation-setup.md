@@ -9,10 +9,9 @@ tags: [freebsd, gumstix, duovero, crochet]
 
 I'm still pretty new to this (cut my teeth on `10.1 RC3`), but here's how I've been setting up my FreeBSD workstations for building [Gumstix Duovero][duovero] images using [crochet-freebsd][crochet].
 
-The process works pretty well though I'm sure I'll fine-tune it as I gain some experience. 
+The faster of the two workstations I'm using can build a *Duovero* image from scratch in about 21 minutes. The slower machine takes about 30 minutes.
 
-The faster of the two workstations can build a *Duovero* image from scratch in under 21 minutes. The slightly slower machine takes around 30 minutes.
-
+I'm pretty happy with the process so far. It's quick enough. No doubt I'll be fine-tuning bits and pieces as I use it more. 
 
 ### Workstation Install
 
@@ -22,13 +21,13 @@ I installed from a USB drive using a *amd64-memstick* image from the [FreeBSD ft
 
 Make sure you select *install src* and *enable sshd* when prompted. You also want to add a normal user.
 
-After installation and setting up the network, I add the following packages with [pkg(7)][pkg]
+After installation and setting up the network, I add the following binary packages with [pkg(7)][pkg]
 
 * subversion (for CURRENT source)
-* git (for crochet-freebsd)
+* git (for crochet-freebsd and duovero-freebsd)
 * gmake (for u-boot builds)
 * gsed (for u-boot builds)
-* kermit (the terminal program I'm most used to, choose any you want)
+* kermit (the terminal program I'm most used to, choose any you want from the ports)
 
 
 I do everything on the workstations through *ssh* sessions.
@@ -37,11 +36,13 @@ I do everything on the workstations through *ssh* sessions.
 
 The workstations run `10.1 RELEASE`, but I'm using `11.0 CURRENT` source for the *Duoveros*.
 
-I'm keeping the `CURRENT` source in my home directory. Fetch it like this.
+I'm keeping the `CURRENT` source in my home directory. 
+
+Fetch it like this.
 
     scott@fbsd:~ % svn co https://svn0.us-east.freebsd.org/base/head ~/src-current
 
-The FreeBSD arm code is progressing rapidly, so you'll want to periodically update
+The FreeBSD arm code is progressing rapidly, so you'll want to update regularly
 
     scott@fbsd:~ % cd ~/src-current
 	scott@fbsd:~/src-current % svn up
@@ -59,6 +60,12 @@ Run the *copy\_to\_src.sh* script to update `~/src-current`.
     scott@fbsd:~ % cd duovero-freebsd
     scott@fbsd:~/duovero-freebsd % ./copy_to_src.sh
   
+You'll also want to update this regularly if you want to follow my stuff.
+
+    scott@fbsd:~/duovero-freebsd % git pull
+
+And then run the *copy\_to\_src.sh* script again.
+
 ### Crochet setup
 
 I have a branch of *crochet-freebsd* with support for the *Duovero* board here [github.com/scottellis/crochet-freebsd][crochet-scottellis].
@@ -67,6 +74,7 @@ Clone it with *git*. You want the `[duovero]` branch.
 
     scott@fbsd:~ % git clone -b duovero git@github.com:scottellis/crochet-freebsd.git
 
+Again, update regularly.
 
 ### Fetch the u-boot source code
 
@@ -79,6 +87,9 @@ Unpack u-boot in the *crochet-freebsd* directory
     scott@fbsd:~ % cd crochet-freebsd
     scott@fbsd:~/crochet-freebsd % tar xf ../u-boot-2014.10.tar.bz2
 
+That's a onetime process unless the u-boot patches in `crochet-freebsd/board/Duovero/files` change.
+
+If so, delete the `~/crochet-freebsd/u-boot-2014.10/` directory and untar it again.
 
 ### Building xdev tools
 
@@ -91,7 +102,7 @@ As root, run the following to build the FreeBSD arm cross-dev tools
 
 ### Tmpfs work directory (optional)
 
-*Crochet* uses a *work* directory for temporary files when it does a build. Since I have enough memory on these build workstations and since I'm not using it for anything else, I use a memory based [tmpfs(5)][tmpfs] file system for the *work* directory.
+*Crochet* uses a *work* directory for temporary files when it does a build. Since I have enough memory on these build workstations and since I'm not using them for anything else, I use a memory based [tmpfs(5)][tmpfs] file system for the *work* directory.
 
 If you want to do the same, as root edit `/etc/fstab` and add a line like this
 
@@ -119,7 +130,7 @@ If you don't do this, the default *work* directory will be `~/crochet-freebsd/wo
 
 ### Adjust the config-duovero.sh script
 
-Here's what my default config-duovero.sh script looks like.
+Here's what my default *config-duovero.sh* script looks like.
 
     scott@fbsd:~/dev/crochet-freebsd % cat config-duovero.sh
     board_setup Duovero
@@ -166,6 +177,8 @@ As root
 
     root@fbsd:/usr/home/scott/crochet-freebsd # ./crochet.sh -c config-duovero.sh
 
+And example of the full build output is [here][crochet-build].
+
 When it's done, you'll have an image you can [dd(1)][dd] to an SD card under `WORKDIR`. 
 
 If you used a *tmpfs*, then be sure to copy the image somewhere permanent or you'll lose it on reboot.
@@ -191,3 +204,4 @@ The default `4GB` image size comes from `crochet-freebsd/board/Duovero/setup.sh`
 [duovero-freebsd]: https://github.com/scottellis/duovero-freebsd
 [tmpfs]: http://www.freebsd.org/cgi/man.cgi?query=tmpfs&apropos=0&sektion=0&manpath=FreeBSD+10.1-RELEASE&arch=default&format=html
 [dd]: http://www.freebsd.org/cgi/man.cgi?query=dd&apropos=0&sektion=0&manpath=FreeBSD+10.1-RELEASE&arch=default&format=html
+[crochet-build]: https://gist.github.com/scottellis/7cae83fe9584cd5f157a
