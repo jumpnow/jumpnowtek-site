@@ -11,7 +11,7 @@ Just a quick post.
 
 With `/usr/src` populated (*option UsrSrc* in crochet), rebuilding a kernel on the Duovero is very easy.
 
-The first build takes awhile, approximately **36** minutes for me [Note 1](*note-1)
+The first build takes awhile, approximately **36** minutes for me (Note 1).
 
     root@duovero:/usr/src # make buildkernel KERNCONF=DUOVERO
 
@@ -38,13 +38,13 @@ Installing the new kernel takes about **5** seconds
 
     root@duovero:/usr/src # make installkernel KERNCONF=DUOVERO
 
-And then power cycle the board [Note 2](*note-2).
+And then power cycle the board (Note 2).
 
 Coming from Linux and Yocto built systems, this is all very slick.
 
 ### Note 1
 
-I'm using some faster then most SanDisk Extreme 16GB UHS-I/U3 Micro SDHC Memory Cards. They cost around $16 from Amazon. They are worth it.
+I'm using SanDisk Extreme 16GB UHS-I/U3 Micro SDHC Memory Cards. They cost around $16 from Amazon. They are worth it.
 
 
 ### Note 2
