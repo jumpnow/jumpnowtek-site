@@ -20,9 +20,9 @@ The code tries to support 3 different speeds: `100 kHz`, `400 kHz` and `1 MHz`.
 
 When you provide a speed, the FreeBSD driver will try to find the speed you asked for or the next highest speed below what you asked for.
 
-Currently I have not been successful getting `1 MHz` to work, even with the *EEPROM* described below.
+Currently I have not been successful getting `1 MHz` to work with the in-tree source code. I've submitted my failed test results in this [bug report][i2c-bug] along with some alternative timing dividers that do work for me if you really need a `1 MHz` speed. No response from the FreeBSD developers on getting this committed though.
 
-But the `100 kHz` and `400 kHz` speeds are working well on the two different devices I have tried. Those are the common speeds used with *I2C* so this is a good improvement.
+The `100 kHz` and `400 kHz` speeds are working just fine on the two different devices I have tried. Those are the common speeds used with *I2C* so this is a good improvement.
 
 You can change the *I2C* bus speed three different ways
 
@@ -30,7 +30,25 @@ You can change the *I2C* bus speed three different ways
 2. Using [sysctl(8)][sysctl]
 3. Using a [loader.conf(5)][loader-conf] file
 
-An example using a dts file can be found in this [duovero.dts][duovero-dts]. The `<clock-frequency>` property was the new addition to the available *i2c* properties. 
+### 1. Device Tree File
+An example using a dts file can be found in this [duovero.dts][duovero-dts]. 
+
+Here is an excerpt for one of the buses
+
+    ...
+    i2c2: i2c@48072000 { 
+            compatible = "ti,i2c"; 
+            reg = <	0x48072000 0x100 >; 
+            interrupts = <89>; 
+            interrupt-parent = <&GIC>; 
+            i2c-device-id = <2>; 
+            clock-frequency = <400000>; 
+    }; 
+    ...
+
+`clock-frequency` was the new addition to the *i2c* properties. 
+
+### 2. sysctl
 
 The *sysctl* option is probably the most convenient method for development.
 
@@ -58,16 +76,17 @@ Then you have to **reset** the bus using the [i2c(8)][i2c] utility for it to tak
     root@duovero:~ # i2c -r -f /dev/iic2
     Resetting I2C controller on /dev/iic2: OK
 
+### 3. loader.conf
 
-Given those two methods, there doesn't seem much need for the *loader.conf* approach when using a *Duovero*, but this is how you could use it.
+Given those two methods, there doesn't seem much need for the [loader.conf(5)][loader-conf] approach. By default, the *loader.conf* framework is not even used on most FreeBSD ARM boards. It adds significantly to the boot time. 
 
-On the systems I've been building with *crochet*, the [loader(8)][loader] program is not used.
+But if you really want to, this is how you could use it.
 
-You can enable it by adding a `/boot/loader.rc` file. You can use the example `/boot/loader.rc.sample`.
+Enable *loader.conf* functionality by adding a `/boot/loader.rc` file. You can use the example `/boot/loader.rc.sample`.
 
     root@duovero:~ # cp /boot/loader.rc.sample /boot/loader.rc
 
-Then add a [loader.conf(5)][loader-conf] that contains the new i2c bus speed you want. Make sure the value has double-quotes around it.
+Then add a `/boot/loader.conf` file that contains the new i2c bus speed you want. Make sure the value has double-quotes around it.
 
     root@duovero:~ # cat /boot/loader.conf
     dev.iicbus.2.frequency="400000"
@@ -89,3 +108,4 @@ I wrote a small utility [duovero-eeprom][duovero-eeprom] that lets you read and 
 [loader]: http://www.freebsd.org/cgi/man.cgi?query=loader&apropos=0&sektion=0&manpath=FreeBSD+11-current&arch=default&format=html
 [loader-conf]: http://www.freebsd.org/cgi/man.cgi?query=loader.conf&apropos=0&sektion=0&manpath=FreeBSD+11-current&arch=default&format=html
 [duovero-eeprom]: https://github.com/scottellis/duovero-eeprom
+[i2c-bug]: http://freebsd.1045724.n5.nabble.com/Bug-195009-New-patch-arm-Use-400-kHz-as-the-default-OMAP4-I2C-bus-speed-td5965161.html
