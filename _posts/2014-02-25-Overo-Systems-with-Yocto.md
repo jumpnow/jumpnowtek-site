@@ -3,7 +3,7 @@ layout: post
 title: Building Overo Systems with Yocto
 description: "Building customized systems for Gumstix Overo using tools from the Yocto Project"
 date: 2014-11-01 11:46:00
-categories: gumstix overo
+categories: yocto 
 tags: [linux, gumstix, overo, yocto]
 ---
 

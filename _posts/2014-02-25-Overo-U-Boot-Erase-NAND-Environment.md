@@ -3,7 +3,7 @@ layout: post
 title: Erasing the Overo U-Boot Environment
 description: "Erasing the Overo U-Boot environment from NAND"
 date: 2014-02-25 09:30:00
-categories: gumstix overo
+categories: gumstix-linux
 tags: [linux, gumstix, overo, u-boot]
 ---
 

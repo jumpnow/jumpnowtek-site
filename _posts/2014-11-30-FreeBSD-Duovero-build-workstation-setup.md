@@ -3,7 +3,7 @@ layout: post
 title: FreeBSD Duovero build workstation setup
 description: "Custom crochet configuration for building FreeBSD Duovero systems"
 date: 2014-11-25 02:00:00
-categories: freebsd
+categories: gumstix-freebsd
 tags: [freebsd, gumstix, duovero, crochet]
 ---
 

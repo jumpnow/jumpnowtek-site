@@ -3,7 +3,7 @@ layout: post
 title: Overo Kernel Development - Simple patching
 description: "Applying a simple patch to the Overo Linux kernel"
 date: 2014-09-05 04:30:00
-categories: overo
+categories: gumstix-linux 
 tags: [overo, linux, yocto, kernel development]
 ---
 

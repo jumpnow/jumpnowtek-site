@@ -3,7 +3,7 @@ layout: post
 title: FreeBSD Duovero I2C - Changing bus speeds
 description: "Continued I2C explorations on a FreeBSD Duovero system"
 date: 2014-11-18 15:00:00
-categories: freebsd
+categories: gumstix-freebsd
 tags: [freebsd, gumstix, duovero, i2c, eeprom]
 ---
 

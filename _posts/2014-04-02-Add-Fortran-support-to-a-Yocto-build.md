@@ -3,7 +3,7 @@ layout: post
 title: Adding Fortran support to a Yocto build
 description: "Adding the Fortran compiler and runtime support to a Yocto build"
 date: 2014-04-02 09:43:00
-categories: linux yocto
+categories: yocto
 tags: [linux, yocto, fortran]
 ---
 

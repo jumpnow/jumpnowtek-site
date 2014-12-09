@@ -3,7 +3,7 @@ layout: post
 title: More FreeBSD on the Gumstix Duovero
 description: "More FreeBSD on a Gumstix Duovero"
 date: 2014-11-05 06:30:00
-categories: freebsd
+categories: gumstix-freebsd
 tags: [freebsd, gumstix, duovero]
 ---
 

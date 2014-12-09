@@ -2,7 +2,7 @@
 layout: post
 title: Adding Go language support to a Yocto build
 date: 2014-10-20 16:26:00
-categories: linux yocto golang
+categories: yocto
 tags: [linux, yocto, golang]
 ---
 

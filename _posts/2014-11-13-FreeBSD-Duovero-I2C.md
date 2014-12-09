@@ -3,7 +3,7 @@ layout: post
 title: FreeBSD Duovero I2C
 description: "Working with I2C on a FreeBSD Duovero system"
 date: 2014-11-13 14:17:00
-categories: freebsd
+categories: gumstix-freebsd
 tags: [freebsd, gumstix, duovero, i2c]
 ---
 

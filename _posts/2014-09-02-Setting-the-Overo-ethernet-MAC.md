@@ -3,7 +3,7 @@ layout: post
 title: Setting the Overo Ethernet MAC
 description: "Using ethtool to set the Overo ethernet MAC"
 date: 2014-09-02 09:30:00
-categories: gumstix overo
+categories: gumstix-linux
 tags: [linux, gumstix, overo, ethtool]
 ---
 

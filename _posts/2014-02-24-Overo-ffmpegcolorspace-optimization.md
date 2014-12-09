@@ -2,7 +2,7 @@
 layout: post
 title: Optimizing GStreamer ffmpegcolorspace for Gumstix webcams
 date: 2014-01-14 20:44:00
-categories: gumstix overo
+categories: gumstix-linux
 tags: [gumstix, overo, gstreamerl webcams, ffmpegcolorspace]
 ---
 

@@ -3,7 +3,7 @@ layout: post
 title: Duovero Real-time Clock
 description: "Working with the Duovero battery backed RTC"
 date: 2014-02-23 08:49:00
-categories: gumstix duovero
+categories: gumstix-linux
 tags: [linux, gumstix, duovero, rtc]
 ---
 

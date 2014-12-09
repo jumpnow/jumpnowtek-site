@@ -3,7 +3,7 @@ layout: post
 title: Building Wandboard Systems with Yocto
 description: "Building customized systems for Wandboards using tools from the Yocto Project"
 date: 2014-02-28 02:07:00
-categories: wandboard
+categories: yocto 
 tags: [linux, wandboard, yocto]
 ---
 

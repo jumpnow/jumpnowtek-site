@@ -3,7 +3,7 @@ layout: post
 title: FreeBSD Duovero Kernel Development
 description: "Rebuilding a FreeBSD kernel on the Duovero"
 date: 2014-12-02 07:15:00
-categories: freebsd
+categories: gumstix-freebsd
 tags: [freebsd, gumstix, duovero, kernel]
 ---
 

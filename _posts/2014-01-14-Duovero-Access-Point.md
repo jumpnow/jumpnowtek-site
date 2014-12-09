@@ -2,7 +2,7 @@
 layout: post
 title: Duovero Access Point
 date: 2014-01-14 20:44:00
-categories: gumstix duovero
+categories: gumstix-linux
 tags: [gumstix, duovero, linux, wifi, access point, hostap]
 ---
 

@@ -3,7 +3,7 @@ layout: post
 title: FreeBSD Duovero Serial Ports
 description: "Working with serial ports on a FreeBSD Duovero system"
 date: 2014-11-09 09:00:00
-categories: freebsd
+categories: gumstix-freebsd
 tags: [freebsd, gumstix, duovero, serial, uart]
 ---
 

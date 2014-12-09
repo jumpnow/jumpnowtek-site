@@ -3,7 +3,7 @@ layout: post
 title: Building Duovero Systems with Yocto
 description: "Building customized systems for Gumstix Duovero using tools from the Yocto Project"
 date: 2014-11-01 16:28:00
-categories: gumstix duovero
+categories: yocto 
 tags: [linux, gumstix, duovero, yocto]
 ---
 

@@ -3,7 +3,7 @@ layout: post
 title: FreeBSD Duovero GPIO
 description: "Working with GPIO on a FreeBSD Duovero system"
 date: 2014-11-23 07:00:00
-categories: freebsd
+categories: gumstix-freebsd
 tags: [freebsd, gumstix, duovero, gpio]
 ---
 

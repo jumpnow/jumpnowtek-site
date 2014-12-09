@@ -3,7 +3,7 @@ layout: post
 title: FreeBSD Duovero USB Wireless
 description: "Enabling drivers for USB wireless on a FreeBSD Duovero system"
 date: 2014-11-11 12:35:00
-categories: freebsd
+categories: gumstix-freebsd
 tags: [freebsd, gumstix, duovero, usb, wireless]
 ---
 
