@@ -13,9 +13,9 @@ There is no `X11` and no desktop installed on any of these systems. The `embedde
 
 The Linux kernel version is `3.10.17`.
 
-The Yocto version is `1.6.1` the `[daisy]` branch.
+The Yocto version is `1.7.0` the `[dizzy]` branch.
 
-`sysvinit` is used for the init system, not `systemd`.
+`sysvinit` is used for the init system.
 
 ### Ubuntu Packages
 
@@ -45,12 +45,12 @@ Choose bash when prompted.
 
 The main Yocto project `poky` repository
 
-    scott@hex:~ git clone -b daisy git://git.yoctoproject.org/poky.git poky-daisy
+    scott@hex:~ git clone -b dizzy git://git.yoctoproject.org/poky.git poky-dizzy
 
 The `meta-openembedded` repository
 
-    scott@hex:~$ cd ~/poky-daisy
-    scott@hex:~/poky-daisy$ git clone -b daisy git://git.openembedded.org/meta-openembedded
+    scott@hex:~$ cd ~/poky-dizzy
+    scott@hex:~/poky-dizzy$ git clone -b dizzy git://git.openembedded.org/meta-openembedded
 
 I like to keep the *wandboard (Freescale)* only repos in a separate sub-directory.
 
@@ -59,15 +59,15 @@ I like to keep the *wandboard (Freescale)* only repos in a separate sub-director
   
 The `meta-fsl-arm` repository
 
-    scott@hex:~/wandboard$ git clone -b daisy git://github.com/Freescale/meta-fsl-arm
+    scott@hex:~/wandboard$ git clone -b dizzy git://github.com/Freescale/meta-fsl-arm
 
 The `meta-fsl-arm-extra` repository
 
-    scott@hex:~/wandboard$ git clone -b daisy git://github.com/Freescale/meta-fsl-arm-extra
+    scott@hex:~/wandboard$ git clone -b dizzy git://github.com/Freescale/meta-fsl-arm-extra
 
 My `meta-wandboard` repository
 
-    scott@hex:~/wandboard$ git clone -b daisy git://github.com/jumpnow/meta-wandboard
+    scott@hex:~/wandboard$ git clone -b dizzy git://github.com/jumpnow/meta-wandboard
 
 
 The `meta-wandboard/README.md` file has the last commits from the dependency repositories that I tested. You can always checkout those commits explicitly if you run into problems.
@@ -78,7 +78,7 @@ Much of the following are only the conventions that I use. All of the paths to t
  
 First setup a build directory. I tend to do this on a per board and/or per project basis so I can quickly switch between projects. For this example I'll put the build directory under `~/wandboard/` with the `meta-wandboard` layer.
 
-    scott@hex:~$ source poky-daisy/oe-init-build-env ~/wandboard/build
+    scott@hex:~$ source poky-dizzy/oe-init-build-env ~/wandboard/build
 
 You always need this command to setup the environment before using `bitbake`. If you only have one build environment, you can put it in your `~/.bashrc`. I work on more then one system so tend to always run it manually.
  
@@ -124,7 +124,7 @@ This is where temporary build files and the final build binaries will end up. Ex
 
 The default location if left commented will be `~/wandboard/build/tmp`. If I'm not working in a VM, I usually put the `TMPDIR` on dedicated partitions. Occasionally something will come up where you'll need to delete the entire `TMPDIR`. For those occasions the sequence unmount/mkfs/remount is much faster then deleting a 35+ GB directory. 
 
-If you specify an alternate location as I do in the example conf file make sure the directory is writable by the user running the build. Also because of some `rpath` issues with gcc, the `TMPDIR` path cannot be too short or the gcc build will fail. I haven't determined exactly how short is too short, but something like `/oe20` is too short and `/oe20/tmp-poky-daisy-build` is long enough.
+If you specify an alternate location as I do in the example conf file make sure the directory is writable by the user running the build. Also because of some `rpath` issues with gcc, the `TMPDIR` path cannot be too short or the gcc build will fail. I haven't determined exactly how short is too short, but something like `/oe8` is too short and `/oe8/tmp-poky-dizzy-build` is long enough.
 
 If you use the default location, the `TMPDIR` path is already long enough.
      
@@ -145,7 +145,7 @@ The default location is `~/wandboard/build/sstate-cache`.
 
 You need to source the environment every time you want to run a build. The `oe-init-build-env` when run a second time will not overwrite your customized conf files.
 
-    scott@hex:~$ cd ~/poky-daisy
+    scott@hex:~$ cd ~/poky-dizzy
     scott@hex:~$ source oe-init-build-env ~/wandboard/build
 
     ### Shell environment set up for builds. ###
@@ -184,7 +184,7 @@ A basic console developer image. See the recipe for specifics, but some of the i
 
 #### qte-image
 
-This image includes the `console-image` and adds Qt 4.8.5 embedded with the associated development headers and qmake.
+This image includes the `console-image` and adds Qt 4.8.6 embedded with the associated development headers and qmake.
 
 This image also includes the [SyntroCore][syntrocore] and [SyntroLCam][syntrolcam] binaries as well as the headers and libraries for doing `Syntro` development directly on the wandboard.
 
@@ -241,11 +241,11 @@ This script needs to know the `TMPDIR` to find the binaries. It looks for an env
 
 For instance, if I had this in the `local.conf`
 
-    TMPDIR = "/oe20/tmp-poky-daisy-build"
+    TMPDIR = "/oe8/tmp-poky-dizzy-build"
 
 Then I would export this environment variable before running `copy_boot.sh`
 
-    scott@hex:~/wandboard/meta-wandboard/scripts$ export OETMP=/oe20/tmp-poky-daisy-build
+    scott@hex:~/wandboard/meta-wandboard/scripts$ export OETMP=/oe8/tmp-poky-dizzy-build
 
 Then run the `copy_boot.sh` script passing the location of SD card
 
@@ -273,7 +273,7 @@ Here's a realistic example session where I want to copy already built images to 
 
     scott@hex:~$ sudo umount /dev/sdc1
     scott@hex:~$ sudo umount /dev/sdc2
-    scott@hex:~$ export OETMP=/oe20/tmp-poky-daisy-build
+    scott@hex:~$ export OETMP=/oe8/tmp-poky-dizzy-build
     scott@hex:~$ cd wandboard/meta-wandboard/scripts
     scott@hex:~/wandboard/meta-wandboard/scripts$ ./copy_boot.sh sdc
     scott@hex:~/wandboard/meta-wandboard/scripts$ ./copy_rootfs.sh sdc console wandq2
@@ -281,6 +281,6 @@ Here's a realistic example session where I want to copy already built images to 
 
 [wandboard]: http://www.wandboard.org/
 [wandboard-github]: https://github.com/wandboard-org
-[linux-wandboard-recipe]: https://github.com/Freescale/meta-fsl-arm-extra/blob/daisy/recipes-kernel/linux/linux-wandboard_3.10.17.bb
+[linux-wandboard-recipe]: https://github.com/Freescale/meta-fsl-arm-extra/blob/dizzy/recipes-kernel/linux/linux-wandboard_3.10.17.bb
 [syntrocore]: https://github.com/Syntro/SyntroCore
 [syntrolcam]: https://github.com/Syntro/SyntroLCam
