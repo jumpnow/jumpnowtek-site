@@ -42,12 +42,14 @@ Fetch it like this.
 
     scott@fbsd:~ % svn co https://svn0.us-east.freebsd.org/base/head ~/src-current
 
-The FreeBSD arm code is progressing rapidly, so you'll want to update regularly
+The FreeBSD arm code is progressing rapidly. The recent compiler upgrade Clang 3.4 to 3.5 on 2014-12-31 broke the cross-build for arm when using crochet and the **xdev** toolchain.
+
+Until this gets worked out (or I start building without crochet), I'm freezing at the last revision that works like this
 
     scott@fbsd:~ % cd ~/src-current
-	scott@fbsd:~/src-current % svn up
+	scott@fbsd:~/src-current % svn up -r276477
 
-You probably want to delete the contents of *WORKDIR* (described below) and do a full rebuild when you update this.
+**r276477** was also a 2014-12-31 commit. So it's not that old.
 
 ### Fetch the Duovero changes
 
@@ -61,12 +63,8 @@ Run the *copy\_to\_src.sh* script to update `~/src-current`.
 
     scott@fbsd:~ % cd duovero-freebsd
     scott@fbsd:~/duovero-freebsd % ./copy_to_src.sh
-  
-You'll also want to update this regularly if you want to follow my stuff.
 
-    scott@fbsd:~/duovero-freebsd % git pull
-
-And then run the *copy\_to\_src.sh* script again.
+The copy script applies some patches that I'm trying to get accepted into the FreeBSD tree.
 
 ### Crochet setup
 
@@ -76,7 +74,6 @@ Clone it with *git*. You want the `[duovero]` branch.
 
     scott@fbsd:~ % git clone -b duovero git@github.com:scottellis/crochet-freebsd.git
 
-Again, update regularly.
 
 ### Fetch the u-boot source code
 
