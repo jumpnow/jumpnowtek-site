@@ -7,53 +7,43 @@ categories: gumstix-freebsd
 tags: [freebsd, gumstix, duovero, crochet]
 ---
 
-I'm still pretty new to this (cut my teeth on `10.1 RC3`), but here's how I've been setting up my FreeBSD workstations for building [Gumstix Duovero][duovero] images using [crochet-freebsd][crochet].
+Here's how I've been setting up my FreeBSD workstations for building [Gumstix Duovero][duovero] FreeBSD systems.
+
+I'm using [crochet-freebsd][crochet] to do the heavy lifting.
 
 The faster of the two workstations I'm using can build a *Duovero* image from scratch in about 21 minutes. The slower machine takes about 30 minutes.
 
-I'm pretty happy with the process so far. It's quick enough. No doubt I'll be fine-tuning bits and pieces as I use it more. 
-
 ### Workstation Install
 
-The workstations are dedicated to this purpose, no VM. 
+I'm running *CURRENT* on the build workstations since the switch to the new *3.5 Clang* compiler. There is some new code for ARM boards that requires this version of *Clang* which is the default in *CURRENT*.
 
 I installed from a USB drive using a *amd64-memstick* image from the [FreeBSD ftp site][freebsd-download].
 
-Make sure you select *install src* and *enable sshd* when prompted. You also want to add a normal user.
+Select *enable sshd* when prompted. You'll also want to add a normal user.
 
-After installation and setting up the network, I add the following binary packages with [pkg(7)][pkg]
+After installation I built the *subversion* port so I could fetch a current `/usr/src`.
 
-* subversion (for CURRENT source)
+Then I followed the [FreeBSD Handbook][fbsd-handbook-current-stable] instructions to update the system to *FreeBSD-CURRENT*. 
+
+And finally I installed these extra ports
+
 * git (for crochet-freebsd and duovero-freebsd)
-* gmake (for u-boot builds)
-* gsed (for u-boot builds)
 * kermit (the terminal program I'm most used to, choose any you want from the ports)
 
-
-I do everything on the workstations through *ssh* sessions.
+I'm doing everything on the workstations through *ssh* sessions, so I don't need much installed.
 
 ### Fetch the FreeBSD source
 
-The workstations run `10.1 RELEASE`, but I'm using `11.0 CURRENT` source for the *Duoveros*.
+I keep another copy of `CURRENT` source in my home directory that I patch up for the *Duovero* systems.  
 
-I'm keeping the `CURRENT` source in my home directory. 
-
-Fetch it like this.
+Fetch a copy like this
 
     scott@fbsd:~ % svn co https://svn0.us-east.freebsd.org/base/head ~/src-current
 
-The FreeBSD arm code is progressing rapidly. The recent compiler upgrade Clang 3.4 to 3.5 on 2014-12-31 broke the cross-build for arm when using crochet and the **xdev** toolchain.
 
-Until this gets worked out (or I start building without crochet), I'm freezing at the last revision that works like this
+### Fetch the Duovero patches
 
-    scott@fbsd:~ % cd ~/src-current
-	scott@fbsd:~/src-current % svn up -r276477
-
-**r276477** was also a 2014-12-31 commit. So it's not that old.
-
-### Fetch the Duovero changes
-
-I'm keeping the Duovero changes to the FreeBSD source in a repository [here][duovero-freebsd]
+I'm keeping the Duovero changes to the FreeBSD source in a repository [duovero-freebsd][duovero-freebsd]
 
 Clone it with *git*
 
@@ -64,7 +54,7 @@ Run the *copy\_to\_src.sh* script to update `~/src-current`.
     scott@fbsd:~ % cd duovero-freebsd
     scott@fbsd:~/duovero-freebsd % ./copy_to_src.sh
 
-The copy script applies some patches that I'm trying to get accepted into the FreeBSD tree.
+The copy script applies my patches for the *Duovero*. I'm working on getting these accepted upstream.
 
 ### Crochet setup
 
@@ -75,30 +65,29 @@ Clone it with *git*. You want the `[duovero]` branch.
     scott@fbsd:~ % git clone -b duovero git@github.com:scottellis/crochet-freebsd.git
 
 
-### Fetch the u-boot source code
+### Fetch and build the Duovero u-boot port
 
-Use ftp to download a tar ball
+FreeBSD now has *ports* for u-boot for a few ARM boards.
 
-    scott@fbsd:~ % ftp ftp://ftp.denx.de/pub/u-boot/u-boot-2014.10.tar.bz2
+I added 2 more for the *PandaBoard* and the *Duovero*.
 
-Unpack u-boot in the *crochet-freebsd* directory
+You can grab the *shar* archives [here][shar-download].
 
-    scott@fbsd:~ % cd crochet-freebsd
-    scott@fbsd:~/crochet-freebsd % tar xf ../u-boot-2014.10.tar.bz2
+As root untar them to `/usr/ports/sysutils` like this
 
-That's a onetime process unless the u-boot patches in `crochet-freebsd/board/Duovero/files` change.
+    # cd /usr/ports/sysutils
+    # sh path/to/u-boot-duovero.shar
 
-If so, delete the `~/crochet-freebsd/u-boot-2014.10/` directory and untar it again.
+That should create a new directory `/usr/ports/sysutils/u-boot-duovero`
 
-### Building xdev tools
+Build the port as normal
 
-As root, run the following to build the FreeBSD arm cross-dev tools
+    # cd /usr/ports/sysutils/u-boot-duovero
+    # make install clean
 
-    root@fbsd:~ # cd /usr/src
+The binaries will be installed in `/usr/local/share/u-boot/u-boot-duovero` which is where the *crochet* scripts will look for them.
 
-    root@fbsd:/usr/src # make XDEV=arm XDEV_ARCH=armv6 WITH_GCC=1 WITH_GCC_BOOTSTRAP=1 WITHOUT_CLANG=1 WITHOUT_CLANG_BOOTSTRAP=1 WITHOUT_CLANG_IS_CC=1 WITHOUT_TESTS=1 xdev
-
-That's a onetime process.
+Using the u-boot *port*, the *xdev* tools are no longer required when using *crochet*.
 
 ### Tmpfs work directory (optional)
 
@@ -142,9 +131,10 @@ Here's what my default *config-duovero.sh* script looks like.
     FREEBSD_BUILDKERNEL_EXTRA_ARGS="-j10"
 
     option AutoSize
-    option UsrSrc
-
-    #IMAGE_SIZE=$((1024 * 1000 * 1000))
+    
+    # uncomment these together
+    #option UsrSrc
+    #IMAGE_SIZE=$((4096 * 1000 * 1000))
 
     customize_freebsd_partition () {
         pw moduser root -V etc/ -w yes
@@ -162,7 +152,7 @@ You'll probably want to tweak the script for your build machine.
 
 The *AutoSize* option adds a script to expand the filesystem on the SD card at boot.
 
-The *UsrSrc* option installs `FREEBSD_SRC` onto the SD card as `/usr/src`.
+The *UsrSrc* option installs `FREEBSD_SRC` onto the SD card as `/usr/src`. You also need to increase the initial SD card image size if installing source.
 
 The lines in the *customize\_freebsd\_partition()* function do the following
 
@@ -179,27 +169,15 @@ As root
 
 And example of a full build output is [here][crochet-build].
 
-When it's done, you'll have an image you can [dd(1)][dd] to an SD card under `WORKDIR`. 
+When it's done, you'll have an image in `WORKDIR` that you can [dd(1)][dd] to an SD card.
 
-If you used a *tmpfs*, then be sure to copy the image somewhere permanent or you'll lose it on reboot.
-
-### Smaller image files
-
-The default images I'm building are 4GB uncompressed. That's big enough to include the source code. They compress to around *~400 MB* which is still pretty big.
-
-If you want smaller image without including a populated `/usr/src` do the following
-
-1. Comment or remove the `option UsrSrc` line in `config-duovero.sh`
-2. Uncomment the `IMAGE_SIZE` line in `config-duovero.sh` to generate a `1GB` image
-
-You don't have to do a full-rebuild. Just delete the image file from `WORKDIR` and run *crochet* again. It should only take a minute or so.
-
-The default `4GB` image size comes from `crochet-freebsd/board/Duovero/setup.sh`.
+If you used a *tmpfs* and want to save the image, then be sure to copy the image somewhere permanent or you'll lose it on reboot. I don't usually bother with this since images build so quickly.
 
 [duovero]: https://store.gumstix.com/index.php/category/43/
 [crochet]: https://github.com/kientzle/crochet-freebsd
-[freebsd-download]: ftp://ftp.freebsd.org/pub/FreeBSD/releases/ISO-IMAGES/10.1/
-[pkg]: http://www.freebsd.org/cgi/man.cgi?query=pkg&apropos=0&sektion=0&manpath=FreeBSD+10.1-RELEASE&arch=default&format=html
+[freebsd-download]: ftp://ftp.freebsd.org/pub/FreeBSD/snapshots/amd64/amd64/ISO-IMAGES/11.0/
+[fbsd-handbook-current-stable]: http://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/current-stable.html
+[shar-download]: http://jumpnowtek.com/downloads/freebsd/ports
 [crochet-scottellis]: https://github.com/scottellis/crochet-freebsd
 [duovero-freebsd]: https://github.com/scottellis/duovero-freebsd
 [tmpfs]: http://www.freebsd.org/cgi/man.cgi?query=tmpfs&apropos=0&sektion=0&manpath=FreeBSD+10.1-RELEASE&arch=default&format=html
