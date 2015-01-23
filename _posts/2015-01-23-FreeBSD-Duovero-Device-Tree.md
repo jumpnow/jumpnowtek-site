@@ -139,7 +139,7 @@ From (1), Section 17.3.2, Table 17-2
 * MA_IRQ_0 : L2_CACHE_IRQ
 
 
-The interrupt is for cache debugging on *FreeBSD*. Not found in the *Linux* cache controller node.
+The interrupt is for cache debugging on *FreeBSD*. This interrupt is not declared in the *Linux* cache controller node.
 
 Used in `sys/arm/arm/pl310.c`
 
@@ -282,7 +282,7 @@ Private timer, PPI(2) - Each Cortex-A9 processor has its own private timers that
 
 Since these are **PPI** (private, peripheral interrupts), *Linux* uses **GIC\_PPI + 13** for the Private timers. 
 
-The Global timer is not configured in [omap4.dtsi][omap4-dtsi]. Not sure if *Linux* uses it.
+The Global timer is not configured in [omap4.dtsi][omap4-dtsi]. Not sure if *Linux* uses the Global timer.
 
 ### SDMA
 
@@ -319,7 +319,7 @@ The *FreeBSD* values are still using the flat IRQ address space. In *Linux* the 
 * GIC\_SPI + 14
 * GIC\_SPI + 15
  
-So you get
+which results in
 
     interrupts = <44 45 46 47>
 
@@ -368,7 +368,7 @@ From (1), Section 17.3.2, Table 17-2
 * MA_IRQ_33 : GPIO5_MPU_IRQ
 * MA_IRQ_34 : GPIO6_MPU_IRQ
  
-So you get
+which results in
 
     interrupts = <61 62 63 64 65 66>;
 
@@ -426,6 +426,7 @@ From (1), Section 17.3.2, Table 17-2
 
 * MA_IRQ_74 : UART3_IRQ
  
+which results in
 
     interrupts = <106>
 
@@ -509,6 +510,7 @@ From (1), Table 17-2
 
 * MA_IRQ_83 : MMC1_IRQ
 
+which results in
 
     interrupts = <115>
 
