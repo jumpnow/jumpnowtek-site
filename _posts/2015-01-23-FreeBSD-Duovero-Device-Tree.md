@@ -48,7 +48,7 @@ And here is the breakdown
 
 These two properties come from a [skeleton.dtsi][linux-skeleton-dtsi] in *Linux*. *FreeBSD* does not have an equivalent.
 
-The default is one *address* cell and one *size* cell for each device.
+The default is one *address* cell and one *size* cell for each device (*reg* property).
 
     #address-cells = <1>
     #size-cells = <1>
@@ -312,14 +312,7 @@ From (1), Section 17.3.2, Table 17-2
 * MA\_IRQ\_14 : SDMA\_IRQ\_2
 * MA\_IRQ\_15 : SDMA\_IRQ\_3
 
-The *FreeBSD* values are still using the flat IRQ address space. In *Linux* the *SDMA* interrupts are
-
-* GIC\_SPI + 12
-* GIC\_SPI + 13
-* GIC\_SPI + 14
-* GIC\_SPI + 15
- 
-which results in
+The *FreeBSD* values using a flat IRQ address space are
 
     interrupts = <44 45 46 47>
 
@@ -373,7 +366,7 @@ which results in
     interrupts = <61 62 63 64 65 66>;
 
 
-Note: *Linux* breaks the 6 banks out into individual devices gpio0 - gpio5.
+Note: *Linux* breaks the 6 banks out into individual devices gpio0 - gpio5, much like the *uart*, *i2c* and *mmc* controllers are done below. The *FreeBSD* code needs some work to support this.
 
 ### UART
 
