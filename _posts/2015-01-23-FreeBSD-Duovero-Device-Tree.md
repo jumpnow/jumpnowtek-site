@@ -319,6 +319,7 @@ The *FreeBSD* values are still using the flat IRQ address space. In *Linux* the 
 * GIC\_SPI + 14
 * GIC\_SPI + 15
  
+So you get
 
     interrupts = <44 45 46 47>
 
@@ -367,6 +368,7 @@ From (1), Section 17.3.2, Table 17-2
 * MA_IRQ_33 : GPIO5_MPU_IRQ
 * MA_IRQ_34 : GPIO6_MPU_IRQ
  
+So you get
 
     interrupts = <61 62 63 64 65 66>;
 
@@ -377,9 +379,18 @@ Note: *Linux* breaks the 6 banks out into individual devices gpio0 - gpio5.
 
 There are 4 UART devices defined in `omap443x.dtsi`.
 
-Showing only *uart3* which is also the console for *Duovero* and *PandaBoard* boards.
+I'm only showing *uart3*. The others are similar.
 
-Listed first because I haven't figured out how to change the *console* to something other then the first *UART* listed in the *dts*.
+*uart3* is also the console for *Duovero* and *PandaBoard* boards.
+
+Because I'm listing the uarts in the order [3, 1, 2, 4] in the *dts*, they show up this way in the O/S
+
+* uart3 - `/dev/ttyu0` or `/dev/cuau0`
+* uart1 - `/dev/ttyu1` or `/dev/cuau1`
+* uart2 - `/dev/ttyu2` or `/dev/cuau2`
+* uart4 - `/dev/ttyu3` or `/dev/cuau3`
+
+I'm listing *uart3* first because I haven't figured out how to change the *console* to something other then the first *UART* listed in the *dts*.
 
     uart3: serial@48020000 {
         compatible = "ti,omap4-uart", "ti,ns16550";
@@ -429,9 +440,10 @@ The clock register for *UART3* is from (1), Section 3.11.39.1, Table 3-1342
 
 ### I2C
 
-There are 5 I2C controllers on the *OMAP4*, 4 of which are available for general purpose use.
+There are 5 I2C controllers on the *OMAP4*, 4 of which are available for general purpose use. The fifth I2C controller is dedicated for use with the 
+[TWL6030][twl6030] power management unit.
 
-I'm showing only *i2c1*.
+I'm only showing *i2c1*. The others are similar.
 
     i2c1: i2c@48070000 {
         compatible = "ti,omap4-i2c", "ti,i2c";
@@ -479,7 +491,9 @@ Used in `sys/arm/ti/ti_i2c.c` to enable the clock for this device as an offset f
 
 **Description**
 
-There are 5 MMC controllers. Only the first one, which has dedicated hardware on both the *Duovero* and *PandaBoard*, is defined for now.
+There are 5 MMC controllers.
+
+I'm only declaring the first one, which has dedicated hardware for an SD card on both the *Duovero* and *PandaBoard*.
    
 Used in `sys/arm/ti/ti_sdhci.c`
 
@@ -528,3 +542,4 @@ Used in `sys/arm/ti/ti_sdhci.c`
 [linux-skeleton-dtsi]: https://git.kernel.org/cgit/linux/kernel/git/stable/linux-stable.git/tree/arch/arm/boot/dts/skeleton.dtsi?id=refs/tags/v3.18.3
 [simplebus]: https://www.freebsd.org/cgi/man.cgi?query=simplebus&apropos=0&sektion=4&manpath=FreeBSD+11-current&arch=default&format=html
 [sysctl]: https://www.freebsd.org/cgi/man.cgi?query=sysctl&apropos=0&sektion=8&manpath=FreeBSD+11-current&arch=default&format=html
+[twl6030]: http://www.ti.com/product/twl6030
