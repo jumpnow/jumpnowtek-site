@@ -49,6 +49,19 @@ I'm using SanDisk Extreme 16GB UHS-I/U3 Micro SDHC Memory Cards. They cost aroun
 
 ### Note 2
  
-Here is a [tentative patch][reset-patch] that does a warm reboot instead of a cold reboot on the OMAP4. With this patch the duovero will `reboot` when given the command. Unfortunately, sometimes (not most of the time) the host USB does not come up correctly on reboot. Additional investigation required, but without USB, no wifi and no networking. Really need to write an ethernet driver...
+Here are a couple of patches that change the behavior of reboot to be a warm reboot instead of a cold reboot on the OMAP4.
 
-[reset-patch]: https://github.com/scottellis/duovero-freebsd/blob/master/patches/omap4-warm-reset.patch
+[0005-omap4-prcm-use-defined-constants-in-reset-function.patch][prcm-use-constants-patch]
+
+[0006-omap4-do-warm-reset-on-reboot.patch][reset-patch]
+
+
+The patches won't apply cleanly unless some of the earlier *prcm* patches in that series are applied first. The `reboot` patch is trivial though and can be manually done.
+
+With these patches the duovero will now `reboot` when given the command. Unfortunately, occasionally the host USB does not come up on reboot. Additional investigation required, but without USB, no wifi and no networking. So you end up needing to do a second cold reboot when this happens. Most of the time `reboot` now works, but this random failure is annoying. 
+
+Really need to write an ethernet driver...
+
+[prcm-use-constants-patch]: https://github.com/scottellis/duovero-freebsd/blob/master/patches/0005-omap4-prcm-use-defined-constants-in-reset-function.patch
+[reset-patch]: https://github.com/scottellis/duovero-freebsd/blob/master/patches/0006-omap4-do-warm-reset-on-reboot.patch
+
