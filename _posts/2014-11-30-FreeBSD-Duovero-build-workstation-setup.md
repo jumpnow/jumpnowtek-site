@@ -60,9 +60,9 @@ The copy script applies my patches for the *Duovero*. I'm working on getting the
 
 I have a branch of *crochet-freebsd* with support for the *Duovero* board here [github.com/scottellis/crochet-freebsd][crochet-scottellis].
 
-Clone it with *git*. You want the `[duovero]` branch.
+Clone it with *git*. You want the `[current]` branch.
 
-    scott@fbsd:~ % git clone -b duovero git@github.com:scottellis/crochet-freebsd.git
+    scott@fbsd:~ % git clone -b current git@github.com:scottellis/crochet-freebsd.git
 
 
 ### Fetch and build the Duovero u-boot port
