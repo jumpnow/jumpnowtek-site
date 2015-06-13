@@ -7,9 +7,13 @@ categories: yocto
 tags: [linux, beaglebone, yocto]
 ---
 
-These instructions are for building generic developer systems for [BeagleBone Black][beagleboard] boards primarily for C/C++ and Qt programmers. I use the `meta-bbb` layer described below only as a template when starting new projects. The two *images* contained in `meta-bbb` are just examples to get started.
+These instructions are for building generic developer systems for [BeagleBone Black][beagleboard] boards
+primarily for C/C++ and Qt programmers.
 
-There is no `X11` and no desktop installed on any of these systems. [Qt][qt] gui applications can be run using the `-platform linuxfb` switch. The Qt version is `5.4.2`.
+Keep in mind the Yocto slogan *"It's not an embedded Linux distribution – it creates a custom one for you"*.
+
+The `meta-bbb` layer described below is simply one template you could use for your own *BBB* project.
+The two *images* contained in `meta-bbb` are just examples.
 
 The Linux `4.0.5` kernel comes from the Linux stable repository.
 
@@ -17,9 +21,19 @@ The Yocto version is `1.8.0` the `[fido]` branch.
 
 `sysvinit` is used for the init system.
 
+There is no `X11` and no desktop installed on any of these systems. [Qt][qt] gui applications can be run using
+the `-platform linuxfb` switch. The Qt version is `5.4.2`.
+
+*Device tree* binaries are generated and installed that support *HDMI*, the *4DCape 7-inch* touchscreen and
+the *New Haven 5-inch* touchscreen. They are easy to switch between and all work with the installed *Qt*
+binaries.
+
+*Spidev* on SPI bus 1, *I2C1* and *I2C2* are configured for use from the P9 header.
+
+
 ### Ubuntu Packages
 
-I've tested this with `Ubuntu 15.04` 64-bit workstations.
+I've tested this build with `Ubuntu 15.04` 64-bit workstations.
 
 You'll need at least the following packages installed
 
@@ -275,8 +289,6 @@ Here's a realistic example session where I want to copy already built images to 
     scott@octo:~/bbb/meta-bbb/scripts$ ./copy_boot.sh sdb
     scott@octo:~/bbb/meta-bbb/scripts$ ./copy_rootfs.sh sdb console bbb2
 
-
-## Next Steps
 
 #### Adding additional packages
 
