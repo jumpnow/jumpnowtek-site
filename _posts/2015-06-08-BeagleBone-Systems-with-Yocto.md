@@ -11,7 +11,7 @@ These instructions are for building generic developer systems for [BeagleBone Bl
 
 The [Yocto][yocto] slogan is *"It's not an embedded Linux distribution – it creates a custom one for you"*.
 
-The `meta-bbb` layer described below *should* be modified by you for your own particular project. This layer is just a template to get started. The two *images* contained in `meta-bbb` are examples with the common packages that I use.
+The `meta-bbb` layer described below *should* be modified by you for your own particular project. This layer is just a template to get started. The two *images* contained in `meta-bbb` are examples with some common packages that I use.
 
 The Yocto version is `1.8.0` the `[fido]` branch.
 
@@ -179,6 +179,7 @@ Instead, there are two custom images available in the meta-bbb layer. The recipe
 * console-image.bb
 * qt5-image.bb
 
+Add your custom images to this same directory.
 
 #### console-image
 
