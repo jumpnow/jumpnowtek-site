@@ -7,13 +7,11 @@ categories: yocto
 tags: [linux, beaglebone, yocto]
 ---
 
-These instructions are for building generic developer systems for [BeagleBone Black][beagleboard] boards
-primarily for C/C++ and Qt programmers.
+These instructions are for building generic developer systems for [BeagleBone Black][beagleboard] boards primarily for C/C++ and Qt programmers.
 
 Keep in mind the Yocto slogan *"It's not an embedded Linux distribution – it creates a custom one for you"*.
 
-The `meta-bbb` layer described below is simply one template you could use for your own *BBB* project.
-The two *images* contained in `meta-bbb` are just examples.
+The `meta-bbb` layer described below is simply one template you could use for your own *BBB* project. The two *images* contained in `meta-bbb` are just examples.
 
 The Linux `4.0.5` kernel comes from the Linux stable repository.
 
@@ -21,12 +19,9 @@ The Yocto version is `1.8.0` the `[fido]` branch.
 
 `sysvinit` is used for the init system.
 
-There is no `X11` and no desktop installed on any of these systems. [Qt][qt] gui applications can be run using
-the `-platform linuxfb` switch. The Qt version is `5.4.2`.
+There is no `X11` and no desktop installed on any of these systems. [Qt][qt] gui applications can be run using the `-platform linuxfb` switch. The Qt version is `5.4.2`.
 
-*Device tree* binaries are generated and installed that support *HDMI*, the *4DCape 7-inch* touchscreen and
-the *New Haven 5-inch* touchscreen. They are easy to switch between and all work with the installed *Qt*
-binaries.
+*Device tree* binaries are generated and installed that support *HDMI*, the *4DCape 7-inch* touchscreen and the *New Haven 5-inch* touchscreen. They are easy to switch between and all work with the installed *Qt* binaries.
 
 *Spidev* on SPI bus 1, *I2C1* and *I2C2* are configured for use from the P9 header.
 
