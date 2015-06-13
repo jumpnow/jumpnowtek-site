@@ -11,7 +11,7 @@ These instructions are for building generic developer systems for [BeagleBone Bl
 
 The [Yocto][yocto] slogan is *"It's not an embedded Linux distribution – it creates a custom one for you"*.
 
-The `meta-bbb` layer described below *should* be modified by you for your own particular project. Use this layer as a template to get started. The two *images* contained in `meta-bbb` are just examples with common packages that I use.
+The `meta-bbb` layer described below *should* be modified by you for your own particular project. This layer is just a template to get started. The two *images* contained in `meta-bbb` are examples with the common packages that I use.
 
 The Yocto version is `1.8.0` the `[fido]` branch.
 
@@ -21,7 +21,7 @@ The Linux `4.0.5` kernel comes from the Linux stable repository.
 
 There is no `X11` and no desktop installed. [Qt][qt] gui applications can be run using the `-platform linuxfb` switch. The Qt version is `5.4.2`.
 
-*Device tree* binaries are generated and installed that support *HDMI* (bbb-hdmi.dtb), the *4DCape 7-inch* touchscreen (bbb-4dcape70t.dtb) and the *New Haven 5-inch* touchscreen (bbb-nh5cape.dtb). They are easy to switch between and all work with the installed *Qt* binaries.
+*Device tree* binaries are generated and installed that support *HDMI* (bbb-hdmi.dtb), the *4DCape 7-inch* touchscreen (bbb-4dcape70t.dtb) and the *New Haven 5-inch* touchscreen (bbb-nh5cape.dtb). They are easy to switch between using `/boot/uEnv.txt` and all work with the installed *Qt* binaries.
 
 *spidev* on SPI bus 1, *I2C1* and *I2C2* are configured for use from the *P9* header. The following kernel patches under `meta-bbb/recipes-kernel/linux/linux-stable-4.0.5` add this functionality
 
@@ -176,8 +176,8 @@ Those 'Common targets' may or may not build successfully. I have never tried the
 
 Instead, there are two custom images available in the meta-bbb layer. The recipes for these images can be found under `meta-bbb/images/`
 
-    console-image.bb
-    qt5-image.bb
+* console-image.bb
+* qt5-image.bb
 
 
 #### console-image
@@ -279,7 +279,7 @@ or
 
     scott@octo:~/bbb/meta-bbb/scripts$ ./copy_rootfs.sh sdb qt5 bbb
 
-The copy scripts will **NOT** unmount partitions automatically. If the partition that is supposed to be the on the SD card is already mounted, the script will complain and abort. This is for safety, mine mostly, since I run these scripts many times a day on different machines and the SD cards show up in different places.
+The copy scripts will **NOT** unmount partitions automatically. If an SD card partition is already mounted, the script will complain and abort. This is for safety, mine mostly, since I run these scripts many times a day on different machines and the SD cards show up in different places.
 
 Here's a realistic example session where I want to copy already built images to a second SD card that I just inserted.
 
@@ -293,14 +293,18 @@ Here's a realistic example session where I want to copy already built images to 
 
 #### Some custom package examples
 
-[spiloop][spiloop] is a spidev test application is installed in `/usr/bin`. The recipe for it is here
+[spiloop][spiloop] is a spidev test application installed in `/usr/bin`.
+
+The *bitbake recipe* that builds and packages *spiloop* is here
 
     meta-bbb/recipes-misc/spiloop/spiloop_1.0.bb
 
-Use it to test the *spidev* driver after placing a jumper between pins *P9.29* and *P9.30*.
+Use it to test the *spidev* driver before and after placing a jumper between pins *P9.29* and *P9.30*.
 
 
-[tspress][tspress] is a Qt5 GUI application installed in `/usr/bin` with the *qt5-image*. The *bitbake recipe* that builds and packages it is here
+[tspress][tspress] is a Qt5 GUI application installed in `/usr/bin` with the *qt5-image*.
+
+The *bitbake recipe* is here
 
     meta-bbb/recipes-qt/tspress/tspress.bb
 
