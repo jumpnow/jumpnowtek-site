@@ -9,26 +9,32 @@ tags: [linux, beaglebone, yocto]
 
 These instructions are for building generic developer systems for [BeagleBone Black][beagleboard] boards primarily for C/C++ and Qt programmers.
 
-Keep in mind the [Yocto][yocto] slogan *"It's not an embedded Linux distribution – it creates a custom one for you"*.
+The [Yocto][yocto] slogan is *"It's not an embedded Linux distribution – it creates a custom one for you"*.
 
-The `meta-bbb` layer described below should be modified by you for your own particular project. Use it simply as a template to get started. The two *images* contained in `meta-bbb` are just examples.
-
-The Linux `4.0.5` kernel comes from the Linux stable repository.
+The `meta-bbb` layer described below *should* be modified by you for your own particular project. Use this layer as a template to get started. The two *images* contained in `meta-bbb` are just examples with common packages that I use.
 
 The Yocto version is `1.8.0` the `[fido]` branch.
 
+The Linux `4.0.5` kernel comes from the Linux stable repository.
+
 `sysvinit` is used for the init system.
 
-There is no `X11` and no desktop installed on any of these systems. [Qt][qt] gui applications can be run using the `-platform linuxfb` switch. The Qt version is `5.4.2`.
+There is no `X11` and no desktop installed. [Qt][qt] gui applications can be run using the `-platform linuxfb` switch. The Qt version is `5.4.2`.
 
-*Device tree* binaries are generated and installed that support *HDMI*, the *4DCape 7-inch* touchscreen and the *New Haven 5-inch* touchscreen. They are easy to switch between and all work with the installed *Qt* binaries.
+*Device tree* binaries are generated and installed that support *HDMI* (bbb-hdmi.dtb), the *4DCape 7-inch* touchscreen (bbb-4dcape70t.dtb) and the *New Haven 5-inch* touchscreen (bbb-nh5cape.dtb). They are easy to switch between and all work with the installed *Qt* binaries.
 
-*Spidev* on SPI bus 1, *I2C1* and *I2C2* are configured for use from the P9 header.
+*spidev* on SPI bus 1, *I2C1* and *I2C2* are configured for use from the *P9* header. The following kernel patches under `meta-bbb/recipes-kernel/linux/linux-stable-4.0.5` add this functionality
+
+* 0001-Add-bbb-spi1-spidev-dtsi.patch
+* 0002-Add-bbb-i2c1-dtsi.patch
+* 0003-Add-bbb-i2c2-dtsi.patch
+
+See the patches for the P9 pin numbers that expose the respective busses/drivers.
 
 
 ### Ubuntu Packages
 
-I've tested this build with `Ubuntu 15.04` 64-bit workstations.
+I've tested this build with *Ubuntu 15.04* 64-bit workstations.
 
 You'll need at least the following packages installed
 
@@ -168,7 +174,7 @@ You need to source the environment every time you want to run a build. The `oe-i
 
 Those 'Common targets' may or may not build successfully. I have never tried them.
 
-Instead, there are a few custom images available in the meta-bbb layer. The recipes for these images can be found under `meta-bbb/images/`
+Instead, there are two custom images available in the meta-bbb layer. The recipes for these images can be found under `meta-bbb/images/`
 
     console-image.bb
     qt5-image.bb
@@ -285,9 +291,24 @@ Here's a realistic example session where I want to copy already built images to 
     scott@octo:~/bbb/meta-bbb/scripts$ ./copy_rootfs.sh sdb console bbb2
 
 
+#### Some custom package examples
+
+[spiloop][spiloop] is a spidev test application is installed in `/usr/bin`. The recipe for it is here
+
+    meta-bbb/recipes-misc/spiloop/spiloop_1.0.bb
+
+Use it to test the *spidev* driver after placing a jumper between pins *P9.29* and *P9.30*.
+
+
+[tspress][tspress] is a Qt5 GUI application installed in `/usr/bin` with the *qt5-image*. The *bitbake recipe* that builds and packages it is here
+
+    meta-bbb/recipes-qt/tspress/tspress.bb
+
+Check the *README* in the [tspress][tspress] repository for usage.
+
 #### Adding additional packages
 
-To display the list of available packages from the `meta-` repositories so far included
+To display the list of available packages from the `meta-` repositories included in *bblayers.conf*
 
     scott@octo:~$ source poky-fido/oe-init-build-env ~/bbb/build
     scott@octo:~/bbb/build$ bitbake -s
@@ -317,4 +338,6 @@ To add or upgrade packages to the system, you might be interested in using the b
 [qt]: http://www.qt.io/
 [yocto]: https://www.yoctoproject.org/
 [meta-bbb]: https://github.com/jumpnow/meta-bbb
+[tspress]: https://github.com/scottellis/tspress
+[spiloop]: https://github.com/scottellis/spiloop
 
