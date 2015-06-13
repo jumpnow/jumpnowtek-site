@@ -9,9 +9,11 @@ tags: [linux, beaglebone, yocto]
 
 These instructions are for building generic developer systems for [BeagleBone Black][beagleboard] boards primarily for C/C++ and Qt programmers.
 
-The [Yocto][yocto] slogan is *"It's not an embedded Linux distribution – it creates a custom one for you"*.
+The `meta-bbb` layer described below **should** be modified by you for your own particular project.
 
-The `meta-bbb` layer described below *should* be modified by you for your own particular project. This layer is just a template to get started. The two *images* contained in `meta-bbb` are examples with some common packages that I use.
+Remember the [Yocto][yocto] slogan is *"It's not an embedded Linux distribution – it creates a custom one for you"*.
+
+This meta-layer is just a template I use to get things started. The two *images* contained in `meta-bbb` are examples with some common packages that I frequently use.
 
 The Yocto version is `1.8.0` the `[fido]` branch.
 
@@ -29,7 +31,7 @@ There is no `X11` and no desktop installed. [Qt][qt] gui applications can be run
 * 0002-Add-bbb-i2c1-dtsi.patch
 * 0003-Add-bbb-i2c2-dtsi.patch
 
-See the patches for the P9 pin numbers that expose the respective busses/drivers.
+See the respective patches for the particular P9 header pins to use.
 
 
 ### Ubuntu Packages
