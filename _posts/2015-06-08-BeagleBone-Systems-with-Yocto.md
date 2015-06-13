@@ -9,9 +9,9 @@ tags: [linux, beaglebone, yocto]
 
 These instructions are for building generic developer systems for [BeagleBone Black][beagleboard] boards primarily for C/C++ and Qt programmers.
 
-Keep in mind the Yocto slogan *"It's not an embedded Linux distribution – it creates a custom one for you"*.
+Keep in mind the [Yocto][yocto] slogan *"It's not an embedded Linux distribution – it creates a custom one for you"*.
 
-The `meta-bbb` layer described below is simply one template you could use for your own *BBB* project. The two *images* contained in `meta-bbb` are just examples.
+The `meta-bbb` layer described below should be modified by you for your own particular project. Use it simply as a template to get started. The two *images* contained in `meta-bbb` are just examples.
 
 The Linux `4.0.5` kernel comes from the Linux stable repository.
 
