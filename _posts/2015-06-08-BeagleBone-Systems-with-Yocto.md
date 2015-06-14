@@ -223,6 +223,17 @@ To build the `qt5-image` it would be
 
     scott@octo:~/bbb/build$ bitbake qt5-image
 
+The `cleansstate` command (with two s's) works for image recipes as well. I typically do an
+
+    rm <TMPDIR>/deploy/images/beaglebone/qt5-image*
+
+or
+
+    rm <TMPDIR>/deploy/images/beaglebone/console-image*
+
+after running `cleansstate` on the image, otherwise you will accumulate old build files as Yocto does not automatically clean them.
+
+You can ignore the **README_-_DO_NOT_DELETE_FILES_IN_THIS_DIRECTORY.txt** file in that directory. I have no idea what motivated that warning. Any files found in that directory are easily recreated.
 
  
 ### Copying the binaries to an SD card
