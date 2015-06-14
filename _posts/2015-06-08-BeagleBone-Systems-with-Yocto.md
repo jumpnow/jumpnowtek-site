@@ -250,7 +250,7 @@ You only have to create this directory once.
 
 #### copy_boot.sh
 
-This script copies the bootloader (MLO, u-boot) to the boot partition of the SD card.
+This script copies the bootloaders (MLO and u-boot) to the boot partition of the SD card.
 
 This script needs to know the `TMPDIR` to find the binaries. It looks for an environment variable called `OETMP`.
 
@@ -265,6 +265,8 @@ Then I would export this environment variable before running `copy_boot.sh`
 Then run the `copy_boot.sh` script passing the location of SD card
 
     scott@bbb:~/bbb/meta-bbb/scripts$ ./copy_boot.sh sdb
+
+This script should run very fast.
 
 #### copy_rootfs.sh
 
@@ -282,6 +284,8 @@ or
 
     scott@octo:~/bbb/meta-bbb/scripts$ ./copy_rootfs.sh sdb qt5 bbb
 
+The copy_rootfs.sh script will take longer to run and depends a lot on the quality of your SD card.
+
 The copy scripts will **NOT** unmount partitions automatically. If an SD card partition is already mounted, the script will complain and abort. This is for safety, mine mostly, since I run these scripts many times a day on different machines and the SD cards show up in different places.
 
 Here's a realistic example session where I want to copy already built images to a second SD card that I just inserted.
@@ -293,6 +297,8 @@ Here's a realistic example session where I want to copy already built images to 
     scott@octo:~/bbb/meta-bbb/scripts$ ./copy_boot.sh sdb
     scott@octo:~/bbb/meta-bbb/scripts$ ./copy_rootfs.sh sdb console bbb2
 
+
+Both *copy_boot.sh* and *copy_rootfs.sh* are simple scripts easily modified for custom use.
 
 #### Some custom package examples
 
@@ -318,15 +324,16 @@ Check the *README* in the [tspress][tspress] repository for usage.
 To display the list of available packages from the `meta-` repositories included in *bblayers.conf*
 
     scott@octo:~$ source poky-fido/oe-init-build-env ~/bbb/build
+
     scott@octo:~/bbb/build$ bitbake -s
 
 Once you have the package name, you can choose to either
 
-1. Add the new package to either the `console-image` or `qt5-image`, whichever you are using.
+1. Add the new package to the `console-image` or `qt5-image`, whichever you are using.
 
 2. Create a new image file and either include the `console-image` the way the `qt5-image` does or create a complete new image recipe. The `console-image` can be used as a template.
 
-The new package needs to get included in the *IMAGE_INSTALL* variable either directly or through another variable in the image file.
+The new package needs to get included directly in the *IMAGE_INSTALL* variable or indirectly through another variable in the image file.
 
 #### Customizing the Kernel
 
