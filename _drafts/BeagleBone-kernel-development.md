@@ -132,11 +132,11 @@ Then rebuild your kernel
 
 ## Working outside of Yocto
 
-It's often more convenient to work on the kernel outside of the Yocto build system. It's definitely faster.
+I find it more convenient to work on the kernel outside of the Yocto build system. Builds are definitely faster.
 
 ### Cross-compiler
 
-The Yocto tools will build a cross-compiler with headers and libraries that you can easily install on multiple machines.
+The Yocto tools will build a cross-compiler with headers and libraries that you can easily install on multiple machines including the Yocto build machine which is where I'll be using it.
 
 First, choose the architecture where you'll be running the cross-compiler by setting the *SDKMACHINE* variable in your `local.conf` file.
 
@@ -187,11 +187,11 @@ Start by creating a working branch
     ~$ cd ~/bbb/linux-stable
     ~/bbb/linux-stable$ checkout -b work
 
-Now apply the patches. Here's all of them at once.
+Here's an example applying all of the patches at once
 
     ~/bbb/linux-stable$ git am ../meta-bbb/recipes-kernel/linux/linux-stable-4.0/*.patch
 
-Or you could apply them individually.
+Or you could apply selective patches individually.
 
 ### Default kernel config
 
@@ -201,6 +201,54 @@ Copy the kernel config file that Yocto use to the new linux-stable repository.
 
 If you make changes to the config that you want to keep, make sure to copy it back to `meta-bbb/.../defconfig`
 
+
+### Building
+
+Source the cross-tools environment
+
+    ~$ cd bbb/linux-stable
+    ~/bbb/linux-stable$ source /opt/poky/1.8/environment-setup-cortexa8hf-vfp-neon-poky-linux-gnueabi
+
+Build a zImage, unset **LOCALVERSION** so modules already on the bbb rootfs will still load
+
+    ~/bbb/linux-stable$ make LOCALVERSION= -j4 zImage
+
+
+Build modules
+
+    ~/bbb/linux-stable$ make LOCALVERSION= -j4 modules
+
+Build device tree binaries
+
+    ~/bbb/linux-stable$ make bbb-hdmi.dtb
+      DTC     arch/arm/boot/dts/bbb-hdmi.dtb
+
+The device tree source files are found under `arch/arm/boot/dts/`
+
+### Deploying
+
+For development, deployment consists of copying over to a running beaglebone system and rebooting. I usually use **scp**.
+
+The new *zImage* file can be found here `arch/arm/boot/zImage`. Copy it to the beaglebone `/boot/` directory.
+
+    ~/bbb/linux-stable$ scp arch/arm/boot/zImage root@<bbb-ip-address>:/boot
+
+
+I'm typically only working on one particular module at a time and therefore would only copy that particular `*.ko` module over to the appropriate beaglebone `/lib/modules` location.
+
+
+Device tree binaries also go in `/boot`.
+
+For example
+
+    ~/bbb/linux-stable$ scp arch/arm/boot/dts/bbb-hdmi.dtb root@<bbb-ip-address>:/boot
+
+
+Modify `/boot/uEnv.txt` to specify which **dtb** file to load.
+
+	fdtfile="some-dtb"
+
+The `meta-bbb` modified **u-boot** looks for a *uEnv.txt* file in the rootfs `/boot` directory.
 
 
 [bbb-yocto]: http://www.jumpnowtek.com/yocto/BeagleBone-Systems-with-Yocto.html
