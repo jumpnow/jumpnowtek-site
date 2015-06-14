@@ -192,6 +192,12 @@ A basic console developer image. See the recipe `meta-bbb/images/console-image.b
     ssh/scp server and client
     perl and a number of commonly used modules
 
+The *console-image* has a line
+
+    inherit core-image
+
+which is `poky-fido/meta/classes/core-image.bbclass` and pulls in some required base packages.
+
 #### qt5-image
 
 This image includes the `console-image` and adds `Qt 5.4.2` with the associated development headers and `qmake`.
