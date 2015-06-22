@@ -4,7 +4,7 @@ title: Working on the BeagleBone Kernel
 description: "Working on and customizing the BeagleBone Black kernel"
 date: 2015-06-22 14:00:00
 categories: beaglebone 
-tags: [linux, beaglebone, yocto]
+tags: [linux, beaglebone, kernel]
 ---
 
 Once you've built a basic [BeagleBone Black system][bbb-yocto] with the [Yocto Project][yocto] tools, you will probably want to customize the kernel or the device tree that gets loaded at boot.
