@@ -3,7 +3,7 @@ layout: post
 title: Building BeagleBone Black Systems with Yocto
 description: "Building customized systems for the BeagleBone Black using tools from the Yocto Project"
 date: 2015-06-08 12:00:00
-categories: yocto 
+categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
 
@@ -17,7 +17,7 @@ This meta-layer is just a template I use to get things started. The two *images*
 
 The Yocto version is `1.8.0` the `[fido]` branch.
 
-The Linux `4.0.5` kernel comes from the Linux stable repository.
+The Linux `4.1.0-rc8` kernel comes from the Linux stable repository.
 
 `sysvinit` is used for the init system.
 
@@ -354,7 +354,7 @@ The new package needs to get included directly in the *IMAGE_INSTALL* variable o
 
 #### Customizing the Kernel
 
-See this **article** for instructions on customizing and rebuilding the BBB kernel or for generating a new device tree binary to load at boot.
+See this [article][bbb-kernel] for some ways to go about customizing and rebuilding the BBB kernel or generating a new device tree.
 
 #### Package management
 
@@ -371,4 +371,5 @@ To add or upgrade packages to the system, you might be interested in using the b
 [meta-bbb]: https://github.com/jumpnow/meta-bbb
 [tspress]: https://github.com/scottellis/tspress
 [spiloop]: https://github.com/scottellis/spiloop
+[bbb-kernel]: http://www.jumpnowtek.com/beaglebone/Working-on-the-BeagleBone-kernel.html
 
