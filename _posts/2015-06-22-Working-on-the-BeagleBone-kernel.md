@@ -256,7 +256,7 @@ Modify `/boot/uEnv.txt` to specify which **dtb** file to load.
 The `meta-bbb` modified **u-boot** looks for a *uEnv.txt* file in the rootfs `/boot` directory.
 
 
-[bbb-yocto]: http://www.jumpnowtek.com/yocto/BeagleBone-Systems-with-Yocto.html
+[bbb-yocto]: http://www.jumpnowtek.com/beaglebone/BeagleBone-Systems-with-Yocto.html
 [yocto]: https://www.yoctoproject.org/
 [meta-bbb]: https://github.com/jumpnow/meta-bbb
 [menuconfig-bug-report]: https://bugzilla.yoctoproject.org/show_bug.cgi?id=7791
