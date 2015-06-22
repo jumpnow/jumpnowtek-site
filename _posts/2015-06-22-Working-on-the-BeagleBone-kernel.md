@@ -1,7 +1,7 @@
 ---
 layout: post
-title: BeagleBone Black Kernel Development
-description: "Customizing the BeagleBone Black kernel"
+title: Working on the BeagleBone Kernel
+description: "Working on and customizing the BeagleBone Black kernel"
 date: 2015-06-22 14:00:00
 categories: beaglebone 
 tags: [linux, beaglebone, yocto]
