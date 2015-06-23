@@ -9,15 +9,15 @@ tags: [linux, beaglebone, yocto]
 
 These instructions are for building generic developer systems for [BeagleBone Black][beagleboard] boards primarily for C/C++ and Qt programmers.
 
-The `meta-bbb` layer described below **should** be modified by you for your own particular project.
+The [Yocto][yocto] motto is *"It's not an embedded Linux distribution – it creates a custom one for you"*.
 
-Remember the [Yocto][yocto] slogan is *"It's not an embedded Linux distribution – it creates a custom one for you"*.
+The `meta-bbb` layer described below **should** be modified by you for your own particular project. 
 
-This meta-layer is just a template I use to get things started. The two *images* contained in `meta-bbb` are examples with some common packages that I frequently use.
+The two *images* contained in `meta-bbb` are examples with some common packages that I like to use.
 
 The Yocto version is `1.8.0` the `[fido]` branch.
 
-The Linux `4.1.0-rc8` kernel comes from the Linux stable repository.
+The Linux `4.1.0-rc8` kernel comes from the [Linux stable][linux-stable] repository.
 
 `sysvinit` is used for the init system.
 
@@ -25,18 +25,19 @@ There is no `X11` and no desktop installed. [Qt][qt] gui applications can be run
 
 *Device tree* binaries are generated and installed that support *HDMI* (bbb-hdmi.dtb), the *4DCape 7-inch* touchscreen (bbb-4dcape70t.dtb) and the *New Haven 5-inch* touchscreen (bbb-nh5cape.dtb). They are easy to switch between using `/boot/uEnv.txt` and all work with the installed *Qt* binaries.
 
-*spidev* on SPI bus 1, *I2C1* and *I2C2* are configured for use from the *P9* header. The following kernel patches under `meta-bbb/recipes-kernel/linux/linux-stable-4.0.5` add this functionality
+*spidev* on SPI bus 1, *I2C1* and *I2C2* are configured for use from the *P9* header. The following kernel patches under `meta-bbb/recipes-kernel/linux/linux-stable-4.1/` add this functionality
 
-* 0001-Add-bbb-spi1-spidev-dtsi.patch
-* 0002-Add-bbb-i2c1-dtsi.patch
-* 0003-Add-bbb-i2c2-dtsi.patch
+* 0001-spidev-Add-generic-compatible-dt-id.patch
+* 0002-Add-bbb-spi1-spidev-dtsi.patch
+* 0003-Add-bbb-i2c1-dtsi.patch
+* 0004-Add-bbb-i2c2-dtsi.patch
 
 See the respective patches for the particular P9 header pins to use.
 
 
 ### Ubuntu Packages
 
-I've tested this build with *Ubuntu 15.04* 64-bit workstations.
+I've been building systems with this layer using *Ubuntu 15.04* 64-bit workstations.
 
 You'll need at least the following packages installed
 
@@ -64,7 +65,7 @@ First the main Yocto project `poky` repository
 
     scott@octo:~ git clone -b fido git://git.yoctoproject.org/poky.git poky-fido
 
-Then the supporting `meta-openembedded` repository
+Then the `meta-openembedded` repository
 
     scott@octo:~$ cd poky-fido
     scott@octo:~/poky-fido$ git clone -b fido git://git.openembedded.org/meta-openembedded
@@ -366,6 +367,7 @@ To add or upgrade packages to the system, you might be interested in using the b
 
 
 [beagleboard]: http://www.beagleboard.org/
+[linux-stable]: https://www.kernel.org/
 [qt]: http://www.qt.io/
 [yocto]: https://www.yoctoproject.org/
 [meta-bbb]: https://github.com/jumpnow/meta-bbb

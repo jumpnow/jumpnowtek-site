@@ -167,19 +167,16 @@ The kernel recipe *linux-stable_4.1.bb* has the repository location, branch and 
 
 These lines have the details
 
-    SRCREV = "0f57d86787d8b1076ea8f9cbdddda2a46d534a27"
+    SRCREV = "b953c0d234bc72e8489d3bf51a276c5c4ec85345"
     SRC_URI = " \
-        git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git;branch=master \
+        git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git;branch=linux-4.1.y \
 
 Here are the commands to checkout that same kernel source
 
     $ cd ~/bbb
     $ git clone git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git
-
-If the branch was not *master*, say for instance it was *linux-4.0.y*, then you would checkout that branch
-
     $ cd linux-stable
-    $ git checkout -b linux-4.0.y origin/linux-4.0.y
+    $ git checkout -b linux-4.1.y origin/linux-4.1.y
 
 That gets you to the correct git branch, but depending on whether I've kept the `meta-bbb` repository up-to-date, the current commit on the branch may or may not match the **SRCREV** in the recipe. If they don't match, you can checkout a particular older commit explicitly or you can modify the recipe to use the latest commit. Checking out the same branch is usually sufficient.
 
