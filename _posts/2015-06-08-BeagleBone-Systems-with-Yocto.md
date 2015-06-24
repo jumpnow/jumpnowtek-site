@@ -2,22 +2,22 @@
 layout: post
 title: Building BeagleBone Black Systems with Yocto
 description: "Building customized systems for the BeagleBone Black using tools from the Yocto Project"
-date: 2015-06-08 12:00:00
+date: 2015-06-24 17:15:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
 
-These instructions are for building generic developer systems for [BeagleBone Black][beagleboard] boards primarily for C/C++ and Qt programmers.
+These instructions are for building generic developer systems for [BeagleBone Black][beagleboard] boards primarily for C, C++ and Qt programmers.
 
 The [Yocto][yocto] motto is *"It's not an embedded Linux distribution – it creates a custom one for you"*.
 
-The `meta-bbb` layer described below **should** be modified by you for your own particular project. 
+The `meta-bbb` layer described below **should** be modified for your own particular project. 
 
-The two *images* contained in `meta-bbb` are examples with some common packages that I like to use.
+The *image recipes* under `meta-bbb/images` are examples with a few common packages I find useful.
 
 The Yocto version is `1.8.0` the `[fido]` branch.
 
-The Linux `4.1.0-rc8` kernel comes from the [Linux stable][linux-stable] repository.
+The Linux `4.1.0` kernel comes from the [Linux stable][linux-stable] repository.
 
 `sysvinit` is used for the init system.
 
@@ -34,6 +34,7 @@ There is no `X11` and no desktop installed. [Qt][qt] gui applications can be run
 
 See the respective patches for the particular P9 header pins to use.
 
+There is an small *spidev* test program [spiloop][spiloop] in the *console-image*.
 
 ### Ubuntu Packages
 
@@ -57,7 +58,7 @@ You also want to change the default Ubuntu shell from `dash` to `bash` by runnin
  
     sudo dpkg-reconfigure dash
 
-Choose *No* to dash when prompted.
+Choose **No** to dash when prompted.
 
 ### Clone the dependency repositories
 
@@ -197,7 +198,7 @@ The *console-image* has a line
 
     inherit core-image
 
-which is `poky-fido/meta/classes/core-image.bbclass` and pulls in some required base packages.
+which is `poky-fido/meta/classes/core-image.bbclass` and pulls in some required base packages.  This is useful to know if you create your own image recipe.
 
 #### qt5-image
 
@@ -234,12 +235,12 @@ or
 
 after running `cleansstate` on the image, otherwise you will accumulate old build files as Yocto does not automatically clean them.
 
-You can ignore the **README_-_DO_NOT_DELETE_FILES_IN_THIS_DIRECTORY.txt** file in that directory. I have no idea what motivated that warning. Any files found in that directory are easily recreated.
+You can ignore the **README\_-\_DO\_NOT\_DELETE\_FILES\_IN\_THIS\_DIRECTORY.txt** file in that directory. Any files found here are easily recreated.
 
  
 ### Copying the binaries to an SD card
 
-After the build completes, the bootloader, kernel and rootfs image files can be found in `TMPDIR/deploy/images/bbb/`.
+After the build completes, the bootloader, kernel and rootfs image files can be found in `<TMPDIR>/deploy/images/bbb/`.
 
 The `meta-bbb/scripts` directory has some helper scripts to format and copy the files to a microSD card.
 
@@ -247,7 +248,30 @@ The `meta-bbb/scripts` directory has some helper scripts to format and copy the 
 
 This script will partition an SD card with the minimal 2 partitions required for the boards.
 
-Insert the microSD into your workstation and note where it shows up. You may have to look at your syslog. I'll assume `/dev/sdb` for this example.
+Insert the microSD into your workstation and note where it shows up.
+
+[lsblk][lsblk] is convenient for finding the microSD card. 
+
+For example
+
+    scott@octo:~/bbb/meta-bbb$ lsblk
+    NAME    MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
+    sda       8:0    0 931.5G  0 disk
+    |-sda1    8:1    0  93.1G  0 part /
+    |-sda2    8:2    0  93.1G  0 part /home
+    |-sda3    8:3    0  29.8G  0 part [SWAP]
+    |-sda4    8:4    0     1K  0 part
+    |-sda5    8:5    0   100G  0 part /oe5
+    |-sda6    8:6    0   100G  0 part /oe6
+    |-sda7    8:7    0   100G  0 part /oe7
+    |-sda8    8:8    0   100G  0 part /oe8
+    |-sda9    8:9    0   100G  0 part /oe9
+    `-sda10   8:10   0 215.5G  0 part /oe10
+    sdb       8:16   1   7.4G  0 disk
+    |-sdb1    8:17   1    64M  0 part
+    `-sdb2    8:18   1   7.3G  0 part
+
+I would use `sdb` for the format and copy script parameters on this machine.
 
 It doesn't matter if some partitions from the SD card are mounted. The `mk2parts.sh` script will unmount them.
 
