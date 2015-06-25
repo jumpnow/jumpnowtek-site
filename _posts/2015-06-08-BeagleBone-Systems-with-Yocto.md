@@ -9,9 +9,9 @@ tags: [linux, beaglebone, yocto]
 
 These instructions are for building generic developer systems for [BeagleBone Black][beagleboard] boards primarily for C, C++ and Qt programmers.
 
-The [Yocto][yocto] motto is *"It's not an embedded Linux distribution – it creates a custom one for you"*.
-
 The `meta-bbb` layer described below **should** be modified for your own particular project. 
+
+The [Yocto][yocto] motto is *"It's not an embedded Linux distribution – it creates a custom one for you"*.
 
 The *image recipes* under `meta-bbb/images` are examples with a few common packages I find useful.
 

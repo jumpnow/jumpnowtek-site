@@ -7,11 +7,11 @@ categories: yocto
 tags: [linux, gumstix, duovero, yocto]
 ---
 
-These instructions are for building generic developer systems for [Gumstix Duovero][duovero] boards primarily for C, C++ and Qt programmers.
-
-The Yocto motto is "It's not an embedded Linux distribution - it creates a custom one for you".
+These instructions are for building generic developer systems for [Gumstix Duovero][duovero] boards primarily for C, C++ and Qt programmers. Perl and Python are also included.
 
 The [meta-duovero][meta-duovero] layer described below **should** be modified for your own particular project.
+
+The Yocto motto is "It's not an embedded Linux distribution - it creates a custom one for you".
 
 The *image recipes* under `meta-duovero/images` are examples with a few common packages I find useful.
 
@@ -23,11 +23,15 @@ The Linux `4.1.0` kernel comes from the [Linux stable][linux-stable] repository.
 
 There is no `X11` and no desktop installed. [Qt][qt] gui applications can be run using the `-platform linuxfb` switch. The Qt version is `5.4.2`.
 
-The Duovero [Zephyr][duovero-zephyr] COM has a built-in Wifi/Bluetooth radio. The kernel and software to support both are included.
+Perl `5.20` with several hundred common modules is included.
 
-NOTE: I haven't tested wifi with the 4.1 kernel yet.
+Python `2.7.9` is included with enough modules to run [Bottle python][bottle-python] web applications. 
 
-*Device tree* binaries are generated and installed that support *HDMI* (jumpnow-duovero-parlor.dtb) or no display (jumpnow-duovero-parlor-nodisplay.dtb). They are easy to switch between using `/boot/uEnv.txt`. If you don't provide a `/boot/uEnv.txt` specifying an alternate *dtb*, then the stock *omap4-duovero-parlor.dtb* is used. There is an example *uEnv.txt* in `meta-duovero/scripts`.
+The Duovero [Zephyr][duovero-zephyr] COM has a built-in Wifi/Bluetooth radio. The kernel and software to support both are included. Access point mode is supported. Some [instructions here][jumpnow-duovero-ap].
+
+NOTE: I haven't tested Bluetooth with the 4.1 kernel yet.
+
+*Device tree* binaries are generated and installed that support **HDMI** *jumpnow-duovero-parlor.dtb* or no display *jumpnow-duovero-parlor-nodisplay.dtb*. They are easy to switch between using `/boot/uEnv.txt`. If you don't provide a `/boot/uEnv.txt` specifying an alternate *dtb*, then the stock *omap4-duovero-parlor.dtb* is used. There is an example *uEnv.txt* in `meta-duovero/scripts`.
 
 *spidev* on SPI bus 1 (CS 0,1,2) and SPI bus 4 (CS 0) are configured for use from the *Parlor header*. The following kernel patches under `meta-duover/recipes-kernel/linux/linux-stable-4.1/` add this functionality
 
@@ -344,6 +348,25 @@ Here's a realistic example session where I want to copy already built images to 
     scott@octo:~/duovero/meta-duovero/scripts$ ./copy_rootfs.sh sdb console duo2
 
 
+#### Some custom package examples
+
+[spiloop][spiloop] is a spidev test application installed in `/usr/bin`.
+
+The *bitbake recipe* that builds and packages *spiloop* is here
+
+    meta-duovero/recipes-misc/spiloop/spiloop_1.0.bb
+
+Use it to test the *spidev* driver before and after placing a jumper between pins *J9.3* and *J9.5* for SPI bus 1 or pins *J9.25* and *J9.27* for SPI bus 4. That's if you are using one of the jumpnow dtbs that includes the spidev.dtsi files.
+
+
+[tspress][tspress] is a Qt5 GUI application installed in `/usr/bin` with the *qt5-image*.
+
+The *bitbake recipe* is here
+
+    meta-duovero/recipes-qt/tspress/tspress.bb
+
+Check the *README* in the [tspress][tspress] repository for usage.
+
 #### Adding additional packages
 
 To display the list of available packages from the `meta-` repositories included in *bblayers.conf*
@@ -384,3 +407,5 @@ To add or upgrade packages to the system, you might be interested in using the b
 [spiloop]: https://github.com/scottellis/spiloop
 [opkg-repo]: http://www.jumpnowtek.com/yocto/Using-your-build-workstation-as-a-remote-package-repository.html
 [bbb-kernel]: http://www.jumpnowtek.com/beaglebone/Working-on-the-BeagleBone-kernel.html
+[bottle-python]: http://bottlepy.org/docs/dev/index.html
+[jumpnow-duovero-ap]: http://www.jumpnowtek.com/gumstix-linux/Duovero-Access-Point.html

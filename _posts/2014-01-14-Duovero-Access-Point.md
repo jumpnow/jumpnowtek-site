@@ -1,10 +1,12 @@
 ---
 layout: post
 title: Duovero Access Point
-date: 2014-01-14 20:44:00
+date: 2015-06-25 11:00:00
 categories: gumstix-linux
 tags: [gumstix, duovero, linux, wifi, access point, hostap]
 ---
+
+These instructions are based on a system running a `4.1` Linux kernel built from the sources described in this [Building Duovero Systems with Yocto][yocto-duovero] post.
 
 The [Gumstix Duovero Zephyr][gumstix-duovero] come with a built-in combination `wifi/bluetooth` radio. 
 
@@ -12,80 +14,71 @@ The wifi radio supports operating as an *access point*.
 
 The *Duovero Zephyr* uses a Marvell SD8787 radio attached to the SDIO bus.
 
-The `mwifiex` and `mwifiex_sdio` modules are available in Linux `3.6` which is the default kernel for the Duovero boards.
+The `mwifiex` and `mwifiex_sdio` are the kernel modules needed.
 
-The Marvell drivers require the `sd8787_uapsta.bin` binary firmware.
+The Marvell drivers also require the `sd8787_uapsta.bin` binary firmware.
 
-When you boot a Duovero with these drivers included you'll get two wireless interfaces, `mlan0` and `uap0`.
+When you boot the Duovero you'll get a single wireless interface `mlan0` that can be used as a *managed* or *ad-hoc* client.
 
-The `mlan0` interface is used for client *managed* and *ad-hoc* mode connections.
-
-The `uap0` interface is for *access point* mode.
-
---- 
-#### Note
-
-With [commit d82b49b][gumstix-disable-uap-patch] Gumstix disabled the `uap0` interface from their Duovero kernels. You will need to remove this patch from your kernel recipe if you are using [meta-gumstix][meta-gumstix] or you can use the [meta-duovero][meta-duovero] layer described below.
-
----
-
-The system should look something like this running on a [Gumstix Parlor][gumstix-parlor] expansion board
+The system will look something like this running on a [Gumstix Parlor][gumstix-parlor] expansion board
 
     root@duovero:~# ifconfig -a
-    eth0  Link encap:Ethernet  HWaddr 00:15:C9:28:F8:95
-          inet addr:192.168.10.115  Bcast:192.168.10.255  Mask:255.255.255.0
-          inet6 addr: fe80::215:c9ff:fe28:f895/64 Scope:Link
-          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
-          RX packets:103091 errors:0 dropped:2 overruns:0 frame:0
-          TX packets:5352 errors:0 dropped:0 overruns:0 carrier:0
-          collisions:0 txqueuelen:1000
-          RX bytes:12879802 (12.2 MiB)  TX bytes:564902 (551.6 KiB)
-          Interrupt:204
+    eth0      Link encap:Ethernet  HWaddr 00:15:C9:28:F8:95
+              inet addr:192.168.10.102  Bcast:192.168.10.255  Mask:255.255.255.0
+              UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+              RX packets:6896 errors:0 dropped:18 overruns:0 frame:0
+              TX packets:3906 errors:0 dropped:0 overruns:0 carrier:0
+              collisions:0 txqueuelen:1000
+              RX bytes:4009505 (3.8 MiB)  TX bytes:415290 (405.5 KiB)
+              Interrupt:71
 
-    lo    Link encap:Local Loopback
-          inet addr:127.0.0.1  Mask:255.0.0.0
-          inet6 addr: ::1/128 Scope:Host
-          UP LOOPBACK RUNNING  MTU:16436  Metric:1
-          RX packets:37 errors:0 dropped:0 overruns:0 frame:0
-          TX packets:37 errors:0 dropped:0 overruns:0 carrier:0
-          collisions:0 txqueuelen:0
-          RX bytes:11880 (11.6 KiB)  TX bytes:11880 (11.6 KiB)
+    lo        Link encap:Local Loopback
+              inet addr:127.0.0.1  Mask:255.0.0.0
+              UP LOOPBACK RUNNING  MTU:65536  Metric:1
+              RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+              TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+              collisions:0 txqueuelen:0
+              RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
 
-    mlan0 Link encap:Ethernet  HWaddr 00:19:88:24:FB:9C
-          BROADCAST MULTICAST  MTU:1500  Metric:1
-          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
-          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
-          collisions:0 txqueuelen:1000
-          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
-
-    uap0  Link encap:Ethernet  HWaddr 00:19:88:24:FB:9C
-          inet addr:192.168.5.1  Bcast:192.168.5.255  Mask:255.255.255.0
-          inet6 addr: fe80::219:88ff:fe24:fb9c/64 Scope:Link
-          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
-          RX packets:587 errors:0 dropped:0 overruns:0 frame:0
-          TX packets:539 errors:25 dropped:0 overruns:0 carrier:0
-          collisions:0 txqueuelen:1000
-          RX bytes:152279 (148.7 KiB)  TX bytes:84038 (82.0 KiB)
+    mlan0     Link encap:Ethernet  HWaddr 00:19:88:24:FB:9C
+              BROADCAST MULTICAST  MTU:1500  Metric:1
+              RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+              TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+              collisions:0 txqueuelen:1000
+              RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
 
 
-You can check the firmware version by looking at the boot log
+You can check the Marvell firmware version by looking at the boot log
 
     root@duovero:~# dmesg | grep mwifiex
     [    4.902313] mwifiex_sdio mmc1:0001:1: WLAN FW is active
     [    5.193237] mwifiex_sdio mmc1:0001:1: driver_version = mwifiex 1.0 (14.66.9.p96)
 
+To enable an *access point* interface called `uap0` run the following command
+
+    root@duovero:~# iw phy0 interface add uap0 type __ap
+
+The following interface will then show up
+
+    uap0      Link encap:Ethernet  HWaddr 00:19:88:24:FB:9C
+              BROADCAST MULTICAST  MTU:1500  Metric:1
+              RX packets:30461 errors:0 dropped:0 overruns:0 frame:0
+              TX packets:52523 errors:0 dropped:0 overruns:0 carrier:0
+              collisions:0 txqueuelen:1000
+              RX bytes:2310017 (2.2 MiB)  TX bytes:78326100 (74.6 MiB)
+
  
 The standard Linux software for access point management is [hostapd][hostapd].
 
-I'm using the `[dizzy]` branch of Yocto to build the Duovero system. [Instructions are here][yocto-duovero]. There is a recipe for *hostapd v1.0* in the *meta-openembedded* repo called *hostap-daemon*, but it doesn't work with the Duovero.
-
-I have new recipe for a more recent *hostapd v2.3* build in the [meta-duovero][meta-duovero] layer. I did have to back out one [patch][a6cc060] to the hostapd source to get it to work with the Duovero. 
+There is a recipe for *hostapd v2.3* called *hostap-daemon* in the [meta-duovero][meta-duovero] layer. One [patch][a6cc060] was backed out to get it to work with the Duovero. 
 
 You can find the recipe with [patch here][hostapd-patch].
 
+The *hostap-daemon* init script (`/etc/init.d/hostapd`) handles bringing up the `uap0` interface and running `ifup uap0` to assign an IP address before starting the *hostapd* daemon. 
+
 If you want a full Duovero rootfs image recipe, you can use this [console-image.bb][console-image]. It includes some useful AP tools like a *dhcp server* and the *iptables* utility.
 
-If you just want to try out some binaries, you can find them at [jumpnowtek.com/downloads/duovero][duovero-binaries].
+If you just want to try out some binaries, you can find them at [jumpnowtek.com/downloads/duovero/fido][duovero-binaries].
 
 ### Configuration
 
@@ -93,12 +86,11 @@ You will need to customize a few configuration files for your own use.
 
 #### uap0 - /etc/network/interfaces
 
-In the `/etc/network/interfaces` file, you need to configure the `uap0` interface. I you uncomment the example already there, `uap0` will have an IP address of `192.168.5.1`.
+In `/etc/network/interfaces`, the `uap0` interface is given a default IP address of `192.168.5.1` that you can change.
 
     --- /etc/network/interfaces ---
     ...
 	### access point interface
-	auto uap0
 	iface uap0 inet static
 	       address 192.168.5.1
 	       netmask 255.255.255.0
@@ -196,11 +188,6 @@ From the client you should be able to *ssh* into the *access point* at `192.168.
 
 #### Routing
 
---- This section is still a work in progress. ---
-
-I enabled some basic *netfilter* modules in the kernel. Enough so that I could
-do some basic *NAT* routing
-
 The first thing is to enable packet forwarding in the kernel
 
     root@duovero:~# sysctl -w net.ipv4.ip_forward=1
@@ -220,7 +207,7 @@ Load the `iptable_nat` kernel module
     [ 2109.500854] ip_tables: (C) 2000-2006 Netfilter Core Team
     [ 2109.516845] nf_conntrack version 0.5.0 (15836 buckets, 63344 max)
 
-To have this kernel module load at boot
+To have this kernel module load at boot you could do this
 
     root@duovero:~# echo iptable_nat > /etc/modules
 
@@ -230,10 +217,12 @@ Add a basic *NAT routing* rule using the `eth0` interface
     root@duovero:~# iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 
 
+There is a `/etc/init.d/firewall` init script included in the *console-image* that will load the `iptable_nat` kernel module and add the NAT rule to iptables at startup. 
+
+To enable the *firewall* script, modify `/etc/default/firewall` and set *FIREWALL_ENABLE* to *yes*.
+
 After that clients using the Duovero AP should be able to see the network that eth0 is attached to and browse the Internet if a valid *nameserver* was given out by the Duovero *dhcp server*.
 
-
-TODO: Add a script to load firewall rules at startup
 
 #### Client Isolation
 
@@ -254,13 +243,13 @@ This is a pretty simple access point implementation, but it should be enough to 
 [gumstix-parlor]: https://store.gumstix.com/index.php/products/287/
 [hostapd]: http://wireless.kernel.org/en/users/Documentation/hostapd
 [yocto-duovero]: http://www.jumpnowtek.com/gumstix/duovero/Duovero-Systems-with-Yocto.html
-[meta-duovero]: https://github.com/jumpnow/meta-duovero/tree/dizzy
+[meta-duovero]: https://github.com/jumpnow/meta-duovero/tree/fido
 [linux-wireless]: http://comments.gmane.org/gmane.linux.kernel.wireless.general/92215
 [cgit-hostap]: http://w1.fi/cgit/hostap/
 [a6cc060]: http://w1.fi/cgit/hostap/commit/?id=a6cc0602dd62f4b2ea02556ddcfd6baf9cd6289d
-[hostapd-patch]: https://github.com/jumpnow/meta-duovero/tree/dizzy/recipes-connectivity/hostapd
-[console-image]: https://github.com/jumpnow/meta-duovero/blob/dizzy/images/console-image.bb
-[duovero-binaries]: http://jumpnowtek.com/downloads/duovero/dizzy
+[hostapd-patch]: https://github.com/jumpnow/meta-duovero/tree/fido/recipes-connectivity/hostapd
+[console-image]: https://github.com/jumpnow/meta-duovero/blob/fido/images/console-image.bb
+[duovero-binaries]: http://jumpnowtek.com/downloads/duovero/fido
 [hostapd-conf]: http://hostap.epitest.fi/cgit/hostap/plain/hostapd/hostapd.conf
 [wireless-isolation]: http://www.wirelessisolation.com/
 [meta-gumstix]: https://github.com/gumstix/meta-gumstix
