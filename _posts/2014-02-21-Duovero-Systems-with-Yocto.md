@@ -304,7 +304,7 @@ You only have to create this directory once.
 
 #### copy_boot.sh
 
-This script copies the bootloader (MLO, u-boot) and Linux kernel (uImage) to the boot partition of the SD card.
+This script copies the bootloader (MLO, u-boot) to the boot partition of the SD card.
 
 This script needs to know the `TMPDIR` to find the binaries. It looks for an environment variable called `OETMP`.
 
@@ -320,9 +320,11 @@ Then run the `copy_boot.sh` script passing the location of SD card
 
     scott@octo:~/duovero/meta-duovero/scripts$ ./copy_boot.sh sdb
 
+This script should run very fast.
+
 #### copy_rootfs.sh
 
-This script copies files to the root file system partition of the SD card.
+This script copies the *zImage* Linux kernel, several device tree binaries (*.dtb) and the rest of the system files to the root file system partition of the SD card.
 
 The script accepts an optional command line argument for the image type, either `console` or `qt5`. The default is `console`.
 
@@ -336,6 +338,8 @@ or
 
     scott@octo:~/duovero/meta-duovero/scripts$ ./copy_rootfs.sh sdb qt5 duo1
 
+The *copy_rootfs.sh* script will take longer to run and depends a lot on the size and quality of your SD card.
+
 The copy scripts will **NOT** unmount partitions automatically. If the partition that is supposed to be the on the SD card is already mounted, the script will complain and abort. This is for safety, mine mostly, since I run these scripts many times a day on different machines and the SD cards show up in different places.
 
 Here's a realistic example session where I want to copy already built images to a second SD card that I just inserted.
@@ -347,6 +351,7 @@ Here's a realistic example session where I want to copy already built images to 
     scott@octo:~/duovero/meta-duovero/scripts$ ./copy_boot.sh sdb
     scott@octo:~/duovero/meta-duovero/scripts$ ./copy_rootfs.sh sdb console duo2
 
+Both *copy_boot.sh* and *copy_rootfs.sh* are simple scripts easily modified for custom use.
 
 #### Some custom package examples
 

@@ -91,24 +91,24 @@ These two workarounds both worked for me.
 
 1. The easiest is the one mentioned in the bug report, add this to your `build/conf/local.conf`
 
-    OE_TERMINAL = "xterm"
+        OE_TERMINAL = "xterm"
 
 2. Googling I found this one line patch to one of the Yocto/Poky scripts that also works
 
-    scott@t410:~/poky-fido$ git diff
-    diff --git a/meta/lib/oe/terminal.py b/meta/lib/oe/terminal.py
-    index 4f5c611..65e1ab8 100644
-    --- a/meta/lib/oe/terminal.py
-    +++ b/meta/lib/oe/terminal.py
-    @@ -57,6 +57,8 @@ class Gnome(XTerminal):
-         priority = 2
-     
-         def __init__(self, sh_cmd, title=None, env=None, d=None):
-    +        if os.getenv('LC_ALL'): os.putenv('LC_ALL','')
-    +
-             # Check version
-             vernum = check_terminal_version("gnome-terminal")
-             if vernum and LooseVersion(vernum) >= '3.10':
+        scott@t410:~/poky-fido$ git diff
+        diff --git a/meta/lib/oe/terminal.py b/meta/lib/oe/terminal.py
+        index 4f5c611..65e1ab8 100644
+        --- a/meta/lib/oe/terminal.py
+        +++ b/meta/lib/oe/terminal.py
+        @@ -57,6 +57,8 @@ class Gnome(XTerminal):
+             priority = 2
+         
+             def __init__(self, sh_cmd, title=None, env=None, d=None):
+        +        if os.getenv('LC_ALL'): os.putenv('LC_ALL','')
+        +
+                 # Check version
+                 vernum = check_terminal_version("gnome-terminal")
+                 if vernum and LooseVersion(vernum) >= '3.10':
 
 
 I expect an official Yocto fix will be in place soon.
