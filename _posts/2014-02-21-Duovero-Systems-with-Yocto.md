@@ -195,6 +195,7 @@ There are a few custom images available in the [meta-duovero][meta-duovero] laye
     console-image.bb
     qt5-image.bb
 
+Place your own image recipes in this same directory.
 
 #### console-image
 
@@ -202,10 +203,10 @@ A basic console developer image. See the recipe `meta-duovero/images/console-ima
 
     gcc/g++ and associated build tools
     git
+    perl and python
     ssh/scp server and client
     wireless support
     kernel modules
-
 
 The *console-image* has a line
 
