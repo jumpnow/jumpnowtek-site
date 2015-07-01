@@ -344,9 +344,11 @@ Both *copy_boot.sh* and *copy_rootfs.sh* are simple scripts easily modified for 
 
 ### Booting from the SD card
 
-The **S2** switch on BBB board should be held down until the bootloader loads to force the BBB to boot from the SD card. The default behavior is to boot from the *eMMC* first if a bootloader is found there.
+The **S2** switch on BBB board should be held down until the bootloader starts to force the BBB to boot from the SD card. The **S2** switch is above the SD card holder.
 
-If you prefer to always boot from the SD card you can erase any existing bootloader from the eMMC with something like the following
+The default behavior of the *BBB* is to boot from the *eMMC* first if it finds a bootloader there.
+
+If you prefer to always boot from the SD card you can erase any existing bootloader from the *eMMC* with something like the following
 
     root@beaglebone:~# dd if=/dev/zero of=/dev/mmcblk1 bs=4096 count=4096
 
@@ -358,23 +360,22 @@ On a system that booted from an SD card, `/dev/mmcblk0` is the SD card and `/dev
 
 You need a running system to install to the *eMMC*, since it is not accessible otherwise.
 
-The Linux userland tools see the *eMMC* similar to an SD card, so the same scripts used to create the SD card slightly modified can be used install a system onto the *eMMC*.
+The Linux userland tools see the *eMMC* similar to an SD card, so the same scripts slightly modified can be used install a system onto the *eMMC*.
 
 There are some scripts under `meta-bbb/scripts` that are customized for an *eMMC* installation.
 
-* emmc_copy_boot.sh - modified copy_boot.sh
-* emmc_copy_rootfs.sh - modified copy_rootfs.sh
-* emmc_install.sh - wrapper that calls *mk2parts.sh*, *emmc_copy_boot.sh* and *emmc_copy_rootfs.sh*
-* emmc-uEnv.txt - modified `/boot/uEnv.txt` for an *eMMC* system
+* emmc_copy_boot.sh - a modified copy_boot.sh
+* emmc_copy_rootfs.sh - a modified copy_rootfs.sh
+* emmc_install.sh - a wrapper script
+* emmc-uEnv.txt - a modified `/boot/uEnv.txt` for an *eMMC* system
 
-The above scripts are for use on the *BBB*.
+The above scripts are meant to be run on the *BBB*.
 
 This final script is meant to be run on the workstation and is used to copy the above scripts and the image binaries to the SD card.
 
 * copy_emmc_install.sh
 
 The arguments to *copy_emmc_install* are the SD card device and the image you want to later install on the *eMMC*. It should be run after the *copy_rootfs.sh* script.
-
 
     scott@octo:~$ cd bbb/meta-bbb/scripts
     scott@octo:~/bbb/meta-bbb/scripts$ ./copy_boot.sh sdb
