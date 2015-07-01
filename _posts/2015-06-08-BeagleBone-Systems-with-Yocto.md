@@ -342,6 +342,97 @@ Here's a realistic example session where I want to copy already built images to 
 
 Both *copy_boot.sh* and *copy_rootfs.sh* are simple scripts easily modified for custom use.
 
+### Booting from the SD card
+
+The **S2** switch on BBB board should be held down until the bootloader loads to force the BBB to boot from the SD card. The default behavior is to boot from the *eMMC* first if a bootloader is found there.
+
+If you prefer to always boot from the SD card you can erase any existing bootloader from the eMMC with something like the following
+
+    root@beaglebone:~# dd if=/dev/zero of=/dev/mmcblk1 bs=4096 count=4096
+
+This is particularly useful during development on systems where the **S2** switch is not easily accessible.
+
+On a system that booted from an SD card, `/dev/mmcblk0` is the SD card and `/dev/mmcblk1` is the *eMMC*.
+
+### Installing to the eMMC
+
+You need a running system to install to the *eMMC*, since it is not accessible otherwise.
+
+The Linux userland tools see the *eMMC* similar to an SD card, so the same scripts used to create the SD card slightly modified can be used install a system onto the *eMMC*.
+
+There are some scripts under `meta-bbb/scripts` that are customized for an *eMMC* installation.
+
+* emmc_copy_boot.sh - modified copy_boot.sh
+* emmc_copy_rootfs.sh - modified copy_rootfs.sh
+* emmc_install.sh - wrapper that calls *mk2parts.sh*, *emmc_copy_boot.sh* and *emmc_copy_rootfs.sh*
+* emmc-uEnv.txt - modified `/boot/uEnv.txt` for an *eMMC* system
+
+The above scripts are for use on the *BBB*.
+
+This final script is meant to be run on the workstation and is used to copy the above scripts and the image binaries to the SD card.
+
+* copy_emmc_install.sh
+
+The arguments to *copy_emmc_install* are the SD card device and the image you want to later install on the *eMMC*. It should be run after the *copy_rootfs.sh* script.
+
+
+    scott@octo:~$ cd bbb/meta-bbb/scripts
+    scott@octo:~/bbb/meta-bbb/scripts$ ./copy_boot.sh sdb
+    scott@octo:~/bbb/meta-bbb/scripts$ ./copy_rootfs.sh sdb console
+    scott@octo:~/bbb/meta-bbb/scripts$ ./copy_emmc_install.sh sdb console
+
+Once you boot this SD card, you'll find the following under `/home/root/emmc` 
+
+    root@beaglebone:~/emmc# ls -l
+    total 37756
+    -rwxr-xr-x 1 root root    83152 Jul  1 06:24 MLO-beaglebone
+    -rw-r--r-- 1 root root 38020844 Jul  1 06:24 console-image-beaglebone.tar.xz
+    -rw-r--r-- 1 root root     1112 Jul  1 06:24 emmc-uEnv.txt
+    -rwxr-xr-x 1 root root     1410 Jul  1 06:24 emmc_copy_boot.sh
+    -rwxr-xr-x 1 root root     2498 Jul  1 06:24 emmc_copy_rootfs.sh
+    -rwxr-xr-x 1 root root      675 Jul  1 06:24 emmc_install.sh
+    -rwxr-xr-x 1 root root     1240 Jul  1 06:24 mk2parts.sh
+    -rwxr-xr-x 1 root root   399360 Jul  1 06:24 u-boot-beaglebone.img
+    -rw-r--r-- 1 root root    30149 Jul  1 06:24 zImage-am335x-boneblack.dtb
+    -rw-r--r-- 1 root root    31722 Jul  1 06:24 zImage-bbb-4dcape70t.dtb
+    -rw-r--r-- 1 root root    30678 Jul  1 06:24 zImage-bbb-hdmi.dtb
+    -rw-r--r-- 1 root root    31927 Jul  1 06:24 zImage-bbb-nh5cape.dtb
+
+To install the *console-image* onto the *eMMC*, run the `emmc_install.sh` script like this
+
+    root@beaglebone:~/emmc# ./emmc_install.sh console
+
+It should take less then a minute to run and the output should look something like this
+
+    root@beaglebone:~/emmc# ./emmc_install.sh console
+    
+    Working on /dev/mmcblk1
+    
+    umount: /dev/mmcblk1p1: not mounted
+    umount: /dev/mmcblk1p2: not mounted
+    DISK SIZE – 3867148288 bytes
+    CYLINDERS – 470
+    
+    Okay, here we go ...
+    
+    === Zeroing the MBR ===
+    ...
+    <partitioning, formatting and copying stuff>
+    ...
+    Extracting console-image-beaglebone.tar.xz to /media
+    Copying am335x-boneblack.dtb to /media/boot/
+    Copying bbb-hdmi.dtb to /media/boot/
+    Copying bbb-4dcape70t.dtb to /media/boot/
+    Copying bbb-nh5cape.dtb to /media/boot/
+    Writing hostname to /etc/hostname
+    Copying emmc-uEnv.txt to /media/boot/uEnv.txt
+    Unmounting /dev/mmcblk1p2
+    Done
+    Success!
+    Power off, remove SD card and power up
+
+Follow the instructions and after reboot you will be running the *console-image* from the *eMMC*.
+
 #### Some custom package examples
 
 [spiloop][spiloop] is a spidev test application installed in `/usr/bin`.
