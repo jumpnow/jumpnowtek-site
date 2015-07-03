@@ -7,7 +7,7 @@ categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
 
-These instructions are for building generic developer systems for [BeagleBone Black][beagleboard] boards primarily for C, C++ and Qt programmers.
+These instructions are for building generic developer systems for [BeagleBone Black][beagleboard] boards primarily for C, C++ and Qt programmers. Perl and Python are also included.
 
 The `meta-bbb` layer described below **should** be modified for your own particular project. 
 
@@ -21,7 +21,11 @@ The Linux `4.1.0` kernel comes from the [Linux stable][linux-stable] repository.
 
 `sysvinit` is used for the init system.
 
-There is no `X11` and no desktop installed. [Qt][qt] gui applications can be run using the `-platform linuxfb` switch. The Qt version is `5.4.2`.
+The Qt version is `5.4.2`. There is no `X11` and no desktop installed. [Qt][qt] gui applications can be run using the `-platform linuxfb` switch.
+
+Perl `5.20` with several hundred common modules is included.
+
+Python `2.7.9` is included with enough modules to run [Bottle python][bottle-python] web applications.
 
 *Device tree* binaries are generated and installed that support *HDMI* (bbb-hdmi.dtb), the *4DCape 7-inch* touchscreen (bbb-4dcape70t.dtb) and the *New Haven 5-inch* touchscreen (bbb-nh5cape.dtb). They are easy to switch between using `/boot/uEnv.txt` and all work with the installed *Qt* binaries.
 
@@ -490,4 +494,5 @@ To add or upgrade packages to the system, you might be interested in using the b
 [tspress]: https://github.com/scottellis/tspress
 [spiloop]: https://github.com/scottellis/spiloop
 [bbb-kernel]: http://www.jumpnowtek.com/beaglebone/Working-on-the-BeagleBone-kernel.html
+[bottle-python]: http://bottlepy.org/docs/dev/index.html
 

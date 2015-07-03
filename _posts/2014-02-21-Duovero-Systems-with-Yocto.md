@@ -21,7 +21,7 @@ The Linux `4.1.0` kernel comes from the [Linux stable][linux-stable] repository.
 
 `sysvinit` is used for the init system.
 
-There is no `X11` and no desktop installed. [Qt][qt] gui applications can be run using the `-platform linuxfb` switch. The Qt version is `5.4.2`.
+The Qt version is `5.4.2`. There is no `X11` and no desktop installed. [Qt][qt] gui applications can be run using the `-platform linuxfb` switch.
 
 Perl `5.20` with several hundred common modules is included.
 
