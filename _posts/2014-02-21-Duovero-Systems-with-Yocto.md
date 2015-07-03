@@ -31,7 +31,7 @@ The Duovero [Zephyr][duovero-zephyr] COM has a built-in Wifi/Bluetooth radio. Th
 
 NOTE: I haven't tested Bluetooth with the 4.1 kernel yet.
 
-*Device tree* binaries are generated and installed that support **HDMI** *jumpnow-duovero-parlor.dtb* or no display *jumpnow-duovero-parlor-nodisplay.dtb*. They are easy to switch between using `/boot/uEnv.txt`. If you don't provide a `/boot/uEnv.txt` specifying an alternate *dtb*, then the stock *omap4-duovero-parlor.dtb* is used. There is an example *uEnv.txt* in `meta-duovero/scripts`.
+*Device tree* binaries are generated and installed that support *HDMI* **jumpnow-duovero-parlor.dtb** or no display **jumpnow-duovero-parlor-nodisplay.dtb**. They are easy to switch between using `/boot/uEnv.txt`. If you don't provide a `/boot/uEnv.txt` specifying an alternate *dtb*, then the stock **omap4-duovero-parlor.dtb** is used. There is an example *uEnv.txt* in `meta-duovero/scripts`.
 
 *spidev* on SPI bus 1 (CS 0,1,2) and SPI bus 4 (CS 0) are configured for use from the *Parlor header*. The following kernel patches under `meta-duover/recipes-kernel/linux/linux-stable-4.1/` add this functionality
 
