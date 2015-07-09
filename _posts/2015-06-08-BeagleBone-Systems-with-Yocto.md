@@ -17,7 +17,7 @@ The Yocto version is `1.8.0` the `[fido]` branch.
 
 The Linux `4.1.1` kernel comes from the [Linux stable][linux-stable] repository.
 
-`sysvinit` is used for the init system.
+These are *sysvinit* systems.
 
 The Qt version is `5.4.3`. There is no `X11` and no desktop installed. [Qt][qt] gui applications can be run using the `-platform linuxfb` switch.
 
