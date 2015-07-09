@@ -11,8 +11,6 @@ These instructions are for building generic developer systems for [Gumstix Duove
 
 The [meta-duovero][meta-duovero] layer described below **should** be modified for your own particular project.
 
-The Yocto motto is "It's not an embedded Linux distribution - it creates a custom one for you".
-
 The *image recipes* under `meta-duovero/images` are examples with a few common packages I find useful.
 
 The Yocto version is `1.8.0` the `[fido]` branch.
