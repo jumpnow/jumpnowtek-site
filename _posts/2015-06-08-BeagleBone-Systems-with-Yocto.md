@@ -2,16 +2,16 @@
 layout: post
 title: Building BeagleBone Black Systems with Yocto
 description: "Building customized systems for the BeagleBone Black using tools from the Yocto Project"
-date: 2015-06-24 17:15:00
+date: 2015-07-11 10:00:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
 
-These instructions are for building generic developer systems for [BeagleBone Black][beagleboard] boards primarily for C, C++ and Qt programmers. Perl and Python are also included.
+These instructions are for building generic developer systems for [BeagleBone Black][beagleboard] boards primarily for C, C++ and Qt programmers. The example systems also include Perl and Python.
 
 The `meta-bbb` layer described below **should** be modified for your own particular project. 
 
-The *image recipes* under `meta-bbb/images` are examples with a few common packages I find useful.
+The *image recipes* under `meta-bbb/images` are examples with some common packages I find useful. 
 
 The Yocto version is `1.8.0` the `[fido]` branch.
 
@@ -19,7 +19,7 @@ The Linux `4.1.1` kernel comes from the [Linux stable][linux-stable] repository.
 
 These are *sysvinit* systems.
 
-The Qt version is `5.4.3`. There is no *X11* and no desktop installed. [Qt][qt] gui applications can be run using the `-platform linuxfb` switch.
+The Qt version is `5.4.3`. There is no *X11* and no desktop installed. [Qt][qt] gui applications can be run using the `-platform linuxfb` switch. I suspect *QML* apps will not work since I don't have *OpenGL* support in the these systems. My projects on SOC boards like the BBB tend to be touchscreen instrument interfaces with simple UI controls and 2D graphs.
 
 Perl `5.20` with several hundred common modules is included.
 
@@ -204,7 +204,7 @@ which is `poky-fido/meta/classes/core-image.bbclass` and pulls in some required 
 
 #### qt5-image
 
-This image includes the `console-image` and adds `Qt 5.4.2` with the associated development headers and `qmake`.
+This image includes the `console-image` and adds `Qt5` with the associated development headers and `qmake`.
 
 ### Build
 
@@ -212,9 +212,9 @@ To build the `console-image` run the following command
 
     scott@octo:~/bbb/build$ bitbake console-image
 
-You may run into build errors related to packages that failed to download or sometimes out of order builds. The easy solution is to clean the build for the failed package and rerun the build again.
+You may occasionally run into build errors related to packages that either failed to download or sometimes out of order builds. The easy solution is to clean the failed package and rerun the build again.
 
-For instance if the build for `zip` failed for some reason, I would run this.
+For instance if the build for `zip` failed for some reason, I would run this
 
     scott@octo:~/bbb/build$ bitbake -c cleansstate zip
     scott@octo:~/bbb/build$ bitbake zip
@@ -493,4 +493,4 @@ To add or upgrade packages to the system, you might be interested in using the b
 [spiloop]: https://github.com/scottellis/spiloop
 [bbb-kernel]: http://www.jumpnowtek.com/beaglebone/Working-on-the-BeagleBone-kernel.html
 [bottle-python]: http://bottlepy.org/docs/dev/index.html
-
+[lsblk]: http://linux.die.net/man/8/lsblk

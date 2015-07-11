@@ -2,12 +2,12 @@
 layout: post
 title: Building Duovero Systems with Yocto
 description: "Building customized systems for Gumstix Duovero using tools from the Yocto Project"
-date: 2015-06-24 17:10:00
-categories: yocto 
+date: 2015-07-11 10:00:00
+categories: gumstix 
 tags: [linux, gumstix, duovero, yocto]
 ---
 
-These instructions are for building generic developer systems for [Gumstix Duovero][duovero] boards primarily for C, C++ and Qt programmers. Perl and Python are also included.
+These instructions are for building generic developer systems for [Gumstix Duovero][duovero] boards primarily for C, C++ and Qt programmers. The example systems also include Perl and Python.
 
 The [meta-duovero][meta-duovero] layer described below **should** be modified for your own particular project.
 
@@ -19,7 +19,7 @@ The Linux `4.1.1` kernel comes from the [Linux stable][linux-stable] repository.
 
 These are *sysvinit* systems.
 
-The Qt version is `5.4.3`. There is no *X11* and no desktop installed. [Qt][qt] gui applications can be run using the `-platform linuxfb` switch.
+The Qt version is `5.4.3`. There is no *X11* and no desktop installed. [Qt][qt] gui applications can be run using the `-platform linuxfb` switch. I suspect *QML* apps will not work since I don't have *OpenGL* support in the these systems.
 
 Perl `5.20` with several hundred common modules is included.
 
@@ -214,7 +214,7 @@ which is `poky-fido/meta/classes/core-image.bbclass` and pulls in some required 
 
 #### qt5-image
 
-This image includes the `console-image` and adds `Qt 5.4.2` with the associated development headers and `qmake`.
+This image includes the `console-image` and adds `Qt5` with the associated development headers and `qmake`.
 
 ### Build
 
@@ -222,7 +222,7 @@ To build the `console-image` run the following command
 
     scott@octo:~/duovero/build$ bitbake console-image
 
-You may run into build errors related to packages that failed to download or sometimes out of order builds. The easy solution is to clean the build for the failed package and rerun the build again.
+You may occasionally run into build errors related to packages that either failed to download or sometimes out of order builds. The easy solution is to clean the failed package and rerun the build again.
 
 For instance if the build for `zip` failed for some reason, I would run this.
 
