@@ -17,6 +17,8 @@ The Yocto version is `1.8.0` the `[fido]` branch.
 
 The Linux `4.1.1` kernel comes from the [Linux stable][linux-stable] repository.
 
+The [u-boot][uboot] version is `2015.07-rc3`.
+
 These are *sysvinit* systems.
 
 The Qt version is `5.4.3`. There is no *X11* and no desktop installed. [Qt][qt] gui applications can be run using the `-platform linuxfb` switch. I suspect *QML* apps will not work since I don't have *OpenGL* support in the these systems. My projects on SOC boards like the BBB tend to be touchscreen instrument interfaces with simple UI controls and 2D graphs.
@@ -486,6 +488,7 @@ To add or upgrade packages to the system, you might be interested in using the b
 
 [beagleboard]: http://www.beagleboard.org/
 [linux-stable]: https://www.kernel.org/
+[uboot]: http://www.denx.de/wiki/U-Boot/WebHome
 [qt]: http://www.qt.io/
 [yocto]: https://www.yoctoproject.org/
 [meta-bbb]: https://github.com/jumpnow/meta-bbb
