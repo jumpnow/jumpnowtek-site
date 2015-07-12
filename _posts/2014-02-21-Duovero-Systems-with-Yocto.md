@@ -17,6 +17,8 @@ The Yocto version is `1.8.0` the `[fido]` branch.
 
 The Linux `4.1.1` kernel comes from the [Linux stable][linux-stable] repository.
 
+The [u-boot][uboot] version is `2015.07-rc3`.
+
 These are *sysvinit* systems.
 
 The Qt version is `5.4.3`. There is no *X11* and no desktop installed. [Qt][qt] gui applications can be run using the `-platform linuxfb` switch. I suspect *QML* apps will not work since I don't have *OpenGL* support in the these systems.
@@ -403,6 +405,7 @@ To add or upgrade packages to the system, you might be interested in using the b
 [duovero]: https://store.gumstix.com/index.php/category/43/
 [duovero-zephyr]: https://store.gumstix.com/index.php/products/355/
 [linux-stable]: https://www.kernel.org/
+[uboot]: http://www.denx.de/wiki/U-Boot/WebHome
 [qt]: http://www.qt.io/
 [yocto]: https://www.yoctoproject.org/
 [meta-duovero]: https://github.com/jumpnow/meta-duovero
