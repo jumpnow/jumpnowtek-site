@@ -11,7 +11,7 @@ The [Gumstix Duovero][duovero] has 4 general purpose *I2C* buses.
 
 There is a 5th *I2C* bus dedicated for use with an external power management unit, a [TWL6030][twl6030] on the *Duovero*.
 
-With the [duovero.dts][duovero-dts] I'm currently using, the general purpose *I2C* buses show up like this
+With the [omap443x.dts][omap443x-dts] I'm currently using, the general purpose *I2C* buses show up like this
 
     root@duovero:~/qdac # ofwdump -a
     Node 0x38:
@@ -55,6 +55,90 @@ With the [duovero.dts][duovero-dts] I'm currently using, the general purpose *I2
     iicbus3: <OFW I2C bus> on iichb3
     iic3: <I2C generic I/O> on iicbus3
 
+### Bus speed
+
+The default *I2C* bus speed is `100 kHz` for all ARM platforms.
+
+The *FreeBSD* driver supports 3 different speeds: `100 kHz`, `400 kHz` and `1 MHz`.
+
+When you provide a speed, the FreeBSD driver will try to find the speed you asked for or the next highest speed less then what you asked for.
+
+### Changing the bus speed
+
+You can change the *I2C* bus speed three different ways
+
+1. In the dts file
+2. Using [sysctl(8)][sysctl]
+3. Using a [loader.conf(5)][loader-conf] file
+
+### 1. Device Tree File
+
+*clock-frequency* is a new *FreeBSD* dts property that can be used to set the initial bus speed.
+ 
+An example can be found in [omap443x.dtsi][omap443x-dtsi]. 
+
+Here is an excerpt for one of the buses
+
+    ...
+    i2c2: i2c@48072000 { 
+            compatible = "ti,i2c"; 
+            reg = <0x48072000 0x100>; 
+            interrupts = <89>; 
+            i2c-device-id = <2>; 
+            clock-frequency = <100000>; 
+    }; 
+    ...
+
+If *400 kHz* was preferred, it would be
+
+    ...
+            clock-frequency = <400000>;
+    ...
+
+### 2. sysctl
+
+The *sysctl* option is probably the most convenient method for development.
+
+The *i2c* bus speeds show up under *sysctl* like this
+
+    root@duovero:~ # sysctl -a | grep iicbus | grep frequency
+    dev.iicbus.0.frequency: 100000
+    dev.iicbus.1.frequency: 100000
+    dev.iicbus.2.frequency: 100000
+    dev.iicbus.3.frequency: 100000
+
+You can change the speed of a particular bus this way
+
+    root@duovero:~ # sysctl dev.iicbus.2.frequency=400000
+    dev.iicbus.2.frequency: 100000 -> 400000
+
+    root@duovero:~/duovero-eeprom # sysctl -a | grep iicbus | grep frequency
+    dev.iicbus.0.frequency: 100000
+    dev.iicbus.1.frequency: 400000
+    dev.iicbus.2.frequency: 100000
+    dev.iicbus.3.frequency: 100000
+
+Then you have to **reset** the bus using the [i2c(8)][i2c] utility for it to take effect
+
+    root@duovero:~ # i2c -r -f /dev/iic2
+    Resetting I2C controller on /dev/iic2: OK
+
+### 3. loader.conf
+
+Given those two methods, there doesn't seem much need for the [loader.conf(5)][loader-conf] approach. By default, the *loader.conf* framework is not even used on most FreeBSD ARM boards. It adds significantly to the boot time. 
+
+But if you really want to, this is how you could use it.
+
+Enable *loader.conf* functionality by adding a `/boot/loader.rc` file. You can use the example `/boot/loader.rc.sample`.
+
+    root@duovero:~ # cp /boot/loader.rc.sample /boot/loader.rc
+
+Then add a `/boot/loader.conf` file that contains the new i2c bus speed you want. Make sure the value has double-quotes around it.
+
+    root@duovero:~ # cat /boot/loader.conf
+    dev.iicbus.2.frequency="400000"
+
+When you reboot the system, the new speed will be in effect.
 
 The [Duovero Parlor][duovero-parlor] board only brings out one *I2C* bus to the 40-pin header, **I2C2_SCL** and **I2C2_SDA** on pins **12** and **14**.
 
@@ -110,6 +194,8 @@ The changes are actually pretty minor between the *FreeBSD* and *Linux* versions
 [duovero]: https://store.gumstix.com/index.php/category/43/
 
 [duovero-dts]: https://github.com/scottellis/duovero-freebsd/blob/master/sys/boot/fdt/dts/arm/duovero.dts
+
+[omap443x-dtsi]: https://gist.github.com/scottellis/43a18509af1b05ce3565
 
 [default-speed-patch]: https://github.com/scottellis/duovero-freebsd/blob/master/patches/omap4-i2c-default-speed.patch
 
