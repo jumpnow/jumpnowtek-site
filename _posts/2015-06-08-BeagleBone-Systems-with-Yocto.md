@@ -21,7 +21,7 @@ The [u-boot][uboot] version is `2015.07-rc3`.
 
 These are *sysvinit* systems.
 
-The Qt version is `5.4.3`. There is no *X11* and no desktop installed. [Qt][qt] gui applications can be run using the `-platform linuxfb` switch. I suspect *QML* apps will not work since I don't have *OpenGL* support in the these systems. My projects on SOC boards like the BBB tend to be touchscreen instrument interfaces with simple UI controls and 2D graphs.
+The Qt version is `5.4.2`. There is no *X11* and no desktop installed. [Qt][qt] gui applications can be run using the `-platform linuxfb` switch. I suspect *QML* apps will not work since I don't have *OpenGL* support in the these systems. My projects on SOC boards like the BBB tend to be touchscreen instrument interfaces with simple UI controls and 2D graphs.
 
 Perl `5.20` with several hundred common modules is included.
 
