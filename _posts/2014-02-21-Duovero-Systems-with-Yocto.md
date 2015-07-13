@@ -2,7 +2,7 @@
 layout: post
 title: Building Duovero Systems with Yocto
 description: "Building customized systems for Gumstix Duovero using tools from the Yocto Project"
-date: 2015-07-11 10:00:00
+date: 2015-07-13 05:12:00
 categories: gumstix-linux 
 tags: [linux, gumstix, duovero, yocto]
 ---
@@ -15,7 +15,7 @@ The *image recipes* under `meta-duovero/images` are examples with a few common p
 
 The Yocto version is `1.8.0` the `[fido]` branch.
 
-The Linux `4.1.1` kernel comes from the [Linux stable][linux-stable] repository.
+The Linux `4.1.2` kernel comes from the [Linux stable][linux-stable] repository.
 
 The [u-boot][uboot] version is `2015.07-rc3`.
 
