@@ -318,6 +318,10 @@ This script should run very fast.
 
 This script copies the *zImage* Linux kernel, several device tree binaries (*.dtb) and the rest of the system files to the root file system partition of the SD card.
 
+The script also copies a *uEnv.txt* file to the root file system `/boot` directory if it finds one in either `<TMPDIR>/deploy/images/beaglebone` or in the local directory where the script is run from. To get started, you might just want to do this
+
+    scott@octo:~/bbb/meta-bbb/scripts$ cp uEnv.txt-example uEnv.txt
+ 
 The script accepts an optional command line argument for the image type, for example `console` or `qt5`. The default is `console` if no argument is provided.
 
 The script also accepts a `hostname` argument if you want the host name to be something other then the default `beaglebone`.
