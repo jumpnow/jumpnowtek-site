@@ -501,3 +501,4 @@ To add or upgrade packages to the system, you might be interested in using the b
 [bbb-kernel]: http://www.jumpnowtek.com/beaglebone/Working-on-the-BeagleBone-kernel.html
 [bottle-python]: http://bottlepy.org/docs/dev/index.html
 [lsblk]: http://linux.die.net/man/8/lsblk
+[opkg-repo]: http://www.jumpnowtek.com/yocto/Using-your-build-workstation-as-a-remote-package-repository.html
