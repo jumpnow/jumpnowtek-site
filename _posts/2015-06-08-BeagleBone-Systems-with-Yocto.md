@@ -9,7 +9,7 @@ tags: [linux, beaglebone, yocto]
 
 These instructions are for building generic developer systems for [BeagleBone Black][beagleboard] boards primarily for C, C++ and Qt programmers. The example systems also include Perl and Python.
 
-The `meta-bbb` layer described below **should** be modified for your own particular project. 
+The [meta-bbb][meta-bbb] layer described below **should** be modified for your own particular project. 
 
 The *image recipes* under `meta-bbb/images` are examples with some common packages I find useful. 
 
