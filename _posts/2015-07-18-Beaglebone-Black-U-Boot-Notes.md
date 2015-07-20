@@ -13,7 +13,7 @@ The Yocto meta-layer I'm using is [meta-bbb][meta-bbb] with instructions describ
 
 The u-boot version I'm working with is `2015-07`.
 
-## Building with Yocto
+# Building with Yocto
 
 The u-boot configuration is specified here `meta-bbb/conf/machine/beaglebone.conf`
 
@@ -49,7 +49,7 @@ If you want to clean the build first
 
 The binaries can be found under `<TMPDIR>/deploy/images/beaglebone`.
 
-## Building outside of Yocto
+# Building outside of Yocto
 
 1. Get a cross-compiler. There are some [notes here][bbb-kernel-work] in the **Cross-compiler** section on how to build some cross-tools with Yocto.
 
@@ -111,7 +111,7 @@ To install and test the new bootloader
 
 Reboot the BBB.
 
-## U-Boot source files
+# U-Boot source files
 
 The configuration file for the BBB is `u-boot/configs/am335x_boneblack_defconfig`
 
@@ -134,7 +134,7 @@ Specific **AM335X\_EVM** source can be found under `u-boot/board/ti/am335x/`.
 
 Definitions and board specific options can be found in `u-boot/include/configs/am335x_evm.h`.
 
-## Why all the warnings from MLO? 
+# Why all the warnings from MLO? 
 
 Here's what the **MLO** output looks like when booting from an SD card
 
@@ -250,8 +250,9 @@ At first just the header to find the proper load address. Then a second read tha
             |-- spl_load_image_fat() from common/spl_fat.c
                 |-- file_fat_read() from fs/fat/fat.c
 
+So it's a little confusing to see *two* reads of **u-boot.img** in the log, but probably not worth removing.
 
-## What are those /dev/mmcblk[0|1]/boot[0|1] partitions ?
+# What are those /dev/mmcblkboot partitions?
 
 A couple of strange partitions show up on the *eMMC*.
 
