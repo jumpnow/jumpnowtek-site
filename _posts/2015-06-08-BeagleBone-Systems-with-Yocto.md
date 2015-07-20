@@ -479,7 +479,11 @@ The new package needs to get included directly in the *IMAGE_INSTALL* variable o
 
 #### Customizing the Kernel
 
-See this [article][bbb-kernel] for some ways to go about customizing and rebuilding the BBB kernel or generating a new device tree.
+See this [post][bbb-kernel] for some ways to go about customizing and rebuilding the BBB kernel or generating a new device tree binary.
+
+#### Customizing U-Boot
+
+See this [post][bbb-uboot] for similar notes on working with u-boot for the BBB.
 
 #### Package management
 
@@ -502,3 +506,4 @@ To add or upgrade packages to the system, you might be interested in using the b
 [bottle-python]: http://bottlepy.org/docs/dev/index.html
 [lsblk]: http://linux.die.net/man/8/lsblk
 [opkg-repo]: http://www.jumpnowtek.com/yocto/Using-your-build-workstation-as-a-remote-package-repository.html
+[bbb-uboot]: http://www.jumpnowtek.com/beaglebone/Beaglebone-Black-U-Boot-Notes.html
