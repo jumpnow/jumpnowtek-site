@@ -350,7 +350,45 @@ And here I've booted a kernel from an SD card with the above patch so `dd` now w
         4096 bytes (4.1 kB) copied, 0.110132 s, 37.2 kB/s
 
 
-So what are these partitions for and how are they normally populated?
+If you run *saveenv* from the u-boot prompt
+
+        U-Boot# saveenv
+        Saving Environment to MMC...
+        Writing to redundant MMC(1)... done
+
+
+The following is now seen from Linux
+
+        root@bbb:~# hexdump -C /dev/mmcblk1boot0
+        00000000  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+        *
+        00200000
+
+
+        root@bbb:~# hexdump -C /dev/mmcblk1boot1
+        00000000  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+        *
+        00020000  05 6e 59 21 01 61 72 63  68 3d 61 72 6d 00 62 61  |.nY!.arch=arm.ba|
+        00020010  75 64 72 61 74 65 3d 31  31 35 32 30 30 00 62 6f  |udrate=115200.bo|
+        00020020  61 72 64 3d 61 6d 33 33  35 78 00 62 6f 61 72 64  |ard=am335x.board|
+        00020030  5f 6e 61 6d 65 3d 41 33  33 35 42 4e 4c 54 00 62  |_name=A335BNLT.b|
+        00020040  6f 61 72 64 5f 72 65 76  3d 30 30 30 43 00 62 6f  |oard_rev=000C.bo|
+        00020050  6f 74 5f 66 64 74 3d 74  72 79 00 62 6f 6f 74 63  |ot_fdt=try.bootc|
+        ...
+        00020eb0  6f 6f 74 20 32 30 31 35  2e 30 37 2d 64 69 72 74  |oot 2015.07-dirt|
+        00020ec0  79 20 28 4a 75 6c 20 32  30 20 32 30 31 35 20 2d  |y (Jul 20 2015 -|
+        00020ed0  20 30 34 3a 31 35 3a 30  30 20 2d 30 34 30 30 29  | 04:15:00 -0400)|
+        00020ee0  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+        *
+        00200000
+
+*saveenv* wrote ~4k of data to the second mmcblkboot partition starting at address `0x20000`.
+
+So the questions I'm curious about
+
+1. Why the second mmcblkboot partition and not the first?
+2. Why start at `0x20000` and not zero?
+3. When is this environment data used?
 
 TO BE CONTINUED...
     
