@@ -9,11 +9,11 @@ tags: [linux, beaglebone, uboot]
 
 Some notes on working with the [U-Boot][uboot] bootloader and [BeagleBone Black][bbb] boards.
 
-The Yocto meta-layer I'm working with is [meta-bbb][meta-bbb] with instructions for use described [here][bbb-yocto].
+The Yocto meta-layer I'm using is [meta-bbb][meta-bbb] with instructions described [here][bbb-yocto].
 
-The u-boot version described is `2015-07`.
+The u-boot version I'm working with is `2015-07`.
 
-### Building with Yocto
+## Building with Yocto
 
 The u-boot configuration is specified here `meta-bbb/conf/machine/beaglebone.conf`
 
@@ -49,21 +49,9 @@ If you want to clean the build first
 
 The binaries can be found under `<TMPDIR>/deploy/images/beaglebone`.
 
-And example from a system with a TMPDIR of `/oe7/bbb/tmp-poky-fido-build`
+## Building outside of Yocto
 
-        scott@octo:~/bbb/build$ ls -lt /oe7/bbb/tmp-poky-fido-build/deploy/images/beaglebone/
-        total 116964
-        lrwxrwxrwx 1 scott scott       25 Jul 17 11:17 MLO -> MLO-beaglebone-2015.07-r3
-        lrwxrwxrwx 1 scott scott       25 Jul 17 11:17 MLO-beaglebone -> MLO-beaglebone-2015.07-r3
-        lrwxrwxrwx 1 scott scott       32 Jul 17 11:17 u-boot-beaglebone.img -> u-boot-beaglebone-2015.07-r3.img
-        lrwxrwxrwx 1 scott scott       32 Jul 17 11:17 u-boot.img -> u-boot-beaglebone-2015.07-r3.img
-        -rwxr-xr-x 2 scott scott    63436 Jul 17 11:17 MLO-beaglebone-2015.07-r3
-        -rwxr-xr-x 2 scott scott   408276 Jul 17 11:17 u-boot-beaglebone-2015.07-r3.img
-        ...
-
-### Building outside of Yocto
-
-1. Get a cross-compiler. Some [notes are here][bbb-kernel-work] in the **Cross-compiler** section on how to build your own with Yocto.
+1. Get a cross-compiler. There are some [notes here][bbb-kernel-work] in the **Cross-compiler** section on how to build some cross-tools with Yocto.
 
 2. Clone u-boot.
 
@@ -123,7 +111,7 @@ To install and test the new bootloader
 
 Reboot the BBB.
 
-### U-Boot source files
+## U-Boot source files
 
 The configuration file for the BBB is `u-boot/configs/am335x_boneblack_defconfig`
 
@@ -146,7 +134,7 @@ Specific AM335X_EVM source can be found under `u-boot/board/ti/am335x/`.
 
 Definitions and board specific options can be found in `u-boot/include/configs/am335x_evm.h`.
 
-### Why all the warnings from MLO? 
+## Why all the warnings from MLO? 
 
 Here's what the **MLO** output looks like when booting from an SD card
 
@@ -206,20 +194,6 @@ Here's the `spl_start_uboot()` function
         }
         #endif
 
-So disregarding these lines in `env_relocate_spec()`
-
-        224 #ifdef CONFIG_SPL_BUILD
-        225         dev = 0;
-        226 #endif
-
-Or these lines in `read_env()`
-
-        196 #ifdef CONFIG_SPL_BUILD
-        197         dev = 0;
-        198 #endif
-
-which cause these warnings to always show when booting from an SD card...
-
 The warning messages can be avoided entirely if the **CONFIG\_SPL\_OS\_BOOT** definition was removed.
 
 From the `u-boot/README`
@@ -230,7 +204,7 @@ From the `u-boot/README`
 
 I'm not interested in **falcon** mode right now.
 
-Instead, I want the **MLO** to load the **u-boot.img**.
+Instead, I want **MLO** to load the **u-boot.img**.
 
 Following convention, **CONFIG\_SPL\_OS\_BOOT** can be removed in the board configuration header `u-boot/include/configs/am335x_evm.h`.
 
@@ -277,7 +251,7 @@ At first just the header to find the proper load address. Then a second read tha
                 |-- file_fat_read() from fs/fat/fat.c
 
 
-### What are those /dev/mmcblk[0|1]/boot[0|1] partitions ?
+## What are those /dev/mmcblk[0|1]/boot[0|1] partitions ?
 
 A couple of strange partitions show up on the *eMMC*.
 
