@@ -51,7 +51,7 @@ The binaries can be found under `<TMPDIR>/deploy/images/beaglebone`.
 
 # Building outside of Yocto
 
-1. Get a cross-compiler. There are some [notes here][bbb-kernel-work] in the **Cross-compiler** section on how to build some cross-tools with Yocto.
+1. Get a cross-compiler. There are some [notes here][bbb-kernel-work] in the *Cross-compiler* section on how to build some cross-tools with Yocto.
 
 2. Clone u-boot.
 
@@ -128,15 +128,15 @@ Here it is
         # CONFIG_CMD_SETEXPR is not set
         CONFIG_SPI_FLASH=y
 
-The **CONFIG\_TARGET\_AM335x\_EVM=y** setting means the BBB build will use the **AM335X\_EVM** board code.
+The *CONFIG\_TARGET\_AM335x\_EVM=y* setting means the BBB build will use the *AM335X\_EVM* board code.
 
-Specific **AM335X\_EVM** source can be found under `u-boot/board/ti/am335x/`.
+Specific *AM335X\_EVM* source can be found under `u-boot/board/ti/am335x/`.
 
 Definitions and board specific options can be found in `u-boot/include/configs/am335x_evm.h`.
 
 # Why all the warnings from MLO? 
 
-Here's what the **MLO** output looks like when booting from an SD card
+Here's what the *MLO* output looks like when booting from an SD card
 
         U-Boot SPL 2015.07 (Jul 19 2015 - 08:22:45)
         MMC: block number 0x100 exceeds max(0x0)
@@ -194,7 +194,7 @@ Here's the `spl_start_uboot()` function
         }
         #endif
 
-The warning messages can be avoided entirely if the **CONFIG\_SPL\_OS\_BOOT** definition was removed.
+The warning messages can be avoided entirely if the *CONFIG\_SPL\_OS\_BOOT* definition was removed.
 
 From the `u-boot/README`
 
@@ -202,11 +202,11 @@ From the `u-boot/README`
                 Enable booting directly to an OS from SPL.
                 See also: doc/README.falcon
 
-I'm not interested in **falcon** mode right now.
+I'm not interested in *falcon* mode right now.
 
-Instead, I want **MLO** to load the **u-boot.img**.
+Instead, I want *MLO* to load the *u-boot.img*.
 
-Following convention, **CONFIG\_SPL\_OS\_BOOT** can be removed in the board configuration header `u-boot/include/configs/am335x_evm.h`.
+Following convention, *CONFIG\_SPL\_OS\_BOOT* can be removed in the board configuration header `u-boot/include/configs/am335x_evm.h`.
 
 Here's a one-liner patch that does it
 
@@ -225,7 +225,7 @@ Here's a one-liner patch that does it
          #define CONFIG_SPL_ENV_SUPPORT
 
 
-The **CONFIG\_EMMC\_BOOT** section applies to the BBB because of `u-boot/configs/am335x_boneblack_defconfig`.
+The *CONFIG\_EMMC\_BOOT* section applies to the BBB because of `u-boot/configs/am335x_boneblack_defconfig`.
 
 Make sure to do a `distclean` after this configuration change.
 
@@ -234,23 +234,23 @@ Make sure to do a `distclean` after this configuration change.
         ~/bbb/u-boot$ make [-j8]
 
 
-Here's what the **MLO** output looks like now when booting from an SD card
+Here's what the *MLO* output looks like now when booting from an SD card
 
         U-Boot SPL 2015.07-dirty (Jul 19 2015 - 10:59:52)
         reading u-boot.img
         reading u-boot.img
 
 
-**u-boot.img** really is read twice. 
+*u-boot.img* really is read twice. 
 
-At first just the header to find the proper load address. Then a second read that loads **u-boot.img** into the proper location. 
+At first just the header to find the proper load address. Then a second read that loads *u-boot.img* into the proper location. 
 
         board_init_r() from common/spl/spl.c line 206
         |-- spl_mmc_load_image() from common/spl/spl_mmc.c line 158
             |-- spl_load_image_fat() from common/spl_fat.c
                 |-- file_fat_read() from fs/fat/fat.c
 
-So it's a little confusing to see *two* reads of **u-boot.img** in the log, but probably not worth removing.
+So it's a little confusing to see *two* reads of *u-boot.img* in the log, but probably not worth removing.
 
 # What are those /dev/mmcblkboot partitions?
 
@@ -268,7 +268,7 @@ They look like this booting from an SD card
         brw-rw---- 1 root disk 179,  9 Jul 20 04:15 /dev/mmcblk1p1
         brw-rw---- 1 root disk 179, 10 Jul 20 04:15 /dev/mmcblk1p2
 
-Or like this booting from the **eMMC**
+Or like this booting from the *eMMC*
 
         root@beaglebone:~# ls -l /dev/mmc*
         brw-rw---- 1 root disk 179,  0 Dec 31  1999 /dev/mmcblk0
