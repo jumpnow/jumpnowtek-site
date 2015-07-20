@@ -7,9 +7,7 @@ categories: beaglebone
 tags: [linux, beaglebone, uboot]
 ---
 
-A collection of notes on working with the [U-Boot][uboot] bootloader and [BeagleBone Black][bbb] boards.
-
-The default configuration of u-boot for the BBB works fine without modifications. What follows is out of curiosity, not necessity.
+Some notes on working with the [U-Boot][uboot] bootloader and [BeagleBone Black][bbb] boards.
 
 The Yocto meta-layer I'm working with is [meta-bbb][meta-bbb] with instructions for use described [here][bbb-yocto].
 
@@ -148,7 +146,7 @@ Specific AM335X_EVM source can be found under `u-boot/board/ti/am335x/`.
 
 Definitions and board specific options can be found in `u-boot/include/configs/am335x_evm.h`.
 
-### Watching the MLO log 
+### Why all the warnings from MLO? 
 
 Here's what the **MLO** output looks like when booting from an SD card
 
@@ -161,21 +159,34 @@ Here's what the **MLO** output looks like when booting from an SD card
         reading u-boot.img
         reading u-boot.img
 
-The warnings/errors are harmless, but here's why they show up
+The warnings/errors are harmless, but annoying.
+
+Here's why they show up
 
         MMC: block number 0x100 exceeds max(0x0)
         MMC: block number 0x200 exceeds max(0x0)
         *** Error - No Valid Environment Area found
 
-These errors come from `drivers/mmc/mmc.c` line 247 in the `mmc_bread()` function.
+These errors come from
 
-`mmc_bread()` is being invoked from `read_env()` line 190 of `u-boot/common/env_mmc.c`
+        spl_start_uboot() from board/ti/am335x_board.c line 196
+        |--- env_relocate_spec() from common/env_mmc.c line 209
+             |--- read_env from common/env_mmc.c line 190
+                  |--- mmc_bread() from drivers/mmc/mmc.c line 247
 
-Which was called twice by `env_relocate_spec()` line 209 of `u-boot/common/env_mmc.c`
+`mmc_bread()` is called twice.
 
-Which was called by `spl_start_uboot()` line 196 of `u-boot/board/ti/am335x/board.c`
+This warning
 
-Here's the relevant chunk from `am335x/board.c`
+        *** Warning - bad CRC, using default environment
+
+comes from 
+
+        env_relocate_spec() from common/env_mmc.c line 293
+        |-- set_default_env() from common\env_commmon.c line 98
+
+
+Here's the `spl_start_uboot()` function
 
         #ifdef CONFIG_SPL_OS_BOOT
         int spl_start_uboot(void)
@@ -207,9 +218,9 @@ Or these lines in `read_env()`
         197         dev = 0;
         198 #endif
 
-which mean these warnings will always show when booting from an SD card.
+which cause these warnings to always show when booting from an SD card...
 
-The warning messages can be avoided entirely if the **CONFIG_SPL_OS_BOOT** definition was removed.
+The warning messages can be avoided entirely if the **CONFIG\_SPL\_OS\_BOOT** definition was removed.
 
 From the `u-boot/README`
 
@@ -217,13 +228,13 @@ From the `u-boot/README`
                 Enable booting directly to an OS from SPL.
                 See also: doc/README.falcon
 
-I'm not interested in **falcon** mode right now (a **TODO** that requires some additional setup).
+I'm not interested in **falcon** mode right now.
 
 Instead, I want the **MLO** to load the **u-boot.img**.
 
-Following convention, **CONFIG_SPL_OS_BOOT** can be removed in the board configuration header `u-boot/include/configs/am335x_evm.h`.
+Following convention, **CONFIG\_SPL\_OS\_BOOT** can be removed in the board configuration header `u-boot/include/configs/am335x_evm.h`.
 
-Here's a patch that does it
+Here's a one-liner patch that does it
 
         ~/bbb/u-boot$ git diff
         diff --git a/include/configs/am335x_evm.h b/include/configs/am335x_evm.h
@@ -240,7 +251,7 @@ Here's a patch that does it
          #define CONFIG_SPL_ENV_SUPPORT
 
 
-The **CONFIG_EMMC_BOOT** section applies to the BBB because of `u-boot/configs/am335x_boneblack_defconfig`.
+The **CONFIG\_EMMC\_BOOT** section applies to the BBB because of `u-boot/configs/am335x_boneblack_defconfig`.
 
 Make sure to do a `distclean` after this configuration change.
 
@@ -255,31 +266,15 @@ Here's what the **MLO** output looks like now when booting from an SD card
         reading u-boot.img
         reading u-boot.img
 
-The multiple reads of u-boot.img happens because at first only the header is read and parsed to find the load address before a second read of the entire u-boot.img into the proper location. See the `spl_load_image_fat()` function in `u-boot/common/spl_fat.c`.
 
-This warning
+**u-boot.img** really is read twice. 
 
-        *** Warning - bad CRC, using default environment
+At first just the header to find the proper load address. Then a second read that loads **u-boot.img** into the proper location. 
 
-was also removed because `env_relocate_spec()` is no longer being called with the above patch which had an error handler at the bottom calling `u-boot\common\env_commmon.c:set_default_env()` with an argument of "bad CRC". 
-
-The built-in default environment is sufficient for the **MLO**.
-
-### Watching u-boot.img log
-
-       U-Boot 2015.07 (Jul 19 2015 - 08:22:45 -0400)
-
-               Watchdog enabled
-       I2C:   ready
-       DRAM:  512 MiB
-       MMC:   OMAP SD/MMC: 0, OMAP SD/MMC: 1
-       *** Warning - bad CRC, using default environment
-       
-       Net:   <ethaddr> not set. Validating first E-fuse MAC
-       cpsw, usb_ether
-       Hit any key to stop autoboot:  0
-       U-Boot#
-
+        board_init_r() from common/spl/spl.c line 206
+        |-- spl_mmc_load_image() from common/spl/spl_mmc.c line 158
+            |-- spl_load_image_fat() from common/spl_fat.c
+                |-- file_fat_read() from fs/fat/fat.c
 
 
 ### What are those /dev/mmcblk[0|1]/boot[0|1] partitions ?
