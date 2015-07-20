@@ -279,6 +279,103 @@ At first just the header to find the proper load address. Then a second read tha
 
 ### What are those /dev/mmcblk[0|1]/boot[0|1] partitions ?
 
+A couple of strange partitions show up on the *eMMC*.
+
+They look like this booting from an SD card
+
+        root@bbb:~# ls -l /dev/mmc*
+        brw-rw---- 1 root disk 179,  0 Jul 20 04:15 /dev/mmcblk0
+        brw-rw---- 1 root disk 179,  1 Jul 20 04:15 /dev/mmcblk0p1
+        brw-rw---- 1 root disk 179,  2 Jul 20 04:15 /dev/mmcblk0p2
+        brw-rw---- 1 root disk 179,  8 Jul 20 04:15 /dev/mmcblk1
+        brw-rw---- 1 root disk 179, 16 Jul 20 04:15 /dev/mmcblk1boot0
+        brw-rw---- 1 root disk 179, 24 Jul 20 04:15 /dev/mmcblk1boot1
+        brw-rw---- 1 root disk 179,  9 Jul 20 04:15 /dev/mmcblk1p1
+        brw-rw---- 1 root disk 179, 10 Jul 20 04:15 /dev/mmcblk1p2
+
+Or like this booting from the **eMMC**
+
+        root@beaglebone:~# ls -l /dev/mmc*
+        brw-rw---- 1 root disk 179,  0 Dec 31  1999 /dev/mmcblk0
+        brw-rw---- 1 root disk 179,  8 Dec 31  1999 /dev/mmcblk0boot0
+        brw-rw---- 1 root disk 179, 16 Dec 31  1999 /dev/mmcblk0boot1
+        brw-rw---- 1 root disk 179,  1 Dec 31  1999 /dev/mmcblk0p1
+        brw-rw---- 1 root disk 179,  2 Dec 31  1999 /dev/mmcblk0p2
+
+
+Here's what `fdisk` says about them
+
+        root@bbb:~# fdisk -l /dev/mmcblk1boot0
+
+        Disk /dev/mmcblk1boot0: 2 MiB, 2097152 bytes, 4096 sectors
+        Units: sectors of 1 * 512 = 512 bytes
+        Sector size (logical/physical): 512 bytes / 512 bytes
+        I/O size (minimum/optimal): 512 bytes / 512 bytes
+
+
+The `mmcblkboot` partitions may or may not have data in them when you initially receive a BBB.
+
+I've cleared mine already.
+ 
+        root@bbb:~# hexdump -C /dev/mmcblk0boot0
+        00000000  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+        *
+        00200000
+
+        root@bbb:~# hexdump -C /dev/mmcblk0boot1
+        00000000  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+        *
+        00200000
+
+Normally these partitions are read-only in Linux
+
+        root@beaglebone:~# whoami
+        root
+
+        root@beaglebone:~# dd if=/dev/zero of=/dev/mmcblk0boot0 bs=512 count=8
+        dd: error writing '/dev/mmcblk0boot0': Operation not permitted
+        1+0 records in
+        0+0 records out
+        0 bytes (0 B) copied, 0.00966661 s, 0.0 kB/s
+
+        root@beaglebone:~# dd if=/dev/zero of=/dev/mmcblk0boot1 bs=512 count=8
+        dd: error writing '/dev/mmcblk0boot1': Operation not permitted
+        1+0 records in
+        0+0 records out
+        0 bytes (0 B) copied, 0.00962403 s, 0.0 kB/s
+
+
+A small patch to a `4.1.2` Linux kernel makes them writable so I can clear them with `dd` for the following tests.
+
+        diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+        index f36c76f..f212eec 100644
+        --- a/drivers/mmc/core/mmc.c
+        +++ b/drivers/mmc/core/mmc.c
+        @@ -417,7 +417,7 @@ static int mmc_decode_ext_csd(struct mmc_card *card, u8 *ext_csd)
+                                        part_size = ext_csd[EXT_CSD_BOOT_MULT] << 17;
+                                        mmc_part_add(card, part_size,
+                                        EXT_CSD_PART_CONFIG_ACC_BOOT0 + idx,
+        -                                       "boot%d", idx, true,
+        +                                       "boot%d", idx, false,
+                                                MMC_BLK_DATA_AREA_BOOT);
+                                }
+                        }
+
+
+And here I've booted a kernel from an SD card with the above patch so `dd` now works.
+
+        root@bbb:~# dd if=/dev/zero of=/dev/mmcblk1boot0 bs=512 count=8
+        8+0 records in
+        8+0 records out
+        4096 bytes (4.1 kB) copied, 0.112604 s, 36.4 kB/s
+
+        root@bbb:~# dd if=/dev/zero of=/dev/mmcblk1boot1 bs=512 count=8
+        8+0 records in
+        8+0 records out
+        4096 bytes (4.1 kB) copied, 0.110132 s, 37.2 kB/s
+
+
+So what are these partitions for and how are they normally populated?
 
 TO BE CONTINUED...
     
