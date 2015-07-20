@@ -115,7 +115,7 @@ Reboot the BBB.
 
 The configuration file for the BBB is `u-boot/configs/am335x_boneblack_defconfig`
 
-It is a small file
+Here it is
  
         CONFIG_ARM=y
         CONFIG_TARGET_AM335X_EVM=y
@@ -128,9 +128,9 @@ It is a small file
         # CONFIG_CMD_SETEXPR is not set
         CONFIG_SPI_FLASH=y
 
-The `CONFIG_TARGET_AM335x_EVM=y` setting means the BBB build will use the **AM335X_EVM** board code.
+The **CONFIG\_TARGET\_AM335x\_EVM=y** setting means the BBB build will use the **AM335X\_EVM** board code.
 
-Specific AM335X_EVM source can be found under `u-boot/board/ti/am335x/`.
+Specific **AM335X\_EVM** source can be found under `u-boot/board/ti/am335x/`.
 
 Definitions and board specific options can be found in `u-boot/include/configs/am335x_evm.h`.
 
@@ -147,7 +147,7 @@ Here's what the **MLO** output looks like when booting from an SD card
         reading u-boot.img
         reading u-boot.img
 
-The warnings/errors are harmless, but annoying.
+The warnings are harmless, but annoying.
 
 Here's why they show up
 
