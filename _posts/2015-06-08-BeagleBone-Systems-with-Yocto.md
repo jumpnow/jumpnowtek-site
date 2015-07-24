@@ -2,7 +2,7 @@
 layout: post
 title: Building BeagleBone Black Systems with Yocto
 description: "Building customized systems for the BeagleBone Black using tools from the Yocto Project"
-date: 2015-07-24 06:12:00
+date: 2015-07-24 14:10:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
@@ -298,6 +298,10 @@ You only have to create this directory once.
 
 This script copies the bootloaders (MLO and u-boot) to the boot partition of the SD card.
 
+The script also copies a *uEnv.txt* file to the boot partition if it finds one in either `<TMPDIR>/deploy/images/beaglebone` or in the local directory where the script is run from. To get started, you might just want to do this
+
+    scott@octo:~/bbb/meta-bbb/scripts$ cp uEnv.txt-example uEnv.txt
+
 This script needs to know the `TMPDIR` to find the binaries. It looks for an environment variable called `OETMP`.
 
 For instance, if I had this in the `local.conf`
@@ -317,10 +321,6 @@ This script should run very fast.
 #### copy_rootfs.sh
 
 This script copies the *zImage* Linux kernel, several device tree binaries (*.dtb) and the rest of the system files to the root file system partition of the SD card.
-
-The script also copies a *uEnv.txt* file to the root file system `/boot` directory if it finds one in either `<TMPDIR>/deploy/images/beaglebone` or in the local directory where the script is run from. To get started, you might just want to do this
-
-    scott@octo:~/bbb/meta-bbb/scripts$ cp uEnv.txt-example uEnv.txt
  
 The script accepts an optional command line argument for the image type, for example `console` or `qt5`. The default is `console` if no argument is provided.
 
@@ -375,7 +375,7 @@ There are some scripts under `meta-bbb/scripts` that are customized for an *eMMC
 * emmc_copy_boot.sh - a modified copy_boot.sh
 * emmc_copy_rootfs.sh - a modified copy_rootfs.sh
 * emmc_install.sh - a wrapper script
-* emmc-uEnv.txt - a modified `/boot/uEnv.txt` for an *eMMC* system
+* emmc-uEnv.txt - a modified `uEnv.txt` for an *eMMC* system
 
 The above scripts are meant to be run on the *BBB*.
 
@@ -387,33 +387,34 @@ The arguments to *copy_emmc_install* are the SD card device and the image you wa
 
     scott@octo:~$ cd bbb/meta-bbb/scripts
     scott@octo:~/bbb/meta-bbb/scripts$ ./copy_boot.sh sdb
-    scott@octo:~/bbb/meta-bbb/scripts$ ./copy_rootfs.sh sdb console
-    scott@octo:~/bbb/meta-bbb/scripts$ ./copy_emmc_install.sh sdb console
+    scott@octo:~/bbb/meta-bbb/scripts$ ./copy_rootfs.sh sdb qt5
+    scott@octo:~/bbb/meta-bbb/scripts$ ./copy_emmc_install.sh sdb qt5
 
 Once you boot this SD card, you'll find the following under `/home/root/emmc` 
 
-    root@beaglebone:~/emmc# ls -l
-    total 37756
-    -rwxr-xr-x 1 root root    83152 Jul  1 06:24 MLO-beaglebone
-    -rw-r--r-- 1 root root 38020844 Jul  1 06:24 console-image-beaglebone.tar.xz
-    -rw-r--r-- 1 root root     1112 Jul  1 06:24 emmc-uEnv.txt
-    -rwxr-xr-x 1 root root     1410 Jul  1 06:24 emmc_copy_boot.sh
-    -rwxr-xr-x 1 root root     2498 Jul  1 06:24 emmc_copy_rootfs.sh
-    -rwxr-xr-x 1 root root      675 Jul  1 06:24 emmc_install.sh
-    -rwxr-xr-x 1 root root     1240 Jul  1 06:24 mk2parts.sh
-    -rwxr-xr-x 1 root root   399360 Jul  1 06:24 u-boot-beaglebone.img
-    -rw-r--r-- 1 root root    30149 Jul  1 06:24 zImage-am335x-boneblack.dtb
-    -rw-r--r-- 1 root root    31722 Jul  1 06:24 zImage-bbb-4dcape70t.dtb
-    -rw-r--r-- 1 root root    30678 Jul  1 06:24 zImage-bbb-hdmi.dtb
-    -rw-r--r-- 1 root root    31927 Jul  1 06:24 zImage-bbb-nh5cape.dtb
+    root@bbb:~/emmc# ls -l
+    total 53184
+    -rwxr-xr-x 1 root root    64408 Jul 24 08:57 MLO-beaglebone
+    -rw-r--r-- 1 root root     1110 Jul 24 09:40 emmc-uEnv.txt
+    -rwxr-xr-x 1 root root     1629 Jul 24 08:57 emmc_copy_boot.sh
+    -rwxr-xr-x 1 root root     2290 Jul 24 08:57 emmc_copy_rootfs.sh
+    -rwxr-xr-x 1 root root      675 Jul 24 08:57 emmc_install.sh
+    -rwxr-xr-x 1 root root     1240 Jul 24 08:57 mk2parts.sh
+    -rw-r--r-- 1 root root 53827004 Jul 24 08:57 qt5-image-beaglebone.tar.xz
+    -rwxr-xr-x 1 root root   410860 Jul 24 08:57 u-boot-beaglebone.img
+    -rw-r--r-- 1 root root    30149 Jul 24 08:57 zImage-am335x-boneblack.dtb
+    -rw-r--r-- 1 root root    32357 Jul 24 08:57 zImage-bbb-4dcape70t.dtb
+    -rw-r--r-- 1 root root    30678 Jul 24 08:57 zImage-bbb-hdmi.dtb
+    -rw-r--r-- 1 root root    31927 Jul 24 08:57 zImage-bbb-nh5cape.dtb
+
 
 To install the *console-image* onto the *eMMC*, run the `emmc_install.sh` script like this
 
-    root@beaglebone:~/emmc# ./emmc_install.sh console
+    root@beaglebone:~/emmc# ./emmc_install.sh qt5
 
 It should take less then a minute to run and the output should look something like this
 
-    root@beaglebone:~/emmc# ./emmc_install.sh console
+    root@bbb:~/emmc# ./emmc_install.sh qt5
     
     Working on /dev/mmcblk1
     
@@ -425,22 +426,72 @@ It should take less then a minute to run and the output should look something li
     Okay, here we go ...
     
     === Zeroing the MBR ===
-    ...
-    <partitioning, formatting and copying stuff>
-    ...
-    Extracting console-image-beaglebone.tar.xz to /media
+    
+    1024+0 records in
+    1024+0 records out
+    1048576 bytes (1.0 MB) copied, 0.238564 s, 4.4 MB/s
+    
+    === Creating 2 partitions ===
+    
+    sfdisk: Checking that no-one is using this disk right now ...
+    sfdisk: OK
+    
+    Disk /dev/mmcblk1: 470 cylinders, 255 heads, 63 sectors/track
+    sfdisk:  /dev/mmcblk1: unrecognized partition table type
+    Old situation:
+    sfdisk: No partitions found
+    New situation:
+    Units: sectors of 512 bytes, counting[  139.330595]  mmcblk1: p1 p2
+     from 0
+    
+       Device Boot    Start       End   #sectors  Id  System
+    /dev/mmcblk1p1   *       128    131071     130944   c  W95 FAT32 (LBA)
+    /dev/mmcblk1p2        131072   7553023    7421952  83  Linux
+    /dev/mmcblk1p3             0         -          0   0  Empty
+    /dev/mmcblk1p4             0         -          0   0  Empty
+    sfdisk: Warning: partition 1 does not end at a cylinder boundary
+    sfdisk: Warning: partition 2 does not start at a cylinder boundary
+    sfdisk: Warning: partition 2 does not end at a cylinder boundary
+    sfdisk: end of partition 2 has impossible value for cylinders: 470 (should be in 0-469)
+    Successfully wrote the new partition table
+    
+    Re-reading the partition table ...
+    
+    sfdisk: If you created or changed a DOS partition, /dev/foo7, say, then use dd(1)
+    to zero the first 512 bytes:  dd if=/dev/zero of=/dev/foo7 bs=512 count=1
+    (See fdisk(8).)
+    
+    === Done! ===
+    
+    Working from local directory
+    Formatting FAT partition on /dev/mmcblk1p1
+    mkfs.vfat 2.11 (12 Mar 2005)
+    Mounting /dev/mmcblk1p1
+    Copying MLO
+    Copying u-boot
+    Copying emmc-uEnv.txt to uEnv.txt
+    Unmounting /dev/mmcblk1p1
+    Done
+    IMAGE: qt5
+    HOSTNAME: beaglebone
+    
+    Formatting /dev/mmcblk1p2 as ext4
+    Mounting /dev/mmcblk1p2
+    [  147.578422] EXT4-fs (mmcblk1p2): mounted filesystem with ordered data mode. Opts: (null)
+    Extracting qt5-image-beaglebone.tar.xz to /media
     Copying am335x-boneblack.dtb to /media/boot/
     Copying bbb-hdmi.dtb to /media/boot/
     Copying bbb-4dcape70t.dtb to /media/boot/
     Copying bbb-nh5cape.dtb to /media/boot/
     Writing hostname to /etc/hostname
-    Copying emmc-uEnv.txt to /media/boot/uEnv.txt
     Unmounting /dev/mmcblk1p2
     Done
     Success!
     Power off, remove SD card and power up
+    root@bbb:~/emmc#
 
-Follow the instructions and after reboot you will be running the *console-image* from the *eMMC*.
+
+Follow the instructions and after reboot you will be running the *qt5-image* from the *eMMC*.
 
 #### Some custom package examples
 
