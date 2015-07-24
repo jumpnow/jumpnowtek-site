@@ -42,37 +42,40 @@ If you had multiple *linux-stable* recipes, maybe *linux-stable_4.0.bb* and *lin
 
 When Yocto builds the *linux-stable-4.1* kernel, it does so under this directory
 
-    <TMPDIR>/work/beaglebone-poky-linux-gnueabi/linux-stable/4.1-r1
+    <TMPDIR>/work/beaglebone-poky-linux-gnueabi/linux-stable/4.1-r5
 
-The *r1* revision comes from this line in the kernel recipe
+The *r5* revision comes from this line in the kernel recipe
 
-    PR = "r1"
+    PR = "r5"
 
 Here's a look at that directory after a build
 
-    scott@octo:~/bbb/build/tmp/work/beaglebone-poky-linux-gnueabi/linux-stable/4.1-r1$ ls -l
-    total 192
-    -rw-r--r--  1 scott scott   674 Jun 22 15:01 0001-spidev-Add-generic-compatible-dt-id.patch
-    -rw-r--r--  1 scott scott  1627 Jun 22 15:01 0002-Add-bbb-spi1-spidev-dtsi.patch
-    -rw-r--r--  1 scott scott  1189 Jun 22 15:01 0003-Add-bbb-i2c1-dtsi.patch
-    -rw-r--r--  1 scott scott  1189 Jun 22 15:01 0004-Add-bbb-i2c2-dtsi.patch
-    -rw-r--r--  1 scott scott  3222 Jun 22 15:01 0005-Add-bbb-hdmi-dts.patch
-    -rw-r--r--  1 scott scott  4436 Jun 22 15:01 0006-Add-bbb-4dcape70t-dts.patch
-    -rw-r--r--  1 scott scott 15054 Jun 22 15:01 0007-Add-ft5x06-touchscreen-driver.patch
-    -rw-r--r--  1 scott scott  5094 Jun 22 15:01 0008-Add-bbb-nh5cape-dts.patch
-    -rw-r--r--  1 scott scott 83936 Jun 22 15:01 defconfig
-    drwxr-xr-x  3 scott scott  4096 Jun 22 15:05 deploy-ipks
-    drwxr-xr-x  2 scott scott  4096 Jun 22 15:05 deploy-linux-stable
-    lrwxrwxrwx  1 scott scott    65 Jun 22 15:01 git -> /oe7/bbb/tmp-poky-fido-build/work-shared/beaglebone/kernel-source
-    drwxr-xr-x  5 scott scott  4096 Jun 22 15:05 image
-    drwxrwxr-x  3 scott scott  4096 Jun 22 15:01 license-destdir
-    drwxr-xr-x 20 scott scott  4096 Jun 22 15:05 linux-beaglebone-standard-build
-    drwxr-xr-x  4 scott scott  4096 Jun 22 15:05 package
-    drwxr-xr-x 65 scott scott  4096 Jun 22 15:05 packages-split
-    drwxr-xr-x  7 scott scott  4096 Jun 22 15:05 pkgdata
-    drwxrwxr-x  2 scott scott  4096 Jun 22 15:05 pseudo
-    drwxr-xr-x  3 scott scott  4096 Jun 22 15:05 sysroot-destdir
-    drwxrwxr-x  2 scott scott 12288 Jun 22 15:05 temp
+    scott@octo:~/bbb/build/tmp/work/beaglebone-poky-linux-gnueabi/linux-stable/4.1-r5$ ls -l
+    total 204
+    -rw-r--r--  1 scott scott   674 Jul 24 06:08 0001-spidev-Add-generic-compatible-dt-id.patch
+    -rw-r--r--  1 scott scott  1627 Jul 24 06:08 0002-Add-bbb-spi1-spidev-dtsi.patch
+    -rw-r--r--  1 scott scott  1189 Jul 24 06:08 0003-Add-bbb-i2c1-dtsi.patch
+    -rw-r--r--  1 scott scott  1189 Jul 24 06:08 0004-Add-bbb-i2c2-dtsi.patch
+    -rw-r--r--  1 scott scott  3222 Jul 24 06:08 0005-Add-bbb-hdmi-dts.patch
+    -rw-r--r--  1 scott scott  4436 Jul 24 06:08 0006-Add-bbb-4dcape70t-dts.patch
+    -rw-r--r--  1 scott scott 15054 Jul 24 06:08 0007-Add-ft5x06-touchscreen-driver.patch
+    -rw-r--r--  1 scott scott  5093 Jul 24 06:08 0008-Add-bbb-nh5cape-dts.patch
+    -rw-r--r--  1 scott scott  2374 Jul 24 06:08 0009-Add-4dcape70t-button-dtsi.patch
+    -rw-r--r--  1 scott scott  1125 Jul 24 06:08 0010-4dcape70t-dts-include-button-dtsi-comment-out-spi.patch
+    -rw-r--r--  1 scott scott   766 Jul 24 06:08 0011-mmc-Allow-writes-to-mmcblkboot-partitions.patch
+    -rw-r--r--  1 scott scott 84935 Jul 24 06:08 defconfig
+    drwxr-xr-x  3 scott scott  4096 Jul 24 06:12 deploy-ipks
+    drwxr-xr-x  2 scott scott  4096 Jul 24 06:12 deploy-linux-stable
+    lrwxrwxrwx  1 scott scott    65 Jul 24 06:08 git -> /oe7/bbb/tmp-poky-fido-build/work-shared/beaglebone/kernel-source
+    drwxr-xr-x  5 scott scott  4096 Jul 24 06:12 image
+    drwxrwxr-x  3 scott scott  4096 Jul 24 06:08 license-destdir
+    drwxr-xr-x 20 scott scott  4096 Jul 24 06:12 linux-beaglebone-standard-build
+    drwxr-xr-x  4 scott scott  4096 Jul 24 06:12 package
+    drwxr-xr-x 71 scott scott  4096 Jul 24 06:12 packages-split
+    drwxr-xr-x  7 scott scott  4096 Jul 24 06:12 pkgdata
+    drwxrwxr-x  2 scott scott  4096 Jul 24 06:12 pseudo
+    drwxr-xr-x  3 scott scott  4096 Jul 24 06:12 sysroot-destdir
+    drwxrwxr-x  2 scott scott 12288 Jul 24 06:12 temp
 
 
 The patches and defconfig are the same files from `meta-bbb/recipes-kernel/linux/linux-stable-4.1/`
@@ -167,7 +170,8 @@ The kernel recipe *linux-stable_4.1.bb* has the repository location, branch and 
 
 These lines have the details
 
-    SRCREV = "b953c0d234bc72e8489d3bf51a276c5c4ec85345"
+    # v4.1.3
+    SRCREV = "c8bde72f9af412de57f0ceae218d648640118b0b"
     SRC_URI = " \
         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git;branch=linux-4.1.y \
 
