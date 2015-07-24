@@ -2,7 +2,7 @@
 layout: post
 title: BeagleBone Black U-Boot
 description: "Some working notes on U-Boot for the BeagleBone Black"
-date: 2015-07-18 14:30:00
+date: 2015-07-24 13:43:00
 categories: beaglebone 
 tags: [linux, beaglebone, uboot]
 ---
@@ -170,8 +170,9 @@ This warning
 
 comes from 
 
-        env_relocate_spec() from common/env_mmc.c line 293
-        |-- set_default_env() from common\env_commmon.c line 98
+        spl_start_uboot() from board/ti/am335x_board.c line 196
+        |--- env_relocate_spec() from common/env_mmc.c line 293
+             |--- set_default_env() from common\env_commmon.c line 98
 
 
 Here's the `spl_start_uboot()` function
@@ -278,11 +279,26 @@ Or like this booting from the *eMMC*
         brw-rw---- 1 root disk 179,  2 Dec 31  1999 /dev/mmcblk0p2
 
 
-Here's what `fdisk` says about them
+`fdisk` says the partitions are 1MB on the `ES2.0` boards
 
-        root@bbb:~# fdisk -l /dev/mmcblk1boot0
+        root@beaglebone:~# dmesg | grep ES2
+        [    0.000000] AM335X ES2.0 (sgx neon )
+    
+        root@beaglebone:~# fdisk -l /dev/mmcblk0boot0
+        
+        Disk /dev/mmcblk0boot0: 1 MiB, 1048576 bytes, 2048 sectors
+        Units: sectors of 1 * 512 = 512 bytes
+        Sector size (logical/physical): 512 bytes / 512 bytes
+        I/O size (minimum/optimal): 512 bytes / 512 bytes
 
-        Disk /dev/mmcblk1boot0: 2 MiB, 2097152 bytes, 4096 sectors
+And 2MB on the `ES2.1` boards
+
+        root@beaglebone:~# dmesg | grep ES2
+        [    0.000000] AM335X ES2.1 (sgx neon )
+        
+        root@beaglebone:~# fdisk -l /dev/mmcblk0boot0
+         
+        Disk /dev/mmcblk0boot0: 2 MiB, 2097152 bytes, 4096 sectors
         Units: sectors of 1 * 512 = 512 bytes
         Sector size (logical/physical): 512 bytes / 512 bytes
         I/O size (minimum/optimal): 512 bytes / 512 bytes
@@ -320,7 +336,7 @@ Normally these partitions are read-only in Linux
         0 bytes (0 B) copied, 0.00962403 s, 0.0 kB/s
 
 
-A small patch to a `4.1.2` Linux kernel makes them writable so I can clear them with `dd` for the following tests.
+A small patch to a `4.1` Linux kernel makes them writable so I can clear them with `dd` for the following tests.
 
         diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
         index f36c76f..f212eec 100644
@@ -384,7 +400,7 @@ The following is now seen from Linux
 
 *saveenv* wrote ~4k of data to the second mmcblkboot partition starting at address `0x20000`.
 
-So the questions I'm curious about
+So the next questions are
 
 1. Why the second mmcblkboot partition and not the first?
 2. Why start at `0x20000` and not zero?
