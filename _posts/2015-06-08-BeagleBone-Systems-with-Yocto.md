@@ -2,7 +2,7 @@
 layout: post
 title: Building BeagleBone Black Systems with Yocto
 description: "Building customized systems for the BeagleBone Black using tools from the Yocto Project"
-date: 2015-07-24 14:10:00
+date: 2015-07-28 10:00:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
@@ -29,17 +29,22 @@ Python `2.7.9` is included with enough modules to run [Bottle python][bottle-pyt
 
 *Device tree* binaries are generated and installed that support *HDMI* (bbb-hdmi.dtb), the *4DCape 7-inch* touchscreen (bbb-4dcape70t.dtb) and the *New Haven 5-inch* touchscreen (bbb-nh5cape.dtb). They are easy to switch between using `/boot/uEnv.txt` and all work with the installed *Qt* binaries.
 
-*spidev* on SPI bus 1, *I2C1* and *I2C2* are configured for use from the *P9* header. The following kernel patches under `meta-bbb/recipes-kernel/linux/linux-stable-4.1/` add this functionality
+*spidev* on SPI bus 1, *I2C1* and *I2C2* and *UART4* are configured for use from the *P9* header. The following kernel patches under `meta-bbb/recipes-kernel/linux/linux-stable-4.1/` add this functionality
 
 * 0001-spidev-Add-generic-compatible-dt-id.patch
 * 0002-Add-bbb-spi1-spidev-dtsi.patch
 * 0003-Add-bbb-i2c1-dtsi.patch
 * 0004-Add-bbb-i2c2-dtsi.patch
+* 0013-Add-uart4-dtsi.patch
 
 See the respective patches for the particular P9 header pins to use.
 
-There is an small *spidev* test program [spiloop][spiloop] in the *console-image*.
+There are some simple loopback test programs included in the console image.
+ 
+[spiloop][spiloop] is a utility for testing the *spidev* driver.
 
+[serialecho][serialecho] is a utility for testing *uarts*.
+  
 ### Ubuntu Packages
 
 I've been building systems with this layer using *Ubuntu 15.04* 64-bit workstations.
@@ -495,7 +500,7 @@ Follow the instructions and after reboot you will be running the *qt5-image* fro
 
 #### Some custom package examples
 
-[spiloop][spiloop] is a spidev test application installed in `/usr/bin`.
+[spiloop][spiloop] is a *spidev* test application installed in `/usr/bin`.
 
 The *bitbake recipe* that builds and packages *spiloop* is here
 
@@ -503,6 +508,13 @@ The *bitbake recipe* that builds and packages *spiloop* is here
 
 Use it to test the *spidev* driver before and after placing a jumper between pins *P9.29* and *P9.30*.
 
+[serialecho][serialecho] is a similar test app for serial ports.
+
+The *bitbake recipe* that builds and packages *serialecho* is here
+
+    meta-bbb/recipes-misc/serialecho/serialecho.bb
+
+Use it to test *UART4* after placing a jumper between pins *P9.11* and *P9.13*.
 
 [tspress][tspress] is a Qt5 GUI application installed in `/usr/bin` with the *qt5-image*.
 
@@ -553,6 +565,7 @@ To add or upgrade packages to the system, you might be interested in using the b
 [meta-bbb]: https://github.com/jumpnow/meta-bbb
 [tspress]: https://github.com/scottellis/tspress
 [spiloop]: https://github.com/scottellis/spiloop
+[serialecho]: https://github.com/scottellis/serialecho
 [bbb-kernel]: http://www.jumpnowtek.com/beaglebone/Working-on-the-BeagleBone-kernel.html
 [bottle-python]: http://bottlepy.org/docs/dev/index.html
 [lsblk]: http://linux.die.net/man/8/lsblk
