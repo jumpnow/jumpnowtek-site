@@ -11,7 +11,7 @@ Instructions for building some developer systems for [Gumstix Duovero][duovero] 
 
 The [meta-duovero][meta-duovero] layer described below **should** be modified for your own particular project. Treat it as a template. 
 
-The *image recipes* under `meta-duovero/images` are examples with some packages I find useful. You should modify those recipes or create new ones to suit your own project. 
+The *image recipes* under `meta-duovero/images` are examples with some packages I find useful. You should modify those recipes or create new ones to suit your needs. 
 
 The Yocto version is `1.8.0` the `[fido]` branch.
 
