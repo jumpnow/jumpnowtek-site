@@ -2,7 +2,7 @@
 layout: post
 title: Working on the BeagleBone Kernel
 description: "Working on and customizing the BeagleBone Black kernel"
-date: 2015-06-22 14:00:00
+date: 2015-08-16 08:42:00
 categories: beaglebone 
 tags: [linux, beaglebone, kernel]
 ---
@@ -42,40 +42,45 @@ If you had multiple *linux-stable* recipes, maybe *linux-stable_4.0.bb* and *lin
 
 When Yocto builds the *linux-stable-4.1* kernel, it does so under this directory
 
-    <TMPDIR>/work/beaglebone-poky-linux-gnueabi/linux-stable/4.1-r5
+    <TMPDIR>/work/beaglebone-poky-linux-gnueabi/linux-stable/4.1-r9
 
-The *r5* revision comes from this line in the kernel recipe
+The *r9* revision comes from this line in the kernel recipe
 
-    PR = "r5"
+    PR = "r9"
 
 Here's a look at that directory after a build
 
-    scott@octo:~/bbb/build/tmp/work/beaglebone-poky-linux-gnueabi/linux-stable/4.1-r5$ ls -l
-    total 204
-    -rw-r--r--  1 scott scott   674 Jul 24 06:08 0001-spidev-Add-generic-compatible-dt-id.patch
-    -rw-r--r--  1 scott scott  1627 Jul 24 06:08 0002-Add-bbb-spi1-spidev-dtsi.patch
-    -rw-r--r--  1 scott scott  1189 Jul 24 06:08 0003-Add-bbb-i2c1-dtsi.patch
-    -rw-r--r--  1 scott scott  1189 Jul 24 06:08 0004-Add-bbb-i2c2-dtsi.patch
-    -rw-r--r--  1 scott scott  3222 Jul 24 06:08 0005-Add-bbb-hdmi-dts.patch
-    -rw-r--r--  1 scott scott  4436 Jul 24 06:08 0006-Add-bbb-4dcape70t-dts.patch
-    -rw-r--r--  1 scott scott 15054 Jul 24 06:08 0007-Add-ft5x06-touchscreen-driver.patch
-    -rw-r--r--  1 scott scott  5093 Jul 24 06:08 0008-Add-bbb-nh5cape-dts.patch
-    -rw-r--r--  1 scott scott  2374 Jul 24 06:08 0009-Add-4dcape70t-button-dtsi.patch
-    -rw-r--r--  1 scott scott  1125 Jul 24 06:08 0010-4dcape70t-dts-include-button-dtsi-comment-out-spi.patch
-    -rw-r--r--  1 scott scott   766 Jul 24 06:08 0011-mmc-Allow-writes-to-mmcblkboot-partitions.patch
-    -rw-r--r--  1 scott scott 84935 Jul 24 06:08 defconfig
-    drwxr-xr-x  3 scott scott  4096 Jul 24 06:12 deploy-ipks
-    drwxr-xr-x  2 scott scott  4096 Jul 24 06:12 deploy-linux-stable
-    lrwxrwxrwx  1 scott scott    65 Jul 24 06:08 git -> /oe7/bbb/tmp-poky-fido-build/work-shared/beaglebone/kernel-source
-    drwxr-xr-x  5 scott scott  4096 Jul 24 06:12 image
-    drwxrwxr-x  3 scott scott  4096 Jul 24 06:08 license-destdir
-    drwxr-xr-x 20 scott scott  4096 Jul 24 06:12 linux-beaglebone-standard-build
-    drwxr-xr-x  4 scott scott  4096 Jul 24 06:12 package
-    drwxr-xr-x 71 scott scott  4096 Jul 24 06:12 packages-split
-    drwxr-xr-x  7 scott scott  4096 Jul 24 06:12 pkgdata
-    drwxrwxr-x  2 scott scott  4096 Jul 24 06:12 pseudo
-    drwxr-xr-x  3 scott scott  4096 Jul 24 06:12 sysroot-destdir
-    drwxrwxr-x  2 scott scott 12288 Jul 24 06:12 temp
+    scott@octo:~/bbb/build/tmp/work/beaglebone-poky-linux-gnueabi/linux-stable/4.1-r9$ ls -l
+    total 224
+    -rw-r--r--  1 scott scott   674 Aug  9 06:15 0001-spidev-Add-generic-compatible-dt-id.patch
+    -rw-r--r--  1 scott scott  1627 Aug  9 06:15 0002-Add-bbb-spi1-spidev-dtsi.patch
+    -rw-r--r--  1 scott scott  1189 Aug  9 06:15 0003-Add-bbb-i2c1-dtsi.patch
+    -rw-r--r--  1 scott scott  1189 Aug  9 06:15 0004-Add-bbb-i2c2-dtsi.patch
+    -rw-r--r--  1 scott scott  3222 Aug  9 06:15 0005-Add-bbb-hdmi-dts.patch
+    -rw-r--r--  1 scott scott  4436 Aug  9 06:15 0006-Add-bbb-4dcape70t-dts.patch
+    -rw-r--r--  1 scott scott 15054 Aug  9 06:15 0007-Add-ft5x06-touchscreen-driver.patch
+    -rw-r--r--  1 scott scott  5093 Aug  9 06:15 0008-Add-bbb-nh5cape-dts.patch
+    -rw-r--r--  1 scott scott  2374 Aug  9 06:15 0009-Add-4dcape70t-button-dtsi.patch
+    -rw-r--r--  1 scott scott  1125 Aug  9 06:15 0010-4dcape70t-dts-include-button-dtsi-comment-out-spi.patch
+    -rw-r--r--  1 scott scott   766 Aug  9 06:15 0011-mmc-Allow-writes-to-mmcblkboot-partitions.patch
+    -rw-r--r--  1 scott scott   753 Aug  9 06:15 0012-4dcape70t-Increase-charge-delay.patch
+    -rw-r--r--  1 scott scott  1139 Aug  9 06:15 0013-Add-uart4-dtsi.patch
+    -rw-r--r--  1 scott scott  1582 Aug  9 06:15 0014-Include-uart4-dtsi-in-bbb-dts-files.patch
+    -rw-r--r--  1 scott scott  5048 Aug  9 06:15 0015-bbb-nh5cape-Fix-bpp-for-24-bit-color.patch
+    -rw-r--r--  1 scott scott 84935 Aug  9 06:15 defconfig
+    drwxr-xr-x  3 scott scott  4096 Aug  9 06:19 deploy-ipks
+    drwxr-xr-x  2 scott scott  4096 Aug  9 06:19 deploy-linux-stable
+    lrwxrwxrwx  1 scott scott    65 Aug  9 06:15 git -> /oe7/bbb/tmp-poky-fido-build/work-shared/ beaglebone/kernel-source
+    drwxr-xr-x  5 scott scott  4096 Aug  9 06:19 image
+    drwxrwxr-x  3 scott scott  4096 Aug  9 06:15 license-destdir
+    drwxr-xr-x 20 scott scott  4096 Aug  9 06:19 linux-beaglebone-standard-build
+    drwxr-xr-x  4 scott scott  4096 Aug  9 06:19 package
+    drwxr-xr-x 71 scott scott  4096 Aug  9 06:19 packages-split
+    drwxr-xr-x  7 scott scott  4096 Aug  9 06:19 pkgdata
+    drwxrwxr-x  2 scott scott  4096 Aug  9 06:19 pseudo
+    drwxr-xr-x  3 scott scott  4096 Aug  9 06:19 sysroot-destdir
+    drwxrwxr-x  2 scott scott 12288 Aug  9 06:19 temp
+
 
 
 The patches and defconfig are the same files from `meta-bbb/recipes-kernel/linux/linux-stable-4.1/`
@@ -170,8 +175,8 @@ The kernel recipe *linux-stable_4.1.bb* has the repository location, branch and 
 
 These lines have the details
 
-    # v4.1.3
-    SRCREV = "c8bde72f9af412de57f0ceae218d648640118b0b"
+    # v4.1.4
+    SRCREV = "89e419960fb6a260f6a112821507d516117d5aa1"
     SRC_URI = " \
         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git;branch=linux-4.1.y \
 
@@ -186,7 +191,7 @@ That gets you to the correct git branch, but depending on whether I've kept the 
 
 ### Apply existing patches
 
-Currently the `meta-bbb/recipes-kernel/linux/linux-stable_4.1.bb` recipe has a number of patches that I've included to add support for *spidev*, *i2c* and a few touchscreens. Use *git* to apply these same patches to your new linux-stable repository.
+Currently the `meta-bbb/recipes-kernel/linux/linux-stable_4.1.bb` recipe has a number of patches that I've included to add support for *spidev*, *i2c*, *uart4* and a few touchscreens. Use *git* to apply these same patches to your new linux-stable repository.
 
 Start by creating a working branch
 
@@ -250,11 +255,105 @@ For example
     ~/bbb/linux-stable$ scp arch/arm/boot/dts/bbb-hdmi.dtb root@<bbb-ip-address>:/boot
 
 
-Modify `/boot/uEnv.txt` to specify which **dtb** file to load.
+Modify `uEnv.txt` to specify which **dtb** file to load.
 
 	fdtfile="some-dtb"
 
-The `meta-bbb` modified **u-boot** looks for a *uEnv.txt* file in the rootfs `/boot` directory.
+The `uEnv.txt` file is on the *boot* partition which you'll normally have to mount first
+
+    root@bbb:~# mount /dev/mmcblk0p1 /mnt
+
+    root@bbb:~# ls -l /mnt
+    total 466
+    -rwxr-xr-x 1 root root  64408 Aug 10  2015 MLO
+    -rwxr-xr-x 1 root root 410860 Aug 10  2015 u-boot.img
+    -rwxr-xr-x 1 root root    931 Aug 10  2015 uEnv.txt
+
+After that you can edit the `uEnv.txt` file to change the **dtb**.
+
+### Generating a patch for Yocto
+
+After finishing development you will probably want to integrate your changes into the Yocto build system. Yocto works with the standard patches generated by *git*.
+
+So for instance that patch to allow writes to the `/dev/mmcblkboot` partitions
+
+    0011-mmc-Allow-writes-to-mmcblkboot-partitions.patch
+
+was generated like this
+
+    scott@octo:~/bbb/linux-stable$ vi drivers/mmc/core/mmc.c
+
+Make the changes and save.
+
+Here's the diff
+
+    scott@octo:~/bbb/linux-stable$ git diff
+    diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+    index f36c76f..43e1ae0 100644
+    --- a/drivers/mmc/core/mmc.c
+    +++ b/drivers/mmc/core/mmc.c
+    @@ -417,7 +417,7 @@ static int mmc_decode_ext_csd(struct mmc_card *card, u8 *ext_csd)
+                                    part_size = ext_csd[EXT_CSD_BOOT_MULT] << 17;
+                                    mmc_part_add(card, part_size,
+                                            EXT_CSD_PART_CONFIG_ACC_BOOT0 + idx,
+    -                                       "boot%d", idx, true,
+    +                                       "boot%d", idx, false,
+                                            MMC_BLK_DATA_AREA_BOOT);
+                            }
+                    }
+
+Now commit the change to git
+
+    scott@octo:~/bbb/linux-stable$ git add drivers/mmc/core/mmc.c
+
+    scott@octo:~/bbb/linux-stable$ git commit -m 'mmc: Allow writes to mmcblkboot partitions'
+    [work 9b5d32c] mmc: Allow writes to mmcblkboot partitions
+     1 file changed, 1 insertion(+), 1 deletion(-)
+
+Generate a patch
+
+    scott@octo:~/bbb/linux-stable$ git format-patch -1
+    0001-mmc-Allow-writes-to-mmcblkboot-partitions.patch
+
+Here's what it looks like
+
+    scott@octo:~/bbb/linux-stable$ cat 0001-mmc-Allow-writes-to-mmcblkboot-partitions.patch
+    From 9b5d32c20a7392867a98e463d01f77c9e7f9ec48 Mon Sep 17 00:00:00 2001
+    From: Scott Ellis <scott@jumpnowtek.com>
+    Date: Mon, 10 Aug 2015 08:32:23 -0400
+    Subject: [PATCH] mmc: Allow writes to mmcblkboot partitions
+    
+    ---
+     drivers/mmc/core/mmc.c | 2 +-
+     1 file changed, 1 insertion(+), 1 deletion(-)
+    
+    diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+    index f36c76f..43e1ae0 100644
+    --- a/drivers/mmc/core/mmc.c
+    +++ b/drivers/mmc/core/mmc.c
+    @@ -417,7 +417,7 @@ static int mmc_decode_ext_csd(struct mmc_card *card, u8 *ext_csd)
+                                    part_size = ext_csd[EXT_CSD_BOOT_MULT] << 17;
+                                    mmc_part_add(card, part_size,
+                                            EXT_CSD_PART_CONFIG_ACC_BOOT0 + idx,
+    -                                       "boot%d", idx, true,
+    +                                       "boot%d", idx, false,
+                                            MMC_BLK_DATA_AREA_BOOT);
+                            }
+                    }
+    --
+    2.1.4
+
+Copy the patch to where Yocto will use it.
+
+    scott@octo:~/bbb/linux-stable$ cp 0001-mmc-* \
+        ~/bbb/meta-bbb/recipes-kernel/linux/linux-stable-4.1/
+
+
+Then add the patch to the kernel recipe `linux-stable_4.1.bb`.
+
+Yocto will apply the patches in the order they appear in the recipe, but to make it easier to work with `git am` outside of Yocto it's useful to rename (renumber) the patches in the order you want them applied.
+
+That's why I renamed this same patch from `0001-` to `0011-` on my system.
 
 
 [bbb-yocto]: http://www.jumpnowtek.com/beaglebone/BeagleBone-Systems-with-Yocto.html
