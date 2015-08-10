@@ -2,16 +2,16 @@
 layout: post
 title: Building BeagleBone Black Systems with Yocto
 description: "Building customized systems for the BeagleBone Black using tools from the Yocto Project"
-date: 2015-08-16 08:16:00
+date: 2015-08-16 12:45:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
 
-These instructions are for building generic developer systems for [BeagleBone Black][beagleboard] boards primarily for C, C++ and Qt programmers. The example systems also include Perl and Python.
+Instructions for building some developer systems for [BeagleBone Black][beagleboard] boards primarily for C, C++ and [Qt5][qt] programmers, but also Perl and Python hackers with a number of modules for both included.
 
-The [meta-bbb][meta-bbb] layer described below **should** be modified for your own particular project. 
+The [meta-bbb][meta-bbb] layer described below **should** be modified for your own particular project. Treat it as a template. 
 
-The *image recipes* under `meta-bbb/images` are examples with some common packages I find useful. 
+The *image recipes* under `meta-bbb/images` are examples with some packages I find useful. You should modify those recipes or create new ones to suit your own project. 
 
 The Yocto version is `1.8.0` the `[fido]` branch.
 
@@ -23,13 +23,13 @@ These are *sysvinit* systems.
 
 The Qt version is `5.4.3`. There is no *X11* and no desktop installed. [Qt][qt] gui applications can be run using the `-platform linuxfb` switch. I suspect *QML* apps will not work since I don't have *OpenGL* support in the these systems. My projects on SOC boards like the BBB tend to be touchscreen instrument interfaces with simple UI controls and 2D graphs.
 
-Perl `5.20` with several hundred common modules is included.
+Perl `5.20` with several hundred modules is included.
 
-Python `2.7.9` is included with enough modules to run [Bottle python][bottle-python] web applications.
+Python `2.7.9` is included with at least enough packages to run [Bottle python][bottle-python] web applications. Additional packages are easily added.
 
-*Device tree* binaries are generated and installed that support *HDMI* (bbb-hdmi.dtb), the *4DCape 7-inch* touchscreen (bbb-4dcape70t.dtb) and the *New Haven 5-inch* touchscreen (bbb-nh5cape.dtb). They are easy to switch between using `/boot/uEnv.txt` and all work with the installed *Qt* binaries.
+*Device tree* binaries are generated and installed that support *HDMI* (`bbb-hdmi.dtb`), the *4DCape 7-inch* touchscreen (`bbb-4dcape70t.dtb`) and the *New Haven 5-inch* touchscreen (`bbb-nh5cape.dtb`). They are easy to switch between using an included example [u-boot][uboot] script file `uEnv.txt`.
 
-*spidev* on SPI bus 1, *I2C1* and *I2C2* and *UART4* are configured for use from the *P9* header. The following kernel patches under `meta-bbb/recipes-kernel/linux/linux-stable-4.1/` add this functionality
+*spidev* on SPI bus 1, *I2C1* and *I2C2* and *UART4* are configured for use from the *P9* header. The following kernel patches under `meta-bbb/recipes-kernel/linux/linux-stable-4.1/` add this functionality.
 
 * 0001-spidev-Add-generic-compatible-dt-id.patch
 * 0002-Add-bbb-spi1-spidev-dtsi.patch

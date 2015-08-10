@@ -2,16 +2,16 @@
 layout: post
 title: Building Duovero Systems with Yocto
 description: "Building customized systems for Gumstix Duovero using tools from the Yocto Project"
-date: 2015-08-16 08:16:00
+date: 2015-08-16 12:45:00
 categories: gumstix-linux 
 tags: [linux, gumstix, duovero, yocto]
 ---
 
-These instructions are for building generic developer systems for [Gumstix Duovero][duovero] boards primarily for C, C++ and Qt programmers. The example systems also include Perl and Python.
+Instructions for building some developer systems for [Gumstix Duovero][duovero] boards primarily for C, C++ and [Qt5][qt] programmers, but also Perl and Python hackers with a number of modules for both included.
 
-The [meta-duovero][meta-duovero] layer described below **should** be modified for your own particular project.
+The [meta-duovero][meta-duovero] layer described below **should** be modified for your own particular project. Treat it as a template. 
 
-The *image recipes* under `meta-duovero/images` are examples with a few common packages I find useful.
+The *image recipes* under `meta-duovero/images` are examples with some packages I find useful. You should modify those recipes or create new ones to suit your own project. 
 
 The Yocto version is `1.8.0` the `[fido]` branch.
 
@@ -23,15 +23,17 @@ These are *sysvinit* systems.
 
 The Qt version is `5.4.3`. There is no *X11* and no desktop installed. [Qt][qt] gui applications can be run using the `-platform linuxfb` switch. I suspect *QML* apps will not work since I don't have *OpenGL* support in the these systems.
 
-Perl `5.20` with several hundred common modules is included.
+Perl `5.20` with several hundred modules is included.
 
-Python `2.7.9` is included with enough modules to run [Bottle python][bottle-python] web applications. 
+Python `2.7.9` is included with at least enough packages to run [Bottle python][bottle-python] web applications. Additional packages are easily added.
 
 The Duovero [Zephyr][duovero-zephyr] COM has a built-in Wifi/Bluetooth radio. The kernel and software to support both are included. Access point mode is supported. Some [instructions here][jumpnow-duovero-ap].
 
 NOTE: I haven't tested Bluetooth with the 4.1 kernel yet.
 
-*Device tree* binaries are generated and installed that support HDMI **jumpnow-duovero-parlor.dtb** or no display **jumpnow-duovero-parlor-nodisplay.dtb**. They are easy to switch between using `/boot/uEnv.txt`. If you don't provide a `/boot/uEnv.txt` specifying an alternate *dtb*, then the stock **omap4-duovero-parlor.dtb** is used. There is an example *uEnv.txt* in `meta-duovero/scripts`.
+*Device tree* binaries are generated and installed that support HDMI (`jumpnow-duovero-parlor.dtb`) or no display (`jumpnow-duovero-parlor-nodisplay.dtb`). They both add *SPI* support to the kernel.
+
+The *dtbs* are easy to switch between using a u-boot script file `/boot/uEnv.txt`. If you don't use a *uEnv.txt* script, then the default `omap4-duovero-parlor.dtb` will be loaded. An example *uEnv.txt* is in `meta-duovero/scripts`.
 
 *spidev* on SPI bus 1 (CS 0,1,2) and SPI bus 4 (CS 0) are configured for use from the *Parlor header*. The following kernel patches under `meta-duover/recipes-kernel/linux/linux-stable-4.1/` add this functionality
 
