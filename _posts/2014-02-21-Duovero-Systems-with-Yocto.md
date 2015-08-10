@@ -325,9 +325,9 @@ This script should run very fast.
 
 #### copy_rootfs.sh
 
-This script copies the *zImage* Linux kernel, several device tree binaries (*.dtb) and the rest of the system files to the root file system partition of the SD card.
+This script copies the *zImage* kernel, the device tree binaries and the rest of the operating system to the root file system partition of the SD card.
 
-The script accepts an optional command line argument for the image type, either `console` or `qt5`. The default is `console`.
+The script accepts an optional command line argument for the image type, for example `console` or `qt5`. The default is `console`.
 
 The script also accepts a `hostname` argument if you want the host name to be something other then the default `duovero`.
 

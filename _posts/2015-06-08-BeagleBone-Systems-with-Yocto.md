@@ -325,7 +325,7 @@ This script should run very fast.
 
 #### copy_rootfs.sh
 
-This script copies the *zImage* Linux kernel, several device tree binaries (*.dtb) and the rest of the system files to the root file system partition of the SD card.
+This script copies the *zImage* kernel, the device tree binaries and the rest of the operating system to the root file system partition of the SD card.
  
 The script accepts an optional command line argument for the image type, for example `console` or `qt5`. The default is `console` if no argument is provided.
 
@@ -339,7 +339,7 @@ or
 
     scott@octo:~/bbb/meta-bbb/scripts$ ./copy_rootfs.sh sdb qt5 bbb
 
-The copy_rootfs.sh script will take longer to run and depends a lot on the quality of your SD card.
+The copy_rootfs.sh script will take longer to run and depends a lot on the quality of your SD card. With a good *Class 10* card it should take less then 30 seconds.
 
 The copy scripts will **NOT** unmount partitions automatically. If an SD card partition is already mounted, the script will complain and abort. This is for safety, mine mostly, since I run these scripts many times a day on different machines and the SD cards show up in different places.
 
@@ -398,19 +398,15 @@ The arguments to *copy_emmc_install* are the SD card device and the image you wa
 Once you boot this SD card, you'll find the following under `/home/root/emmc` 
 
     root@bbb:~/emmc# ls -l
-    total 53184
-    -rwxr-xr-x 1 root root    64408 Jul 24 08:57 MLO-beaglebone
-    -rw-r--r-- 1 root root     1110 Jul 24 09:40 emmc-uEnv.txt
-    -rwxr-xr-x 1 root root     1629 Jul 24 08:57 emmc_copy_boot.sh
-    -rwxr-xr-x 1 root root     2290 Jul 24 08:57 emmc_copy_rootfs.sh
-    -rwxr-xr-x 1 root root      675 Jul 24 08:57 emmc_install.sh
-    -rwxr-xr-x 1 root root     1240 Jul 24 08:57 mk2parts.sh
-    -rw-r--r-- 1 root root 53827004 Jul 24 08:57 qt5-image-beaglebone.tar.xz
-    -rwxr-xr-x 1 root root   410860 Jul 24 08:57 u-boot-beaglebone.img
-    -rw-r--r-- 1 root root    30149 Jul 24 08:57 zImage-am335x-boneblack.dtb
-    -rw-r--r-- 1 root root    32357 Jul 24 08:57 zImage-bbb-4dcape70t.dtb
-    -rw-r--r-- 1 root root    30678 Jul 24 08:57 zImage-bbb-hdmi.dtb
-    -rw-r--r-- 1 root root    31927 Jul 24 08:57 zImage-bbb-nh5cape.dtb
+    total 53096
+    -rwxr-xr-x 1 root root    64408 Aug 10 05:37 MLO-beaglebone
+    -rw-r--r-- 1 root root     1112 Aug 10 05:37 emmc-uEnv.txt
+    -rwxr-xr-x 1 root root     1629 Aug 10 05:37 emmc_copy_boot.sh
+    -rwxr-xr-x 1 root root     1825 Aug 10 05:37 emmc_copy_rootfs.sh
+    -rwxr-xr-x 1 root root      675 Aug 10 05:37 emmc_install.sh
+    -rwxr-xr-x 1 root root     1240 Aug 10 05:37 mk2parts.sh
+    -rw-r--r-- 1 root root 53870180 Aug 10 05:37 qt5-image-beaglebone.tar.xz
+    -rwxr-xr-x 1 root root   410860 Aug 10 05:37 u-boot-beaglebone.img
 
 
 To install the *console-image* onto the *eMMC*, run the `emmc_install.sh` script like this
@@ -484,10 +480,6 @@ It should take less then a minute to run and the output should look something li
     Mounting /dev/mmcblk1p2
     [  147.578422] EXT4-fs (mmcblk1p2): mounted filesystem with ordered data mode. Opts: (null)
     Extracting qt5-image-beaglebone.tar.xz to /media
-    Copying am335x-boneblack.dtb to /media/boot/
-    Copying bbb-hdmi.dtb to /media/boot/
-    Copying bbb-4dcape70t.dtb to /media/boot/
-    Copying bbb-nh5cape.dtb to /media/boot/
     Writing hostname to /etc/hostname
     Unmounting /dev/mmcblk1p2
     Done
@@ -497,6 +489,30 @@ It should take less then a minute to run and the output should look something li
 
 
 Follow the instructions and after reboot you will be running the *qt5-image* from the *eMMC*.
+
+#### Modifying uEnv.txt
+
+The *uEnv.txt* bootloader configuration script is located on the *boot* partition. Before you can edit the file, you need to mount the *boot* partition
+
+    root@bbb:~# mount /dev/mmcblk0p1 /mnt
+
+    root@bbb:~# ls -l /mnt
+    total 466
+    -rwxr-xr-x 1 root root  64408 Aug 10  2015 MLO
+    -rwxr-xr-x 1 root root 410860 Aug 10  2015 u-boot.img
+    -rwxr-xr-x 1 root root    931 Aug 10  2015 uEnv.txt
+
+You can add an entry to `/etc/fstab` if you want the *boot* partition mounted all the time.
+
+First create a better mount point
+
+    root@bbb:~# mkdir /mnt/boot
+
+Then an entry like this
+
+    /dev/mmcblk0p1       /mnt/boot          auto       defaults  0  0
+
+added to `/etc/fstab` would work.
 
 #### Some custom package examples
 
