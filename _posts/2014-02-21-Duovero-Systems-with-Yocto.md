@@ -2,12 +2,12 @@
 layout: post
 title: Building Duovero Systems with Yocto
 description: "Building customized systems for Gumstix Duovero using tools from the Yocto Project"
-date: 2015-08-16 12:45:00
+date: 2015-08-11 08:55:00
 categories: gumstix-linux 
 tags: [linux, gumstix, duovero, yocto]
 ---
 
-Instructions for building some developer systems for [Gumstix Duovero][duovero] boards primarily for C, C++ and [Qt5][qt] programmers, but also Perl and Python hackers with a number of modules for both included.
+Instructions for building some developer systems for [Gumstix Duovero][duovero] boards primarily for C, C++ and [Qt5][qt] programmers. Perl and Python are also included.
 
 The [meta-duovero][meta-duovero] layer described below **should** be modified for your own particular project. Treat it as a template. 
 
@@ -15,7 +15,7 @@ The *image recipes* under `meta-duovero/images` are examples with some packages 
 
 The Yocto version is `1.8.0` the `[fido]` branch.
 
-The Linux `4.1.4` kernel comes from the [Linux stable][linux-stable] repository.
+The Linux `4.1.5` kernel comes from the [Linux stable][linux-stable] repository.
 
 The [u-boot][uboot] version is `2015.07`.
 

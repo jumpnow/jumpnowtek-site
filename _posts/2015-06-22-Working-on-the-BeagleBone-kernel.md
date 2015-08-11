@@ -2,7 +2,7 @@
 layout: post
 title: Working on the BeagleBone Kernel
 description: "Working on and customizing the BeagleBone Black kernel"
-date: 2015-08-16 08:42:00
+date: 2015-08-11 08:45:00
 categories: beaglebone 
 tags: [linux, beaglebone, kernel]
 ---
@@ -42,15 +42,15 @@ If you had multiple *linux-stable* recipes, maybe *linux-stable_4.0.bb* and *lin
 
 When Yocto builds the *linux-stable-4.1* kernel, it does so under this directory
 
-    <TMPDIR>/work/beaglebone-poky-linux-gnueabi/linux-stable/4.1-r9
+    <TMPDIR>/work/beaglebone-poky-linux-gnueabi/linux-stable/4.1-r10
 
-The *r9* revision comes from this line in the kernel recipe
+The *r10* revision comes from this line in the kernel recipe
 
-    PR = "r9"
+    PR = "r10"
 
 Here's a look at that directory after a build
 
-    scott@octo:~/bbb/build/tmp/work/beaglebone-poky-linux-gnueabi/linux-stable/4.1-r9$ ls -l
+    scott@octo:~/bbb/build/tmp/work/beaglebone-poky-linux-gnueabi/linux-stable/4.1-r10$ ls -l
     total 224
     -rw-r--r--  1 scott scott   674 Aug  9 06:15 0001-spidev-Add-generic-compatible-dt-id.patch
     -rw-r--r--  1 scott scott  1627 Aug  9 06:15 0002-Add-bbb-spi1-spidev-dtsi.patch
@@ -175,8 +175,8 @@ The kernel recipe *linux-stable_4.1.bb* has the repository location, branch and 
 
 These lines have the details
 
-    # v4.1.4
-    SRCREV = "89e419960fb6a260f6a112821507d516117d5aa1"
+    # v4.1.5
+    SRCREV = "352cb8677f83a6cf2139151578c8c79785d2d4bf"
     SRC_URI = " \
         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git;branch=linux-4.1.y \
 
