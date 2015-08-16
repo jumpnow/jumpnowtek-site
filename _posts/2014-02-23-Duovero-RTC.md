@@ -2,7 +2,7 @@
 layout: post
 title: Duovero Real-time Clock
 description: "Working with the Duovero battery backed RTC"
-date: 2014-02-23 08:49:00
+date: 2015-08-16 12:45:00
 categories: gumstix-linux
 tags: [linux, gumstix, duovero, rtc]
 ---
@@ -95,7 +95,7 @@ Given that, this kernel [patch][trickle-charge-patch] enables trickle charging t
     +        * TWL6030 Register Map, Table 224, BBSPOR_CFG Register
     +        */
     +       data &= ~BB_SEL_0;
-    +       data |= (BB_SEL_1 & BB_CHG_EN);
+    +       data |= (BB_SEL_1 | BB_CHG_EN);
     +
     +       ret = twl_i2c_write_u8(TWL6030_MODULE_ID0, data, REG_BBSPOR_CFG);
     +       if (ret < 0)
