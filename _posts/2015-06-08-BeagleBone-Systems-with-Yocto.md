@@ -2,7 +2,7 @@
 layout: post
 title: Building BeagleBone Black Systems with Yocto
 description: "Building customized systems for the BeagleBone Black using tools from the Yocto Project"
-date: 2015-08-11 08:45:00
+date: 2015-08-16 05:53:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
@@ -234,17 +234,9 @@ To build the `qt5-image` it would be
 
     scott@octo:~/bbb/build$ bitbake qt5-image
 
-The `cleansstate` command (with two s's) works for image recipes as well. I typically do an
+The `cleansstate` command (with two s's) works for image recipes as well.
 
-    rm <TMPDIR>/deploy/images/beaglebone/qt5-image*
-
-or
-
-    rm <TMPDIR>/deploy/images/beaglebone/console-image*
-
-after running `cleansstate` on the image, otherwise you will accumulate old build files as Yocto does not automatically clean them.
-
-You can ignore the **README\_-\_DO\_NOT\_DELETE\_FILES\_IN\_THIS\_DIRECTORY.txt** file in that directory. Any files found here are easily recreated.
+The image files won't get deleted from the *TMPDIR* until the next time you build.
 
  
 ### Copying the binaries to an SD card
