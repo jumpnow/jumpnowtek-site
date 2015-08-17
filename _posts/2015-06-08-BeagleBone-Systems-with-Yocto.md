@@ -2,7 +2,7 @@
 layout: post
 title: Building BeagleBone Black Systems with Yocto
 description: "Building customized systems for the BeagleBone Black using tools from the Yocto Project"
-date: 2015-08-16 05:53:00
+date: 2015-08-17 10:16:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
@@ -15,7 +15,7 @@ The *image recipes* under `meta-bbb/images` are examples with some packages I fi
 
 The Yocto version is `1.8.0` the `[fido]` branch.
 
-The Linux `4.1.5` kernel comes from the [Linux stable][linux-stable] repository.
+The Linux `4.1.6` kernel comes from the [Linux stable][linux-stable] repository.
 
 The [u-boot][uboot] version is `2015.07`.
 
