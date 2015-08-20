@@ -2,7 +2,7 @@
 layout: post
 title: Building BeagleBone Black Systems with Yocto
 description: "Building customized systems for the BeagleBone Black using tools from the Yocto Project"
-date: 2015-08-17 10:16:00
+date: 2015-08-20 08:49:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
@@ -124,44 +124,31 @@ In `bblayers.conf` file replace `${HOME}` with the appropriate path to the meta-
 
 The variables you may want to customize are the following:
 
-- BB\_NUMBER\_THREADS
-- PARALLEL\_MAKE
 - TMPDIR
 - DL\_DIR
 - SSTATE\_DIR
 
-The defaults for all of these should work just fine. Adjustments are optional.
-
-##### BB\_NUMBER\_THREADS
-
-Set to the number of cores on your build machine. This will significantly speed up the builds.
-
-##### PARALLEL\_MAKE
-
-Set to the number of cores on your build machine. Same as *BB_NUMBER_THREADS*
+The defaults for all of these work fine. Adjustments are optional.
 
 ##### TMPDIR
 
 This is where temporary build files and the final build binaries will end up. Expect to use at least 35GB. You probably want at least 50GB available.
 
-The default location if left commented will be `~/bbb/build/tmp`.
+The default location is in the `build` directory, in this example `~/bbb/build/tmp`.
 
 If you specify an alternate location as I do in the example conf file make sure the directory is writable by the user running the build. Also because of some `rpath` issues with gcc, the `TMPDIR` path cannot be too short or the gcc build will fail. I haven't determined exactly how short is too short, but something like `/oe9` is too short and `/oe9/tmp-poky-fido-build` is long enough.
 
-If you use the default location, the `TMPDIR` path is already long enough.
-     
 ##### DL_DIR
 
 This is where the downloaded source files will be stored. You can share this among configurations and build files so I created a general location for this outside my home directory. Make sure the build user has write permission to the directory you decide on.
 
-The default directory will be `~/bbb/build/sources`.
+The default location is in the `build` directory, `~/bbb/build/sources`.
 
 ##### SSTATE_DIR
 
 This is another Yocto build directory that can get pretty big, greater then 5GB. I often put this somewhere else other then my home directory as well.
 
-The default location is `~/bbb/build/sstate-cache`.
-
+The default location is in the `build` directory, `~/bbb/build/sstate-cache`.
  
 ### Run the build
 

@@ -2,7 +2,7 @@
 layout: post
 title: Building Duovero Systems with Yocto
 description: "Building customized systems for Gumstix Duovero using tools from the Yocto Project"
-date: 2015-08-17 10:19:00
+date: 2015-08-20 08:51:00
 categories: gumstix-linux 
 tags: [linux, gumstix, duovero, yocto]
 ---
@@ -129,43 +129,31 @@ In `bblayers.conf` file replace `${HOME}` with the appropriate path to the meta-
 
 The variables you may want to customize are the following:
 
-- BB\_NUMBER\_THREADS
-- PARALLEL\_MAKE
 - TMPDIR
 - DL\_DIR
 - SSTATE\_DIR
 
-The defaults should work, but I always make some adjustment.
-
-##### BB\_NUMBER\_THREADS
-
-Set to the number of cores on your build machine.
-
-##### PARALLEL\_MAKE
-
-Set to the number of cores on your build machine.
+The defaults work fine. Adjustments are optional.
 
 ##### TMPDIR
 
 This is where temporary build files and the final build binaries will end up. Expect to use at least 35GB. You probably want at least 50GB available.
 
-The default location if left commented will be `~/duovero/build/tmp`. If I'm not working in a VM, I usually put my `TMPDIRs` on dedicated partitions. Occasionally something will come up where you'll need to delete the entire `TMPDIR`. For those occasions the sequence unmount/mkfs/remount is much faster then deleting a 35+ GB directory. 
+The default location is in the `build` directory, in this example `~/duovero/build/tmp`.
 
 If you specify an alternate location as I do in the example conf file make sure the directory is writable by the user running the build. Also because of some `rpath` issues with gcc, the `TMPDIR` path cannot be too short or the gcc build will fail. I haven't determined exactly how short is too short, but something like `/oe9` is too short and `/oe9/tmp-poky-fido-build` is long enough.
 
-If you use the default location, the `TMPDIR` path is already long enough.
-     
 ##### DL_DIR
 
 This is where the downloaded source files will be stored. You can share this among configurations and build files so I created a general location for this outside my home directory. Make sure the build user has write permission to the directory you decide on.
 
-The default directory will be `~/duovero/build/sources`.
+The default location is in the `build` directory, `~/duovero/build/sources`.
 
 ##### SSTATE_DIR
 
 This is another Yocto build directory that can get pretty big, greater then 5GB. I often put this somewhere else other then my home directory as well.
 
-The default location is `~/duovero/build/sstate-cache`.
+The default location is in the `build` directory, `~/duovero/build/sstate-cache`.
 
  
 ### Run the build
