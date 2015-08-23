@@ -2,7 +2,7 @@
 layout: post
 title: Building BeagleBone Black Systems with Yocto
 description: "Building customized systems for the BeagleBone Black using tools from the Yocto Project"
-date: 2015-08-20 08:49:00
+date: 2015-08-23 09:42:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
@@ -228,7 +228,7 @@ The image files won't get deleted from the *TMPDIR* until the next time you buil
  
 ### Copying the binaries to an SD card
 
-After the build completes, the bootloader, kernel and rootfs image files can be found in `<TMPDIR>/deploy/images/bbb/`.
+After the build completes, the bootloader, kernel and rootfs image files can be found in `<TMPDIR>/deploy/images/beaglebone/`.
 
 The `meta-bbb/scripts` directory has some helper scripts to format and copy the files to a microSD card.
 
