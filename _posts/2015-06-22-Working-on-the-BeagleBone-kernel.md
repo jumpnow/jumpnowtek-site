@@ -353,7 +353,44 @@ Then add the patch to the kernel recipe `linux-stable_4.1.bb`.
 
 Yocto will apply the patches in the order they appear in the recipe, but to make it easier to work with `git am` outside of Yocto it's useful to rename (renumber) the patches in the order you want them applied.
 
-That's why I renamed this same patch from `0001-` to `0011-` on my system.
+That's why I renamed this same patch from `0001-` to `0011-` in the `meta-bbb` layer.
+
+### External Kernel Modules
+
+You can build external kernel modules by first *sourcing* the Yocto SDK environment as above and then pointing your Makefile *KERNELDIR* to the correct location using the `-C` switch.
+
+For example
+
+    scott@octo:~/projects/hellow$ cat Makefile
+    # Makefile for the hellow kernel module
+
+    MODULE_NAME=hellow
+
+    ifneq ($(KERNELRELEASE),)
+        obj-m := $(MODULE_NAME).o
+    else
+        PWD := $(shell pwd)
+
+    default:
+            $(MAKE) -C $(HOME)/bbb/linux-stable M=$(PWD) modules
+
+    clean:
+            rm -rf *~ *.ko *.o *.mod.c modules.order Module.symvers .${MODULE_NAME}* .tmp_versions
+
+    endif
+
+Then to build
+
+    scott@octo:~/projects/hellow$ make
+    make -C /home/scott/bbb/linux-stable M=/home/scott/projects/hellow modules
+    make[1]: Entering directory '/home/scott/bbb/linux-stable'
+      CC [M]  /home/scott/projects/hellow/hellow.o
+      Building modules, stage 2.
+      MODPOST 1 modules
+      CC      /home/scott/projects/hellow/hellow.mod.o
+      LD [M]  /home/scott/projects/hellow/hellow.ko
+    make[1]: Leaving directory '/home/scott/bbb/linux-stable'
+
 
 
 [bbb-yocto]: http://www.jumpnowtek.com/beaglebone/BeagleBone-Systems-with-Yocto.html
