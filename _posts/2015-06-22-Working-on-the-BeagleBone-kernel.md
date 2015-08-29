@@ -42,7 +42,7 @@ If you had multiple *linux-stable* recipes, maybe *linux-stable_4.0.bb* and *lin
 
 When Yocto builds the *linux-stable-4.1* kernel, it does so under this directory
 
-    <TMPDIR>/work/beaglebone-poky-linux-gnueabi/linux-stable/4.1-r10
+    <TMPDIR>/work/beaglebone-poky-linux-gnueabi/linux-stable/4.1-r12
 
 The *r12* revision comes from this line in the kernel recipe
 
@@ -111,7 +111,7 @@ Then rebuild your kernel
 
 ## Working outside of Yocto
 
-I usually find it more convenient to work on the kernel outside of the Yocto build system. Turn-around time between build iterations are definitely faster.
+I usually find it more convenient to work on the kernel outside of the Yocto build system. Turn-around time between build iterations are definitely faster. It does require a little bit of setup first.
 
 ### Cross-compiler
 
@@ -160,14 +160,14 @@ That gets you to the correct git branch, but depending on whether I've kept the 
 
 ### Apply existing patches
 
-Currently the `meta-bbb/recipes-kernel/linux/linux-stable_4.1.bb` recipe has a number of patches that I've included to add support for *spidev*, *i2c*, *uart4* and a few touchscreens. Use *git* to apply these same patches to your new linux-stable repository.
+Currently the `meta-bbb/recipes-kernel/linux/linux-stable_4.1.bb` recipe has a number of patches that I've included to add support for *spidev*, *i2c*, *uart4* and a few touchscreens. These are all completely optional and you probably want your own patches instead. You can use *git* to apply the same patches used by Yocto to the Linux source repository.
 
 Start by creating a working branch
 
     ~$ cd ~/bbb/linux-stable
     ~/bbb/linux-stable$ checkout -b work
 
-Here's an example applying all of the patches at once
+And if you wanted to apply all of the patches at once
 
     ~/bbb/linux-stable$ git am ../meta-bbb/recipes-kernel/linux/linux-stable-4.1/*.patch
 
@@ -175,7 +175,7 @@ Or you could apply selective patches individually.
 
 ### Default kernel config
 
-Copy the kernel config file that Yocto use to the new linux-stable repository.
+Copy the kernel config file that Yocto used to the new linux-stable repository.
 
     cp ~/bbb/meta-bbb/recipes-kernel/linux/linux-stable-4.1/beaglebone/defconfig ~/bbb/linux-stable/.config
 
@@ -192,7 +192,6 @@ Source the cross-tools environment
 Build a zImage, unset **LOCALVERSION** so modules already on the bbb rootfs will still load
 
     ~/bbb/linux-stable$ make LOCALVERSION= -j8 zImage
-
 
 Build modules
 
