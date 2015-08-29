@@ -2,7 +2,7 @@
 layout: post
 title: Working on the BeagleBone Kernel
 description: "Working on and customizing the BeagleBone Black kernel"
-date: 2015-08-11 08:45:00
+date: 2015-08-29 04:55:00
 categories: beaglebone 
 tags: [linux, beaglebone, kernel]
 ---
@@ -44,44 +44,43 @@ When Yocto builds the *linux-stable-4.1* kernel, it does so under this directory
 
     <TMPDIR>/work/beaglebone-poky-linux-gnueabi/linux-stable/4.1-r10
 
-The *r10* revision comes from this line in the kernel recipe
+The *r12* revision comes from this line in the kernel recipe
 
-    PR = "r10"
+    PR = "r12"
 
 Here's a look at that directory after a build
 
-    scott@octo:~/bbb/build/tmp/work/beaglebone-poky-linux-gnueabi/linux-stable/4.1-r10$ ls -l
-    total 224
-    -rw-r--r--  1 scott scott   674 Aug  9 06:15 0001-spidev-Add-generic-compatible-dt-id.patch
-    -rw-r--r--  1 scott scott  1627 Aug  9 06:15 0002-Add-bbb-spi1-spidev-dtsi.patch
-    -rw-r--r--  1 scott scott  1189 Aug  9 06:15 0003-Add-bbb-i2c1-dtsi.patch
-    -rw-r--r--  1 scott scott  1189 Aug  9 06:15 0004-Add-bbb-i2c2-dtsi.patch
-    -rw-r--r--  1 scott scott  3222 Aug  9 06:15 0005-Add-bbb-hdmi-dts.patch
-    -rw-r--r--  1 scott scott  4436 Aug  9 06:15 0006-Add-bbb-4dcape70t-dts.patch
-    -rw-r--r--  1 scott scott 15054 Aug  9 06:15 0007-Add-ft5x06-touchscreen-driver.patch
-    -rw-r--r--  1 scott scott  5093 Aug  9 06:15 0008-Add-bbb-nh5cape-dts.patch
-    -rw-r--r--  1 scott scott  2374 Aug  9 06:15 0009-Add-4dcape70t-button-dtsi.patch
-    -rw-r--r--  1 scott scott  1125 Aug  9 06:15 0010-4dcape70t-dts-include-button-dtsi-comment-out-spi.patch
-    -rw-r--r--  1 scott scott   766 Aug  9 06:15 0011-mmc-Allow-writes-to-mmcblkboot-partitions.patch
-    -rw-r--r--  1 scott scott   753 Aug  9 06:15 0012-4dcape70t-Increase-charge-delay.patch
-    -rw-r--r--  1 scott scott  1139 Aug  9 06:15 0013-Add-uart4-dtsi.patch
-    -rw-r--r--  1 scott scott  1582 Aug  9 06:15 0014-Include-uart4-dtsi-in-bbb-dts-files.patch
-    -rw-r--r--  1 scott scott  5048 Aug  9 06:15 0015-bbb-nh5cape-Fix-bpp-for-24-bit-color.patch
-    -rw-r--r--  1 scott scott 84935 Aug  9 06:15 defconfig
-    drwxr-xr-x  3 scott scott  4096 Aug  9 06:19 deploy-ipks
-    drwxr-xr-x  2 scott scott  4096 Aug  9 06:19 deploy-linux-stable
-    lrwxrwxrwx  1 scott scott    65 Aug  9 06:15 git -> /oe7/bbb/tmp-poky-fido-build/work-shared/ beaglebone/kernel-source
-    drwxr-xr-x  5 scott scott  4096 Aug  9 06:19 image
-    drwxrwxr-x  3 scott scott  4096 Aug  9 06:15 license-destdir
-    drwxr-xr-x 20 scott scott  4096 Aug  9 06:19 linux-beaglebone-standard-build
-    drwxr-xr-x  4 scott scott  4096 Aug  9 06:19 package
-    drwxr-xr-x 71 scott scott  4096 Aug  9 06:19 packages-split
-    drwxr-xr-x  7 scott scott  4096 Aug  9 06:19 pkgdata
-    drwxrwxr-x  2 scott scott  4096 Aug  9 06:19 pseudo
-    drwxr-xr-x  3 scott scott  4096 Aug  9 06:19 sysroot-destdir
-    drwxrwxr-x  2 scott scott 12288 Aug  9 06:19 temp
-
-
+    scott@octo:~/bbb/build/tmp/work/beaglebone-poky-linux-gnueabi/linux-stable/4.1-r12$ ls -l
+    total 228
+    -rw-r--r--  1 scott scott   674 Aug 28 14:59 0001-spidev-Add-generic-compatible-dt-id.patch
+    -rw-r--r--  1 scott scott  1627 Aug 28 14:59 0002-Add-bbb-spi1-spidev-dtsi.patch
+    -rw-r--r--  1 scott scott  1189 Aug 28 14:59 0003-Add-bbb-i2c1-dtsi.patch
+    -rw-r--r--  1 scott scott  1189 Aug 28 14:59 0004-Add-bbb-i2c2-dtsi.patch
+    -rw-r--r--  1 scott scott  3222 Aug 28 14:59 0005-Add-bbb-hdmi-dts.patch
+    -rw-r--r--  1 scott scott  4436 Aug 28 14:59 0006-Add-bbb-4dcape70t-dts.patch
+    -rw-r--r--  1 scott scott 15054 Aug 28 14:59 0007-Add-ft5x06-touchscreen-driver.patch
+    -rw-r--r--  1 scott scott  5093 Aug 28 14:59 0008-Add-bbb-nh5cape-dts.patch
+    -rw-r--r--  1 scott scott  2374 Aug 28 14:59 0009-Add-4dcape70t-button-dtsi.patch
+    -rw-r--r--  1 scott scott  1125 Aug 28 14:59 0010-4dcape70t-dts-include-button-dtsi-comment-out-spi.patch
+    -rw-r--r--  1 scott scott   766 Aug 28 14:59 0011-mmc-Allow-writes-to-mmcblkboot-partitions.patch
+    -rw-r--r--  1 scott scott   753 Aug 28 14:59 0012-4dcape70t-Increase-charge-delay.patch
+    -rw-r--r--  1 scott scott  1139 Aug 28 14:59 0013-Add-uart4-dtsi.patch
+    -rw-r--r--  1 scott scott  1582 Aug 28 14:59 0014-Include-uart4-dtsi-in-bbb-dts-files.patch
+    -rw-r--r--  1 scott scott  5048 Aug 28 14:59 0015-bbb-nh5cape-Fix-bpp-for-24-bit-color.patch
+    -rw-r--r--  1 scott scott  1092 Aug 28 14:59 0016-Revert-usb-musb-dsps-just-start-polling-already.patch
+    -rw-r--r--  1 scott scott 84935 Aug 28 14:59 defconfig
+    drwxr-xr-x  3 scott scott  4096 Aug 28 15:29 deploy-ipks
+    drwxr-xr-x  2 scott scott  4096 Aug 28 15:28 deploy-linux-stable
+    lrwxrwxrwx  1 scott scott    65 Aug 28 14:59 git -> /oe4/bbb/tmp-poky-fido-build/work-shared/beaglebone/kernel-source
+    drwxr-xr-x  5 scott scott  4096 Aug 28 15:28 image
+    drwxrwxr-x  3 scott scott  4096 Aug 28 15:05 license-destdir
+    drwxr-xr-x 20 scott scott  4096 Aug 29 04:51 linux-beaglebone-standard-build
+    drwxr-xr-x  4 scott scott  4096 Aug 28 15:28 package
+    drwxr-xr-x 71 scott scott  4096 Aug 28 15:30 packages-split
+    drwxr-xr-x  7 scott scott  4096 Aug 28 15:28 pkgdata
+    drwxrwxr-x  2 scott scott  4096 Aug 28 15:28 pseudo
+    drwxr-xr-x  3 scott scott  4096 Aug 28 15:28 sysroot-destdir
+    drwxrwxr-x  2 scott scott 12288 Aug 29 04:51 temp
 
 The patches and defconfig are the same files from `meta-bbb/recipes-kernel/linux/linux-stable-4.1/`
 
@@ -91,36 +90,6 @@ The build output happens under `linux-beaglebone-standard-build` and this is whe
 
 
 ## Changing the kernel config
-
-**NOTE** - Using Yocto 1.8 and Ubuntu 15.04 there is a problem invoking the kernel config.
-See this [bug report][menuconfig-bug-report]. Other Linux distros are probably fine.
-
-These two workarounds both worked for me.
-
-1. The easiest is the one mentioned in the bug report, add this to your `build/conf/local.conf`
-
-        OE_TERMINAL = "xterm"
-
-2. Googling I found this one line patch to one of the Yocto/Poky scripts that also works
-
-        scott@t410:~/poky-fido$ git diff
-        diff --git a/meta/lib/oe/terminal.py b/meta/lib/oe/terminal.py
-        index 4f5c611..65e1ab8 100644
-        --- a/meta/lib/oe/terminal.py
-        +++ b/meta/lib/oe/terminal.py
-        @@ -57,6 +57,8 @@ class Gnome(XTerminal):
-             priority = 2
-         
-             def __init__(self, sh_cmd, title=None, env=None, d=None):
-        +        if os.getenv('LC_ALL'): os.putenv('LC_ALL','')
-        +
-                 # Check version
-                 vernum = check_terminal_version("gnome-terminal")
-                 if vernum and LooseVersion(vernum) >= '3.10':
-
-
-I expect an official Yocto fix will be in place soon.
-
 
 You can invoke the standard kernel configuration editor using bitbake
 
@@ -142,7 +111,7 @@ Then rebuild your kernel
 
 ## Working outside of Yocto
 
-I find it more convenient to work on the kernel outside of the Yocto build system. Builds are definitely faster.
+I usually find it more convenient to work on the kernel outside of the Yocto build system. Turn-around time between build iterations are definitely faster.
 
 ### Cross-compiler
 
@@ -175,8 +144,8 @@ The kernel recipe *linux-stable_4.1.bb* has the repository location, branch and 
 
 These lines have the details
 
-    # v4.1.5
-    SRCREV = "352cb8677f83a6cf2139151578c8c79785d2d4bf"
+    # v4.1.6
+    SRCREV = "4ff62ca06c0c0b084f585f7a2cfcf832b21d94fc"
     SRC_URI = " \
         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git;branch=linux-4.1.y \
 
