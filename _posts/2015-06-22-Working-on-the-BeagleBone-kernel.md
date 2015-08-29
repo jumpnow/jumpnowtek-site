@@ -2,7 +2,7 @@
 layout: post
 title: Working on the BeagleBone Kernel
 description: "Working on and customizing the BeagleBone Black kernel"
-date: 2015-08-29 04:55:00
+date: 2015-08-29 05:27:00
 categories: beaglebone 
 tags: [linux, beaglebone, kernel]
 ---
@@ -160,9 +160,9 @@ That gets you to the correct git branch, but depending on whether I've kept the 
 
 ### Apply existing patches
 
-Currently the `meta-bbb/recipes-kernel/linux/linux-stable_4.1.bb` recipe has a number of patches that I've included to add support for *spidev*, *i2c*, *uart4* and a few touchscreens. These are all completely optional and you probably want your own patches instead. You can use *git* to apply the same patches used by Yocto to the Linux source repository.
+Currently the `meta-bbb/recipes-kernel/linux/linux-stable_4.1.bb` recipe has a number of patches that I've included to add support for *spidev*, *i2c*, *uart4* and a few touchscreens. These are all completely optional and you probably want your own patches instead. You can use *git* to apply these same patches to the Linux source repository.
 
-Start by creating a working branch
+I usually start by creating a working branch
 
     ~$ cd ~/bbb/linux-stable
     ~/bbb/linux-stable$ checkout -b work
@@ -359,6 +359,41 @@ Then to build
       LD [M]  /home/scott/projects/hellow/hellow.ko
     make[1]: Leaving directory '/home/scott/bbb/linux-stable'
 
+
+After that you can copy the *ko* module to the BBB using *scp* and load it manually with *insmod*.
+
+### Adding a Yocto Recipe for an External Kernel Module
+
+When you are done with development, you probably want your new kernel module to be built with the rest of the system.
+
+Here's a working a recipe that pulls the external module source from a private *Github* repository
+
+    scott@fractal:~/fit-overo/meta-fit/recipes-kernel/drivers$ cat ads1278_git.bb
+    DESCRIPTION = "A kernel module for the FIT ads1278"
+    LICENSE = "GPLv2"
+    LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/GPL-2.0;md5=801f80980d171dd6425610833a22dbe6"
+
+    inherit module
+
+    PR = "r23"
+
+    SRCREV = "${AUTOREV}"
+    SRC_URI = "git://git@github.com/Fluid-Imaging-Technologies/fit-ads1278.git;protocol=ssh"
+
+    S = "${WORKDIR}/git"
+
+    do_compile() {
+      unset CFLAGS CPPFLAGS CXXFLAGS LDFLAGS
+      oe_runmake 'KERNELDIR=${STAGING_KERNEL_DIR}'
+    }
+    
+    do_install() {
+      install -d ${D}${base_libdir}/modules/${KERNEL_VERSION}/kernel/drivers/${PN}
+      install -m 0644 ads1278${KERNEL_OBJECT_SUFFIX} ${D}${base_libdir}/modules/${KERNEL_VERSION}/kernel/drivers/${PN}
+    }
+
+
+And then add the driver package, `ads128` in this example, to to the `IMAGE_INSTALL` variable for the image recipe.
 
 
 [bbb-yocto]: http://www.jumpnowtek.com/beaglebone/BeagleBone-Systems-with-Yocto.html
