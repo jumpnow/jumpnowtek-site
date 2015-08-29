@@ -393,7 +393,7 @@ Here's a working a recipe that pulls the external module source from a private *
     }
 
 
-And then add the driver package, `ads128` in this example, to to the `IMAGE_INSTALL` variable for the image recipe.
+You could then add the driver package, `ads128` in this example, to to the `IMAGE_INSTALL` variable for the *Yocto* image recipe you are using.
 
 
 [bbb-yocto]: http://www.jumpnowtek.com/beaglebone/BeagleBone-Systems-with-Yocto.html
