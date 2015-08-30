@@ -2,7 +2,7 @@
 layout: post
 title: Working on the BeagleBone Kernel
 description: "Working on and customizing the BeagleBone Black kernel"
-date: 2015-08-30 04:21:00
+date: 2015-08-30 04:32:00
 categories: beaglebone 
 tags: [linux, beaglebone, kernel]
 ---
@@ -13,13 +13,13 @@ Once you've built a basic [BeagleBone Black system][bbb-yocto] with the [Yocto P
 
 The default Linux kernel is referred to as **virtual/kernel** when building with *bitbake*.
 
-For example:
-
-    ~/bbb/build$ bitbake -c cleansstate virtual/kernel
-
-or
+For example to build the kernel and modules
 
     ~/bbb/build$ bitbake virtual/kernel
+
+or to clean the build
+
+    ~/bbb/build$ bitbake -c cleansstate virtual/kernel
 
 
 Which kernel to use comes from this line in `meta-bbb/conf/machine/beaglebone.conf`
@@ -113,7 +113,7 @@ Finally you'll probably want to rebuild your image to get the new kernel and mod
 
 I usually find it more convenient to work on the kernel outside of the Yocto build system.
 
-The setup for this is not too hard.
+A little setup is required.
 
 ### Cross-compiler
 
@@ -338,9 +338,7 @@ After that you can copy the *ko* module to the BBB using *scp* and load it manua
 
 ### Adding a Yocto Recipe for an External Kernel Module
 
-When you are done with development, you probably want your new external kernel module to be built with the rest of the system.
-
-Here's a working a recipe that pulls the external module source from a private *Github* repository
+Here's a working Yocto recipe that pulls the external module source from a private *Github* repository, builds and then installs the module under `/lib/modules/${KERNEL_VERSION/kernel/drivers` on the final *rootfs*.
 
     scott@fractal:~/fit-overo/meta-fit/recipes-kernel/drivers$ cat ads1278_git.bb
     DESCRIPTION = "A kernel module for the FIT ads1278"
