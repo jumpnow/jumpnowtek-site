@@ -2,7 +2,7 @@
 layout: post
 title: Working on the BeagleBone Kernel
 description: "Working on and customizing the BeagleBone Black kernel"
-date: 2015-08-29 05:27:00
+date: 2015-08-30 04:21:00
 categories: beaglebone 
 tags: [linux, beaglebone, kernel]
 ---
@@ -24,7 +24,7 @@ or
 
 Which kernel to use comes from this line in `meta-bbb/conf/machine/beaglebone.conf`
 
-    PREFERRED\_PROVIDER\_virtual/kernel = "linux-stable"
+    PREFERRED_PROVIDER_virtual/kernel = "linux-stable"
 
 Kernel recipes are here `meta-bbb/recipes-kernel/linux/`
 
@@ -38,7 +38,7 @@ The kernel config file is `meta-bbb/recipes-kernel/linux/linux-stable-4.1/beagle
 
 If you had multiple *linux-stable* recipes, maybe *linux-stable_4.0.bb* and *linux-stable_4.1.bb* then the highest revision number, 4.1 in this case, would be used. To specify an earlier version, you could use a line like this in `build/conf/local.conf`
 
-    PREFERRED\_VERSION\_linux-stable = "4.0"
+    PREFERRED_VERSION_linux-stable = "4.0"
 
 When Yocto builds the *linux-stable-4.1* kernel, it does so under this directory
 
@@ -107,11 +107,13 @@ Then rebuild your kernel
 
     ~/bbb/build$ bitbake -c cleansstate virtual/kernel && bitbake virtual/kernel
 
-
+Finally you'll probably want to rebuild your image to get the new kernel and modules into the *rootfs* for installation onto an SD card.
 
 ## Working outside of Yocto
 
-I usually find it more convenient to work on the kernel outside of the Yocto build system. Turn-around time between build iterations are definitely faster. It does require a little bit of setup first.
+I usually find it more convenient to work on the kernel outside of the Yocto build system.
+
+The setup for this is not too hard.
 
 ### Cross-compiler
 
@@ -121,7 +123,7 @@ First, choose the architecture where you'll be running the cross-compiler by set
 
     SDKMACHINE = "x86_64"
 
-The choices are *i686* for 32-bit build workstations or *x86_64* for 64-bit workstations.
+The choices are **i686** for 32-bit build workstations or **x86_64** for 64-bit workstations.
 
 Then after the normal setting up of the Yocto build environment
 
@@ -237,7 +239,7 @@ The `uEnv.txt` file is on the *boot* partition which you'll normally have to mou
     -rwxr-xr-x 1 root root 410860 Aug 10  2015 u-boot.img
     -rwxr-xr-x 1 root root    931 Aug 10  2015 uEnv.txt
 
-After that you can edit the `uEnv.txt` file to change the **dtb**.
+After that you can edit the `uEnv.txt` file to change the **dtb** that is loaded.
 
 ### Generating a patch for Yocto
 
@@ -278,46 +280,18 @@ Now commit the change to git
     [work 9b5d32c] mmc: Allow writes to mmcblkboot partitions
      1 file changed, 1 insertion(+), 1 deletion(-)
 
-Generate a patch
+generate a patch
 
     scott@octo:~/bbb/linux-stable$ git format-patch -1
     0001-mmc-Allow-writes-to-mmcblkboot-partitions.patch
 
-Here's what it looks like
-
-    scott@octo:~/bbb/linux-stable$ cat 0001-mmc-Allow-writes-to-mmcblkboot-partitions.patch
-    From 9b5d32c20a7392867a98e463d01f77c9e7f9ec48 Mon Sep 17 00:00:00 2001
-    From: Scott Ellis <scott@jumpnowtek.com>
-    Date: Mon, 10 Aug 2015 08:32:23 -0400
-    Subject: [PATCH] mmc: Allow writes to mmcblkboot partitions
-    
-    ---
-     drivers/mmc/core/mmc.c | 2 +-
-     1 file changed, 1 insertion(+), 1 deletion(-)
-    
-    diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
-    index f36c76f..43e1ae0 100644
-    --- a/drivers/mmc/core/mmc.c
-    +++ b/drivers/mmc/core/mmc.c
-    @@ -417,7 +417,7 @@ static int mmc_decode_ext_csd(struct mmc_card *card, u8 *ext_csd)
-                                    part_size = ext_csd[EXT_CSD_BOOT_MULT] << 17;
-                                    mmc_part_add(card, part_size,
-                                            EXT_CSD_PART_CONFIG_ACC_BOOT0 + idx,
-    -                                       "boot%d", idx, true,
-    +                                       "boot%d", idx, false,
-                                            MMC_BLK_DATA_AREA_BOOT);
-                            }
-                    }
-    --
-    2.1.4
-
-Copy the patch to where Yocto will use it.
+copy the patch to where Yocto will use it
 
     scott@octo:~/bbb/linux-stable$ cp 0001-mmc-* \
         ~/bbb/meta-bbb/recipes-kernel/linux/linux-stable-4.1/
 
 
-Then add the patch to the kernel recipe `linux-stable_4.1.bb`.
+and finally add the patch to the kernel recipe `linux-stable_4.1.bb`.
 
 Yocto will apply the patches in the order they appear in the recipe, but to make it easier to work with `git am` outside of Yocto it's useful to rename (renumber) the patches in the order you want them applied.
 
@@ -347,7 +321,7 @@ For example
 
     endif
 
-Then to build
+Build the module with *make*
 
     scott@octo:~/projects/hellow$ make
     make -C /home/scott/bbb/linux-stable M=/home/scott/projects/hellow modules
@@ -364,7 +338,7 @@ After that you can copy the *ko* module to the BBB using *scp* and load it manua
 
 ### Adding a Yocto Recipe for an External Kernel Module
 
-When you are done with development, you probably want your new kernel module to be built with the rest of the system.
+When you are done with development, you probably want your new external kernel module to be built with the rest of the system.
 
 Here's a working a recipe that pulls the external module source from a private *Github* repository
 
