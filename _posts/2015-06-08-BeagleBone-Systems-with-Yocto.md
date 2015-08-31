@@ -2,7 +2,7 @@
 layout: post
 title: Building BeagleBone Black Systems with Yocto
 description: "Building customized systems for the BeagleBone Black using tools from the Yocto Project"
-date: 2015-08-23 09:42:00
+date: 2015-08-31 11:32:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
@@ -15,7 +15,7 @@ The *image recipes* under `meta-bbb/images` are examples with some packages I fi
 
 The Yocto version is `1.8.0` the `[fido]` branch.
 
-The Linux `4.1.6` kernel comes from the [Linux stable][linux-stable] repository.
+The Linux `4.2` kernel comes from the [Linux stable][linux-stable] repository.
 
 The [u-boot][uboot] version is `2015.07`.
 
@@ -29,15 +29,7 @@ Python `2.7.9` is included with at least enough packages to run [Bottle python][
 
 *Device tree* binaries are generated and installed that support *HDMI* (`bbb-hdmi.dtb`), the *4DCape 7-inch* touchscreen (`bbb-4dcape70t.dtb`) and the *New Haven 5-inch* touchscreen (`bbb-nh5cape.dtb`). They are easy to switch between using an included example [u-boot][uboot] script file `uEnv.txt`.
 
-*spidev* on SPI bus 1, *I2C1* and *I2C2* and *UART4* are configured for use from the *P9* header. The following kernel patches under `meta-bbb/recipes-kernel/linux/linux-stable-4.1/` add this functionality.
-
-* 0001-spidev-Add-generic-compatible-dt-id.patch
-* 0002-Add-bbb-spi1-spidev-dtsi.patch
-* 0003-Add-bbb-i2c1-dtsi.patch
-* 0004-Add-bbb-i2c2-dtsi.patch
-* 0013-Add-uart4-dtsi.patch
-
-See the respective patches for the particular P9 header pins to use.
+*spidev* on SPI bus 1, *I2C1* and *I2C2* and *UART4* are configured for use from the *P9* header.
 
 There are some simple loopback test programs included in the console image.
  
