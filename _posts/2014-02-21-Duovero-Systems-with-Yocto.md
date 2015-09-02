@@ -2,12 +2,12 @@
 layout: post
 title: Building Duovero Systems with Yocto
 description: "Building customized systems for Gumstix Duovero using tools from the Yocto Project"
-date: 2015-08-20 08:51:00
+date: 2015-09-01 04:20:00
 categories: gumstix-linux 
 tags: [linux, gumstix, duovero, yocto]
 ---
 
-Instructions for building some developer systems for [Gumstix Duovero][duovero] boards primarily for C, C++ and [Qt5][qt] programmers. Perl and Python are also included.
+Instructions for building some developer systems for [Gumstix Duovero][duovero] boards primarily for C, C++ and [Qt5][qt] programmers.
 
 The [meta-duovero][meta-duovero] layer described below **should** be modified for your own particular project. Treat it as a template. 
 
@@ -21,9 +21,11 @@ The [u-boot][uboot] version is `2015.07`.
 
 These are *sysvinit* systems.
 
-The Qt version is `5.4.3`. There is no *X11* and no desktop installed. [Qt][qt] gui applications can be run using the `-platform linuxfb` switch. I suspect *QML* apps will not work since I don't have *OpenGL* support in the these systems.
+The Qt version is `5.4.2`. By default there is no *X11* and no desktop installed. [Qt][qt] gui applications can be run using the `-platform linuxfb` switch.
 
-Perl `5.20` with several hundred modules is included.
+A light-weight *X11* desktop can be added with minimal changes to the build configuration.
+
+Perl `5.20` with a number of modules is included.
 
 Python `2.7.9` is included with at least enough packages to run [Bottle python][bottle-python] web applications. Additional packages are easily added.
 
