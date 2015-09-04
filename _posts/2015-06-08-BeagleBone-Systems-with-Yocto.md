@@ -2,7 +2,7 @@
 layout: post
 title: Building BeagleBone Black Systems with Yocto
 description: "Building customized systems for the BeagleBone Black using tools from the Yocto Project"
-date: 2015-09-02 06:25:00
+date: 2015-09-04 07:52:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
@@ -27,7 +27,7 @@ A light-weight *X11* desktop can be added with minimal changes to the build conf
 
 Perl `5.20` with a number of modules is included.
 
-Python `2.7.9` is included with at least enough packages to run [Bottle python][bottle-python] web applications. Additional packages are easily added.
+Python `2.7.9` is included with at least enough packages to run [Bottle python][bottle-python] web applications. Additional Python packages are easily added.
 
 *Device tree* binaries are generated and installed that support *HDMI* (`bbb-hdmi.dtb`), the *4DCape 7-inch* touchscreen (`bbb-4dcape70t.dtb`) and the *New Haven 5-inch* touchscreen (`bbb-nh5cape.dtb`). They are easy to switch between using an included example [u-boot][uboot] script file `uEnv.txt`.
 
@@ -382,7 +382,7 @@ Once you boot this SD card, you'll find the following under `/home/root/emmc`
     -rwxr-xr-x 1 root root   410860 Aug 10 05:37 u-boot-beaglebone.img
 
 
-To install the *console-image* onto the *eMMC*, run the `emmc_install.sh` script like this
+To install the *qt5-image* onto the *eMMC*, run the `emmc_install.sh` script like this
 
     root@beaglebone:~/emmc# ./emmc_install.sh qt5
 
