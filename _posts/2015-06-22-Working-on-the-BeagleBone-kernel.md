@@ -2,7 +2,7 @@
 layout: post
 title: Working on the BeagleBone Kernel
 description: "Working on and customizing the BeagleBone Black kernel"
-date: 2015-08-30 04:32:00
+date: 2015-09-17 07:14:00
 categories: beaglebone 
 tags: [linux, beaglebone, kernel]
 ---
@@ -28,61 +28,54 @@ Which kernel to use comes from this line in `meta-bbb/conf/machine/beaglebone.co
 
 Kernel recipes are here `meta-bbb/recipes-kernel/linux/`
 
-The default kernel recipe is `linux-stable_4.1.bb`
+The default kernel recipe is `linux-stable_4.2.bb`
 
-Kernel patches and config file are searched for under `meta-bbb/recipes-kernel/linux/linux-stable-4.1/` because of this line in the kernel recipe
+Kernel patches and config file are searched for under `meta-bbb/recipes-kernel/linux/linux-stable-4.2/` because of this line in the kernel recipe
 
-    FILESEXTRAPATHS_prepend := "${THISDIR}/linux-stable-4.1:"
+    FILESEXTRAPATHS_prepend := "${THISDIR}/linux-stable-4.2:"
 
-The kernel config file is `meta-bbb/recipes-kernel/linux/linux-stable-4.1/beaglebone/defconfig`.
+The kernel config file is `meta-bbb/recipes-kernel/linux/linux-stable-4.2/beaglebone/defconfig`.
 
-If you had multiple *linux-stable* recipes, maybe *linux-stable_4.0.bb* and *linux-stable_4.1.bb* then the highest revision number, 4.1 in this case, would be used. To specify an earlier version, you could use a line like this in `build/conf/local.conf`
+If you had multiple *linux-stable* recipes, maybe *linux-stable_4.1.bb* and *linux-stable_4.2.bb* then the highest revision number, **4.2** in this case, would be used. To specify an earlier version, you could use a line like this in `build/conf/local.conf`
 
-    PREFERRED_VERSION_linux-stable = "4.0"
+    PREFERRED_VERSION_linux-stable = "4.1"
 
-When Yocto builds the *linux-stable-4.1* kernel, it does so under this directory
+When Yocto builds the *linux-stable-4.2* kernel, it does so under this directory
 
-    <TMPDIR>/work/beaglebone-poky-linux-gnueabi/linux-stable/4.1-r12
+    <TMPDIR>/work/beaglebone-poky-linux-gnueabi/linux-stable/4.2-r2
 
-The *r12* revision comes from this line in the kernel recipe
+The *r2* revision comes from this line in the kernel recipe
 
-    PR = "r12"
+    PR = "r2"
 
-Here's a look at that directory after a build
+It is a good idea to update the *PR* value if you make any changes to the kernel recipe. This will force a rebuild of the kernel the next time you build an image.
 
-    scott@octo:~/bbb/build/tmp/work/beaglebone-poky-linux-gnueabi/linux-stable/4.1-r12$ ls -l
-    total 228
-    -rw-r--r--  1 scott scott   674 Aug 28 14:59 0001-spidev-Add-generic-compatible-dt-id.patch
-    -rw-r--r--  1 scott scott  1627 Aug 28 14:59 0002-Add-bbb-spi1-spidev-dtsi.patch
-    -rw-r--r--  1 scott scott  1189 Aug 28 14:59 0003-Add-bbb-i2c1-dtsi.patch
-    -rw-r--r--  1 scott scott  1189 Aug 28 14:59 0004-Add-bbb-i2c2-dtsi.patch
-    -rw-r--r--  1 scott scott  3222 Aug 28 14:59 0005-Add-bbb-hdmi-dts.patch
-    -rw-r--r--  1 scott scott  4436 Aug 28 14:59 0006-Add-bbb-4dcape70t-dts.patch
-    -rw-r--r--  1 scott scott 15054 Aug 28 14:59 0007-Add-ft5x06-touchscreen-driver.patch
-    -rw-r--r--  1 scott scott  5093 Aug 28 14:59 0008-Add-bbb-nh5cape-dts.patch
-    -rw-r--r--  1 scott scott  2374 Aug 28 14:59 0009-Add-4dcape70t-button-dtsi.patch
-    -rw-r--r--  1 scott scott  1125 Aug 28 14:59 0010-4dcape70t-dts-include-button-dtsi-comment-out-spi.patch
-    -rw-r--r--  1 scott scott   766 Aug 28 14:59 0011-mmc-Allow-writes-to-mmcblkboot-partitions.patch
-    -rw-r--r--  1 scott scott   753 Aug 28 14:59 0012-4dcape70t-Increase-charge-delay.patch
-    -rw-r--r--  1 scott scott  1139 Aug 28 14:59 0013-Add-uart4-dtsi.patch
-    -rw-r--r--  1 scott scott  1582 Aug 28 14:59 0014-Include-uart4-dtsi-in-bbb-dts-files.patch
-    -rw-r--r--  1 scott scott  5048 Aug 28 14:59 0015-bbb-nh5cape-Fix-bpp-for-24-bit-color.patch
-    -rw-r--r--  1 scott scott  1092 Aug 28 14:59 0016-Revert-usb-musb-dsps-just-start-polling-already.patch
-    -rw-r--r--  1 scott scott 84935 Aug 28 14:59 defconfig
-    drwxr-xr-x  3 scott scott  4096 Aug 28 15:29 deploy-ipks
-    drwxr-xr-x  2 scott scott  4096 Aug 28 15:28 deploy-linux-stable
-    lrwxrwxrwx  1 scott scott    65 Aug 28 14:59 git -> /oe4/bbb/tmp-poky-fido-build/work-shared/beaglebone/kernel-source
-    drwxr-xr-x  5 scott scott  4096 Aug 28 15:28 image
-    drwxrwxr-x  3 scott scott  4096 Aug 28 15:05 license-destdir
-    drwxr-xr-x 20 scott scott  4096 Aug 29 04:51 linux-beaglebone-standard-build
-    drwxr-xr-x  4 scott scott  4096 Aug 28 15:28 package
-    drwxr-xr-x 71 scott scott  4096 Aug 28 15:30 packages-split
-    drwxr-xr-x  7 scott scott  4096 Aug 28 15:28 pkgdata
-    drwxrwxr-x  2 scott scott  4096 Aug 28 15:28 pseudo
-    drwxr-xr-x  3 scott scott  4096 Aug 28 15:28 sysroot-destdir
-    drwxrwxr-x  2 scott scott 12288 Aug 29 04:51 temp
+Here's a look at that kernel work directory after a build
 
-The patches and defconfig are the same files from `meta-bbb/recipes-kernel/linux/linux-stable-4.1/`
+    scott@fractal:~/bbb$ ls -l /oe4/bbb/tmp-poky-fido-build/work/beaglebone-poky-linux-gnueabi/linux-stable/4.2-r2/
+    total 196
+    -rw-r--r--  1 scott scott   705 Sep 17 06:10 0001-spidev-Add-a-generic-compatible-id.patch
+    -rw-r--r--  1 scott scott   770 Sep 17 06:10 0002-mmc-Allow-writes-to-mmcblkboot-partitions.patch
+    -rw-r--r--  1 scott scott  1093 Sep 17 06:10 0003-Revert-usb-musb-dsps-just-start-polling-already.patch
+    -rw-r--r--  1 scott scott  5824 Sep 17 06:10 0005-dts-Add-some-dtsi-files-for-common-controllers.patch
+    -rw-r--r--  1 scott scott  3243 Sep 17 06:10 0006-dts-Add-bbb-hdmi-dts.patch
+    -rw-r--r--  1 scott scott  6851 Sep 17 06:10 0007-dts-Add-bbb-4dcape70t-dts.patch
+    -rw-r--r--  1 scott scott 15059 Sep 17 06:10 0008-Add-ft5x06_ts-touchscreen-driver.patch
+    -rw-r--r--  1 scott scott  5355 Sep 17 06:10 0009-dts-Add-bbb-nh5cape-dts.patch
+    -rw-r--r--  1 scott scott 87331 Sep 17 06:10 defconfig
+    drwxr-xr-x  2 scott scott  4096 Sep 17 07:04 deploy-linux-stable
+    lrwxrwxrwx  1 scott scott    65 Sep 17 06:10 git -> /oe4/bbb/tmp-poky-fido-build/work-shared/beaglebone/kernel-source
+    drwxr-xr-x  5 scott scott  4096 Sep 17 07:04 image
+    drwxrwxr-x  3 scott scott  4096 Sep 17 06:12 license-destdir
+    drwxr-xr-x 20 scott scott  4096 Sep 17 07:04 linux-beaglebone-standard-build
+    drwxr-xr-x  4 scott scott  4096 Sep 17 07:04 package
+    drwxr-xr-x 79 scott scott  4096 Sep 17 07:04 packages-split
+    drwxr-xr-x  7 scott scott  4096 Sep 17 07:04 pkgdata
+    drwxrwxr-x  2 scott scott  4096 Sep 17 07:04 pseudo
+    drwxr-xr-x  3 scott scott  4096 Sep 17 07:04 sysroot-destdir
+    drwxrwxr-x  2 scott scott 12288 Sep 17 07:04 temp
+
+The patches and defconfig are the same files from `meta-bbb/recipes-kernel/linux/linux-stable-4.2/`
 
 The files under `git` are the Linux source after the kernel recipe patches have been applied.
 
@@ -97,11 +90,11 @@ You can invoke the standard kernel configuration editor using bitbake
 
 After you make your changes and save them, the new configuration file can be found here
 
-    <TMPDIR>/work/beaglebone-poky-linux-gnueabi/linux-stable/4.1-r1/linux-beaglebone-standard-build/.config
+    <TMPDIR>/work/beaglebone-poky-linux-gnueabi/linux-stable/4.2-r2/linux-beaglebone-standard-build/.config
 
 Copy that `.config` file to
 
-    ~/bbb/meta-bbb/recipes-kernel/linux/linux-stable-4.1/beaglebone/defconfig
+    ~/bbb/meta-bbb/recipes-kernel/linux/linux-stable-4.2/beaglebone/defconfig
 
 Then rebuild your kernel
 
@@ -142,27 +135,28 @@ If you run it and accept the defaults, the cross-tools will get installed under 
 
 ### Fetch the Linux source
 
-The kernel recipe *linux-stable_4.1.bb* has the repository location, branch and commit of the kernel source used in the Yocto build.
+The kernel recipe *linux-stable_4.2.bb* has the repository location, branch and commit of the kernel source used in the Yocto build.
 
 These lines have the details
 
-    # v4.1.6
-    SRCREV = "4ff62ca06c0c0b084f585f7a2cfcf832b21d94fc"
+    # v4.2
+    SRCREV = "64291f7db5bd8150a74ad2036f1037e6a0428df2"
     SRC_URI = " \
-        git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git;branch=linux-4.1.y \
+        git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git;branch=linux-4.2.y \
+
 
 Here are the commands to checkout that same kernel source
 
     $ cd ~/bbb
     $ git clone git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git
     $ cd linux-stable
-    $ git checkout -b linux-4.1.y origin/linux-4.1.y
+    $ git checkout -b linux-4.2.y origin/linux-4.2.y
 
 That gets you to the correct git branch, but depending on whether I've kept the `meta-bbb` repository up-to-date, the current commit on the branch may or may not match the **SRCREV** in the recipe. If they don't match, you can checkout a particular older commit explicitly or you can modify the recipe to use the latest commit. Checking out the same branch is usually sufficient.
 
 ### Apply existing patches
 
-Currently the `meta-bbb/recipes-kernel/linux/linux-stable_4.1.bb` recipe has a number of patches that I've included to add support for *spidev*, *i2c*, *uart4* and a few touchscreens. These are all completely optional and you probably want your own patches instead. You can use *git* to apply these same patches to the Linux source repository.
+Currently the `meta-bbb/recipes-kernel/linux/linux-stable_4.2.bb` recipe has a number of patches that I've included to add support for *spidev*, *i2c*, *uart4* and a few touchscreens. These are all completely optional and you probably want your own patches instead. You can use *git* to apply these same patches to the Linux source repository.
 
 I usually start by creating a working branch
 
@@ -171,7 +165,7 @@ I usually start by creating a working branch
 
 And if you wanted to apply all of the patches at once
 
-    ~/bbb/linux-stable$ git am ../meta-bbb/recipes-kernel/linux/linux-stable-4.1/*.patch
+    ~/bbb/linux-stable$ git am ../meta-bbb/recipes-kernel/linux/linux-stable-4.2/*.patch
 
 Or you could apply selective patches individually.
 
@@ -179,7 +173,7 @@ Or you could apply selective patches individually.
 
 Copy the kernel config file that Yocto used to the new linux-stable repository.
 
-    cp ~/bbb/meta-bbb/recipes-kernel/linux/linux-stable-4.1/beaglebone/defconfig ~/bbb/linux-stable/.config
+    cp ~/bbb/meta-bbb/recipes-kernel/linux/linux-stable-4.2/beaglebone/defconfig ~/bbb/linux-stable/.config
 
 If you make changes to the config that you want to keep, make sure to copy it back to `meta-bbb/.../defconfig`
 
@@ -247,11 +241,11 @@ After finishing development you will probably want to integrate your changes int
 
 So for instance that patch to allow writes to the `/dev/mmcblkboot` partitions
 
-    0011-mmc-Allow-writes-to-mmcblkboot-partitions.patch
+    0002-mmc-Allow-writes-to-mmcblkboot-partitions.patch
 
 was generated like this
 
-    scott@octo:~/bbb/linux-stable$ vi drivers/mmc/core/mmc.c
+    scott@fractal:~/bbb/linux-stable$ vi drivers/mmc/core/mmc.c
 
 Make the changes and save.
 
@@ -259,10 +253,10 @@ Here's the diff
 
     scott@octo:~/bbb/linux-stable$ git diff
     diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
-    index f36c76f..43e1ae0 100644
+    index e726903..422acaf 100644
     --- a/drivers/mmc/core/mmc.c
     +++ b/drivers/mmc/core/mmc.c
-    @@ -417,7 +417,7 @@ static int mmc_decode_ext_csd(struct mmc_card *card, u8 *ext_csd)
+    @@ -420,7 +420,7 @@ static int mmc_decode_ext_csd(struct mmc_card *card, u8 *ext_csd)
                                     part_size = ext_csd[EXT_CSD_BOOT_MULT] << 17;
                                     mmc_part_add(card, part_size,
                                             EXT_CSD_PART_CONFIG_ACC_BOOT0 + idx,
@@ -272,30 +266,31 @@ Here's the diff
                             }
                     }
 
+
 Now commit the change to git
 
-    scott@octo:~/bbb/linux-stable$ git add drivers/mmc/core/mmc.c
+    scott@fractal:~/bbb/linux-stable$ git add drivers/mmc/core/mmc.c
 
-    scott@octo:~/bbb/linux-stable$ git commit -m 'mmc: Allow writes to mmcblkboot partitions'
+    scott@fractal:~/bbb/linux-stable$ git commit -m 'mmc: Allow writes to mmcblkboot partitions'
     [work 9b5d32c] mmc: Allow writes to mmcblkboot partitions
      1 file changed, 1 insertion(+), 1 deletion(-)
 
 generate a patch
 
-    scott@octo:~/bbb/linux-stable$ git format-patch -1
+    scott@fractal:~/bbb/linux-stable$ git format-patch -1
     0001-mmc-Allow-writes-to-mmcblkboot-partitions.patch
 
 copy the patch to where Yocto will use it
 
-    scott@octo:~/bbb/linux-stable$ cp 0001-mmc-* \
-        ~/bbb/meta-bbb/recipes-kernel/linux/linux-stable-4.1/
+    scott@fractal:~/bbb/linux-stable$ cp 0001-mmc-* \
+        ~/bbb/meta-bbb/recipes-kernel/linux/linux-stable-4.2/
 
 
-and finally add the patch to the kernel recipe `linux-stable_4.1.bb`.
+and finally add the patch to the kernel recipe `linux-stable_4.2.bb`.
 
 Yocto will apply the patches in the order they appear in the recipe, but to make it easier to work with `git am` outside of Yocto it's useful to rename (renumber) the patches in the order you want them applied.
 
-That's why I renamed this same patch from `0001-` to `0011-` in the `meta-bbb` layer.
+That's why I renamed this same patch from `0001-` to `0002-` in the `meta-bbb` layer.
 
 ### External Kernel Modules
 
@@ -303,7 +298,7 @@ You can build external kernel modules by first *sourcing* the Yocto SDK environm
 
 For example
 
-    scott@octo:~/projects/hellow$ cat Makefile
+    scott@fractal:~/projects/hellow$ cat Makefile
     # Makefile for the hellow kernel module
 
     MODULE_NAME=hellow
@@ -323,7 +318,7 @@ For example
 
 Build the module with *make*
 
-    scott@octo:~/projects/hellow$ make
+    scott@fractal:~/projects/hellow$ make
     make -C /home/scott/bbb/linux-stable M=/home/scott/projects/hellow modules
     make[1]: Entering directory '/home/scott/bbb/linux-stable'
       CC [M]  /home/scott/projects/hellow/hellow.o

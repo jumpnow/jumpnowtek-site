@@ -2,16 +2,26 @@
 layout: post
 title: Building BeagleBone Black Systems with Yocto
 description: "Building customized systems for the BeagleBone Black using tools from the Yocto Project"
-date: 2015-09-05 06:30:00
+date: 2015-09-17 07:10:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
 
-Instructions for building some developer systems for [BeagleBone Black][beagleboard] boards primarily for C, C++ and [Qt5][qt] programmers.
+Instructions for building some developer systems for [BeagleBone Black][beagleboard] boards.
 
-The [meta-bbb][meta-bbb] layer described below **should** be modified for your own particular project. Treat it as a template. 
+I develop primarily using C and C++ using [Qt5][qt] with some occasional Perl and Python.
 
-The *image recipes* under `meta-bbb/images` are examples with some packages I find useful. You should modify those recipes or create new ones to suit your needs. 
+The [Yocto][yocto] meta-layer [meta-bbb][meta-bbb] described below builds systems that support my preferences.
+
+After all, that is the point of Yocto
+
+    "It's not an embedded Linux distribution - it creates a custom one for you"
+
+The [meta-bbb][meta-bbb] layer **should** be modified for your own particular project. Treat it as a template.
+
+The *image recipes* under `meta-bbb/images` are examples with some packages I find useful for development. Those recipes should be modified or new ones created to suit your own needs. 
+
+### System Info
 
 The Yocto version is `1.8.0` the `[fido]` branch.
 
@@ -19,11 +29,11 @@ The Linux `4.2` kernel comes from the [Linux stable][linux-stable] repository.
 
 The [u-boot][uboot] version is `2015.07`.
 
-These are *sysvinit* systems.
+These are **sysvinit** systems.
 
 The Qt version is `5.4.2`. There is no *X11* and no desktop installed. [Qt][qt] gui applications can be run using the `-platform linuxfb` switch.
 
-A light-weight *X11* desktop can be added with minimal changes to the build configuration.
+A light-weight *X11* desktop can be added with minimal changes to the build configuration. (Instructions coming)
 
 Perl `5.20` with a number of modules is included.
 
@@ -39,11 +49,11 @@ There are some simple loopback test programs included in the console image.
 
 [serialecho][serialecho] is a utility for testing *uarts*.
   
-### Ubuntu Packages
+### Ubuntu Workstation Setup
 
-I've been building systems with this layer using *Ubuntu 15.04* 64-bit workstations.
+I have been using *Ubuntu 15.04* 64-bit workstations to build these systems.
 
-You'll need at least the following packages installed
+You will need at least the following packages installed
 
     build-essential
     git
@@ -348,22 +358,22 @@ On a system that booted from an SD card, `/dev/mmcblk0` is the SD card and `/dev
 
 You need a running system to install to the *eMMC*, since it is not accessible otherwise.
 
-The Linux userland tools see the *eMMC* similar to an SD card, so the same scripts slightly modified can be used install a system onto the *eMMC*.
+The Linux userland tools see the *eMMC* similar to an SD card, so the same scripts slightly modified and this time run from the *BBB* can be used install a system onto the *eMMC*.
 
 There are some scripts under `meta-bbb/scripts` that are customized for an *eMMC* installation.
 
-* emmc_copy_boot.sh - a modified copy_boot.sh
-* emmc_copy_rootfs.sh - a modified copy_rootfs.sh
-* emmc_install.sh - a wrapper script
+* emmc\_copy\_boot.sh - a modified copy\_boot.sh
+* emmc\_copy\_rootfs.sh - a modified copy\_rootfs.sh
+* emmc\_install.sh - a wrapper script
 * emmc-uEnv.txt - a modified `uEnv.txt` for an *eMMC* system
 
 The above scripts are meant to be run on the *BBB*.
 
 This final script is meant to be run on the workstation and is used to copy the above scripts and the image binaries to the SD card.
 
-* copy_emmc_install.sh
+* copy\_emmc\_install.sh
 
-The arguments to *copy_emmc_install* are the SD card device and the image you want to later install on the *eMMC*. It should be run after the *copy_rootfs.sh* script.
+The arguments to *copy\_emmc\_install* are the SD card device and the image you want to later install on the *eMMC*. It should be run after the *copy\_rootfs.sh* script.
 
     scott@octo:~$ cd bbb/meta-bbb/scripts
     scott@octo:~/bbb/meta-bbb/scripts$ ./copy_boot.sh sdb
