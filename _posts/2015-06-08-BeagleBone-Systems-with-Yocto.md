@@ -160,7 +160,7 @@ The default location is in the `build` directory, `~/bbb/build/sstate-cache`.
  
 ### Run the build
 
-You need to source the environment every time you want to run a build. The `oe-init-build-env` when run a second time will not overwrite your customized conf files.
+You need to source the environment into your shell before you can use the primary Yocto build tool [bitbake][bitbake]. The `oe-init-build-env` when run a second time will not overwrite your customized conf files.
 
     scott@octo:~$ source poky-fido/oe-init-build-env ~/bbb/build
 
@@ -180,14 +180,14 @@ You need to source the environment every time you want to run a build. The `oe-i
     scott@octo:~/bbb/build$
 
 
-Those 'Common targets' may or may not build successfully. I have never tried them.
+I don't use those *Common targets*, but instead use my own custom image recipes.
 
-Instead, there are two custom images available in the meta-bbb layer. The recipes for these images can be found under `meta-bbb/images/`
+There are two custom images available in the *meta-bbb* layer. The recipes for the images can be found in `meta-bbb/images/`
 
 * console-image.bb
 * qt5-image.bb
 
-Add your custom images to this same directory.
+You should add your own custom images to this same directory.
 
 #### console-image
 
@@ -577,3 +577,4 @@ To add or upgrade packages to the system, you might be interested in using the b
 [opkg-repo]: http://www.jumpnowtek.com/yocto/Using-your-build-workstation-as-a-remote-package-repository.html
 [bbb-uboot]: http://www.jumpnowtek.com/beaglebone/Beaglebone-Black-U-Boot-Notes.html
 [4dcape]: http://www.4dsystems.com.au/product/4DCAPE_70T/
+[bitbake]: https://www.yoctoproject.org/docs/1.8/bitbake-user-manual/bitbake-user-manual.html
