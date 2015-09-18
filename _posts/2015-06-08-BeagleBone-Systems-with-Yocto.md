@@ -346,7 +346,7 @@ Both *copy_boot.sh* and *copy_rootfs.sh* are simple scripts easily modified for 
 
 The **S2** switch on BBB board should be held down until the bootloader starts to force the BBB to boot from the SD card. The **S2** switch is above the SD card holder.
 
-Or if **S2** is inaccessible because you only have access to the back of the board, a temporary jump of **P8.43** to ground when the bootloader starts will do the same thing.
+If you are using a cape, the **S2** switch is usually inaccessible or at least awkward to reach. From the back of the board a temporary jump of **P8.43** to ground when the bootloader starts will do the same thing.
 
 The default behavior of the *BBB* is to boot from the *eMMC* first if it finds a bootloader there.
 
