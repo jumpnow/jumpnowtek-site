@@ -2,24 +2,22 @@
 layout: post
 title: Building BeagleBone Black Systems with Yocto
 description: "Building customized systems for the BeagleBone Black using tools from the Yocto Project"
-date: 2015-09-17 07:10:00
+date: 2015-09-18 06:54:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
 
 Instructions for building some developer systems for [BeagleBone Black][beagleboard] boards.
 
-I develop primarily using C and C++ using [Qt5][qt] with some occasional Perl and Python.
+I develop primarily using C, C++ and [Qt5][qt] and some occasional Perl and Python.
 
-The [Yocto][yocto] meta-layer [meta-bbb][meta-bbb] described below builds systems that support my preferences.
+The [meta-bbb][meta-bbb] *Yocto meta-layer*  described below builds systems that suit my preferences and contains packages I commonly use.
 
-After all, that is the point of Yocto
+This layer should be modified for your own particular project.
+
+After all, that is the point of [Yocto][yocto]
 
     "It's not an embedded Linux distribution - it creates a custom one for you"
-
-The [meta-bbb][meta-bbb] layer **should** be modified for your own particular project. Treat it as a template.
-
-The *image recipes* under `meta-bbb/images` are examples with some packages I find useful for development. Those recipes should be modified or new ones created to suit your own needs. 
 
 ### System Info
 
@@ -33,13 +31,19 @@ These are **sysvinit** systems.
 
 The Qt version is `5.4.2`. There is no *X11* and no desktop installed. [Qt][qt] gui applications can be run using the `-platform linuxfb` switch.
 
-A light-weight *X11* desktop can be added with minimal changes to the build configuration. (Instructions coming)
+A light-weight *X11* desktop can be added with minimal changes to the build configuration.
 
 Perl `5.20` with a number of modules is included.
 
 Python `2.7.9` is included with at least enough packages to run [Bottle python][bottle-python] web applications. Additional Python packages are easily added.
 
-*Device tree* binaries are generated and installed that support *HDMI* (`bbb-hdmi.dtb`), the *4DCape 7-inch* touchscreen (`bbb-4dcape70t.dtb`) and the *New Haven 5-inch* touchscreen (`bbb-nh5cape.dtb`). They are easy to switch between using an included example [u-boot][uboot] script file `uEnv.txt`.
+*Device tree* binaries are generated and installed that support
+
+1. HDMI (`bbb-hdmi.dtb`)
+2. [4DCape 7-inch resistive touchscreen cape][4dcape] (`bbb-4dcape70t.dtb`)
+3. Newhaven 5-inch capacitive touchscreen cape (`bbb-nh5cape.dtb`) 
+
+They are easy enough to switch between using a [u-boot][uboot] script file `uEnv.txt`
 
 *spidev* on SPI bus 1, *I2C1* and *I2C2* and *UART4* are configured for use from the *P9* header.
 
@@ -572,3 +576,4 @@ To add or upgrade packages to the system, you might be interested in using the b
 [lsblk]: http://linux.die.net/man/8/lsblk
 [opkg-repo]: http://www.jumpnowtek.com/yocto/Using-your-build-workstation-as-a-remote-package-repository.html
 [bbb-uboot]: http://www.jumpnowtek.com/beaglebone/Beaglebone-Black-U-Boot-Notes.html
+[4dcape]: http://www.4dsystems.com.au/product/4DCAPE_70T/
