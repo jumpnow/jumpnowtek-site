@@ -2,7 +2,7 @@
 layout: post
 title: Building BeagleBone Black Systems with Yocto
 description: "Building customized systems for the BeagleBone Black using tools from the Yocto Project"
-date: 2015-09-18 06:54:00
+date: 2015-09-18 07:44:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
@@ -344,21 +344,21 @@ Both *copy_boot.sh* and *copy_rootfs.sh* are simple scripts easily modified for 
 
 ### Booting from the SD card
 
-The **S2** switch on BBB board should be held down until the bootloader starts to force the BBB to boot from the SD card. The **S2** switch is above the SD card holder.
-
-If you are using a cape, the **S2** switch is usually inaccessible or at least awkward to reach. From the back of the board a temporary jump of **P8.43** to ground when the bootloader starts will do the same thing.
-
 The default behavior of the *BBB* is to boot from the *eMMC* first if it finds a bootloader there.
+
+Holding the **S2** switch down when the bootloader starts will cause the BBB to try booting from the SD card first. The **S2** switch is above the SD card holder.
+
+If you are using a cape, the **S2** switch is usually inaccessible or at least awkward to reach. From the back of the board a temporary jump of **P8.43** to ground when the bootloader starts will do the same thing as holding the **S2** switch.
 
 If you prefer to always boot from the SD card you can erase any existing bootloader from the *eMMC* with something like the following
 
     root@beaglebone:~# dd if=/dev/zero of=/dev/mmcblk1 bs=4096 count=4096
 
-This is particularly useful during development on systems where accessing the the board is inconvenient.
-
 On a system that booted from an SD card, `/dev/mmcblk0` is the SD card and `/dev/mmcblk1` is the *eMMC*.
 
 ### Installing to the eMMC
+
+Typically you'll want to use the *eMMC* over the SD card since the *eMMC* is faster.
 
 You need a running system to install to the *eMMC*, since it is not accessible otherwise.
 
