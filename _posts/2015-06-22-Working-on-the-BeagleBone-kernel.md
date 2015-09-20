@@ -2,7 +2,7 @@
 layout: post
 title: Working on the BeagleBone Kernel
 description: "Working on and customizing the BeagleBone Black kernel"
-date: 2015-09-17 07:14:00
+date: 2015-09-20 10:34:00
 categories: beaglebone 
 tags: [linux, beaglebone, kernel]
 ---
@@ -156,7 +156,9 @@ That gets you to the correct git branch, but depending on whether I've kept the 
 
 ### Apply existing patches
 
-Currently the `meta-bbb/recipes-kernel/linux/linux-stable_4.2.bb` recipe has a number of patches that I've included to add support for *spidev*, *i2c*, *uart4* and a few touchscreens. These are all completely optional and you probably want your own patches instead. You can use *git* to apply these same patches to the Linux source repository.
+Currently the `meta-bbb/recipes-kernel/linux/linux-stable_4.2.bb` recipe has a number of patches that I've included to add support for *spidev*, *i2c*, *uart4* and a few touchscreens. These are all completely optional and you probably want your own patches instead. 
+
+Whatever patches you decide to use when building with *Yocto*, you can use *git* to apply these same patches to the Linux source repository outside of *Yocto*.
 
 I usually start by creating a working branch
 
@@ -189,11 +191,13 @@ Build a zImage, unset **LOCALVERSION** so modules already on the bbb rootfs will
 
     ~/bbb/linux-stable$ make LOCALVERSION= -j8 zImage
 
-Build modules
+The `-jN` argument is optional and depends on your workstation.
+
+Build the modules
 
     ~/bbb/linux-stable$ make LOCALVERSION= -j8 modules
 
-Build device tree binaries
+Build the device tree binaries
 
     ~/bbb/linux-stable$ make bbb-hdmi.dtb
       DTC     arch/arm/boot/dts/bbb-hdmi.dtb
