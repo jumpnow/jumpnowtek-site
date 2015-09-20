@@ -2,7 +2,7 @@
 layout: post
 title: Building BeagleBone Black Systems with Yocto
 description: "Building customized systems for the BeagleBone Black using tools from the Yocto Project"
-date: 2015-09-19 14:25:00
+date: 2015-09-20 10:25:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
@@ -11,11 +11,11 @@ Instructions for building some developer systems for [BeagleBone Black][beaglebo
 
 I develop primarily using C, C++ when using [Qt][qt] and some occasional Perl and Python.
 
-The [meta-bbb][meta-bbb] *Yocto meta-layer* described below builds some basic systems that suit my preferences with some packages I commonly use.
+The [meta-bbb][meta-bbb] *Yocto meta-layer* described below builds some basic systems with packages I commonly use.
 
-You will want to make modifications for any particular project.
+You will want to make modifications for your own project.
 
-After all, that is the point of [Yocto][yocto]
+After all, that is the point of using [Yocto][yocto]
 
     "It's not an embedded Linux distribution - it creates a custom one for you"
 
@@ -111,22 +111,47 @@ Much of the following are only the conventions that I use. All of the paths to t
  
 First setup a build directory. I tend to do this on a per board and/or per project basis so I can quickly switch between projects. For this example I'll put the build directory under `~/bbb/` with the `meta-bbb` layer.
 
+You could manually create the directory structure like this
+
+    scott@octo:~$ mkdir -p ~/bbb/build/conf
+
+
+Or you could use the *Yocto* environment script `oe-init-build-env` like this passing in the path to the build directory
+
     scott@octo:~$ source poky-fido/oe-init-build-env ~/bbb/build
 
-You always need this command to setup the environment before using `bitbake`. If you only have one build environment, you can put it in your `~/.bashrc`. I work on more then one system so tend to always run it manually.
+The *Yocto* environment script will create the build directory if it does not already exist.
  
-### Customize the conf files
+### Customize the configuration files
 
-The `oe-init-build-env` script generated some generic configuration files in the `build/conf` directory. You want to replace those with the conf-samples in the `meta-bbb/conf` directory.
+There are some sample configuration files in the `meta-bbb/conf` directory.
+
+Copy them to the `build/conf` directory (removing the '-sample')
 
     scott@octo:~/bbb/build$ cp ~/bbb/meta-bbb/conf/local.conf-sample conf/local.conf
     scott@octo:~/bbb/build$ cp ~/bbb/meta-bbb/conf/bblayers.conf-sample conf/bblayers.conf
 
-You generally only have to edit these files once.
+If you used the `oe-init-build-env` script to create the build directory, it generated some generic configuration files in the `build/conf` directory. It is okay to copy over them.
+
+You may want to customize the configuration files before your first build.
 
 ### Edit bblayers.conf
 
-In `bblayers.conf` file replace `${HOME}` with the appropriate path to the meta-layer repositories on your system if you modified any of the above instructions when cloning. 
+In `bblayers.conf` file replace `${HOME}` with the appropriate path to the meta-layer repositories on your system if you modified any of the paths in the previous instructions.
+
+For example, if your directory structure does not look exactly like this, you will need to modify `bblayers.conf`
+
+
+    ~/poky-fido/
+         meta-openembedded/
+         meta-qt5/
+         ...
+
+    ~/bbb/
+        meta-bbb/
+        build/
+            conf/
+
 
 ### Edit local.conf
 
@@ -160,7 +185,7 @@ The default location is in the `build` directory, `~/bbb/build/sstate-cache`.
  
 ### Run the build
 
-You need to source the environment into your shell before you can use the primary Yocto build tool [bitbake][bitbake]. The `oe-init-build-env` when run a second time will not overwrite your customized conf files.
+You need to [source][source-script] the Yocto environment into your shell before you can use [bitbake][bitbake]. The `oe-init-build-env` will not overwrite your customized conf files.
 
     scott@octo:~$ source poky-fido/oe-init-build-env ~/bbb/build
 
@@ -578,3 +603,4 @@ To add or upgrade packages to the system, you might be interested in using the b
 [bbb-uboot]: http://www.jumpnowtek.com/beaglebone/Beaglebone-Black-U-Boot-Notes.html
 [4dcape]: http://www.4dsystems.com.au/product/4DCAPE_70T/
 [bitbake]: https://www.yoctoproject.org/docs/1.8/bitbake-user-manual/bitbake-user-manual.html
+[source-script]: http://stackoverflow.com/questions/4779756/what-is-the-difference-between-source-script-sh-and-script-sh
