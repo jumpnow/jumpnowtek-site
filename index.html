@@ -12,15 +12,15 @@ title: Jumpnow Technologies
     <a href="http://www.freescale.com/webapp/sps/site/taxonomy.jsp?code=IMX6X_SERIES">Freescale i.MX6</a>
     hardware.
   </p>
-  <h1>Gumstix - Linux</h1>
-  <ul class="posts">
-    {% for post in site.categories['gumstix-linux'] %}
-      <li><span>{{ post.date | date_to_string }}</span> &raquo; <a href="{{ post.url }}">{{ post.title }}</a></li>
-    {% endfor %}
-  </ul>
   <h1>BeagleBone</h1>
   <ul class="posts">
     {% for post in site.categories['beaglebone'] %}
+      <li><span>{{ post.date | date_to_string }}</span> &raquo; <a href="{{ post.url }}">{{ post.title }}</a></li>
+    {% endfor %}
+  </ul>
+  <h1>Gumstix - Linux</h1>
+  <ul class="posts">
+    {% for post in site.categories['gumstix-linux'] %}
       <li><span>{{ post.date | date_to_string }}</span> &raquo; <a href="{{ post.url }}">{{ post.title }}</a></li>
     {% endfor %}
   </ul>
