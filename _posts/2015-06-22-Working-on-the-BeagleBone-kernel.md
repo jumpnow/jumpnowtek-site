@@ -2,7 +2,7 @@
 layout: post
 title: Working on the BeagleBone Kernel
 description: "Working on and customizing the BeagleBone Black kernel"
-date: 2015-09-20 10:34:00
+date: 2015-09-22 05:50:00
 categories: beaglebone 
 tags: [linux, beaglebone, kernel]
 ---
@@ -42,17 +42,17 @@ If you had multiple *linux-stable* recipes, maybe *linux-stable_4.1.bb* and *lin
 
 When Yocto builds the *linux-stable-4.2* kernel, it does so under this directory
 
-    <TMPDIR>/work/beaglebone-poky-linux-gnueabi/linux-stable/4.2-r2
+    <TMPDIR>/work/beaglebone-poky-linux-gnueabi/linux-stable/4.2-r3
 
-The *r2* revision comes from this line in the kernel recipe
+The *r3* revision comes from this line in the kernel recipe
 
-    PR = "r2"
+    PR = "r3"
 
 It is a good idea to update the *PR* value if you make any changes to the kernel recipe. This will force a rebuild of the kernel the next time you build an image.
 
 Here's a look at that kernel work directory after a build
 
-    scott@fractal:~/bbb$ ls -l /oe4/bbb/tmp-poky-fido-build/work/beaglebone-poky-linux-gnueabi/linux-stable/4.2-r2/
+    scott@fractal:~/bbb$ ls -l /oe4/bbb/tmp-poky-fido-build/work/beaglebone-poky-linux-gnueabi/linux-stable/4.2-r3/
     total 196
     -rw-r--r--  1 scott scott   705 Sep 17 06:10 0001-spidev-Add-a-generic-compatible-id.patch
     -rw-r--r--  1 scott scott   770 Sep 17 06:10 0002-mmc-Allow-writes-to-mmcblkboot-partitions.patch
@@ -90,7 +90,7 @@ You can invoke the standard kernel configuration editor using bitbake
 
 After you make your changes and save them, the new configuration file can be found here
 
-    <TMPDIR>/work/beaglebone-poky-linux-gnueabi/linux-stable/4.2-r2/linux-beaglebone-standard-build/.config
+    <TMPDIR>/work/beaglebone-poky-linux-gnueabi/linux-stable/4.2-r3/linux-beaglebone-standard-build/.config
 
 Copy that `.config` file to
 
@@ -139,8 +139,8 @@ The kernel recipe *linux-stable_4.2.bb* has the repository location, branch and 
 
 These lines have the details
 
-    # v4.2
-    SRCREV = "64291f7db5bd8150a74ad2036f1037e6a0428df2"
+    # v4.2.1
+    SRCREV = "f4ca8c1b9c4e24a693794badf09d3a8857c46a80"
     SRC_URI = " \
         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git;branch=linux-4.2.y \
 

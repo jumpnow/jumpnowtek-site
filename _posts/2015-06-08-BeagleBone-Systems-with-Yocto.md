@@ -2,20 +2,18 @@
 layout: post
 title: Building BeagleBone Black Systems with Yocto
 description: "Building customized systems for the BeagleBone Black using tools from the Yocto Project"
-date: 2015-09-20 10:25:00
+date: 2015-09-22 05:52:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
 
-Instructions for building some developer systems for [BeagleBone Black][beagleboard] boards.
+One approach to building systems for [BeagleBone Black][beagleboard] boards using tools from the [Yocto Project][Yocto].
 
-I develop primarily using C, C++ when using [Qt][qt] and some occasional Perl and Python.
+The [meta-bbb][meta-bbb] *layer* described below generates some basic systems with packages to support C, C++, [Qt5][qt], Perl and Python development.
 
-The [meta-bbb][meta-bbb] *Yocto meta-layer* described below builds some basic systems with packages I commonly use.
+I use it primarily as a template when starting new *BBB* projects.
 
-You will want to make modifications for your own project.
-
-After all, that is the point of using [Yocto][yocto]
+Remember the point of using [Yocto][yocto]
 
     "It's not an embedded Linux distribution - it creates a custom one for you"
 
@@ -23,7 +21,7 @@ After all, that is the point of using [Yocto][yocto]
 
 The Yocto version is `1.8.0` the `[fido]` branch.
 
-The Linux `4.2` kernel comes from the [Linux stable][linux-stable] repository.
+The Linux `4.2.1` kernel comes from the [Linux stable][linux-stable] repository.
 
 The [u-boot][uboot] version is `2015.07`.
 
@@ -31,7 +29,7 @@ These are **sysvinit** systems.
 
 The Qt version is `5.4.2`. There is no *X11* and no desktop installed. [Qt][qt] gui applications can be run using the `-platform linuxfb` switch.
 
-A light-weight *X11* desktop can be added with minimal changes to the build configuration.
+A light-weight *X11* desktop can be added with minimal changes to the build configuration. (*X11* is needed to run Java GUI apps.)
 
 Perl `5.20` with a number of modules is included.
 
@@ -307,7 +305,7 @@ You only have to format the SD card once.
 
 You will need to create a mount point on your workstation for the copy scripts to use.
 
-    scott@bbb:~$ sudo mkdir /media/card
+    scott@octo:~$ sudo mkdir /media/card
 
 You only have to create this directory once.
 
@@ -327,11 +325,11 @@ For instance, if I had this in the `local.conf`
 
 Then I would export this environment variable before running `copy_boot.sh`
 
-    scott@bbb:~/bbb/meta-bbb/scripts$ export OETMP=/oe9/tmp-poky-fido-build
+    scott@octo:~/bbb/meta-bbb/scripts$ export OETMP=/oe9/tmp-poky-fido-build
 
 Then run the `copy_boot.sh` script passing the location of SD card
 
-    scott@bbb:~/bbb/meta-bbb/scripts$ ./copy_boot.sh sdb
+    scott@octo:~/bbb/meta-bbb/scripts$ ./copy_boot.sh sdb
 
 This script should run very fast.
 
