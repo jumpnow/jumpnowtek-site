@@ -2,12 +2,12 @@
 layout: post
 title: Building BeagleBone Black Systems with Yocto
 description: "Building customized systems for the BeagleBone Black using tools from the Yocto Project"
-date: 2015-09-22 05:57:00
+date: 2015-09-25 06:20:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
 
-What follows is one approach to building systems for [BeagleBone Black][beagleboard] boards using tools from the [Yocto Project][Yocto].
+Some notes on building systems for [BeagleBone Black][beagleboard] boards using tools from the [Yocto Project][Yocto].
 
 The [meta-bbb][meta-bbb] *layer* described generates some basic systems with packages to support C, C++, [Qt5][qt], Perl and Python development.
 
@@ -126,8 +126,8 @@ There are some sample configuration files in the `meta-bbb/conf` directory.
 
 Copy them to the `build/conf` directory (removing the '-sample')
 
-    scott@octo:~/bbb/build$ cp ~/bbb/meta-bbb/conf/local.conf-sample conf/local.conf
-    scott@octo:~/bbb/build$ cp ~/bbb/meta-bbb/conf/bblayers.conf-sample conf/bblayers.conf
+    scott@octo:~/bbb$ cp meta-bbb/conf/local.conf-sample build/conf/local.conf
+    scott@octo:~/bbb$ cp meta-bbb/conf/bblayers.conf-sample build/conf/bblayers.conf
 
 If you used the `oe-init-build-env` script to create the build directory, it generated some generic configuration files in the `build/conf` directory. It is okay to copy over them.
 

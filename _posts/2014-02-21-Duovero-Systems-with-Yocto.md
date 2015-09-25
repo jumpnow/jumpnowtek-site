@@ -2,24 +2,30 @@
 layout: post
 title: Building Duovero Systems with Yocto
 description: "Building customized systems for Gumstix Duovero using tools from the Yocto Project"
-date: 2015-09-02 06:26:00
+date: 2015-09-25 06:20:00
 categories: gumstix-linux 
 tags: [linux, gumstix, duovero, yocto]
 ---
 
-Instructions for building some developer systems for [Gumstix Duovero][duovero] boards primarily for C, C++ and [Qt5][qt] programmers.
+Some notes on building systems for [Gumstix Duovero][duovero] boards using tools from the [Yocto Project][yocto].
 
-The [meta-duovero][meta-duovero] layer described below **should** be modified for your own particular project. Treat it as a template. 
+The [meta-duovero][meta-duovero] layer described generates some basic systems with packages to support, C, C++, Qt5, Perl and Python development. 
 
-The *image recipes* under `meta-duovero/images` are examples with some packages I find useful. You should modify those recipes or create new ones to suit your needs. 
+I use it primarily as a template when starting new *Duovero* projects.
+
+Keep in mind the motto of [Yocto][yocto]
+
+    "It's not an embedded Linux distribution - it creates a custom one for you"
+
+### System Info
 
 The Yocto version is `1.8.0` the `[fido]` branch.
 
-The Linux `4.1.6` kernel comes from the [Linux stable][linux-stable] repository.
+The Linux `4.1.8` kernel comes from the [Linux stable][linux-stable] repository.
 
 The [u-boot][uboot] version is `2015.07`.
 
-These are *sysvinit* systems.
+These are **sysvinit** systems.
 
 The Qt version is `5.4.2`. By default there is no *X11* and no desktop installed. [Qt][qt] gui applications can be run using the `-platform linuxfb` switch.
 
@@ -33,11 +39,16 @@ The Duovero [Zephyr][duovero-zephyr] COM has a built-in Wifi/Bluetooth radio. Th
 
 NOTE: I haven't tested Bluetooth with the 4.1 kernel yet.
 
-*Device tree* binaries are generated and installed that support HDMI (`jumpnow-duovero-parlor.dtb`) or no display (`jumpnow-duovero-parlor-nodisplay.dtb`). They both add *SPI* support to the kernel.
+*Device tree* binaries are generated and installed that support
 
-The *dtbs* are easy to switch between using a u-boot script file `/boot/uEnv.txt`. If you don't use a *uEnv.txt* script, then the default `omap4-duovero-parlor.dtb` will be loaded. An example *uEnv.txt* is in `meta-duovero/scripts`.
+1. HDMI (`jumpnow-duovero-parlor.dtb`)
+2. No display (`jumpnow-duovero-parlor-nodisplay.dtb`)
+ 
+Both add *SPI* support to the kernel.
 
-*spidev* on SPI bus 1 (CS 0,1,2) and SPI bus 4 (CS 0) are configured for use from the *Parlor header*. The following kernel patches under `meta-duover/recipes-kernel/linux/linux-stable-4.1/` add this functionality
+You can switch between the *dtbs* using a u-boot script file `/boot/uEnv.txt`. If you don't use a *uEnv.txt* script, then the default `omap4-duovero-parlor.dtb` will be loaded. An example *uEnv.txt* is in `meta-duovero/scripts`.
+
+*spidev* on SPI bus 1 (CS 0,1,2) and SPI bus 4 (CS 0) are configured for use from the *Parlor header*. The following kernel patches under `meta-duovero/recipes-kernel/linux/linux-stable-4.1/` add this functionality
 
 * 0001-spidev-Add-generic-compatible-dt-id.patch
 * 0002-duovero-Add-spi1-spidev-dtsi.patch
@@ -52,7 +63,7 @@ There is a Qt5 test program [tspress][tspress] in the *qt5-image*.
 
 ### Ubuntu Packages
 
-I've been building systems with this layer using `Ubuntu 15.04` 64-bit workstations.
+I have been using *Ubuntu 15.04* 64-bit workstations to build these systems.
 
 You'll need at least the following packages installed
 
@@ -108,24 +119,45 @@ Much of the following are only the conventions that I use. All of the paths to t
  
 First setup a build directory. I tend to do this on a per board and/or per project basis so I can quickly switch between projects. For this example I'll put the build directory under `~/duovero/` with the `meta-duovero` layer.
 
+You could manually create the directory structure like this
+
+    scott@octo:~$ mkdir -p ~/duovero/build/conf
+
+Or you could use the *Yocto* environment script `oe-init-build-env` like this passing in the path to the build directory
+
     scott@octo:~$ source poky-fido/oe-init-build-env ~/duovero/build
 
-You always need this command to setup the environment before using `bitbake`. If you only have one build environment, you can put it in your `~/.bashrc`. I work on more then one system so tend to always run it manually.
+The *Yocto* environment script will create the build directory if it does not already exist.
  
-### Customize the conf files
+### Customize the configuration files
 
-The `oe-init-build-env` script generated some generic configuration files in the `build/conf` directory. You want to replace those with the conf-samples in the `meta-duovero/conf` directory.
+There are some sample configuration files in the `meta-duovero/conf` directory.
 
-	scott@octo:~/duovero/build$ cp ~/duovero/meta-duovero/conf/local.conf-sample \
-      conf/local.conf
-    scott@octo:~/duovero/build$ cp ~/duovero/meta-duovero/conf/bblayers.conf-sample \
-      conf/bblayers.conf
+Copy them to the `build/conf` directory (removing the '-sample')
 
-You generally only have to edit these files once.
+    scott@octo:~/duovero$ cp meta-duovero/conf/local.conf-sample build/conf/local.conf
+    scott@octo:~/duovero$ cp meta-duovero/conf/bblayers.conf-sample build/conf/bblayers.conf
+
+If you used the `oe-init-build-env` script to create the build directory, it generated some generic configuration files in the `build/conf` directory. It is okay to copy over them.
+
+You may want to customize the configuration files before your first build.
 
 ### Edit bblayers.conf
 
 In `bblayers.conf` file replace `${HOME}` with the appropriate path to the meta-layer repositories on your system if you modified any of the above instructions when cloning. 
+
+For example, if your directory structure does not look exactly like this, you will need to modify `bblayers.conf`
+
+
+    ~/poky-fido/
+         meta-openembedded/
+         meta-qt5/
+         ...
+
+    ~/duovero/
+        meta-duovero/
+        build/
+            conf/
 
 ### Edit local.conf
 
@@ -375,7 +407,7 @@ The new package needs to get included directly in the *IMAGE_INSTALL* variable o
 
 #### Customizing the Kernel
 
-See this [article][bbb-kernel] for some ways to go about customizing and rebuilding the Duovero kernel or generating a new device tree. Replace **bbb** with **duovero** when reading.
+See this [article][bbb-kernel] for some ways to go about customizing and rebuilding the *Duovero* kernel or generating a new device tree. Replace **bbb** with **duovero** when reading.
 
 #### Package management
 
