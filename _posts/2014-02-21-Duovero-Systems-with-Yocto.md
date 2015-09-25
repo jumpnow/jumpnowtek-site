@@ -2,7 +2,7 @@
 layout: post
 title: Building Duovero Systems with Yocto
 description: "Building customized systems for Gumstix Duovero using tools from the Yocto Project"
-date: 2015-09-25 06:20:00
+date: 2015-09-25 10:00:00
 categories: gumstix-linux 
 tags: [linux, gumstix, duovero, yocto]
 ---
@@ -21,7 +21,7 @@ Keep in mind the motto of [Yocto][yocto]
 
 The Yocto version is `1.8.0` the `[fido]` branch.
 
-The Linux `4.1.8` kernel comes from the [Linux stable][linux-stable] repository.
+The Linux `4.2.1` kernel comes from the [Linux stable][linux-stable] repository.
 
 The [u-boot][uboot] version is `2015.07`.
 
@@ -46,18 +46,27 @@ NOTE: I haven't tested Bluetooth with the 4.1 kernel yet.
  
 Both add *SPI* support to the kernel.
 
-You can switch between the *dtbs* using a u-boot script file `/boot/uEnv.txt`. If you don't use a *uEnv.txt* script, then the default `omap4-duovero-parlor.dtb` will be loaded. An example *uEnv.txt* is in `meta-duovero/scripts`.
+You can switch between the *dtbs* using a u-boot script file `/boot/uEnv.txt`. If you don't use a *uEnv.txt* script, then the default `omap4-duovero-parlor.dtb` will be loaded. 
 
-*spidev* on SPI bus 1 (CS 0,1,2) and SPI bus 4 (CS 0) are configured for use from the *Parlor header*. The following kernel patches under `meta-duovero/recipes-kernel/linux/linux-stable-4.1/` add this functionality
+An example *uEnv.txt* is in `meta-duovero/scripts`.
+
+*spidev* on SPI bus 1 (CS 0,1,2) and SPI bus 4 (CS 0) are configured for use from the *Parlor header*.
+
+The following kernel patches under `meta-duovero/recipes-kernel/linux/linux-stable-4.1/` add this functionality
 
 * 0001-spidev-Add-generic-compatible-dt-id.patch
 * 0002-duovero-Add-spi1-spidev-dtsi.patch
 * 0003-duovero-Add-spi4-spidev-dtsi.patch
 
+See the respective patches for the particular pins to use for the different SPI busses and CS pins.
 
-See the respective patches for the particular pins to use.
+*UART2* is available as `/dev/ttyO1` from the header pins *15* TX and *17* RX.
 
-There is an small spidev test program [spiloop][spiloop] in the *console-image*.
+There are some simple loopback test programs included in the console image.
+ 
+[spiloop][spiloop] is a utility for testing the *spidev* driver.
+
+[serialecho][serialecho] is a utility for testing the *uart*.
 
 There is a Qt5 test program [tspress][tspress] in the *qt5-image*.
 
@@ -428,6 +437,7 @@ To add or upgrade packages to the system, you might be interested in using the b
 [lsblk]: http://linux.die.net/man/8/lsblk
 [tspress]: https://github.com/scottellis/tspress
 [spiloop]: https://github.com/scottellis/spiloop
+[serialecho]: https://github.com/scottellis/serialecho
 [opkg-repo]: http://www.jumpnowtek.com/yocto/Using-your-build-workstation-as-a-remote-package-repository.html
 [bbb-kernel]: http://www.jumpnowtek.com/beaglebone/Working-on-the-BeagleBone-kernel.html
 [bottle-python]: http://bottlepy.org/docs/dev/index.html
