@@ -2,7 +2,7 @@
 layout: post
 title: Building Duovero Systems with Yocto
 description: "Building customized systems for Gumstix Duovero using tools from the Yocto Project"
-date: 2015-09-25 10:00:00
+date: 2015-09-29 15:30:00
 categories: gumstix-linux 
 tags: [linux, gumstix, duovero, yocto]
 ---
@@ -21,7 +21,7 @@ Keep in mind the motto of [Yocto][yocto]
 
 The Yocto version is `1.8.0` the `[fido]` branch.
 
-The Linux `4.2.1` kernel comes from the [Linux stable][linux-stable] repository.
+The Linux `4.2.2` kernel comes from the [Linux stable][linux-stable] repository.
 
 The [u-boot][uboot] version is `2015.07`.
 
@@ -37,7 +37,7 @@ Python `2.7.9` is included with at least enough packages to run [Bottle python][
 
 The Duovero [Zephyr][duovero-zephyr] COM has a built-in Wifi/Bluetooth radio. The kernel and software to support both are included. Access point mode is supported. Some [instructions here][jumpnow-duovero-ap].
 
-NOTE: I haven't tested Bluetooth with the 4.1 kernel yet.
+NOTE: I haven't tested Bluetooth with the 4.x kernels.
 
 *Device tree* binaries are generated and installed that support
 
@@ -52,7 +52,7 @@ An example *uEnv.txt* is in `meta-duovero/scripts`.
 
 *spidev* on SPI bus 1 (CS 0,1,2) and SPI bus 4 (CS 0) are configured for use from the *Parlor header*.
 
-The following kernel patches under `meta-duovero/recipes-kernel/linux/linux-stable-4.1/` add this functionality
+The following kernel patches under `meta-duovero/recipes-kernel/linux/linux-stable-4.2/` add this functionality
 
 * 0001-spidev-Add-generic-compatible-dt-id.patch
 * 0002-duovero-Add-spi1-spidev-dtsi.patch
