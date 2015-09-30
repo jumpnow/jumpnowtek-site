@@ -2,7 +2,7 @@
 layout: post
 title: Building BeagleBone Black Systems with Yocto
 description: "Building customized systems for the BeagleBone Black using tools from the Yocto Project"
-date: 2015-09-29 15:25:00
+date: 2015-09-30 15:35:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
@@ -21,7 +21,7 @@ Keep in mind the motto of [Yocto][yocto]
 
 ### System Info
 
-The Yocto version is `1.8.0` the `[fido]` branch.
+The Yocto version is `1.8.1` the `[fido]` branch.
 
 The Linux `4.2.2` kernel comes from the [Linux stable][linux-stable] repository.
 

@@ -2,7 +2,7 @@
 layout: post
 title: Building Duovero Systems with Yocto
 description: "Building customized systems for Gumstix Duovero using tools from the Yocto Project"
-date: 2015-09-29 15:30:00
+date: 2015-09-30 10:40:00
 categories: gumstix-linux 
 tags: [linux, gumstix, duovero, yocto]
 ---
@@ -19,7 +19,7 @@ Keep in mind the motto of [Yocto][yocto]
 
 ### System Info
 
-The Yocto version is `1.8.0` the `[fido]` branch.
+The Yocto version is `1.8.1` the `[fido]` branch.
 
 The Linux `4.2.2` kernel comes from the [Linux stable][linux-stable] repository.
 
