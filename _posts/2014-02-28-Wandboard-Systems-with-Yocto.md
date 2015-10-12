@@ -2,26 +2,41 @@
 layout: post
 title: Building Wandboard Systems with Yocto
 description: "Building customized systems for Wandboards using tools from the Yocto Project"
-date: 2014-02-28 02:07:00
-categories: yocto 
+date: 2015-10-12 17:10:00
+categories: wandboard 
 tags: [linux, wandboard, yocto]
 ---
 
-These instructions are for building generic developer systems for [Wandboard][wandboard] boards with a focus on C/C++ and Qt programmers. You will almost certainly want to modify the contents of the images for any particular project. 
+Some notes on building systems for [Wandboards][wandboard] using tools from the [Yocto Project][Yocto].
 
-There is no `X11` and no desktop installed on any of these systems. The `embedded Qt` images can be used to run GUI applications with the `-qws` switch. 
+The [meta-wandboard][meta-wandboard] *layer* described below generates some basic systems with packages to support C, C++, [Qt5][qt], Perl and Python development.
 
-The Linux kernel version is `3.10.17`.
+I use this primarily as a template when starting new *Wandboard* projects.
 
-The Yocto version is `1.7.0` the `[dizzy]` branch.
+### System Info
 
-`sysvinit` is used for the init system.
+The Yocto version is `1.8.1` the `[fido]` branch.
 
-### Ubuntu Packages
+The Linux `4.2.3` kernel comes from the [Linux stable][linux-stable] repository.
 
-I've tested `Ubuntu 14.04` 64-bit workstations for the build.
+The [u-boot][uboot] version is `2015.07`.
 
-You'll need at least the following packages installed
+These are **sysvinit** systems.
+
+The Qt version is `5.4.2`. There is no *X11* and no desktop installed. [Qt][qt] GUI applications can be run using the `-platform linuxfb` switch.
+
+A light-weight *X11* desktop can be added with minimal changes to the build configuration. (*X11* is needed to run Java GUI apps.)
+
+[ZeroMQ][zeromq] version `4.0.4` with development headers and libs is included.
+
+Perl `5.20` and Python `2.7.9' each with a number of modules is included.
+
+
+### Ubuntu Workstation Setup
+
+I have been using *Ubuntu 15.04* 64-bit workstations to build these systems.
+
+You will need at least the following packages installed
 
     build-essential
     git
@@ -35,118 +50,130 @@ You'll need at least the following packages installed
     libncurses5-dev
     u-boot-tools
 
-You'll also want to change the default Ubuntu shell from `dash` to `bash` by running this command from a shell
+You also want to change the default Ubuntu shell from `dash` to `bash` by running this command from a shell
  
     sudo dpkg-reconfigure dash
 
-Choose bash when prompted.
+Choose **No** to dash when prompted.
 
 ### Clone the dependency repositories
 
-The main Yocto project `poky` repository
+First the main Yocto project `poky` repository
 
-    scott@hex:~ git clone -b dizzy git://git.yoctoproject.org/poky.git poky-dizzy
+    scott@fractal:~ git clone -b fido git://git.yoctoproject.org/poky.git poky-fido
 
-The `meta-openembedded` repository
+Then the `meta-openembedded` repository
 
-    scott@hex:~$ cd ~/poky-dizzy
-    scott@hex:~/poky-dizzy$ git clone -b dizzy git://git.openembedded.org/meta-openembedded
+    scott@fractal:~$ cd poky-fido
+    scott@fractal:~/poky-fido$ git clone -b fido git://git.openembedded.org/meta-openembedded
 
-I like to keep the *wandboard (Freescale)* only repos in a separate sub-directory.
+And `meta-qt5` repository
 
-    scott@hex:~$ mkdir ~/wandboard
-	scott@hex:~$ cd ~/wandboard
-  
-The `meta-fsl-arm` repository
-
-    scott@hex:~/wandboard$ git clone -b dizzy git://github.com/Freescale/meta-fsl-arm
-
-The `meta-fsl-arm-extra` repository
-
-    scott@hex:~/wandboard$ git clone -b dizzy git://github.com/Freescale/meta-fsl-arm-extra
-
-My `meta-wandboard` repository
-
-    scott@hex:~/wandboard$ git clone -b dizzy git://github.com/jumpnow/meta-wandboard
+    scott@fractal:~/poky-fido$ git clone -b fido https://github.com/meta-qt5/meta-qt5.git
 
 
-The `meta-wandboard/README.md` file has the last commits from the dependency repositories that I tested. You can always checkout those commits explicitly if you run into problems.
+I usually keep these repositories separated since they can be shared between projects and different boards.
+
+### Clone the meta-wandboard repository
+
+Create a sub-directory for the `meta-wandboard` repository before cloning
+
+    scott@octo:~$ mkdir ~/wandboard
+    scott@octo:~$ cd ~/wanboard
+    scott@octo:~/wandboard$ git clone -b fido git://github.com/jumpnow/meta-wandboard
+
+The `meta-wandboard/README.md` file has the last commits from the dependency repositories that I tested. You can always checkout those commits explicitly if you run into
+problems.
 
 ### Initialize the build directory
 
 Much of the following are only the conventions that I use. All of the paths to the meta-layers are configurable.
  
-First setup a build directory. I tend to do this on a per board and/or per project basis so I can quickly switch between projects. For this example I'll put the build directory under `~/wandboard/` with the `meta-wandboard` layer.
+First setup a build directory. I tend to do this on a per board and/or per project basis so I can quickly switch between projects. For this example I'll put the build
+directory under `~/wandboard/` with the `meta-wandboard` layer.
 
-    scott@hex:~$ source poky-dizzy/oe-init-build-env ~/wandboard/build
+You could manually create the directory structure like this
 
-You always need this command to setup the environment before using `bitbake`. If you only have one build environment, you can put it in your `~/.bashrc`. I work on more then one system so tend to always run it manually.
+    scott@fractal:~$ mkdir -p ~/wandboard/build/conf
+
+
+Or you could use the *Yocto* environment script `oe-init-build-env` like this passing in the path to the build directory
+
+    scott@fractal:~$ source poky-fido/oe-init-build-env ~/wandboard/build
+
+The *Yocto* environment script will create the build directory if it does not already exist.
  
-### Customize the conf files
+### Customize the configuration files
 
-The `oe-init-build-env` script generated some generic configuration files in the `build/conf` directory. You want to replace those with the conf-samples in the `meta-wandboard/conf` directory.
+There are some sample configuration files in the `meta-wandboard/conf` directory.
 
-	scott@hex:~/wandboard/build$ cp ~/wandboard/meta-wandboard/conf/local.conf-sample \
-      conf/local.conf
-    scott@hex:~/wandboard/build$ cp ~/wandboard/meta-wandboard/conf/bblayers.conf-sample \
-      conf/bblayers.conf
+Copy them to the `build/conf` directory (removing the '-sample')
 
-You generally only have to edit these files once.
+    scott@fractal:~/wandboard$ cp meta-wandboard/conf/local.conf-sample build/conf/local.conf
+    scott@fractal:~/wandboard$ cp meta-wandboard/conf/bblayers.conf-sample build/conf/bblayers.conf
+
+If you used the `oe-init-build-env` script to create the build directory, it generated some generic configuration files in the `build/conf` directory.
+It is okay to copy over them.
+
+You may want to customize the configuration files before your first build.
 
 ### Edit bblayers.conf
 
-In `bblayers.conf` file replace `${HOME}` with the appropriate path to the meta-layer repositories on your system if you modified any of the above instructions when cloning. 
+In `bblayers.conf` file replace `${HOME}` with the appropriate path to the meta-layer repositories on your system if you modified any of the paths in the previous instructions.
+
+For example, if your directory structure does not look exactly like this, you will need to modify `bblayers.conf`
+
+
+    ~/poky-fido/
+         meta-openembedded/
+         meta-qt5/
+         ...
+
+    ~/wandboard/
+        meta-wandboard/
+        build/
+            conf/
+
 
 ### Edit local.conf
 
 The variables you may want to customize are the following:
 
-- BB\_NUMBER\_THREADS
-- PARALLEL\_MAKE
 - TMPDIR
 - DL\_DIR
 - SSTATE\_DIR
 
-
-The defaults should work, but I always make some adjustment.
-
-##### BB\_NUMBER\_THREADS
-
-Set to the number of cores on your build machine.
-
-##### PARALLEL\_MAKE
-
-Set to the number of cores on your build machine.
+The defaults for all of these work fine. Adjustments are optional.
 
 ##### TMPDIR
 
 This is where temporary build files and the final build binaries will end up. Expect to use at least 35GB. You probably want at least 50GB available.
 
-The default location if left commented will be `~/wandboard/build/tmp`. If I'm not working in a VM, I usually put the `TMPDIR` on dedicated partitions. Occasionally something will come up where you'll need to delete the entire `TMPDIR`. For those occasions the sequence unmount/mkfs/remount is much faster then deleting a 35+ GB directory. 
+The default location is in the `build` directory, in this example `~/wandboard/build/tmp`.
 
-If you specify an alternate location as I do in the example conf file make sure the directory is writable by the user running the build. Also because of some `rpath` issues with gcc, the `TMPDIR` path cannot be too short or the gcc build will fail. I haven't determined exactly how short is too short, but something like `/oe8` is too short and `/oe8/tmp-poky-dizzy-build` is long enough.
+If you specify an alternate location as I do in the example conf file make sure the directory is writable by the user running the build. Also because of some
+`rpath` issues with gcc, the `TMPDIR` path cannot be too short or the gcc build will fail. I haven't determined exactly how short is too short, but something
+like `/oe9` is too short and `/oe9/tmp-poky-fido-build` is long enough.
 
-If you use the default location, the `TMPDIR` path is already long enough.
-     
-##### DL\_DIR
+##### DL_DIR
 
-This is where the downloaded source files will be stored. You can share this among configurations and build files so I created a general location for this outside my home directory. Make sure the build user has write permission to the directory you decide on.
+This is where the downloaded source files will be stored. You can share this among configurations and build files so I created a general location for this outside
+my home directory. Make sure the build user has write permission to the directory you decide on.
 
-The default directory will be `~/wandboard/build/sources`.
+The default location is in the `build` directory, `~/wandboard/build/sources`.
 
-##### SSTATE\_DIR
+##### SSTATE_DIR
 
 This is another Yocto build directory that can get pretty big, greater then 5GB. I often put this somewhere else other then my home directory as well.
 
-The default location is `~/wandboard/build/sstate-cache`.
- 
+The default location is in the `build` directory, `~/wandboard/build/sstate-cache`.
  
 ### Run the build
 
-You need to source the environment every time you want to run a build. The `oe-init-build-env` when run a second time will not overwrite your customized conf files.
+You need to [source][source-script] the Yocto environment into your shell before you can use [bitbake][bitbake]. The `oe-init-build-env` will not overwrite your
+customized conf files.
 
-    scott@hex:~$ cd ~/poky-dizzy
-    scott@hex:~$ source oe-init-build-env ~/wandboard/build
+    scott@fractal:~$ source poky-fido/oe-init-build-env ~/wandboard/build
 
     ### Shell environment set up for builds. ###
 
@@ -161,67 +188,107 @@ You need to source the environment every time you want to run a build. The `oe-i
         meta-ide-support
 
     You can also run generated qemu images with a command like 'runqemu qemux86'
-    scott@hex:~/wandboard/build$
+    scott@fractal:~/wandboard/build$
 
-Those 'Common targets' may or may not build successfully. I have never tried them.
 
-There are a few custom images available in the meta-wandboard layer. The recipes for these image can be found in `meta-wandboard/images/`
+I don't use those *Common targets*, but instead use my own custom image recipes.
 
-    console-image.bb
-    qte-image.bb
+There are two custom images available in the *meta-wandboard* layer. The recipes for the images can be found in `meta-wandboard/images/`
 
+* console-image.bb
+* qt5-image.bb
+
+You should add your own custom images to this same directory.
 
 #### console-image
 
-A basic console developer image. See the recipe for specifics, but some of the installed programs are
+A basic console developer image. See the recipe `meta-wandboard/images/console-image.bb` for specifics, but some of the installed programs are
 
     gcc/g++ and associated build tools
     git
-    opencv
     ssh/scp server and client
-    wireless support
-    kernel modules
+    perl and a number of commonly used modules
+    zeromq
 
-#### qte-image
+The *console-image* has a line
 
-This image includes the `console-image` and adds Qt 4.8.6 embedded with the associated development headers and qmake.
+    inherit core-image
 
-This image also includes the [SyntroCore][syntrocore] and [SyntroLCam][syntrolcam] binaries as well as the headers and libraries for doing `Syntro` development directly on the wandboard.
+which is `poky-fido/meta/classes/core-image.bbclass` and pulls in some required base packages.  This is useful to know if you create your own image recipe.
+
+#### qt5-image
+
+This image includes the `console-image` and adds `Qt5` with the associated development headers and `qmake`.
+
+### Build
 
 To build the `console-image` run the following command
 
-    scott@hex:~/wandboard/build$ bitbake console-image
+    scott@fractal:~/wandboard/build$ bitbake console-image
 
-You may run into build errors related to packages that failed to download or sometimes out of order builds. The easy solution is to clean the build for the failed package and rerun the build again.
+You may occasionally run into build errors related to packages that either failed to download or sometimes out of order builds. The easy solution is to clean the
+failed package and rerun the build again.
 
-For instance if the build for `zip` failed for some reason, I would run this.
+For instance if the build for `zip` failed for some reason, I would run this
 
-    scott@hex:~/wandboard/build$ bitbake -c cleansstate zip
-    scott@hex:~/wandboard/build$ bitbake zip
+    scott@fractal:~/wandboard/build$ bitbake -c cleansstate zip
+    scott@fractal:~/wandboard/build$ bitbake zip
 
 And then continue with the full build.
 
-    scott@hex:~/wandboard/build$ bitbake console-image
+    scott@fractal:~/wandboard/build$ bitbake console-image
+
+To build the `qt5-image` it would be
+
+    scott@fractal:~/wandboard/build$ bitbake qt5-image
+
+The `cleansstate` command (with two s's) works for image recipes as well.
+
+The image files won't get deleted from the *TMPDIR* until the next time you build.
 
  
 ### Copying the binaries to an SD card
 
-After the build completes, the bootloader, kernel and rootfs image files can be found in `TMPDIR/deploy/images/wandboard-quad/`.
+After the build completes, the bootloader, kernel and rootfs image files can be found in `<TMPDIR>/deploy/images/wandboard/`.
 
 The `meta-wandboard/scripts` directory has some helper scripts to format and copy the files to a microSD card.
 
 #### mk2parts.sh
 
-This script will partition an SD card with the minimal 2 partitions required for the boards.
+This script will partition an SD card with the minimal 2 partitions required for the boards. The script leaves a 4 MB empty region before the first partition for
+use as explained below.
 
-Insert the microSD into your workstation and note where it shows up. You may have to look at your syslog. I'll assume `/dev/sdc` for this example.
+Insert the microSD into your workstation and note where it shows up.
+
+[lsblk][lsblk] is convenient for finding the microSD card. 
+
+For example
+
+    scott@fractal:~/wandboard/meta-wandboard$ lsblk
+    NAME    MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
+    sda       8:0    0 931.5G  0 disk
+    |-sda1    8:1    0  93.1G  0 part /
+    |-sda2    8:2    0  93.1G  0 part /home
+    |-sda3    8:3    0  29.8G  0 part [SWAP]
+    |-sda4    8:4    0     1K  0 part
+    |-sda5    8:5    0   100G  0 part /oe5
+    |-sda6    8:6    0   100G  0 part /oe6
+    |-sda7    8:7    0   100G  0 part /oe7
+    |-sda8    8:8    0   100G  0 part /oe8
+    |-sda9    8:9    0   100G  0 part /oe9
+    `-sda10   8:10   0 215.5G  0 part /oe10
+    sdb       8:16   1   7.4G  0 disk
+    |-sdb1    8:17   1    64M  0 part
+    `-sdb2    8:18   1   7.3G  0 part
+
+I would use `sdb` for the format and copy script parameters on this machine.
 
 It doesn't matter if some partitions from the SD card are mounted. The `mk2parts.sh` script will unmount them.
 
-BE CAREFUL with this script. It will format any disk on your workstation.
+**BE CAREFUL** with this script. It will format any disk on your workstation.
 
-    scott@hex:~$ cd ~/wandboard/meta-wandboard/scripts
-    scott@hex:~/wandboard/meta-wandboard/scripts$ sudo ./mk2parts.sh sdc
+    scott@fractal:~$ cd ~/wandboard/meta-wandboard/scripts
+    scott@fractal:~/wandboard/meta-wandboard/scripts$ sudo ./mk2parts.sh sdb
 
 You only have to format the SD card once.
 
@@ -229,58 +296,80 @@ You only have to format the SD card once.
 
 You will need to create a mount point on your workstation for the copy scripts to use.
 
-    scott@hex:~$ sudo mkdir /media/card
+    scott@fractal:~$ sudo mkdir /media/card
 
 You only have to create this directory once.
 
 #### copy_boot.sh
 
-This script copies the bootloader (MLO, u-boot) and Linux kernel (uImage) to the boot partition of the SD card.
+This script copies the bootloaders (MLO and u-boot) to the *unpartitioned* 4MB beginning section of the SD card.
+
+The script also formats the first partition of the SD card as a FAT filesystem and copies the kernel (zImage) and a number of DTB files to it.
 
 This script needs to know the `TMPDIR` to find the binaries. It looks for an environment variable called `OETMP`.
 
 For instance, if I had this in the `local.conf`
 
-    TMPDIR = "/oe8/tmp-poky-dizzy-build"
+    TMPDIR = "/oe9/tmp-poky-fido-build"
 
 Then I would export this environment variable before running `copy_boot.sh`
 
-    scott@hex:~/wandboard/meta-wandboard/scripts$ export OETMP=/oe8/tmp-poky-dizzy-build
+    scott@fractal:~/wandboard/meta-wandboard/scripts$ export OETMP=/oe9/tmp-poky-fido-build
 
 Then run the `copy_boot.sh` script passing the location of SD card
 
-    scott@hex:~/wandboard/meta-wandboard/scripts$ ./copy_boot.sh sdc
+    scott@fractal:~/wandboard/meta-wandboard/scripts$ ./copy_boot.sh sdb
+
+This script should run very fast.
 
 #### copy_rootfs.sh
 
-This script copies files to the root file system partition of the SD card.
+This script formats the second partition of the SD card as an *EXT4* filesystem and copies the operating system to it.
+ 
+The script accepts an optional command line argument for the image type, for example `console` or `qt5`. The default is `console` if no argument is provided.
 
-The script accepts an optional command line argument for the image type, either `console` or `qte`. The default is `console`.
-
-The script also accepts a `hostname` argument if you want the host name to be something other then the default `wandboard-quad`.
+The script also accepts a `hostname` argument if you want the host name to be something other then the default `wandboard`.
 
 Here's an example of how you'd run `copy_rootfs.sh`
 
-    scott@hex:~/wandboard/meta-wandboard/scripts$ ./copy_rootfs.sh sdc console
+    scott@fractal:~/wandboard/meta-wandboard/scripts$ ./copy_rootfs.sh sdb console
 
 or
 
-    scott@hex:~/wandboard/meta-wandboard/scripts$ ./copy_rootfs.sh sdc qte wandq
+    scott@fractal:~/wandboard/meta-wandboard/scripts$ ./copy_rootfs.sh sdb qt5 wandq
 
-The copy scripts will **NOT** unmount partitions automatically. If the partition that is supposed to be the on the SD card is already mounted, the script will complain and abort. This is for safety, mine mostly, since I run these scripts many times a day on different machines and the SD cards show up in different places.
+The copy_rootfs.sh script will take longer to run and depends a lot on the quality of your SD card. With a good *Class 10* card it should take less then 30 seconds.
+
+The copy scripts will **NOT** unmount partitions automatically. If an SD card partition is already mounted, the script will complain and abort. This is for
+safety, mine mostly, since I run these scripts many times a day on different machines and the SD cards show up in different places.
 
 Here's a realistic example session where I want to copy already built images to a second SD card that I just inserted.
 
-    scott@hex:~$ sudo umount /dev/sdc1
-    scott@hex:~$ sudo umount /dev/sdc2
-    scott@hex:~$ export OETMP=/oe8/tmp-poky-dizzy-build
-    scott@hex:~$ cd wandboard/meta-wandboard/scripts
-    scott@hex:~/wandboard/meta-wandboard/scripts$ ./copy_boot.sh sdc
-    scott@hex:~/wandboard/meta-wandboard/scripts$ ./copy_rootfs.sh sdc console wandq2
+    scott@fractal:~$ sudo umount /dev/sdb1
+    scott@fractal:~$ sudo umount /dev/sdb2
+    scott@fractal:~$ export OETMP=/oe9/tmp-poky-fido-build
+    scott@fractal:~$ cd wandboard/meta-wandboard/scripts
+    scott@fractal:~/wandboard/meta-wandboard/scripts$ ./copy_boot.sh sdb
+    scott@fractal:~/wandboard/meta-wandboard/scripts$ ./copy_rootfs.sh sdb console wandq2
+
+
+Both *copy_boot.sh* and *copy_rootfs.sh* are simple scripts easily modified for custom use.
 
 
 [wandboard]: http://www.wandboard.org/
-[wandboard-github]: https://github.com/wandboard-org
-[linux-wandboard-recipe]: https://github.com/Freescale/meta-fsl-arm-extra/blob/dizzy/recipes-kernel/linux/linux-wandboard_3.10.17.bb
-[syntrocore]: https://github.com/Syntro/SyntroCore
-[syntrolcam]: https://github.com/Syntro/SyntroLCam
+[meta-wandboard]: https://github.com/jumpnow/meta-wandboard
+[meta-fsl-arm]: https://github.com/freescale/meta-fsl-arm
+[meta-fsl-arm-extra]: https://github.com/freescale/meta-fsl-arm-extra
+[zeromq]: http://zeromq.org/
+[linux-stable]: https://www.kernel.org/
+[uboot]: http://www.denx.de/wiki/U-Boot/WebHome
+[qt]: http://www.qt.io/
+[yocto]: https://www.yoctoproject.org/
+[spiloop]: https://github.com/scottellis/spiloop
+[serialecho]: https://github.com/scottellis/serialecho
+[bbb-kernel]: http://www.jumpnowtek.com/beaglebone/Working-on-the-BeagleBone-kernel.html
+[lsblk]: http://linux.die.net/man/8/lsblk
+[opkg-repo]: http://www.jumpnowtek.com/yocto/Using-your-build-workstation-as-a-remote-package-repository.html
+[bitbake]: https://www.yoctoproject.org/docs/1.8/bitbake-user-manual/bitbake-user-manual.html
+[source-script]: http://stackoverflow.com/questions/4779756/what-is-the-difference-between-source-script-sh-and-script-
+[zeromq]: http://zeromq.org/
