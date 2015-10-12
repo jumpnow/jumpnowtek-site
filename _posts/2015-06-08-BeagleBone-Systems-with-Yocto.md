@@ -2,7 +2,7 @@
 layout: post
 title: Building BeagleBone Black Systems with Yocto
 description: "Building customized systems for the BeagleBone Black using tools from the Yocto Project"
-date: 2015-10-12 17:15:00
+date: 2015-10-12 19:30:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
@@ -11,14 +11,14 @@ Building systems for [BeagleBone Black][beagleboard] boards using tools from the
 
 The [meta-bbb][meta-bbb] *layer* described below generates some basic systems with packages to support C, C++, [Qt5][qt], Perl and Python development.
 
-I use this primarily as a template when starting new *BeagleBone Black* projects.
+I use this as a template when starting new *BeagleBone Black* projects.
 
 
 ### System Info
 
 The Yocto version is `1.8.1` the `[fido]` branch.
 
-The Linux `4.2.3` kernel comes from the [Linux stable][linux-stable] repository.
+The `4.2.3` Linux kernel comes from the [linux-stable][linux-stable] repository.
 
 The [u-boot][uboot] version is `2015.07`.
 
@@ -30,7 +30,7 @@ A light-weight *X11* desktop can be added with minimal changes to the build conf
 
 [ZeroMQ][zeromq] version `4.0.4` with development headers and libs is included.
 
-Perl `5.20` and Python `2.7.9' each with a number of modules is included.
+Perl `5.20` and Python `2.7.9` each with a number of modules is included.
 
 *Device tree* binaries are generated and installed that support
 

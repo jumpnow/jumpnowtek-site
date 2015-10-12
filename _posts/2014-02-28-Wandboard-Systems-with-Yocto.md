@@ -2,7 +2,7 @@
 layout: post
 title: Building Wandboard Systems with Yocto
 description: "Building customized systems for Wandboards using tools from the Yocto Project"
-date: 2015-10-12 17:10:00
+date: 2015-10-12 19:30:00
 categories: wandboard 
 tags: [linux, wandboard, yocto]
 ---
@@ -11,13 +11,13 @@ Some notes on building systems for [Wandboards][wandboard] using tools from the 
 
 The [meta-wandboard][meta-wandboard] *layer* described below generates some basic systems with packages to support C, C++, [Qt5][qt], Perl and Python development.
 
-I use this primarily as a template when starting new *Wandboard* projects.
+I use this as a template when starting new *Wandboard* projects.
 
 ### System Info
 
 The Yocto version is `1.8.1` the `[fido]` branch.
 
-The Linux `4.2.3` kernel comes from the [Linux stable][linux-stable] repository.
+The `4.2.3` Linux kernel comes from the [linux-stable][linux-stable] repository.
 
 The [u-boot][uboot] version is `2015.07`.
 
@@ -29,8 +29,16 @@ A light-weight *X11* desktop can be added with minimal changes to the build conf
 
 [ZeroMQ][zeromq] version `4.0.4` with development headers and libs is included.
 
-Perl `5.20` and Python `2.7.9' each with a number of modules is included.
+Perl `5.20` and Python `2.7.9` each with a number of modules is included.
 
+The following device tree binaries (dtbs) from the *linux-stable* repository are built and installed
+
+* imx6dl-wandboard-revb1.dtb
+* imx6dl-wandboard.dtb
+* imx6q-wandboard-revb1.dtb
+* imx6q-wandboard.dtb
+
+*U-Boot* should detect the correct *dtb* to load at boot time.
 
 ### Ubuntu Workstation Setup
 
@@ -376,7 +384,7 @@ The new package needs to get included directly in the *IMAGE_INSTALL* variable o
 
 #### Customizing the Kernel
 
-See this [article][bbb-kernel] for some ways to go about customizing and rebuilding the *Wandboard* kernel or generating a new device tree. Replace **bbb** with **wandboard** when reading.
+See this [post][bbb-kernel] for some ways to go about customizing and rebuilding the *Wandboard* kernel or generating a new device tree. Replace **bbb** with **wandboard** when reading.
 
 #### Package management
 
