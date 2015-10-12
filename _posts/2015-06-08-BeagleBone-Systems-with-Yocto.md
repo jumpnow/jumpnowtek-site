@@ -2,7 +2,7 @@
 layout: post
 title: Building BeagleBone Black Systems with Yocto
 description: "Building customized systems for the BeagleBone Black using tools from the Yocto Project"
-date: 2015-10-04 11:15:00
+date: 2015-10-12 17:15:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
@@ -11,13 +11,8 @@ Building systems for [BeagleBone Black][beagleboard] boards using tools from the
 
 The [meta-bbb][meta-bbb] *layer* described below generates some basic systems with packages to support C, C++, [Qt5][qt], Perl and Python development.
 
-I use it primarily as a template when starting new *BeagleBone Black* projects.
+I use this primarily as a template when starting new *BeagleBone Black* projects.
 
-Keeping in mind the motto of [Yocto][yocto]
-
-    "It's not an embedded Linux distribution - it creates a custom one for you"
-	
-it should be modified for your own partiicular project.	
 
 ### System Info
 
@@ -35,9 +30,7 @@ A light-weight *X11* desktop can be added with minimal changes to the build conf
 
 [ZeroMQ][zeromq] version `4.0.4` with development headers and libs is included.
 
-Perl `5.20` with a number of modules is included.
-
-Python `2.7.9` is included with at least enough packages to run [Bottle python][bottle-python] web applications. Additional Python packages are easily added.
+Perl `5.20` and Python `2.7.9' each with a number of modules is included.
 
 *Device tree* binaries are generated and installed that support
 
@@ -609,7 +602,6 @@ To add or upgrade packages to the system, you might be interested in using the b
 [spiloop]: https://github.com/scottellis/spiloop
 [serialecho]: https://github.com/scottellis/serialecho
 [bbb-kernel]: http://www.jumpnowtek.com/beaglebone/Working-on-the-BeagleBone-kernel.html
-[bottle-python]: http://bottlepy.org/docs/dev/index.html
 [lsblk]: http://linux.die.net/man/8/lsblk
 [opkg-repo]: http://www.jumpnowtek.com/yocto/Using-your-build-workstation-as-a-remote-package-repository.html
 [bbb-uboot]: http://www.jumpnowtek.com/beaglebone/Beaglebone-Black-U-Boot-Notes.html
