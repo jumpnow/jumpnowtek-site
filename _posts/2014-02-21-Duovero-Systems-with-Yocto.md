@@ -11,11 +11,7 @@ Some notes on building systems for [Gumstix Duovero][duovero] boards using tools
 
 The [meta-duovero][meta-duovero] layer described generates some basic systems with packages to support, C, C++, Qt5, Perl and Python development. 
 
-I use it primarily as a template when starting new *Duovero* projects.
-
-Keep in mind the motto of [Yocto][yocto]
-
-    "It's not an embedded Linux distribution - it creates a custom one for you"
+I use this primarily as a template when starting new *Duovero* projects.
 
 ### System Info
 

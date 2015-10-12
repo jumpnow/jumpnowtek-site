@@ -82,15 +82,13 @@ Create a sub-directory for the `meta-wandboard` repository before cloning
     scott@octo:~$ cd ~/wanboard
     scott@octo:~/wandboard$ git clone -b fido git://github.com/jumpnow/meta-wandboard
 
-The `meta-wandboard/README.md` file has the last commits from the dependency repositories that I tested. You can always checkout those commits explicitly if you run into
-problems.
+The `meta-wandboard/README.md` file has the last commits from the dependency repositories that I tested. You can always checkout those commits explicitly if you run into problems.
 
 ### Initialize the build directory
 
 Much of the following are only the conventions that I use. All of the paths to the meta-layers are configurable.
  
-First setup a build directory. I tend to do this on a per board and/or per project basis so I can quickly switch between projects. For this example I'll put the build
-directory under `~/wandboard/` with the `meta-wandboard` layer.
+First setup a build directory. I tend to do this on a per board and/or per project basis so I can quickly switch between projects. For this example I'll put the build directory under `~/wandboard/` with the `meta-wandboard` layer.
 
 You could manually create the directory structure like this
 
@@ -151,14 +149,12 @@ This is where temporary build files and the final build binaries will end up. Ex
 
 The default location is in the `build` directory, in this example `~/wandboard/build/tmp`.
 
-If you specify an alternate location as I do in the example conf file make sure the directory is writable by the user running the build. Also because of some
-`rpath` issues with gcc, the `TMPDIR` path cannot be too short or the gcc build will fail. I haven't determined exactly how short is too short, but something
+If you specify an alternate location as I do in the example conf file make sure the directory is writable by the user running the build. Also because of some `rpath` issues with gcc, the `TMPDIR` path cannot be too short or the gcc build will fail. I haven't determined exactly how short is too short, but something
 like `/oe9` is too short and `/oe9/tmp-poky-fido-build` is long enough.
 
 ##### DL_DIR
 
-This is where the downloaded source files will be stored. You can share this among configurations and build files so I created a general location for this outside
-my home directory. Make sure the build user has write permission to the directory you decide on.
+This is where the downloaded source files will be stored. You can share this among configurations and build files so I created a general location for this outside my home directory. Make sure the build user has write permission to the directory you decide on.
 
 The default location is in the `build` directory, `~/wandboard/build/sources`.
 
@@ -207,7 +203,7 @@ A basic console developer image. See the recipe `meta-wandboard/images/console-i
     gcc/g++ and associated build tools
     git
     ssh/scp server and client
-    perl and a number of commonly used modules
+    perl and python
     zeromq
 
 The *console-image* has a line
@@ -226,8 +222,7 @@ To build the `console-image` run the following command
 
     scott@fractal:~/wandboard/build$ bitbake console-image
 
-You may occasionally run into build errors related to packages that either failed to download or sometimes out of order builds. The easy solution is to clean the
-failed package and rerun the build again.
+You may occasionally run into build errors related to packages that either failed to download or sometimes out of order builds. The easy solution is to clean the failed package and rerun the build again.
 
 For instance if the build for `zip` failed for some reason, I would run this
 
@@ -255,8 +250,7 @@ The `meta-wandboard/scripts` directory has some helper scripts to format and cop
 
 #### mk2parts.sh
 
-This script will partition an SD card with the minimal 2 partitions required for the boards. The script leaves a 4 MB empty region before the first partition for
-use as explained below.
+This script will partition an SD card with the minimal 2 partitions required for the boards. The script leaves a 4 MB empty region before the first partition for use as explained below.
 
 Insert the microSD into your workstation and note where it shows up.
 
@@ -340,8 +334,7 @@ or
 
 The copy_rootfs.sh script will take longer to run and depends a lot on the quality of your SD card. With a good *Class 10* card it should take less then 30 seconds.
 
-The copy scripts will **NOT** unmount partitions automatically. If an SD card partition is already mounted, the script will complain and abort. This is for
-safety, mine mostly, since I run these scripts many times a day on different machines and the SD cards show up in different places.
+The copy scripts will **NOT** unmount partitions automatically. If an SD card partition is already mounted, the script will complain and abort. This is for safety, mine mostly, since I run these scripts many times a day on different machines and the SD cards show up in different places.
 
 Here's a realistic example session where I want to copy already built images to a second SD card that I just inserted.
 
@@ -355,6 +348,44 @@ Here's a realistic example session where I want to copy already built images to 
 
 Both *copy_boot.sh* and *copy_rootfs.sh* are simple scripts easily modified for custom use.
 
+#### Some custom package examples
+
+[tspress][tspress] is a Qt5 GUI application installed in `/usr/bin` with the *qt5-image*.
+
+The *bitbake recipe* is here
+
+    meta-wandboard/recipes-qt/tspress/tspress.bb
+
+Check the *README* in the [tspress][tspress] repository for usage.
+
+#### Adding additional packages
+
+To display the list of available packages from the `meta-` repositories included in *bblayers.conf*
+
+    scott@fractal:~$ source poky-fido/oe-init-build-env ~/wandboard/build
+
+    scott@fractal:~/wandboard/build$ bitbake -s
+
+Once you have the package name, you can choose to either
+
+1. Add the new package to the `console-image` or `qt5-image`, whichever you are using.
+
+2. Create a new image file and either include the `console-image` the way the `qt5-image` does or create a complete new image recipe. The `console-image` can be used as a template.
+
+The new package needs to get included directly in the *IMAGE_INSTALL* variable or indirectly through another variable in the image file.
+
+#### Customizing the Kernel
+
+See this [article][bbb-kernel] for some ways to go about customizing and rebuilding the *Wandboard* kernel or generating a new device tree. Replace **bbb** with **wandboard** when reading.
+
+#### Package management
+
+The package manager for these systems is *opkg*. The other choices are *rpm* or *apt*. You can change the package manager with the *PACKAGE_CLASSES* variable in `local.conf`.
+
+*opkg* is the most lightweight of the Yocto package managers and the one that builds packages the quickest.
+
+To add or upgrade packages to the system, you might be interested in using the build workstation as a [remote package repository][opkg-repo].
+
 
 [wandboard]: http://www.wandboard.org/
 [meta-wandboard]: https://github.com/jumpnow/meta-wandboard
@@ -367,9 +398,11 @@ Both *copy_boot.sh* and *copy_rootfs.sh* are simple scripts easily modified for 
 [yocto]: https://www.yoctoproject.org/
 [spiloop]: https://github.com/scottellis/spiloop
 [serialecho]: https://github.com/scottellis/serialecho
+[tspress]: https://github.com/scottellis/tspress
 [bbb-kernel]: http://www.jumpnowtek.com/beaglebone/Working-on-the-BeagleBone-kernel.html
 [lsblk]: http://linux.die.net/man/8/lsblk
 [opkg-repo]: http://www.jumpnowtek.com/yocto/Using-your-build-workstation-as-a-remote-package-repository.html
 [bitbake]: https://www.yoctoproject.org/docs/1.8/bitbake-user-manual/bitbake-user-manual.html
 [source-script]: http://stackoverflow.com/questions/4779756/what-is-the-difference-between-source-script-sh-and-script-
 [zeromq]: http://zeromq.org/
+
