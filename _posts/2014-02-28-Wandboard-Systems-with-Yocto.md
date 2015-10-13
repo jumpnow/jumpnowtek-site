@@ -2,14 +2,14 @@
 layout: post
 title: Building Wandboard Systems with Yocto
 description: "Building customized systems for Wandboards using tools from the Yocto Project"
-date: 2015-10-12 19:30:00
+date: 2015-10-13 07:00:00
 categories: wandboard 
 tags: [linux, wandboard, yocto]
 ---
 
 Some notes on building systems for [Wandboards][wandboard] using tools from the [Yocto Project][Yocto].
 
-The [meta-wandboard][meta-wandboard] *layer* described below generates some basic systems with packages to support C, C++, [Qt5][qt], Perl and Python development.
+The [meta-wandboard][meta-wandboard] *layer* generates some basic systems with packages to support C, C++, [Qt5][qt], Perl and Python development.
 
 I use this as a template when starting new *Wandboard* projects.
 

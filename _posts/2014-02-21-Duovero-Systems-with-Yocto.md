@@ -2,14 +2,14 @@
 layout: post
 title: Building Duovero Systems with Yocto
 description: "Building customized systems for Gumstix Duovero using tools from the Yocto Project"
-date: 2015-10-12 19:30:00
+date: 2015-10-13 07:00:00
 categories: gumstix-linux 
 tags: [linux, gumstix, duovero, yocto]
 ---
 
 Some notes on building systems for [Gumstix Duovero][duovero] boards using tools from the [Yocto Project][yocto].
 
-The [meta-duovero][meta-duovero] layer described generates some basic systems with packages to support, C, C++, Qt5, Perl and Python development. 
+The [meta-duovero][meta-duovero] *layer* generates some basic systems with packages to support, C, C++, Qt5, Perl and Python development.
 
 I use this as a template when starting new *Duovero* projects.
 

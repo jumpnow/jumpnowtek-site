@@ -2,14 +2,14 @@
 layout: post
 title: Building BeagleBone Black Systems with Yocto
 description: "Building customized systems for the BeagleBone Black using tools from the Yocto Project"
-date: 2015-10-12 19:30:00
+date: 2015-10-13 07:00:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
 
 Building systems for [BeagleBone Black][beagleboard] boards using tools from the [Yocto Project][Yocto].
 
-The [meta-bbb][meta-bbb] *layer* described below generates some basic systems with packages to support C, C++, [Qt5][qt], Perl and Python development.
+The [meta-bbb][meta-bbb] *layer* generates some basic systems with packages to support C, C++, [Qt5][qt], Perl and Python development.
 
 I use this as a template when starting new *BeagleBone Black* projects.
 
