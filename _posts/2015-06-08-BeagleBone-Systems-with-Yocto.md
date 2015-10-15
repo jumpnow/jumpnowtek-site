@@ -2,7 +2,7 @@
 layout: post
 title: Building BeagleBone Black Systems with Yocto
 description: "Building customized systems for the BeagleBone Black using tools from the Yocto Project"
-date: 2015-10-13 07:00:00
+date: 2015-10-15 08:25:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
@@ -164,13 +164,11 @@ This is where temporary build files and the final build binaries will end up. Ex
 
 The default location is in the `build` directory, in this example `~/bbb/build/tmp`.
 
-If you specify an alternate location as I do in the example conf file make sure the directory is writable by the user running the build. Also because of some `rpath` issues with gcc, the `TMPDIR` path cannot be too short or the gcc build
-will fail. I haven't determined exactly how short is too short, but something like `/oe9` is too short and `/oe9/tmp-poky-fido-build` is long enough.
+If you specify an alternate location as I do in the example conf file make sure the directory is writable by the user running the build. Also because of some `rpath` issues with gcc, the `TMPDIR` path cannot be too short or the gcc build will fail. I haven't determined exactly how short is too short, but something like `/oe9` is too short and `/oe9/tmp-poky-fido-build` is long enough.
 
 ##### DL_DIR
 
-This is where the downloaded source files will be stored. You can share this among configurations and build files so I created a general location for this outside my home directory. Make sure the build user has write permission to the directory
-you decide on.
+This is where the downloaded source files will be stored. You can share this among configurations and build files so I created a general location for this outside my home directory. Make sure the build user has write permission to the directory you decide on.
 
 The default location is in the `build` directory, `~/bbb/build/sources`.
 
@@ -218,7 +216,7 @@ A basic console developer image. See the recipe `meta-bbb/images/console-image.b
     gcc/g++ and associated build tools
     git
     ssh/scp server and client
-    perl and a number of commonly used modules
+    perl and python with a number of modules
 
 The *console-image* has a line
 
@@ -316,11 +314,13 @@ The script also copies a *uEnv.txt* file to the boot partition if it finds one i
 
     <TMPDIR>/deploy/images/beaglebone/
 
-or in the local directory where the script is run from. To get started, you might just want to do this
+or in the local directory where the script is run from.
+
+If you are just starting out, you might just want to do this
 
     scott@octo:~/bbb/meta-bbb/scripts$ cp uEnv.txt-example uEnv.txt
 
-This script needs to know the `TMPDIR` to find the binaries. It looks for an environment variable called `OETMP`.
+This *copy_boot.sh* script needs to know the `TMPDIR` to find the binaries. It looks for an environment variable called `OETMP`.
 
 For instance, if I had this in the `local.conf`
 
@@ -352,10 +352,9 @@ or
 
     scott@octo:~/bbb/meta-bbb/scripts$ ./copy_rootfs.sh sdb qt5 bbb
 
-The copy_rootfs.sh script will take longer to run and depends a lot on the quality of your SD card. With a good *Class 10* card it should take less then 30 seconds.
+The *copy_rootfs.sh* script will take longer to run and depends a lot on the quality of your SD card. With a good *Class 10* card it should take less then 30 seconds.
 
-The copy scripts will **NOT** unmount partitions automatically. If an SD card partition is already mounted, the script will complain and abort. This is for
-safety, mine mostly, since I run these scripts many times a day on different machines and the SD cards show up in different places.
+The copy scripts will **NOT** unmount partitions automatically. If an SD card partition is already mounted, the script will complain and abort. This is for safety, mine mostly, since I run these scripts many times a day on different machines and the SD cards show up in different places.
 
 Here's a realistic example session where I want to copy already built images to a second SD card that I just inserted.
 
@@ -375,8 +374,7 @@ The default behavior of the *BBB* is to boot from the *eMMC* first if it finds a
 
 Holding the **S2** switch down when the bootloader starts will cause the BBB to try booting from the SD card first. The **S2** switch is above the SD card holder.
 
-If you are using a cape, the **S2** switch is usually inaccessible or at least awkward to reach. From the back of the board a temporary jump of **P8.43** to ground when the bootloader starts will do the same thing as holding the **S2**
-switch.
+If you are using a cape, the **S2** switch is usually inaccessible or at least awkward to reach. From the back of the board a temporary jump of **P8.43** to ground when the bootloader starts will do the same thing as holding the **S2** switch.
 
 If you prefer to always boot from the SD card you can erase any existing bootloader from the *eMMC* with something like the following
 
@@ -569,9 +567,7 @@ Once you have the package name, you can choose to either
 
 1. Add the new package to the `console-image` or `qt5-image`, whichever you are using.
 
-2. Create a new image file and either include the `console-image` the way the
-   `qt5-image` does or create a complete new image recipe. The `console-image` can
-   be used as a template.
+2. Create a new image file and either include the `console-image` the way the `qt5-image` does or create a   complete new image recipe. The `console-image` can be used as a template.
 
 The new package needs to get included directly in the *IMAGE_INSTALL* variable or indirectly through another variable in the image file.
 
