@@ -176,8 +176,8 @@ From `spruh73 TRM` Table 11-23 *Direct Mapped*
 ##### Example using crossbar: mmc2 (mmc3 in dts)
 
     &edma {
-        ti,edma-xbar-event-map = <1 12
-                                  2 13>;
+        ti,edma-xbar-event-map = /bits/ 16 <1 12
+                                            2 13>;
     }
 
     &mmc3 {
