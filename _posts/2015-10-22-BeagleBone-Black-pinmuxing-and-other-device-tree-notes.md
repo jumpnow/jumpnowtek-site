@@ -2,7 +2,7 @@
 layout: post
 title: BeagleBone Black pinmuxing and other device tree notes
 description: "References for various dts registers and offsets"
-date: 2015-10-22 13:12:00
+date: 2015-10-22 16:00:00
 categories: beaglebone
 tags: [linux, beaglebone, device tree]
 ---
@@ -117,7 +117,9 @@ From `spruh73 TRM` Table 9-7
 
 ## DMA Event Channels
 	
-EDMA event definitions come from the `spruh73 TRM` Section 11.3.20, Table 11-23 Direct Mapped
+EDMA event definitions come from the `spruh73 TRM` Section 11.3.20, Table 11-23 *Direct Mapped* and Table 11-24 *Crossbar Mapped*.
+
+Section 9.2.3 `EDMA Event Multiplexing` explains the purpose of the *Crossbar Mapped* table.
 
 ##### Example: mmc0 (mmc1 in dts)
 
@@ -138,7 +140,7 @@ From `am33xx.dtsi`
         status = "disabled";
     };
 
-From `spruh73 TRM` Table 11-23
+From `spruh73 TRM` Table 11-23 *Direct Mapped*
 
 	24	SDTXEVT0	MMCHS0
 	25	SDRXEVT0	MMCHS0
@@ -164,13 +166,38 @@ From `am33xx.dtsi`
         status = "disabled";
     };
 
-From `spruh73 TRM` Table 11-23
+From `spruh73 TRM` Table 11-23 *Direct Mapped*
 
 	16	SPIXEVT0	MCSPI0
 	17	SPIREVT0	MCSPI0
 	18	SPIXEVT1	MCSPI0
 	19	SPIREVT1	MCSPI0
 	
+##### Example using crossbar: mmc2 (mmc3 in dts)
+
+    &edma {
+        ti,edma-xbar-event-map = <1 12
+                                  2 13>;
+    }
+
+    &mmc3 {
+        ...
+        dmas = <&edma 12
+                &edma 13>;
+        dma-names = "tx", "rx";
+        ...
+    };
+
+From `spruh73 TRM` Table 11-24 *Crossbar Mapped*
+
+    1	SDTXEVT2	MMCHS2
+	2	SDRXEVT2	MMCHS2
+
+and from `spruh73 TRM` Table 11-23 *Direct Mapped*
+
+    12	Open	Open
+    13	Open	Open
+
 
 ## Interrupts
 	
