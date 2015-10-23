@@ -2,7 +2,7 @@
 layout: post
 title: BeagleBone Black U-Boot
 description: "Some working notes on U-Boot for the BeagleBone Black"
-date: 2015-07-24 13:43:00
+date: 2015-10-23 09:45:00
 categories: beaglebone 
 tags: [linux, beaglebone, uboot]
 ---
@@ -253,11 +253,13 @@ At first just the header to find the proper load address. Then a second read tha
 
 So it's a little confusing to see *two* reads of *u-boot.img* in the log, but probably not worth removing.
 
-# What are those /dev/mmcblkboot partitions?
+# What are those /dev/mmcblkXbootY partitions?
 
 A couple of strange partitions show up on the *eMMC*.
 
-They look like this booting from an SD card
+There is some information about them in the *Linux* docs: [Documentation/mmc/mmc-dev-parts.txt][mmc-dev-parts]
+
+The partitions look like this booting from an SD card
 
         root@bbb:~# ls -l /dev/mmc*
         brw-rw---- 1 root disk 179,  0 Jul 20 04:15 /dev/mmcblk0
@@ -318,10 +320,7 @@ I've cleared mine already.
         *
         00200000
 
-Normally these partitions are read-only in Linux
-
-        root@beaglebone:~# whoami
-        root
+Normally these partitions are read-only
 
         root@beaglebone:~# dd if=/dev/zero of=/dev/mmcblk0boot0 bs=512 count=8
         dd: error writing '/dev/mmcblk0boot0': Operation not permitted
@@ -335,25 +334,17 @@ Normally these partitions are read-only in Linux
         0+0 records out
         0 bytes (0 B) copied, 0.00962403 s, 0.0 kB/s
 
+But you can disable the read-only behavior using the sysfs interface
 
-A small patch to a `4.1` Linux kernel makes them writable so I can clear them with `dd` for the following tests.
+For `mmcblk1boot0`
 
-        diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
-        index f36c76f..f212eec 100644
-        --- a/drivers/mmc/core/mmc.c
-        +++ b/drivers/mmc/core/mmc.c
-        @@ -417,7 +417,7 @@ static int mmc_decode_ext_csd(struct mmc_card *card, u8 *ext_csd)
-                                        part_size = ext_csd[EXT_CSD_BOOT_MULT] << 17;
-                                        mmc_part_add(card, part_size,
-                                        EXT_CSD_PART_CONFIG_ACC_BOOT0 + idx,
-        -                                       "boot%d", idx, true,
-        +                                       "boot%d", idx, false,
-                                                MMC_BLK_DATA_AREA_BOOT);
-                                }
-                        }
+        root@bbb:~# echo 0 > /sys/block/mmcblk1boot0/force_ro
 
+or for `mmcblk1boot1`
 
-And here I've booted a kernel from an SD card with the above patch so `dd` now works.
+        root@bbb:~# echo 0 > /sys/block/mmcblk1boot1/force_ro
+
+And after that the partitions are writable and `dd` works.
 
         root@bbb:~# dd if=/dev/zero of=/dev/mmcblk1boot0 bs=512 count=8
         8+0 records in
@@ -365,6 +356,7 @@ And here I've booted a kernel from an SD card with the above patch so `dd` now w
         8+0 records out
         4096 bytes (4.1 kB) copied, 0.110132 s, 37.2 kB/s
 
+The sysfs *read-only* override does not persist across reboots.
 
 If you run *saveenv* from the u-boot prompt
 
@@ -414,3 +406,4 @@ TO BE CONTINUED...
 [meta-bbb]: https://github.com/jumpnow/meta-bbb
 [bbb-yocto]: http://www.jumpnowtek.com/beaglebone/BeagleBone-Systems-with-Yocto.html
 [bbb-kernel-work]: http://www.jumpnowtek.com/beaglebone/Working-on-the-BeagleBone-kernel.html
+[mmc-dev-parts]: https://git.kernel.org/cgit/linux/kernel/git/stable/linux-stable.git/tree/Documentation/mmc/mmc-dev-parts.txt?id=refs/tags/v4.2.4
