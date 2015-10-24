@@ -2,7 +2,7 @@
 layout: post
 title: Building Duovero Systems with Yocto
 description: "Building customized systems for Gumstix Duovero using tools from the Yocto Project"
-date: 2015-10-23 12:52:00
+date: 2015-10-24 06:35:00
 categories: gumstix-linux 
 tags: [linux, gumstix, duovero, yocto]
 ---
@@ -68,7 +68,7 @@ There is a Qt5 test program [tspress][tspress] in the *qt5-image*.
 
 ### Ubuntu Packages
 
-I have been using *Ubuntu 15.04* 64-bit workstations to build these systems.
+I have been using *Ubuntu 15.04* and *15.10* 64-bit workstations to build these systems.
 
 You'll need at least the following packages installed
 
@@ -101,12 +101,12 @@ Then the `meta-openembedded` repository
     scott@octo:~$ cd poky-fido
     scott@octo:~/poky-fido$ git clone -b fido git://git.openembedded.org/meta-openembedded
 
-And `meta-qt5` repository
+And the `meta-qt5` repository
 
     scott@octo:~/poky-fido$ git clone -b fido https://github.com/meta-qt5/meta-qt5.git
 
 
-I keep these repositories separated since they can be shared between projects and different boards.
+I usually keep these repositories separated since they can be shared between projects and different boards.
 
 ### Clone the meta-duovero repository
 

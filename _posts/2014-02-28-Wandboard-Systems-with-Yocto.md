@@ -2,7 +2,7 @@
 layout: post
 title: Building Wandboard Systems with Yocto
 description: "Building customized systems for Wandboards using tools from the Yocto Project"
-date: 2015-10-23 11:45:00
+date: 2015-10-24 06:35:00
 categories: wandboard 
 tags: [linux, wandboard, yocto]
 ---
@@ -42,7 +42,7 @@ The following device tree binaries (dtbs) from the *linux-stable* repository are
 
 ### Ubuntu Workstation Setup
 
-I have been using *Ubuntu 15.04* 64-bit workstations to build these systems.
+I have been using *Ubuntu 15.04* and *15.10* 64-bit workstations to build these systems.
 
 You will need at least the following packages installed
 
@@ -75,7 +75,7 @@ Then the `meta-openembedded` repository
     scott@fractal:~$ cd poky-fido
     scott@fractal:~/poky-fido$ git clone -b fido git://git.openembedded.org/meta-openembedded
 
-And `meta-qt5` repository
+And the `meta-qt5` repository
 
     scott@fractal:~/poky-fido$ git clone -b fido https://github.com/meta-qt5/meta-qt5.git
 
