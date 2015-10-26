@@ -2,7 +2,7 @@
 layout: post
 title: Building BeagleBone Black Systems with Yocto
 description: "Building customized systems for the BeagleBone Black using tools from the Yocto Project"
-date: 2015-10-24 06:32:00
+date: 2015-10-26 16:30:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
@@ -54,16 +54,17 @@ I have been using *Ubuntu 15.04* and *15.10* 64-bit workstations to build these 
 
 You will need at least the following packages installed
 
+    bc
     build-essential
-    git
-    pkg-config
+    chrpath
     diffstat
+    gawk
+    git
+    libncurses5-dev
+    pkg-config
+    subversion
     texi2html
     texinfo
-    gawk
-    chrpath
-    subversion
-    libncurses5-dev
     u-boot-tools
 
 You also want to change the default Ubuntu shell from `dash` to `bash` by running this command from a shell
