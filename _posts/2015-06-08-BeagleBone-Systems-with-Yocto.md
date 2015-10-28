@@ -2,7 +2,7 @@
 layout: post
 title: Building BeagleBone Black Systems with Yocto
 description: "Building customized systems for the BeagleBone Black using tools from the Yocto Project"
-date: 2015-10-26 16:30:00
+date: 2015-10-28 10:30:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
@@ -18,7 +18,7 @@ I use this as a template when starting new *BeagleBone Black* projects.
 
 The Yocto version is `1.8.1` the `[fido]` branch.
 
-The `4.2.4` Linux kernel comes from the [linux-stable][linux-stable] repository.
+The `4.2.5` Linux kernel comes from the [linux-stable][linux-stable] repository.
 
 The [u-boot][uboot] version is `2015.07`.
 
@@ -178,7 +178,7 @@ The default location is in the `build` directory, `~/bbb/build/sources`.
 This is another Yocto build directory that can get pretty big, greater then 5GB. I often put this somewhere else other then my home directory as well.
 
 The default location is in the `build` directory, `~/bbb/build/sstate-cache`.
- 
+
 ### Run the build
 
 You need to [source][source-script] the Yocto environment into your shell before you can use [bitbake][bitbake]. The `oe-init-build-env` will not overwrite your customized conf files.
