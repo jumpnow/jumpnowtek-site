@@ -2,7 +2,7 @@
 layout: post
 title: Building Wandboard Systems with Yocto
 description: "Building customized systems for Wandboards using tools from the Yocto Project"
-date: 2015-11-02 03:20:00
+date: 2015-11-10 06:48:00
 categories: wandboard 
 tags: [linux, wandboard, yocto]
 ---
@@ -15,7 +15,7 @@ I use this as a template when starting new *Wandboard* projects.
 
 ### System Info
 
-The Yocto version is `1.8.1` the `[fido]` branch.
+The Yocto version is `2.0` the `[jethro]` branch.
 
 The `4.3` Linux kernel comes from the [linux-stable][linux-stable] repository.
 
@@ -23,13 +23,13 @@ The [u-boot][uboot] version is `2015.07`.
 
 These are **sysvinit** systems.
 
-The Qt version is `5.4.2`. There is no *X11* and no desktop installed. [Qt][qt] GUI applications can be run using the `-platform linuxfb` switch.
+The Qt version is `5.5.1`. There is no *X11* and no desktop installed. [Qt][qt] GUI applications can be run using the `-platform linuxfb` switch.
 
 A light-weight *X11* desktop can be added with minimal changes to the build configuration. (*X11* is needed to run Java GUI apps.)
 
-[ZeroMQ][zeromq] version `4.0.4` with development headers and libs is included.
+[ZeroMQ][zeromq] version `4.1.3` with development headers and libs is included.
 
-Perl `5.20` and Python `2.7.9` each with a number of modules is included.
+Perl `5.22` and Python `2.7.9` each with a number of modules is included.
 
 The following device tree binaries (dtbs) from the *linux-stable* repository are built and installed
 
@@ -69,16 +69,16 @@ Choose **No** to dash when prompted.
 
 First the main Yocto project `poky` repository
 
-    scott@fractal:~ git clone -b fido git://git.yoctoproject.org/poky.git poky-fido
+    scott@fractal:~ git clone -b jethro git://git.yoctoproject.org/poky.git poky-jethro
 
 Then the `meta-openembedded` repository
 
-    scott@fractal:~$ cd poky-fido
-    scott@fractal:~/poky-fido$ git clone -b fido git://git.openembedded.org/meta-openembedded
+    scott@fractal:~$ cd poky-jethro
+    scott@fractal:~/poky-jethro$ git clone -b jethro git://git.openembedded.org/meta-openembedded
 
 And the `meta-qt5` repository
 
-    scott@fractal:~/poky-fido$ git clone -b fido https://github.com/meta-qt5/meta-qt5.git
+    scott@fractal:~/poky-jethro$ git clone -b jethro https://github.com/meta-qt5/meta-qt5.git
 
 
 I usually keep these repositories separated since they can be shared between projects and different boards.
@@ -89,7 +89,7 @@ Create a sub-directory for the `meta-wandboard` repository before cloning
 
     scott@octo:~$ mkdir ~/wandboard
     scott@octo:~$ cd ~/wanboard
-    scott@octo:~/wandboard$ git clone -b fido git://github.com/jumpnow/meta-wandboard
+    scott@octo:~/wandboard$ git clone -b jethro git://github.com/jumpnow/meta-wandboard
 
 The `meta-wandboard/README.md` file has the last commits from the dependency repositories that I tested. You can always checkout those commits explicitly if you run into problems.
 
@@ -106,7 +106,7 @@ You could manually create the directory structure like this
 
 Or you could use the *Yocto* environment script `oe-init-build-env` like this passing in the path to the build directory
 
-    scott@fractal:~$ source poky-fido/oe-init-build-env ~/wandboard/build
+    scott@fractal:~$ source poky-jethro/oe-init-build-env ~/wandboard/build
 
 The *Yocto* environment script will create the build directory if it does not already exist.
  
@@ -131,7 +131,7 @@ In `bblayers.conf` file replace `${HOME}` with the appropriate path to the meta-
 For example, if your directory structure does not look exactly like this, you will need to modify `bblayers.conf`
 
 
-    ~/poky-fido/
+    ~/poky-jethro/
          meta-openembedded/
          meta-qt5/
          ...
@@ -159,7 +159,7 @@ This is where temporary build files and the final build binaries will end up. Ex
 The default location is in the `build` directory, in this example `~/wandboard/build/tmp`.
 
 If you specify an alternate location as I do in the example conf file make sure the directory is writable by the user running the build. Also because of some `rpath` issues with gcc, the `TMPDIR` path cannot be too short or the gcc build will fail. I haven't determined exactly how short is too short, but something
-like `/oe9` is too short and `/oe9/tmp-poky-fido-build` is long enough.
+like `/oe9` is too short and `/oe9/tmp-poky-jethro-build` is long enough.
 
 ##### DL_DIR
 
@@ -178,7 +178,7 @@ The default location is in the `build` directory, `~/wandboard/build/sstate-cach
 You need to [source][source-script] the Yocto environment into your shell before you can use [bitbake][bitbake]. The `oe-init-build-env` will not overwrite your
 customized conf files.
 
-    scott@fractal:~$ source poky-fido/oe-init-build-env ~/wandboard/build
+    scott@fractal:~$ source poky-jethro/oe-init-build-env ~/wandboard/build
 
     ### Shell environment set up for builds. ###
 
@@ -219,7 +219,7 @@ The *console-image* has a line
 
     inherit core-image
 
-which is `poky-fido/meta/classes/core-image.bbclass` and pulls in some required base packages.  This is useful to know if you create your own image recipe.
+which is `poky-jethro/meta/classes/core-image.bbclass` and pulls in some required base packages.  This is useful to know if you create your own image recipe.
 
 #### qt5-image
 
@@ -313,11 +313,11 @@ This script needs to know the `TMPDIR` to find the binaries. It looks for an env
 
 For instance, if I had this in the `local.conf`
 
-    TMPDIR = "/oe9/tmp-poky-fido-build"
+    TMPDIR = "/oe9/tmp-poky-jethro-build"
 
 Then I would export this environment variable before running `copy_boot.sh`
 
-    scott@fractal:~/wandboard/meta-wandboard/scripts$ export OETMP=/oe9/tmp-poky-fido-build
+    scott@fractal:~/wandboard/meta-wandboard/scripts$ export OETMP=/oe9/tmp-poky-jethro-build
 
 Then run the `copy_boot.sh` script passing the location of SD card
 
@@ -349,7 +349,7 @@ Here's a realistic example session where I want to copy already built images to 
 
     scott@fractal:~$ sudo umount /dev/sdb1
     scott@fractal:~$ sudo umount /dev/sdb2
-    scott@fractal:~$ export OETMP=/oe9/tmp-poky-fido-build
+    scott@fractal:~$ export OETMP=/oe9/tmp-poky-jethro-build
     scott@fractal:~$ cd wandboard/meta-wandboard/scripts
     scott@fractal:~/wandboard/meta-wandboard/scripts$ ./copy_boot.sh sdb
     scott@fractal:~/wandboard/meta-wandboard/scripts$ ./copy_rootfs.sh sdb console wandq2
@@ -371,7 +371,7 @@ Check the *README* in the [tspress][tspress] repository for usage.
 
 To display the list of available packages from the `meta-` repositories included in *bblayers.conf*
 
-    scott@fractal:~$ source poky-fido/oe-init-build-env ~/wandboard/build
+    scott@fractal:~$ source poky-jethro/oe-init-build-env ~/wandboard/build
 
     scott@fractal:~/wandboard/build$ bitbake -s
 
@@ -398,8 +398,6 @@ To add or upgrade packages to the system, you might be interested in using the b
 
 [wandboard]: http://www.wandboard.org/
 [meta-wandboard]: https://github.com/jumpnow/meta-wandboard
-[meta-fsl-arm]: https://github.com/freescale/meta-fsl-arm
-[meta-fsl-arm-extra]: https://github.com/freescale/meta-fsl-arm-extra
 [zeromq]: http://zeromq.org/
 [linux-stable]: https://www.kernel.org/
 [uboot]: http://www.denx.de/wiki/U-Boot/WebHome
