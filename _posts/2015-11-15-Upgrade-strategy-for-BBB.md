@@ -41,7 +41,6 @@ I'm making some assumptions that might be more restrictive then necessary.
 6. The *eMMC* has already been partitioned appropriately with some initial install scripts.
 7. The upgrade is allowed to modify files on a fourth partition of the *eMMC*.
 8. There is temporary space available on some writable partition of the *eMMC* for the compressed tarball.
-
 9. No modifications to standard *u-boot*.
 
 If possible I would like to stay with an unmodified mainstream u-boot.
@@ -50,7 +49,9 @@ If possible I would like to stay with an unmodified mainstream u-boot.
 
 An actual implementation will have to handle the downloading and validation of the new *rootfs* tarball.
 
-The new image file might be coming from a USB drive the user inserted or it could be coming over the network. System upgrades might happen automatically or they might be user initiated.
+The new image file might be coming from a USB drive or it could be coming over the network.
+
+System upgrades might happen automatically or they might be user initiated.
 
 There also needs to be some sort of validation that the image file is not corrupted (a checksum) and that the image is appropriate for this system.
 
@@ -91,10 +92,12 @@ There are some subtleties to be handled, but nothing too difficult.
 
 TODO: Insert script when it's cleaned up
 
-Installing the *rootfs* from a tarball once we know the partition is 2 steps
+Installing the *rootfs* from a tarball once we know the partition is four steps
 
-1. Format the partition as ext4 to erase what was there previously
-2. Untar the new *rootfs*
+1. Format the partition as ext4
+2. Mount the partition at a temporary location
+3. Untar the new *rootfs*
+4. Unmount the partition
 
 The actual code will be something like this (without any error handling)
 
