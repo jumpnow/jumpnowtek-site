@@ -31,6 +31,8 @@ So there is plenty of space on the BBB *eMMC* to support this multiple *rootfs* 
 
 ### Assumptions
 
+I'm making some assumptions that might be more restrictive then necessary.
+
 1. The upgrade is a full *rootfs* upgrade, not just select packages using a package manager.
 2. The system is currently running off the *eMMC*.
 3. The running *rootfs* will be the fallback if the upgrade fails.
@@ -42,16 +44,17 @@ So there is plenty of space on the BBB *eMMC* to support this multiple *rootfs* 
 
 9. No modifications to standard *u-boot*.
 
+If possible I would like to stay with an unmodified mainstream u-boot.
 
 ### Downloading
 
 An actual implementation will have to handle the downloading and validation of the new *rootfs* tarball.
 
-I'm going to skip over this part since the details will be project specific. 
-
-For instance, the image file might be coming from a USB drive the user inserted or it could be coming over the network. System upgrades might happen automatically or they might be user initiated.
+The new image file might be coming from a USB drive the user inserted or it could be coming over the network. System upgrades might happen automatically or they might be user initiated.
 
 There also needs to be some sort of validation that the image file is not corrupted (a checksum) and that the image is appropriate for this system.
+
+I'm going to skip over this part since the details will be project specific. 
 
 ### Implementation
 
