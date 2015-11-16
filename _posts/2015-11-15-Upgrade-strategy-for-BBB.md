@@ -2,7 +2,7 @@
 layout: post
 title: Upgrading BeagleBone Black Systems
 description: "Implementing a simple upgrade strategy for deployed BBB systems"
-date: 2015-11-16 10:50:00
+date: 2015-11-16 11:16:00
 categories: beaglebone 
 tags: [linux, beaglebone, upgrade]
 ---
@@ -165,11 +165,11 @@ Those two variables have defaults that specify `/dev/mmcblk0p2` as the *rootfs*.
 2. The two `/dev/mmcblkboot` partitions on the *eMMC* seem ideal for placing the *flag* file instead of a fifth partition.
  
   * Can the `/dev/mmcblkboot` partitions be accessed from the u-boot *Hush* shell?
-  * Can we format the `/dev/mmcblkboot` partitions as ext4 or FAT?
+  * Can we format the `/dev/mmcblkboot` partitions as ext4 or FAT so we can test for a file using the shell?
 
-3. `uEnv.txt` could add some checks so that if it doesn't find a kernel or *dtb* on the partition it thinks it should boot from it can automatically fall back to the other partition.
+3. `uEnv.txt` could add some checks so that if it doesn't find a kernel or *dtb* on the partition it is supposed to boot from it will automatically fall back to the other partition.
 
-4. How does the user revert to the older rootfs if the new kernel loads but the systems doesn't finish booting for some reason?
+4. How does the user revert to the older rootfs if the new kernel loads but the system doesn't finish booting for some other reason?
 
 [hush]: http://www.denx.de/wiki/view/DULG/CommandLineParsing#Section_14.2.17.2.
  
