@@ -2,7 +2,7 @@
 layout: post
 title: Upgrading BeagleBone Black Systems
 description: "Implementing a simple upgrade strategy for deployed BBB systems"
-date: 2015-11-16 11:16:00
+date: 2015-11-18 17:46:00
 categories: beaglebone 
 tags: [linux, beaglebone, upgrade]
 ---
@@ -17,17 +17,16 @@ The core idea is that there will be two *rootfs* partitions, one active and pote
 
 The upgrade will mount and install the new *rootfs* on the non-active partition and then make whatever changes are necessary to let the bootloader know which partition to use on the next boot. 
 
-BBB projects I work on tend to be small, dedicated systems.
-
 The current Rev C BBBs have a 4GB *eMMC*. Older revisions had a 2GB *eMMC*, but since projects I'm working on assume a Rev C. That's what I'll do here. 
 
-The largest BBB system I've worked on included an X11 desktop to support a full-screen Java GUI application. The distributable image file for that project was less then *80MB* as a compressed tarball. 
+BBB projects I work on tend to be small, dedicated systems.
 
-That's not unreasonable for a network download.
+The largest BBB system I've worked on included an X11 desktop to support a full-screen Java GUI application. 
+The uncompressed image was under *250MB* as a running system.
 
-Uncompressed that X11/Java image was under *250MB* as a running system.
+There is enough space on the BBB *eMMC* to support a multiple *rootfs* strategy.
 
-So there is plenty of space on the BBB *eMMC* to support this multiple *rootfs* strategy.
+The distributable image file for that project was less then *80MB* as a compressed tarball making full image network downloads reasonable.
 
 ### Assumptions
 
@@ -38,10 +37,11 @@ I'm making some assumptions that might be more restrictive then necessary.
 3. The running *rootfs* will be the fallback if the upgrade fails.
 4. The running *rootfs* is **read-only**.
 5. The *boot* partition is **read-only**.
-6. The *eMMC* has already been partitioned appropriately with some initial install scripts.
+6. The *eMMC* has already been partitioned appropriately with some initial install scripts run from an SD card boot.
 7. The upgrade is allowed to modify files on a fourth partition of the *eMMC*.
 8. There is temporary space available on some writable partition of the *eMMC* for the compressed tarball.
-9. No modifications to standard *u-boot*.
+9. Require only the [BusyBox][busybox] *Ash* shell and some basic disk utilities, no *Bash*, *Perl* or *Python*.
+10. No modifications to standard *u-boot*.
 
 If possible I would like to stay with an unmodified mainstream u-boot.
 
@@ -63,19 +63,21 @@ I'm going to skip over this part since the details will be project specific.
 
 Here's a potential partitioning 
  
-    root@beaglebone:~# fdisk -l /dev/mmcblk0
+    root@bbb:~/emmc# fdisk -l /dev/mmcblk0
     Disk /dev/mmcblk0: 3.7 GiB, 3925868544 bytes, 7667712 sectors
     Units: sectors of 1 * 512 = 512 bytes
     Sector size (logical/physical): 512 bytes / 512 bytes
     I/O size (minimum/optimal): 512 bytes / 512 bytes
     Disklabel type: dos
-    Disk identifier: 0xc9abb9c2
+    Disk identifier: 0x32e05668
     
     Device         Boot   Start     End Sectors  Size Id Type
     /dev/mmcblk0p1 *        128  131071  130944   64M  c W95 FAT32 (LBA)
     /dev/mmcblk0p2       131072 2228223 2097152    1G 83 Linux
     /dev/mmcblk0p3      2228224 4325375 2097152    1G 83 Linux
-    /dev/mmcblk0p4      4325376 7667711 3342336  1.6G 83 Linux
+    /dev/mmcblk0p4      4325376 7667711 3342336  1.6G  5 Extended
+    /dev/mmcblk0p5      4327424 4458495  131072   64M  c W95 FAT32 (LBA)
+    /dev/mmcblk0p6      4460544 7667711 3207168  1.5G 83 Linux
 
 
 The two *rootfs* partitions for this system would be `/dev/mmcblk0p2` and `/dev/mmcblk0p3`.
@@ -90,8 +92,6 @@ Some things to check
 
 There are some subtleties to be handled, but nothing too difficult.
 
-TODO: Insert script when it's cleaned up
-
 Installing the *rootfs* from a tarball once we know the partition is four steps
 
 1. Format the partition as ext4
@@ -102,7 +102,7 @@ Installing the *rootfs* from a tarball once we know the partition is four steps
 The actual code will be something like this (without any error handling)
 
     # mkfs.ext4 -q <new-root-partition>
-    # mount <new-root-partition> /media
+    # mount <new-root-partition> /mnt
     # tar -C /media -xJf <image-file>.tar.xz
     # umount <new-root-partition>
 
@@ -110,76 +110,106 @@ Additional data from the current *rootfs* might want to be copied over to the ne
 
 The final step is updating the bootloader so that it knows about the new *rootfs*.
 
-A `uEnv.txt` bootloader command file is used with BBB systems to customize the boot process. 
+A `uEnv.txt` bootloader command file is typically used with BBB systems to customize the boot process. 
 
 The `uEnv.txt` file lets you specify the kernel and *dtb* and allows passing parameters to the kernel including the type and location of the *rootfs*.
 
-The `uEnv.txt` file is located on the boot partition of the *eMMC* which according to *Assumption 5* is to be considered **read-only**. So we can't modify `uEnv.txt`.
+The `uEnv.txt` file is located on the boot partition of the *eMMC* which according to *Assumption 5* is to be considered **read-only**. So we can't modify `uEnv.txt` directly.
 
-But *u-boot* runs a [Hush][hush] shell that lets us do some simple scripting. 
+*u-boot* runs a [Hush][hush] shell that lets us do some simple scripting. 
 
-One of the things we can do in the u-boot shell is test for file existence. We can use this for the boolean choice of using partition 2 or 3 for the *rootfs*.
+Some of the things that can be done with the *u-boot* shell
 
-For this example, assuming `/dev/mmcblk0p4` is mounted as `/data`, the test file might be something like
+* Test whether a file exists on FAT or Linux ext partitions
+* Create new files on a FAT partition
 
-    /data/active_root/three
+What cannot be done
 
-If `uEnv.txt` sees this file it will use `/dev/mmcblk0p3` as the *rootfs*, otherwise it will use `/dev/mmcblk0p2`.
+* Delete or rename a file on any type of partition
 
-Here is a sample `uEnv.txt` that does this
+The plan is to use a small dedicated partition `/dev/mmcblk0p5` formatted as FAT for some flag files for u-boot. I'm going to call this the **flags** partition.
 
-    rootpart=1:2
-    bootdir=/boot
-    mmcroot=/dev/mmcblk0p2 ro
-    mmcrootfstype=ext4 rootwait
-    bootfile=zImage
-    console=ttyO0,115200n8
-    fdtaddr=0x88000000
-    fdtfile=bbb-nohdmi.dtb
-    loadaddr=0x82000000
-    optargs=consoleblank=0
-    mmcargs=setenv bootargs console=${console} ${optargs} root=${mmcroot} rootfstype=${mmcrootfstype}
-    findrootpart=if test -e mmc 1:4 /active_root/three; then setenv rootpart 1:3; setenv mmcroot /dev/mmcblk0p3 ro; fi;
-    loadfdt=load mmc ${rootpart} ${fdtaddr} ${bootdir}/${fdtfile}
-    loadimage=load mmc ${rootpart} ${loadaddr} ${bootdir}/${bootfile}
-    uenvcmd=run findrootpart; if run loadfdt; then echo Loaded ${fdtfile}; if run loadimage; then run mmcargs; bootz ${loadaddr} - ${fdtaddr}; fi; fi;
- 
+There will be at most three flag files at any one time.
 
-The test is *findrootpart*.
+If `/dev/mmcblk0p2` is the *rootfs*, the files would be
 
-    findrootpart= \
-        if test -e mmc 1:4 /active_root/three; then \
-            setenv rootpart 1:3; \
-            setenv mmcroot /dev/mmcblk0p3 ro; \
-        fi; \
+    two
+    two_tried
+    two_success
 
-The variables that have to get modified are
+or if `/dev/mmcblk0p3` is the *rootfs*, they would be
 
-* *rootpart* - the root partition as u-boot sees it
-* *mmcroot* - the root partition to pass to the kernel
+    three
+    three_tried
+    three_success
 
 
-Those two variables have defaults that specify `/dev/mmcblk0p2` as the *rootfs*.
+Here's how the **flags** partition will be managed.
+
+The upgrade script will wipe all files on the **flags** partition, make sure it's formatted as FAT and write a single file either `two` or `three` depending on the new *rootfs*.
+
+The u-boot script will use an algorithm like this to choose the u-boot partition to use for the *rootfs* on this boot.
+
+All file operations done on the FAT formatted **flags** partition
+
+    if test -e two then
+        if test -e two_success then
+            boot two
+        elif test -e two_tried then
+            boot three
+        else
+            write two_tried
+            boot two
+    else test -e three then
+        if test -e three_success then
+            boot three
+        elif test -e three_tried
+            boot two
+        else
+            write three_tried
+            boot three
+
+If this is the first time trying this *rootfs* partition a flag file '_tried' is written so the **flags** partition is not repeatedly used if it is failing for some reason.
+
+Linux will run a pseudo code script like this sometime before shutdown to ensure that a '_success' file is written to the **flags** partition for the next boot.
+
+    mount /dev/mmcblk0p5 on /mnt
+
+    if <current rootfs is /dev/mmcblk0p2> then
+        if [ ! -e /mnt/two ]; then
+            touch /mnt/two
+        fi
+
+        if [ ! -e /mnt/two_success ]; then
+            touch /mnt/two_success
+        fi
+
+        rm -rf /mnt/three*
+    else
+        if [ ! -e /mnt/three ]; then
+            touch /mnt/three
+        fi
+	
+     if [ ! -e /mnt/three_success ]; then
+            touch /mnt/three_success
+        fi
+	
+        rm -rf /mnt/two*
+    fi
+
+    umount /dev/mmcblk0p5
+
 
 ### Issues / Improvements / TODOs
 
-1. The fourth partition is likely also used as the `/data` partition for applications and is subject to getting filled or corrupted. Maybe a 5 partition scheme makes more sense.
+1. `uEnv.txt` could add some additional checks so that if it doesn't find a kernel or *dtb* on the partition it is supposed to boot from it will automatically fall back to the other partition. This is really the job of the upgrade script though.
 
 2. The two `/dev/mmcblkboot` partitions on the *eMMC* seem ideal for placing the *flag* file instead of a fifth partition.
  
   * Can the `/dev/mmcblkboot` partitions be accessed from the u-boot *Hush* shell?
   * Can we format the `/dev/mmcblkboot` partitions as ext4 or FAT so we can test for a file using the shell?
 
-3. `uEnv.txt` could add some checks so that if it doesn't find a kernel or *dtb* on the partition it is supposed to boot from it will automatically fall back to the other partition.
 
-4. How does the user revert to the older rootfs if the new kernel loads but the system doesn't finish booting for some other reason?
-
+[busybox]: https://en.wikipedia.org/wiki/BusyBox
 [hush]: http://www.denx.de/wiki/view/DULG/CommandLineParsing#Section_14.2.17.2.
- 
-
-    
-
-
-
-
 
