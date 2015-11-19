@@ -2,7 +2,7 @@
 layout: post
 title: Upgrading BeagleBone Black Systems
 description: "Implementing a simple upgrade strategy for deployed BBB systems"
-date: 2015-11-18 17:46:00
+date: 2015-11-19 09:10:00
 categories: beaglebone 
 tags: [linux, beaglebone, upgrade]
 ---
@@ -55,7 +55,7 @@ System upgrades might happen automatically or they might be user initiated.
 
 There also needs to be some sort of validation that the image file is not corrupted (a checksum) and that the image is appropriate for this system.
 
-I'm going to skip over this part since the details will be project specific. 
+I'm going to skip over this part since those kinds of details tend to be project specific. 
 
 ### Implementation
 
@@ -63,21 +63,21 @@ I'm going to skip over this part since the details will be project specific.
 
 Here's a potential partitioning 
  
-    root@bbb:~/emmc# fdisk -l /dev/mmcblk0
-    Disk /dev/mmcblk0: 3.7 GiB, 3925868544 bytes, 7667712 sectors
+    root@bbb:~/emmc# fdisk -l /dev/mmcblk1
+    Disk /dev/mmcblk1: 3.7 GiB, 3925868544 bytes, 7667712 sectors
     Units: sectors of 1 * 512 = 512 bytes
     Sector size (logical/physical): 512 bytes / 512 bytes
     I/O size (minimum/optimal): 512 bytes / 512 bytes
     Disklabel type: dos
-    Disk identifier: 0x32e05668
+    Disk identifier: 0xc3617200
     
     Device         Boot   Start     End Sectors  Size Id Type
-    /dev/mmcblk0p1 *        128  131071  130944   64M  c W95 FAT32 (LBA)
-    /dev/mmcblk0p2       131072 2228223 2097152    1G 83 Linux
-    /dev/mmcblk0p3      2228224 4325375 2097152    1G 83 Linux
-    /dev/mmcblk0p4      4325376 7667711 3342336  1.6G  5 Extended
-    /dev/mmcblk0p5      4327424 4458495  131072   64M  c W95 FAT32 (LBA)
-    /dev/mmcblk0p6      4460544 7667711 3207168  1.5G 83 Linux
+    /dev/mmcblk1p1 *        128  131199  131072   64M  c W95 FAT32 (LBA)
+    /dev/mmcblk1p2       133120 2230271 2097152    1G 83 Linux
+    /dev/mmcblk1p3      2230272 4327423 2097152    1G 83 Linux
+    /dev/mmcblk1p4      4327424 7667711 3340288  1.6G  5 Extended
+    /dev/mmcblk1p5      4329472 4460543  131072   64M  c W95 FAT32 (LBA)
+    /dev/mmcblk1p6      4462592 7667711 3205120  1.5G 83 Linux
 
 
 The two *rootfs* partitions for this system would be `/dev/mmcblk0p2` and `/dev/mmcblk0p3`.
@@ -135,43 +135,95 @@ If `/dev/mmcblk0p2` is the *rootfs*, the files would be
 
     two
     two_tried
-    two_success
+    two_ok
 
 or if `/dev/mmcblk0p3` is the *rootfs*, they would be
 
     three
     three_tried
-    three_success
+    three_ok
 
 
-Here's how the **flags** partition will be managed.
+The upgrade script will wipe all files on the **flags** partition, make sure it's formatted as FAT.
 
-The upgrade script will wipe all files on the **flags** partition, make sure it's formatted as FAT and write a single file either `two` or `three` depending on the new *rootfs*.
+The file `two` or `three` indicates the partition that should be used. This file is managed by the upgrade script.
 
-The u-boot script will use an algorithm like this to choose the u-boot partition to use for the *rootfs* on this boot.
+`two_tried` or `three_tried` is a flag to u-boot that it has tried this partition before. This file is managed by u-boot
+and ensures u-boot won't keep retrying a partition that doesn't boot.
 
-All file operations done on the FAT formatted **flags** partition
+`two_ok` or `three_ok` is a flag to u-boot that the partition is ok to use. This file is managed by Linux.
+
+
+Here's some psuedo code for u-boot use of the **flags** partition
 
     if test -e two then
-        if test -e two_success then
+        if test -e two_ok then
             boot two
         elif test -e two_tried then
             boot three
         else
             write two_tried
             boot two
+		fi
     else test -e three then
-        if test -e three_success then
+        if test -e three_ok then
             boot three
-        elif test -e three_tried
+        elif test -e three_tried then
             boot two
         else
             write three_tried
             boot three
+		fi
+	fi
 
-If this is the first time trying this *rootfs* partition a flag file '_tried' is written so the **flags** partition is not repeatedly used if it is failing for some reason.
 
-Linux will run a pseudo code script like this sometime before shutdown to ensure that a '_success' file is written to the **flags** partition for the next boot.
+Here's a example `uEnv.txt` implementation
+
+    rootpart=1:2
+    flagpart=1:5
+    bootdir=/boot
+    bootfile=zImage
+    console=ttyO0,115200n8
+    fdtaddr=0x88000000
+    fdtfile=bbb-nohdmi.dtb
+    loadaddr=0x82000000
+    mmcroot=/dev/mmcblk0p2 ro
+    mmcrootfstype=ext4 rootwait
+    optargs=consoleblank=0
+    mmcargs=setenv bootargs console=${console} ${optargs} root=${mmcroot} rootfstype=${mmcrootfstype}
+    loadfdt=load mmc ${rootpart} ${fdtaddr} ${bootdir}/${fdtfile}
+    loadimage=load mmc ${rootpart} ${loadaddr} ${bootdir}/${bootfile}
+    boot_three=setenv rootpart 1:3; setenv mmcroot /dev/mmcblk0p3 ro
+    findroot=\
+        if test -e mmc $flagpart three; then \
+            if test -e mmc $flagpart three_ok; then \
+                run boot_three; \
+            elif test ! -e mmc $flagpart three_tried; then \
+                fatwrite mmc $flagpart $loadaddr three_tried 4; \
+                run boot_three; \
+            fi; \
+        elif test -e mmc $flagpart two; then \
+            if test ! -e mmc $flagpart two_ok; then \
+                if test -e mmc $flagpart two_tried; then \
+                    run boot_three; \
+                else \
+                    fatwrite mmc $flagpart $loadaddr two_tried 4; \
+                fi; \
+            fi; \
+        fi;
+    uenvcmd=\
+        run findroot; \
+        echo Using root partition ${rootpart}; \
+        if run loadfdt; then \
+            echo Loaded ${fdtfile}; \
+            if run loadimage; then \
+                run mmcargs; \
+                bootz ${loadaddr} - ${fdtaddr}; \
+            fi; \
+        fi;
+
+
+Linux will run a pseudo code script like this sometime before shutdown to ensure that an 'ok' file is written to the **flags** partition for the next boot.
 
     mount /dev/mmcblk0p5 on /mnt
 
@@ -180,8 +232,8 @@ Linux will run a pseudo code script like this sometime before shutdown to ensure
             touch /mnt/two
         fi
 
-        if [ ! -e /mnt/two_success ]; then
-            touch /mnt/two_success
+        if [ ! -e /mnt/two_ok ]; then
+            touch /mnt/two_ok
         fi
 
         rm -rf /mnt/three*
@@ -190,8 +242,8 @@ Linux will run a pseudo code script like this sometime before shutdown to ensure
             touch /mnt/three
         fi
 	
-     if [ ! -e /mnt/three_success ]; then
-            touch /mnt/three_success
+     if [ ! -e /mnt/three_ok ]; then
+            touch /mnt/three_ok
         fi
 	
         rm -rf /mnt/two*
