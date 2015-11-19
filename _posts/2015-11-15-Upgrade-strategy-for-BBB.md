@@ -9,7 +9,7 @@ tags: [linux, beaglebone, upgrade]
 
 A simple upgrade strategy for deployed BeagleBone Black systems running off the *eMMC*.
 
-Sample implementation scripts can be found in this [github project][bbb-updater].
+Sample implementation scripts can be found in this [github project][bbb-upgrader]
 
 This is a work in progress.
 
