@@ -2,29 +2,28 @@
 layout: post
 title: Upgrading BeagleBone Black Systems
 description: "Implementing a simple upgrade strategy for deployed BBB systems"
-date: 2015-11-19 09:10:00
+date: 2015-11-19 18:40:00
 categories: beaglebone 
 tags: [linux, beaglebone, upgrade]
 ---
 
 A simple upgrade strategy for deployed BeagleBone Black systems running off the *eMMC*.
 
+Sample implementation scripts can be found in this [github project][bbb-updater].
+
 This is a work in progress.
 
 ### Background
 
-The core idea is that there will be two *rootfs* partitions, one active and potentially **read-only** and the other inactive and not mounted.
+The core idea is nothing new. There will be two *rootfs* partitions, one active and potentially **read-only** and the other inactive and not mounted.
 
 The upgrade will mount and install the new *rootfs* on the non-active partition and then make whatever changes are necessary to let the bootloader know which partition to use on the next boot. 
 
 The current Rev C BBBs have a 4GB *eMMC*. Older revisions had a 2GB *eMMC*, but since projects I'm working on assume a Rev C. That's what I'll do here. 
 
-BBB projects I work on tend to be small, dedicated systems.
+The BBB projects I work on tend to be small, dedicated systems where there is more then enough space on the *eMMC* to support a multiple *rootfs* strategy.
 
-The largest BBB system I've worked on included an X11 desktop to support a full-screen Java GUI application. 
-The uncompressed image was under *250MB* as a running system.
-
-There is enough space on the BBB *eMMC* to support a multiple *rootfs* strategy.
+The largest BBB system I've worked on included an X11 desktop to support a full-screen Java GUI application. The uncompressed image was still under *250MB* as a running system.
 
 The distributable image file for that project was less then *80MB* as a compressed tarball making full image network downloads reasonable.
 
@@ -33,17 +32,16 @@ The distributable image file for that project was less then *80MB* as a compress
 I'm making some assumptions that might be more restrictive then necessary.
 
 1. The upgrade is a full *rootfs* upgrade, not just select packages using a package manager.
-2. The system is currently running off the *eMMC*.
-3. The running *rootfs* will be the fallback if the upgrade fails.
-4. The running *rootfs* is **read-only**.
-5. The *boot* partition is **read-only**.
-6. The *eMMC* has already been partitioned appropriately with some initial install scripts run from an SD card boot.
-7. The upgrade is allowed to modify files on a fourth partition of the *eMMC*.
-8. There is temporary space available on some writable partition of the *eMMC* for the compressed tarball.
-9. Require only the [BusyBox][busybox] *Ash* shell and some basic disk utilities, no *Bash*, *Perl* or *Python*.
-10. No modifications to standard *u-boot*.
+2. No dependencies other then the [BusyBox][busybox] shell and some basic disk utilities.
+3. The system is currently running off the *eMMC*.
+4. The running *rootfs* will be the fallback if the upgrade fails for any reason.
+5. The running *rootfs* is **read-only**.
+6. The *boot* partition is **read-only**.
+7. The *eMMC* has already been partitioned appropriately with some initial install scripts.
+8. The upgrade is allowed to modify files on a fourth partition of the *eMMC*.
+9. There is temporary space available on some writable partition of the *eMMC* for the compressed tarball.
+10. No modifications to standard *u-boot*. (Currently using 2015.07).
 
-If possible I would like to stay with an unmodified mainstream u-boot.
 
 ### Downloading
 
@@ -81,8 +79,6 @@ Here's a potential partitioning
 
 
 The two *rootfs* partitions for this system would be `/dev/mmcblk0p2` and `/dev/mmcblk0p3`.
-
-Figuring out which partition we should be using for the upgrade can be done with some shell scripting.
 
 Some things to check
 
@@ -148,8 +144,7 @@ The upgrade script will wipe all files on the **flags** partition, make sure it'
 
 The file `two` or `three` indicates the partition that should be used. This file is managed by the upgrade script.
 
-`two_tried` or `three_tried` is a flag to u-boot that it has tried this partition before. This file is managed by u-boot
-and ensures u-boot won't keep retrying a partition that doesn't boot.
+`two_tried` or `three_tried` is a flag to u-boot that it has tried this partition before. This file is managed by u-boot and ensures u-boot won't keep retrying a partition that doesn't boot.
 
 `two_ok` or `three_ok` is a flag to u-boot that the partition is ok to use. This file is managed by Linux.
 
@@ -177,7 +172,7 @@ Here's some psuedo code for u-boot use of the **flags** partition
 	fi
 
 
-Here's a example `uEnv.txt` implementation
+Here is an example `uEnv.txt` implementation with some optimizations knowing *boot_two* is the default.
 
     rootpart=1:2
     flagpart=1:5
@@ -223,8 +218,10 @@ Here's a example `uEnv.txt` implementation
         fi;
 
 
-Linux will run a pseudo code script like this sometime before shutdown to ensure that an 'ok' file is written to the **flags** partition for the next boot.
+Linux will run a script like this sometime before shutdown to ensure that an 'ok' file is written to the **flags** partition for the next boot.
 
+    #!/bin/sh
+	
     mount /dev/mmcblk0p5 on /mnt
 
     if <current rootfs is /dev/mmcblk0p2> then
@@ -264,4 +261,5 @@ Linux will run a pseudo code script like this sometime before shutdown to ensure
 
 [busybox]: https://en.wikipedia.org/wiki/BusyBox
 [hush]: http://www.denx.de/wiki/view/DULG/CommandLineParsing#Section_14.2.17.2.
+[bbb-upgrader]: https://github.com/jumpnow/bbb-upgrader
 
