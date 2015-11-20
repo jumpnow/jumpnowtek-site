@@ -2,7 +2,7 @@
 layout: post
 title: Building Duovero Systems with Yocto
 description: "Building customized systems for Gumstix Duovero using tools from the Yocto Project"
-date: 2015-11-03 05:10:00
+date: 2015-11-20 10:15:00
 categories: gumstix-linux 
 tags: [linux, gumstix, duovero, yocto]
 ---
@@ -15,7 +15,7 @@ I use this as a template when starting new *Duovero* projects.
 
 ### System Info
 
-The Yocto version is `1.8.1` the `[fido]` branch.
+The Yocto version is `2.0` the `[jethro]` branch.
 
 The `4.3` Linux kernel comes from the [linux-stable][linux-stable] repository.
 
@@ -23,11 +23,11 @@ The [u-boot][uboot] version is `2015.07`.
 
 These are **sysvinit** systems.
 
-The Qt version is `5.4.2`. By default there is no *X11* and no desktop installed. [Qt][qt] gui applications can be run using the `-platform linuxfb` switch.
+The Qt version is `5.5.1`. By default there is no *X11* and no desktop installed. [Qt][qt] gui applications can be run using the `-platform linuxfb` switch.
 
 A light-weight *X11* desktop can be added with minimal changes to the build configuration.
 
-Perl `5.20` with a number of modules is included.
+Perl `5.22` with a number of modules is included.
 
 Python `2.7.9` is included with at least enough packages to run [Bottle python][bottle-python] web applications. Additional packages are easily added.
 
