@@ -2,20 +2,20 @@
 layout: post
 title: Upgrading BeagleBone Black Systems
 description: "Implementing a simple upgrade strategy for deployed BBB systems"
-date: 2015-11-19 18:40:00
+date: 2015-11-20 09:25:00
 categories: beaglebone 
 tags: [linux, beaglebone, upgrade]
 ---
 
 A simple upgrade strategy for deployed BeagleBone Black systems running off the *eMMC*.
 
-Sample implementation scripts can be found in this [github project][bbb-upgrader]
+A sample implementation can be found on [github][bbb-upgrader].
 
 This is a work in progress.
 
 ### Background
 
-The core idea is nothing new. There will be two *rootfs* partitions, one active and potentially **read-only** and the other inactive and not mounted.
+The core idea is nothing radical. There will be two *rootfs* partitions, one active and potentially **read-only** and the other inactive and not mounted.
 
 The upgrade will mount and install the new *rootfs* on the non-active partition and then make whatever changes are necessary to let the bootloader know which partition to use on the next boot. 
 
@@ -23,25 +23,29 @@ The current Rev C BBBs have a 4GB *eMMC*. Older revisions had a 2GB *eMMC*, but 
 
 The BBB projects I work on tend to be small, dedicated systems where there is more then enough space on the *eMMC* to support a multiple *rootfs* strategy.
 
-The largest BBB system I've worked on included an X11 desktop to support a full-screen Java GUI application. The uncompressed image was still under *250MB* as a running system.
+I use *Yocto* to [build BBB systems][bbb-build]. A large system for me is a **250MB** installed *rootfs*, most are much smaller.
 
-The distributable image file for that project was less then *80MB* as a compressed tarball making full image network downloads reasonable.
+This won't work with the **+2GB** [Debian desktop][bbb-debian] systems that come factory installed on the BBB.
+
+### Requirements
+
+Here are some of my self-imposed requirements
+
+1. The upgrade is a full *rootfs* upgrade, not just select packages.
+2. No dependencies other then the [BusyBox][busybox] shell and some basic disk utilities (dd, sfdisk, mkfs)
+3. The running *rootfs* will be the fallback if the upgrade fails for any reason.
+4. No modifications to standard *u-boot*. (Currently using 2015.07).
+5. The upgrade is allowed to modify files on a fourth partition of the *eMMC*.
+6. The *eMMC* has already been partitioned appropriately with some initial install scripts.
 
 ### Assumptions
 
-I'm making some assumptions that might be more restrictive then necessary.
+These assumptions could be worked-around or ignored, but for now I am treating them as true.
 
-1. The upgrade is a full *rootfs* upgrade, not just select packages using a package manager.
-2. No dependencies other then the [BusyBox][busybox] shell and some basic disk utilities.
-3. The system is currently running off the *eMMC*.
-4. The running *rootfs* will be the fallback if the upgrade fails for any reason.
-5. The running *rootfs* is **read-only**.
-6. The *boot* partition is **read-only**.
-7. The *eMMC* has already been partitioned appropriately with some initial install scripts.
-8. The upgrade is allowed to modify files on a fourth partition of the *eMMC*.
-9. There is temporary space available on some writable partition of the *eMMC* for the compressed tarball.
-10. No modifications to standard *u-boot*. (Currently using 2015.07).
-
+1. The system is currently running off the *eMMC*.
+2. The running *rootfs* is **read-only**.
+3. The *boot* partition is **read-only**.
+4. There is temporary space available on some writable partition of the *eMMC* for the compressed tarball.
 
 ### Downloading
 
@@ -51,13 +55,13 @@ The new image file might be coming from a USB drive or it could be coming over t
 
 System upgrades might happen automatically or they might be user initiated.
 
-There also needs to be some sort of validation that the image file is not corrupted (a checksum) and that the image is appropriate for this system.
+There also needs to be some sort of validation that the image file is not corrupted and that the image is appropriate for this system.
 
 I'm going to skip over this part since those kinds of details tend to be project specific. 
 
 ### Implementation
 
-*Assumption 8* assumed an initial install previously setup some partitions on the *eMMC*.
+One of the requirements was that an initial install previously setup some partitions on the *eMMC*.
 
 Here's a potential partitioning 
  
@@ -80,13 +84,15 @@ Here's a potential partitioning
 
 The two *rootfs* partitions for this system would be `/dev/mmcblk0p2` and `/dev/mmcblk0p3`.
 
-Some things to check
+`/dev/mmcblk0p5` will be used for some *flag* files.
+
+
+Here are some of the things the upgrade script needs to check, nothing too difficult.
 
 1. On which partition is the current root running?
 2. Is the *eMMC* partitioned appropriately?
 3. Do we have a writable location to flag the *rootfs* partition switch?
 
-There are some subtleties to be handled, but nothing too difficult.
 
 Installing the *rootfs* from a tarball once we know the partition is four steps
 
@@ -102,7 +108,9 @@ The actual code will be something like this (without any error handling)
     # tar -C /media -xJf <image-file>.tar.xz
     # umount <new-root-partition>
 
-Additional data from the current *rootfs* might want to be copied over to the new *rootfs* before it is unmounted (ssh keys, etc...) The assumption is the *rootfs* is **read-only** when running so any changes have to be made now.
+Additional data from the current *rootfs* might want to be copied over to the new *rootfs* before it is unmounted: ssh keys, `/etc/fstab`, `/etc/hostname`, etc... 
+
+The assumption is the *rootfs* is **read-only** when running so any changes have to be made now.
 
 The final step is updating the bootloader so that it knows about the new *rootfs*.
 
@@ -110,7 +118,7 @@ A `uEnv.txt` bootloader command file is typically used with BBB systems to custo
 
 The `uEnv.txt` file lets you specify the kernel and *dtb* and allows passing parameters to the kernel including the type and location of the *rootfs*.
 
-The `uEnv.txt` file is located on the boot partition of the *eMMC* which according to *Assumption 5* is to be considered **read-only**. So we can't modify `uEnv.txt` directly.
+The `uEnv.txt` file is located on the boot partition of the *eMMC* which according to one of the assumptions is to be considered **read-only**. So we can't modify `uEnv.txt` directly.
 
 *u-boot* runs a [Hush][hush] shell that lets us do some simple scripting. 
 
@@ -123,7 +131,7 @@ What cannot be done
 
 * Delete or rename a file on any type of partition
 
-The plan is to use a small dedicated partition `/dev/mmcblk0p5` formatted as FAT for some flag files for u-boot. I'm going to call this the **flags** partition.
+The plan is to use a small dedicated partition `/dev/mmcblk0p5` formatted as FAT for some flag files for u-boot. I'm calling this the **flags** partition.
 
 There will be at most three flag files at any one time.
 
@@ -140,16 +148,16 @@ or if `/dev/mmcblk0p3` is the *rootfs*, they would be
     three_ok
 
 
-The upgrade script will wipe all files on the **flags** partition, make sure it's formatted as FAT.
+The upgrade script will wipe all files on the **flags** partition and make sure it's formatted as FAT.
 
-The file `two` or `three` indicates the partition that should be used. This file is managed by the upgrade script.
+The files `two` or `three` indicate which partition should be used. This file is managed by the upgrade script.
 
-`two_tried` or `three_tried` is a flag to u-boot that it has tried this partition before. This file is managed by u-boot and ensures u-boot won't keep retrying a partition that doesn't boot.
+The `tried` flag files tell u-boot that it has tried this partition once before. This file is managed by u-boot (`uEnv.txt`) and ensures u-boot won't keep retrying a partition that doesn't boot.
 
-`two_ok` or `three_ok` is a flag to u-boot that the partition is ok to use. This file is managed by Linux.
+The `ok` flag files tell u-boot that the partition is OK to use. This file is managed by Linux once the system has booted successfully.
 
 
-Here's some psuedo code for u-boot use of the **flags** partition
+Here's some pseudo code for the u-boot use of the **flags** partition
 
     if test -e two then
         if test -e two_ok then
@@ -172,7 +180,7 @@ Here's some psuedo code for u-boot use of the **flags** partition
 	fi
 
 
-Here is an example `uEnv.txt` implementation with some optimizations knowing *boot_two* is the default.
+Here is an example `uEnv.txt` implementation optimized somewhat knowing that *boot_two* is the default.
 
     rootpart=1:2
     flagpart=1:5
@@ -218,7 +226,7 @@ Here is an example `uEnv.txt` implementation with some optimizations knowing *bo
         fi;
 
 
-Linux will run a script like this sometime before shutdown to ensure that an 'ok' file is written to the **flags** partition for the next boot.
+Once the new system has booted successfully, Linux will run a script like this sometime before shutdown to ensure that an `ok` file is written to the **flags** partition for the next boot.
 
     #!/bin/sh
 	
@@ -262,4 +270,6 @@ Linux will run a script like this sometime before shutdown to ensure that an 'ok
 [busybox]: https://en.wikipedia.org/wiki/BusyBox
 [hush]: http://www.denx.de/wiki/view/DULG/CommandLineParsing#Section_14.2.17.2.
 [bbb-upgrader]: https://github.com/jumpnow/bbb-upgrader
-
+[yocto]: http://www.yoctoproject.org
+[bbb-build]: http://www.jumpnowtek.com/beaglebone/BeagleBone-Systems-with-Yocto.html
+[bbb-debian]: http://elinux.org/Beagleboard:BeagleBoneBlack_Debian
