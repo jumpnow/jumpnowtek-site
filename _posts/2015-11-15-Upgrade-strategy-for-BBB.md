@@ -2,7 +2,7 @@
 layout: post
 title: Upgrading BeagleBone Black Systems
 description: "Implementing a simple upgrade strategy for deployed BBB systems"
-date: 2015-11-20 09:36:00
+date: 2015-11-20 10:29:00
 categories: beaglebone 
 tags: [linux, beaglebone, upgrade]
 ---
@@ -23,7 +23,7 @@ The current Rev C BBBs have a 4GB *eMMC*. Older revisions had a 2GB *eMMC*, but 
 
 The BBB projects I work on tend to be small, dedicated systems where there is more then enough space on the *eMMC* to support a multiple *rootfs* strategy.
 
-I use *Yocto* to [build BBB systems][bbb-build]. A large system for me is a **250MB** installed *rootfs*, most are much smaller.
+I use *Yocto* to [build BBB systems][bbb-build]. The systems are typically less then **500MB** when installed. Most are much smaller.
 
 This won't work with the **+2GB** [Debian desktop][bbb-debian] systems that come factory installed on the BBB.
 
