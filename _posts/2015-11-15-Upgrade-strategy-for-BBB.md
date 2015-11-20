@@ -2,7 +2,7 @@
 layout: post
 title: Upgrading BeagleBone Black Systems
 description: "Implementing a simple upgrade strategy for deployed BBB systems"
-date: 2015-11-20 09:25:00
+date: 2015-11-20 09:36:00
 categories: beaglebone 
 tags: [linux, beaglebone, upgrade]
 ---
@@ -63,7 +63,7 @@ I'm going to skip over this part since those kinds of details tend to be project
 
 One of the requirements was that an initial install previously setup some partitions on the *eMMC*.
 
-Here's a potential partitioning 
+Here's the kind of partitioning I'm planning on 
  
     root@bbb:~/emmc# fdisk -l /dev/mmcblk1
     Disk /dev/mmcblk1: 3.7 GiB, 3925868544 bytes, 7667712 sectors
@@ -86,6 +86,7 @@ The two *rootfs* partitions for this system would be `/dev/mmcblk0p2` and `/dev/
 
 `/dev/mmcblk0p5` will be used for some *flag* files.
 
+`/dev/mmcblk0p6` is there for application use and general storage. (The *rootfs* is **read-only**.) 
 
 Here are some of the things the upgrade script needs to check, nothing too difficult.
 
