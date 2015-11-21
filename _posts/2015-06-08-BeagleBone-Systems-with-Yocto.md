@@ -2,7 +2,7 @@
 layout: post
 title: Building BeagleBone Black Systems with Yocto
 description: "Building customized systems for the BeagleBone Black using tools from the Yocto Project"
-date: 2015-11-10 06:46:00
+date: 2015-11-21 10:30:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
@@ -18,7 +18,7 @@ I use this as a template when starting new *BeagleBone Black* projects.
 
 The Yocto version is `2.0` the `[jethro]` branch.
 
-The `4.3` Linux kernel comes from the [linux-stable][linux-stable] repository.
+The `4.3` Linux kernel comes from the [linux-stable][linux-stable] repository. Switching to another kernel like the `4.1` *LTS* kernel is very easy.
 
 The [u-boot][uboot] version is `2015.07`.
 
@@ -429,86 +429,15 @@ To install the *qt5-image* onto the *eMMC*, run the `emmc_install.sh` script lik
 
     root@beaglebone:~/emmc# ./emmc_install.sh qt5
 
-It should take less then a minute to run and the output should look something like this
+It should take less then a minute to run.
 
-    root@bbb:~/emmc# ./emmc_install.sh qt5
-    
-    Working on /dev/mmcblk1
-    
-    umount: /dev/mmcblk1p1: not mounted
-    umount: /dev/mmcblk1p2: not mounted
-    DISK SIZE – 3867148288 bytes
-    CYLINDERS – 470
-    
-    Okay, here we go ...
-    
-    === Zeroing the MBR ===
-    
-    1024+0 records in
-    1024+0 records out
-    1048576 bytes (1.0 MB) copied, 0.238564 s, 4.4 MB/s
-    
-    === Creating 2 partitions ===
-    
-    sfdisk: Checking that no-one is using this disk right now ...
-    sfdisk: OK
-    
-    Disk /dev/mmcblk1: 470 cylinders, 255 heads, 63 sectors/track
-    sfdisk:  /dev/mmcblk1: unrecognized partition table type
-    Old situation:
-    sfdisk: No partitions found
-    New situation:
-    Units: sectors of 512 bytes, counting[  139.330595]  mmcblk1: p1 p2
-     from 0
-    
-       Device Boot    Start       End   #sectors  Id  System
-    /dev/mmcblk1p1   *       128    131071     130944   c  W95 FAT32 (LBA)
-    /dev/mmcblk1p2        131072   7553023    7421952  83  Linux
-    /dev/mmcblk1p3             0         -          0   0  Empty
-    /dev/mmcblk1p4             0         -          0   0  Empty
-    sfdisk: Warning: partition 1 does not end at a cylinder boundary
-    sfdisk: Warning: partition 2 does not start at a cylinder boundary
-    sfdisk: Warning: partition 2 does not end at a cylinder boundary
-    sfdisk: end of partition 2 has impossible value for cylinders: 470 (should be in 0-469)
-    Successfully wrote the new partition table
-    
-    Re-reading the partition table ...
-    
-    sfdisk: If you created or changed a DOS partition, /dev/foo7, say, then use dd(1)
-    to zero the first 512 bytes:  dd if=/dev/zero of=/dev/foo7 bs=512 count=1
-    (See fdisk(8).)
-    
-    === Done! ===
-    
-    Working from local directory
-    Formatting FAT partition on /dev/mmcblk1p1
-    mkfs.vfat 2.11 (12 Mar 2005)
-    Mounting /dev/mmcblk1p1
-    Copying MLO
-    Copying u-boot
-    Copying emmc-uEnv.txt to uEnv.txt
-    Unmounting /dev/mmcblk1p1
-    Done
-    IMAGE: qt5
-    HOSTNAME: beaglebone
-    
-    Formatting /dev/mmcblk1p2 as ext4
-    Mounting /dev/mmcblk1p2
-    [  147.578422] EXT4-fs (mmcblk1p2): mounted filesystem with ordered data mode. Opts: (null)
-    Extracting qt5-image-beaglebone.tar.xz to /media
-    Writing hostname to /etc/hostname
-    Unmounting /dev/mmcblk1p2
-    Done
-    Success!
-    Power off, remove SD card and power up
-    root@bbb:~/emmc#
-
-
-Follow the instructions and after reboot you will be running the *qt5-image* from the *eMMC*.
+When it completes, reboot you will be running the *qt5-image* from the *eMMC*.
 
 #### Modifying uEnv.txt
 
-The *uEnv.txt* bootloader configuration script is located on the *boot* partition. Before you can edit the file, you need to mount the *boot* partition
+The *uEnv.txt* bootloader configuration script is where the kernel *dtb* is specified. 
+
+The file is located on the *boot* partition. Before you can edit the file, you need to mount the *boot* partition
 
     root@bbb:~# mount /dev/mmcblk0p1 /mnt
 
@@ -588,6 +517,11 @@ The package manager for these systems is *opkg*. The other choices are *rpm* or 
 
 To add or upgrade packages to the system, you might be interested in using the build workstation as a [remote package repository][opkg-repo].
 
+#### Full System upgrades
+
+There are some notes on a full system upgrade strategy for use on BBB systems built as described here.
+
+You can find an explanation here: [Upgrade strategy for BBB][bbb-upgrades], with a link to a sample implementation on github.
 
 [beagleboard]: http://www.beagleboard.org/
 [linux-stable]: https://www.kernel.org/
@@ -606,3 +540,4 @@ To add or upgrade packages to the system, you might be interested in using the b
 [bitbake]: https://www.yoctoproject.org/docs/1.8/bitbake-user-manual/bitbake-user-manual.html
 [source-script]: http://stackoverflow.com/questions/4779756/what-is-the-difference-between-source-script-sh-and-script-sh
 [zeromq]: http://zeromq.org/
+[bbb-upgrades]: http://www.jumpnowtek.com/beaglebone/Upgrade-strategy-for-BBB.html
