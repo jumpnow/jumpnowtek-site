@@ -2,14 +2,22 @@
 layout: post
 title: Upgrading BeagleBone Black Systems
 description: "Implementing a simple upgrade strategy for deployed BBB systems"
-date: 2015-11-21 10:50:00
+date: 2015-11-21 11:58:00
 categories: beaglebone 
 tags: [linux, beaglebone, upgrade]
 ---
 
 A simple upgrade strategy for deployed BeagleBone Black systems running off the *eMMC*.
 
-The idea described here could easily be extended to systems running off an SD card, opening it up to other boards I work on like the *Gumstix* [Overo][overo] and [Duovero][duovero] or *i.MX6* boards from [Wandboard][wandboard] or [Technexion][technexion].
+This is a *full-system* upgrade strategy, everything but the bootloader.
+
+One reason to prefer a *full-system* upgrade is to keep the upgrade operation *atomic* and thereby easier to rollback to a known good state.
+
+This is harder to do when an upgrade is split up into individual packages with various inter-dependencies.
+
+*Full-system* upgrades also make it easier to track the exact version of software a system is running.
+
+The idea described here could easily be extended to systems running off an SD card, opening it up to other boards like the *Gumstix* [Overo][overo] and [Duovero][duovero] or *i.MX6* boards from [Wandboard][wandboard] or [Technexion][technexion].
 
 A sample implementation for the BBB can be found on [github][bbb-upgrader].
 

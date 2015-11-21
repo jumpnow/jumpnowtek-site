@@ -2,7 +2,7 @@
 layout: post
 title: Building BeagleBone Black Systems with Yocto
 description: "Building customized systems for the BeagleBone Black using tools from the Yocto Project"
-date: 2015-11-21 10:30:00
+date: 2015-11-21 10:50:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
@@ -509,7 +509,7 @@ See this [post][bbb-kernel] for some ways to go about customizing and rebuilding
 
 See this [post][bbb-uboot] for similar notes on working with u-boot for the BBB.
 
-#### Package management
+#### Package Management
 
 The package manager for these systems is *opkg*. The other choices are *rpm* or *apt*. You can change the package manager with the *PACKAGE_CLASSES* variable in `local.conf`.
 
@@ -517,11 +517,11 @@ The package manager for these systems is *opkg*. The other choices are *rpm* or 
 
 To add or upgrade packages to the system, you might be interested in using the build workstation as a [remote package repository][opkg-repo].
 
-#### Full System upgrades
+#### Full System Upgrades
 
-There are some notes on a full system upgrade strategy for use on BBB systems built as described here.
+For deployed production systems, you might prefer full system upgrades using an alternate *rootfs* method. This keeps upgrades *atomic* instead of spread out over multiple packages. It also allows for easy rollback when required.
 
-You can find an explanation here: [Upgrade strategy for BBB][bbb-upgrades], with a link to a sample implementation on github.
+An implementation of this idea is described here [An Upgrade strategy for the BBB][bbb-upgrades] including a link to some sample code on github.
 
 [beagleboard]: http://www.beagleboard.org/
 [linux-stable]: https://www.kernel.org/
