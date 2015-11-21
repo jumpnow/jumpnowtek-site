@@ -2,14 +2,16 @@
 layout: post
 title: Upgrading BeagleBone Black Systems
 description: "Implementing a simple upgrade strategy for deployed BBB systems"
-date: 2015-11-20 10:29:00
+date: 2015-11-21 10:50:00
 categories: beaglebone 
 tags: [linux, beaglebone, upgrade]
 ---
 
 A simple upgrade strategy for deployed BeagleBone Black systems running off the *eMMC*.
 
-A sample implementation can be found on [github][bbb-upgrader].
+The idea described here could easily be extended to systems running off an SD card, opening it up to other boards I work on like the *Gumstix* [Overo][overo] and [Duovero][duovero] or *i.MX6* boards from [Wandboard][wandboard] or [Technexion][technexion].
+
+A sample implementation for the BBB can be found on [github][bbb-upgrader].
 
 This is a work in progress.
 
@@ -57,7 +59,7 @@ System upgrades might happen automatically or they might be user initiated.
 
 There also needs to be some sort of validation that the image file is not corrupted and that the image is appropriate for this system.
 
-I'm going to skip over this part since those kinds of details tend to be project specific. 
+I'm going to skip over this part for now since these details tend to have a lot of project specific nuances that don't affect the low-level implementation I am covering here. 
 
 ### Implementation
 
@@ -274,3 +276,7 @@ Once the new system has booted successfully, Linux will run a script like this s
 [yocto]: http://www.yoctoproject.org
 [bbb-build]: http://www.jumpnowtek.com/beaglebone/BeagleBone-Systems-with-Yocto.html
 [bbb-debian]: http://elinux.org/Beagleboard:BeagleBoneBlack_Debian
+[overo]: https://store.gumstix.com/coms/overo-coms.html
+[duovero]: https://store.gumstix.com/coms/duovero-coms.html
+[wandboard]: http://www.wandboard.org/
+[technexion]: http://www.technexion.com/products/edm/edm-som
