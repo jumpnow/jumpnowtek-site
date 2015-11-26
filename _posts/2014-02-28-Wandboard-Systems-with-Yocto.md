@@ -2,7 +2,7 @@
 layout: post
 title: Building Wandboard Systems with Yocto
 description: "Building customized systems for Wandboards using tools from the Yocto Project"
-date: 2015-11-10 06:48:00
+date: 2015-11-26 06:30:00
 categories: wandboard 
 tags: [linux, wandboard, yocto]
 ---
@@ -158,8 +158,7 @@ This is where temporary build files and the final build binaries will end up. Ex
 
 The default location is in the `build` directory, in this example `~/wandboard/build/tmp`.
 
-If you specify an alternate location as I do in the example conf file make sure the directory is writable by the user running the build. Also because of some `rpath` issues with gcc, the `TMPDIR` path cannot be too short or the gcc build will fail. I haven't determined exactly how short is too short, but something
-like `/oe9` is too short and `/oe9/tmp-poky-jethro-build` is long enough.
+If you specify an alternate location as I do in the example conf file make sure the directory is writable by the user running the build.
 
 ##### DL_DIR
 
@@ -313,11 +312,11 @@ This script needs to know the `TMPDIR` to find the binaries. It looks for an env
 
 For instance, if I had this in the `local.conf`
 
-    TMPDIR = "/oe9/tmp-poky-jethro-build"
+    TMPDIR = "/oe9/wand/tmp-jethro"
 
 Then I would export this environment variable before running `copy_boot.sh`
 
-    scott@fractal:~/wandboard/meta-wandboard/scripts$ export OETMP=/oe9/tmp-poky-jethro-build
+    scott@fractal:~/wandboard/meta-wandboard/scripts$ export OETMP=/oe9/wand/tmp-jethro
 
 Then run the `copy_boot.sh` script passing the location of SD card
 
@@ -349,7 +348,7 @@ Here's a realistic example session where I want to copy already built images to 
 
     scott@fractal:~$ sudo umount /dev/sdb1
     scott@fractal:~$ sudo umount /dev/sdb2
-    scott@fractal:~$ export OETMP=/oe9/tmp-poky-jethro-build
+    scott@fractal:~$ export OETMP=/oe9/wand/tmp-jethro
     scott@fractal:~$ cd wandboard/meta-wandboard/scripts
     scott@fractal:~/wandboard/meta-wandboard/scripts$ ./copy_boot.sh sdb
     scott@fractal:~/wandboard/meta-wandboard/scripts$ ./copy_rootfs.sh sdb console wandq2

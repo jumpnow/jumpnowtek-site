@@ -2,7 +2,7 @@
 layout: post
 title: Upgrading BeagleBone Black Systems
 description: "Implementing a simple upgrade strategy for deployed BBB systems"
-date: 2015-11-21 11:58:00
+date: 2015-11-26 06:20:00
 categories: beaglebone 
 tags: [linux, beaglebone, upgrade]
 ---
@@ -15,9 +15,9 @@ One reason to prefer a *full-system* upgrade is to keep the upgrade operation *a
 
 This is harder to do when an upgrade is split up into individual packages with various inter-dependencies.
 
-*Full-system* upgrades also make it easier to track the exact version of software a system is running.
+*Full-system* upgrades also make it easier to track the exact software a system is running. 
 
-The idea described here could easily be extended to systems running off an SD card, opening it up to other boards like the *Gumstix* [Overo][overo] and [Duovero][duovero] or *i.MX6* boards from [Wandboard][wandboard] or [Technexion][technexion].
+The idea described here could easily be extended to systems running off an SD card, opening it up to other boards I work on like the *Gumstix* [Overo][overo] and [Duovero][duovero] or *i.MX6* boards from [Wandboard][wandboard] or [Technexion][technexion].
 
 A sample implementation for the BBB can be found on [github][bbb-upgrader].
 
@@ -25,7 +25,7 @@ This is a work in progress.
 
 ### Background
 
-The core idea is nothing radical. There will be two *rootfs* partitions, one active and potentially **read-only** and the other inactive and not mounted.
+The core idea is nothing new. There will be two *rootfs* partitions, one active and potentially **read-only** and the other inactive and not mounted.
 
 The upgrade will mount and install the new *rootfs* on the non-active partition and then make whatever changes are necessary to let the bootloader know which partition to use on the next boot. 
 
@@ -178,7 +178,7 @@ Here's some pseudo code for the u-boot use of the **flags** partition
         else
             write two_tried
             boot two
-		fi
+        fi
     else test -e three then
         if test -e three_ok then
             boot three
@@ -187,7 +187,7 @@ Here's some pseudo code for the u-boot use of the **flags** partition
         else
             write three_tried
             boot three
-		fi
+        fi
 	fi
 
 
@@ -267,6 +267,7 @@ Once the new system has booted successfully, Linux will run a script like this s
 
     umount /dev/mmcblk0p5
 
+If Linux doesn't update the **flags** partition, the system will revert back to the previous *rootfs* on the next boot.
 
 ### Issues / Improvements / TODOs
 

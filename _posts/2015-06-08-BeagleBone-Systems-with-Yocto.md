@@ -2,7 +2,7 @@
 layout: post
 title: Building BeagleBone Black Systems with Yocto
 description: "Building customized systems for the BeagleBone Black using tools from the Yocto Project"
-date: 2015-11-21 10:50:00
+date: 2015-11-26 06:30:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
@@ -165,7 +165,7 @@ This is where temporary build files and the final build binaries will end up. Ex
 
 The default location is in the `build` directory, in this example `~/bbb/build/tmp`.
 
-If you specify an alternate location as I do in the example conf file make sure the directory is writable by the user running the build. Also because of some `rpath` issues with gcc, the `TMPDIR` path cannot be too short or the gcc build will fail. I haven't determined exactly how short is too short, but something like `/oe9` is too short and `/oe9/tmp-poky-jethro-build` is long enough.
+If you specify an alternate location as I do in the example conf file make sure the directory is writable by the user running the build.
 
 ##### DL_DIR
 
@@ -325,11 +325,11 @@ This *copy_boot.sh* script needs to know the `TMPDIR` to find the binaries. It l
 
 For instance, if I had this in the `local.conf`
 
-    TMPDIR = "/oe9/tmp-poky-jethro-build"
+    TMPDIR = "/oe9/bbb/tmp-jethro"
 
 Then I would export this environment variable before running `copy_boot.sh`
 
-    scott@octo:~/bbb/meta-bbb/scripts$ export OETMP=/oe9/tmp-poky-jethro-build
+    scott@octo:~/bbb/meta-bbb/scripts$ export OETMP=/oe9/bbb/tmp-jethro
 
 Then run the `copy_boot.sh` script passing the location of SD card
 
@@ -361,7 +361,7 @@ Here's a realistic example session where I want to copy already built images to 
 
     scott@octo:~$ sudo umount /dev/sdb1
     scott@octo:~$ sudo umount /dev/sdb2
-    scott@octo:~$ export OETMP=/oe9/tmp-poky-jethro-build
+    scott@octo:~$ export OETMP=/oe9/bbb/tmp-jethro
     scott@octo:~$ cd bbb/meta-bbb/scripts
     scott@octo:~/bbb/meta-bbb/scripts$ ./copy_boot.sh sdb
     scott@octo:~/bbb/meta-bbb/scripts$ ./copy_rootfs.sh sdb console bbb2
