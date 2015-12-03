@@ -2,7 +2,7 @@
 layout: post
 title: Upgrading BeagleBone Black Systems
 description: "Implementing a simple upgrade strategy for deployed BBB systems"
-date: 2015-11-26 06:20:00
+date: 2015-12-03 03:50:00
 categories: beaglebone 
 tags: [linux, beaglebone, upgrade]
 ---
@@ -137,10 +137,6 @@ Some of the things that can be done with the *u-boot* shell
 
 * Test whether a file exists on FAT or Linux ext partitions
 * Create new files on a FAT partition
-
-What cannot be done
-
-* Delete or rename a file on any type of partition
 
 The plan is to use a small dedicated partition `/dev/mmcblk0p5` formatted as FAT for some flag files for u-boot. I'm calling this the **flags** partition.
 
