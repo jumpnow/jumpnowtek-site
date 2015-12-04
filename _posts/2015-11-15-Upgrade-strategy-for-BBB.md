@@ -2,7 +2,7 @@
 layout: post
 title: Upgrading BeagleBone Black Systems
 description: "Implementing a simple upgrade strategy for deployed BBB systems"
-date: 2015-12-03 03:50:00
+date: 2015-12-04 16:30:00
 categories: beaglebone 
 tags: [linux, beaglebone, upgrade]
 ---
@@ -17,11 +17,9 @@ This is harder to do when an upgrade is split up into individual packages with v
 
 *Full-system* upgrades also make it easier to track the exact software a system is running. 
 
-The idea described here could easily be extended to systems running off an SD card, opening it up to other boards I work on like the *Gumstix* [Overo][overo] and [Duovero][duovero] or *i.MX6* boards from [Wandboard][wandboard] or [Technexion][technexion].
+The idea described here could easily be extended to systems running off an SD card, opening it up to other boards like [Raspberry Pis][rpi], *Gumstix* [Overos][overo] and [Duoveros][duovero] or *i.MX6* systems like the [Wandboards][wandboard].
 
 A sample implementation for the BBB can be found on [github][bbb-upgrader].
-
-This is a work in progress.
 
 ### Background
 
@@ -285,3 +283,4 @@ If Linux doesn't update the **flags** partition, the system will revert back to 
 [duovero]: https://store.gumstix.com/coms/duovero-coms.html
 [wandboard]: http://www.wandboard.org/
 [technexion]: http://www.technexion.com/products/edm/edm-som
+[rpi]: https://www.raspberrypi.org/
