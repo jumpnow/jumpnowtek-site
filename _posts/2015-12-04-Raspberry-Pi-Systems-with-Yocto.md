@@ -31,7 +31,7 @@ The Qt version is `5.5.1`.
 
 Perl `5.22` and Python `2.7.9` each with a number of modules is included.
 
-[omxplayer][omxplayer] for playing video and audio files from the command line.
+[omxplayer][omxplayer] for playing video and audio files from the command line, hardware accelerated.
 
 ### Ubuntu Workstation Setup
 
