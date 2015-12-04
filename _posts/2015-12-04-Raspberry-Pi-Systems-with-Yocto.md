@@ -31,6 +31,8 @@ The Qt version is `5.5.1`.
 
 Perl `5.22` and Python `2.7.9` each with a number of modules is included.
 
+[omxplayer][omxplayer] for playing video and audio files from the command line.
+
 ### Ubuntu Workstation Setup
 
 I have been using *Ubuntu 15.04* and *15.10* 64-bit workstations to build these systems.
@@ -205,7 +207,7 @@ A basic console developer image. See the recipe `meta-rpi/images/console-image.b
     git
     ssh/scp server and client
     perl and python with a number of modules
-    omxplayer for playing video or audio files from the command line
+    omxplayer
 
 The *console-image* has a line
 
@@ -397,6 +399,7 @@ The new package needs to get included directly in the *IMAGE_INSTALL* variable o
 [qt]: http://www.qt.io/
 [yocto]: https://www.yoctoproject.org/
 [meta-rpi]: https://github.com/jumpnow/meta-rpi
+[omxplayer]: http://elinux.org/Omxplayer
 [rpi-kernel]: https://github.com/raspberrypi/linux
 [tspress]: https://github.com/scottellis/tspress
 [qcolorcheck]:  https://github.com/scottellis/qcolorcheck
