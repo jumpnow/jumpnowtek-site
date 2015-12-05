@@ -2,20 +2,22 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2015-12-04 16:15:00
+date: 2015-12-05 12:15:00
 categories: rpi
 tags: [linux, rpi, yocto]
 ---
 
-Building systems for [Raspberry Pi 2][rpi] boards using tools from the [Yocto Project][Yocto].
+Building systems for [Raspberry Pi][rpi] boards using tools from the [Yocto Project][Yocto].
 
-The [meta-rpi][meta-rpi] *layer* generates some basic systems with packages to support C, C++, [Qt5][qt], Perl and Python development.
+The [meta-rpi][meta-rpi] *layer* generates basic systems with packages to support C, C++, [Qt5][qt], Perl and Python development.
 
-For now I'm just working with `BCM2836` quad-core *RPi 2* boards in `meta-rpi`.
+If you are looking for a fancy desktop experience you should probably stick with [Raspbian][raspbian] or another one of the full-featured [RPi Distros][rpi-distros].
 
-The Yocto `meta-raspberrypi` layer which is handling the kernel and bootloader for this layer also supports the `BCM2835` single-core RPi boards.
+This layer is targeted more at small, dedicated systems usually having only a few functions.
 
-When my [Raspberry Pi Zero][rpi-zero] board gets in, I'll add support here in `meta-rpi`. Until then I'm only using *RPi 2s*, since they are basically the same price with a lot more power. 
+Another reason you might choose *Yocto* is because generating *read-only* systems is very easy, reducing the risk of SD card corruption. It's done with a simple one-liner in a config file.
+
+I'm using the Yocto `meta-raspberrypi` layer which has the kernel and bootloader recipes for the `BCM2836` quad-core *RPi 2* and `BCM2835` single-core *RPi* boards.
 
 ### System Info
 
@@ -141,11 +143,18 @@ For example, if your directory structure does not look exactly like this, you wi
 
 The variables you may want to customize are the following:
 
+- MACHINE
 - TMPDIR
 - DL\_DIR
 - SSTATE\_DIR
 
 The defaults for all of these work fine. Adjustments are optional.
+
+##### MACHINE
+
+The choices are **raspberrypi2** the default or **raspberrypi**.
+
+You can only build for one type of board at a time since they have different processors with different instruction sets.
 
 ##### TMPDIR
 
@@ -251,7 +260,7 @@ The image files won't get deleted from the *TMPDIR* until the next time you buil
  
 ### Copying the binaries to an SD card
 
-After the build completes, the bootloader, kernel and rootfs image files can be found in `<TMPDIR>/deploy/images/raspberrypi2/`.
+After the build completes, the bootloader, kernel and rootfs image files can be found in `<TMPDIR>/deploy/images/raspberrypi2/` or `<TMPDIR>/deploy/images/raspberrypi` depending on `MACHINE`.
 
 The `meta-rpi/scripts` directory has some helper scripts to format and copy the files to a microSD card.
 
@@ -303,7 +312,7 @@ You only have to create this directory once.
 
 #### copy_boot.sh
 
-This script copies the BCM2835 bootloader files, the Linux kenrel and RPI2 dtb and a number of DTB overlays (that I have not tried) to the boot partition of the SD card.
+This script copies the BCM2835 bootloader files, the Linux kernel, dtbs for both RPi 2 and RPi boards and a number of DTB overlays (that I have not tried) to the boot partition of the SD card.
 
 This *copy_boot.sh* script needs to know the `TMPDIR` to find the binaries. It looks for an environment variable called `OETMP`.
 
@@ -315,6 +324,19 @@ Then I would export this environment variable before running `copy_boot.sh`
 
     scott@octo:~/rpi/meta-rpi/scripts$ export OETMP=/oe8/rpi/tmp-jethro
 
+If you didn't override the default `TMPDIR` in `local.conf`, then set it to the default `TMPDIR`
+
+    scott@octo:~/rpi/meta-rpi/scripts$ export OETMP=~/rpi/build/tmp
+
+The `copy_boot.sh` script also needs a `MACHINE` environment variable specifying the type of RPi board.
+
+	scott@octo:~/rpi/meta-rpi/scripts$ export MACHINE=raspberrypi2
+
+or
+
+	scott@octo:~/rpi/meta-rpi/scripts$ export MACHINE=raspberrypi
+
+
 Then run the `copy_boot.sh` script passing the location of SD card
 
     scott@octo:~/rpi/meta-rpi/scripts$ ./copy_boot.sh sdb
@@ -325,6 +347,8 @@ This script should run very fast.
 
 This script copies the root file system to the second partition of the SD card.
  
+The `copy_rootfs.sh` script needs the same `OETMP` and `MACHINE` environment variables.
+
 The script accepts an optional command line argument for the image type, for example `console` or `qt5-x11`. The default is `console` if no argument is provided.
 
 The script also accepts a `hostname` argument if you want the host name to be something other then the default `raspberrypi2`.
@@ -346,6 +370,7 @@ Here's a realistic example session where I want to copy already built images to 
     scott@octo:~$ sudo umount /dev/sdb1
     scott@octo:~$ sudo umount /dev/sdb2
     scott@octo:~$ export OETMP=/oe8/rpi/tmp-jethro
+    scott@octo:~$ export MACHINE=raspberrypi2
     scott@octo:~$ cd rpi/meta-rpi/scripts
     scott@octo:~/rpi/meta-rpi/scripts$ ./copy_boot.sh sdb
     scott@octo:~/rpi/meta-rpi/scripts$ ./copy_rootfs.sh sdb console rpi
@@ -393,9 +418,29 @@ Once you have the package name, you can choose to either
 
 The new package needs to get included directly in the *IMAGE_INSTALL* variable or indirectly through another variable in the image file.
 
+#### Playing videos
+
+I did not install any movies in the default `meta-rpi` images. They can be pretty big.
+
+Recipes for a few sample movies can be found here
+
+    scott@octo:~$ ls -l poky-jethro/meta-openembedded/meta-multimedia/recipes-multimedia/sample-content/
+    total 16
+    -rw-rw-r-- 1 scott scott 656 Oct 30 08:56 bigbuckbunny-1080p.bb
+    -rw-rw-r-- 1 scott scott 661 Oct 30 08:56 bigbuckbunny-480p.bb
+    -rw-rw-r-- 1 scott scott 653 Oct 30 08:56 bigbuckbunny-720p.bb
+    -rw-rw-r-- 1 scott scott 576 Oct 30 08:56 tearsofsteel-1080p.bb
+
+If you add one or more of them to the *IMAGE_INSTALL* list in your image recipe, they will get installed under `/usr/share/movies`.
+
+Assuming you have an HDMI display attached, you can play them with `omxplayer` like this
+
+    root@rpi:~# omxplayer -o hdmi /usr/share/movies/ToS-4k-1920.mov
+
 
 [rpi]: https://www.raspberrypi.org/
-[rpi-zero]: https://www.raspberrypi.org/blog/raspberry-pi-zero/
+[raspbian]: https://www.raspbian.org/
+[rpi-distros]: https://www.raspberrypi.org/downloads/
 [qt]: http://www.qt.io/
 [yocto]: https://www.yoctoproject.org/
 [meta-rpi]: https://github.com/jumpnow/meta-rpi
