@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2015-12-05 12:15:00
+date: 2015-12-06 09:15:00
 categories: rpi
 tags: [linux, rpi, yocto]
 ---
@@ -437,6 +437,39 @@ Assuming you have an HDMI display attached, you can play them with `omxplayer` l
 
     root@rpi:~# omxplayer -o hdmi /usr/share/movies/ToS-4k-1920.mov
 
+You could also copy videos to the *RPi* after it's running.
+
+Here's an example using one of the sample movies in `meta-openembedded` (*Tears of Steel*).
+
+Get the *URI* from the recipe
+
+    scott@fractal:~$ cat poky-jethro/meta-openembedded/meta-multimedia/recipes-multimedia/sample-content/tearsofsteel-1080p.bb
+    SUMMARY = "Tears of Steel movie - 1080P"
+    LICENSE = "CC-BY-3.0"
+    LIC_FILES_CHKSUM = "file://${COREBASE}/meta/files/common-licenses/CC-BY-3.0;md5=dfa02b5755629022e267f10b9c0a2ab7"
+    
+    SRC_URI = "http://ftp.nluug.nl/pub/graphics/blender/demo/movies/ToS/ToS-4k-1920.mov"
+    SRC_URI[md5sum] = "e3fee55b1779c553e37b1d3988e6fad6"
+    SRC_URI[sha256sum] = "bd2b5bc6c16d4085034f47ef7e4b3938afe86b4eec4ac3cf2685367d3b0b23b0"
+
+    inherit allarch
+
+    do_install() {
+            install -d ${D}${datadir}/movies
+            install -m 0644 ${WORKDIR}/ToS-4k-1920.mov ${D}${datadir}/movies/
+    }
+
+    FILES_${PN} += "${datadir}/movies"
+
+Then using `wget` on the *RPi*
+
+    root@rpi2:~# wget http://ftp.nluug.nl/pub/graphics/blender/demo/movies/ToS/ToS-4k-1920.mov
+    
+    root@rpi2:~# omxplayer -o hdmi ToS-4k-1920.mov
+    Video codec omx-h264 width 1920 height 800 profile 100 fps 24.000000
+    Audio codec aac channels 2 samplerate 44100 bitspersample 16
+    Subtitle count: 0, state: off, index: 1, delay: 0
+    V:PortSettingsChanged: 1920x800@24.00 interlace:0 deinterlace:0 anaglyph:0 par:1.00 layer:0 alpha:255
 
 [rpi]: https://www.raspberrypi.org/
 [raspbian]: https://www.raspbian.org/
