@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2015-12-06 09:15:00
+date: 2015-12-08 16:48:00
 categories: rpi
 tags: [linux, rpi, yocto]
 ---
@@ -15,7 +15,7 @@ If you are looking for a fancy desktop experience you should probably stick with
 
 This layer is targeted more at small, dedicated systems usually having only a few functions.
 
-Another reason you might choose *Yocto* is because generating *read-only* systems is very easy, reducing the risk of SD card corruption. It's done with a simple one-liner in a config file.
+One reason you might choose *Yocto* is to generate *read-only* systems, reducing your risk of SD card corruption. *Yocto* makes this very easy.
 
 I'm using the Yocto `meta-raspberrypi` layer which has the kernel and bootloader recipes for the `BCM2836` quad-core *RPi 2* and `BCM2835` single-core *RPi* boards.
 
