@@ -2,23 +2,22 @@
 layout: post
 title: Building BeagleBone Black Systems with Yocto
 description: "Building customized systems for the BeagleBone Black using tools from the Yocto Project"
-date: 2015-11-26 06:30:00
+date: 2015-12-12 06:50:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
 
-Building systems for [BeagleBone Black][beagleboard] boards using tools from the [Yocto Project][Yocto].
+Building systems for [BeagleBone Black][bbb] and [BeagleBone Green][bbg] boards using tools from the [Yocto Project][Yocto].
 
 The [meta-bbb][meta-bbb] *layer* generates some basic systems with packages to support C, C++, [Qt5][qt], Perl and Python development.
 
-I use this as a template when starting new *BeagleBone Black* projects.
-
+I use this as a template when starting new *BeagleBone* projects.
 
 ### System Info
 
 The Yocto version is `2.0` the `[jethro]` branch.
 
-The `4.3` Linux kernel comes from the [linux-stable][linux-stable] repository. Switching to another kernel like the `4.1` *LTS* kernel is very easy.
+The `4.3.2` Linux kernel comes from the [linux-stable][linux-stable] repository. Switching to another kernel like the `4.1.14` *LTS* kernel is easy.
 
 The [u-boot][uboot] version is `2015.07`.
 
@@ -34,11 +33,14 @@ Perl `5.22` and Python `2.7.9` each with a number of modules is included.
 
 *Device tree* binaries are generated and installed that support
 
-1. HDMI (`bbb-hdmi.dtb`)
-2. [4DCape 7-inch resistive touchscreen cape][4dcape] (`bbb-4dcape70t.dtb`)
-3. Newhaven 5-inch capacitive touchscreen cape (`bbb-nh5cape.dtb`) 
+1. HDMI (`bbb-hdmi.dtb`) not for the [BBG][bbg]
+2. No HDMI (`bbb-nohdmi.dtb`)
+3. [4DCape 7-inch resistive touchscreen cape][4dcape] (`bbb-4dcape70t.dtb`)
+4. Newhaven 5-inch capacitive touchscreen cape (`bbb-nh5cape.dtb`) 
 
-They are easy enough to switch between using a [u-boot][uboot] script file `uEnv.txt`
+My custom DTBs all support the *eMMC*.
+
+The DTBs are easy enough to switch between using a [u-boot][uboot] script file `uEnv.txt`
 
 *spidev* on SPI bus 1, *I2C1* and *I2C2* and *UART4* are configured for use from the *P9* header.
 
@@ -437,7 +439,28 @@ When it completes, reboot you will be running the *qt5-image* from the *eMMC*.
 
 The *uEnv.txt* bootloader configuration script is where the kernel *dtb* is specified. 
 
-The file is located on the *boot* partition. Before you can edit the file, you need to mount the *boot* partition
+The *uEnv.txt* file is located on the *boot* partition. 
+
+You can modify the *uEnv.txt* file before installation by adding a *uEnv.txt* file to the `meta-bbb/scripts` directory.
+
+    scott@octo:~/bbb/meta-bbb/scripts$ cp uEnv.txt-example uEnv.txt
+
+And then edit the file. The `copy_boot.sh` script will pick it up and use it.
+
+For the *uEnv.txt* file that installs onto the *eMMC*, edit this file directly
+
+    scott@octo:~/bbb/meta-bbb/scripts/emmc-uEnv.txt
+
+Be careful not to lose this line in the *eMMC* version of *uEnv.txt*
+
+    bootpart=1:2
+
+It differs from SD card *uEnv.txt* files which use
+
+    bootpart=0:2
+
+
+On a running system, before you can edit the file, you need to mount the *boot* partition
 
     root@bbb:~# mount /dev/mmcblk0p1 /mnt
 
@@ -523,7 +546,8 @@ For deployed production systems, you might prefer full system upgrades using an 
 
 An implementation of this idea is described here [An Upgrade strategy for the BBB][bbb-upgrades] including a link to some sample code on github.
 
-[beagleboard]: http://www.beagleboard.org/
+[bbb]: http://www.beagleboard.org/black
+[bbg]: http://www.beagleboard.org/green
 [linux-stable]: https://www.kernel.org/
 [uboot]: http://www.denx.de/wiki/U-Boot/WebHome
 [qt]: http://www.qt.io/
