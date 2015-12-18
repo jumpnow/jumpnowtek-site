@@ -2,7 +2,7 @@
 layout: post
 title: Building BeagleBone Black Systems with Yocto
 description: "Building customized systems for the BeagleBone Black using tools from the Yocto Project"
-date: 2015-12-12 06:50:00
+date: 2015-12-18 11:45:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
@@ -17,7 +17,7 @@ I use this as a template when starting new *BeagleBone* projects.
 
 The Yocto version is `2.0` the `[jethro]` branch.
 
-The `4.3.2` Linux kernel comes from the [linux-stable][linux-stable] repository. Switching to another kernel like the `4.1.14` *LTS* kernel is easy.
+The `4.4.0-rc5` Linux kernel comes from the [linux-stable][linux-stable] repository. Switching to another kernel like the `4.1.15` *LTS* kernel is easy.
 
 The [u-boot][uboot] version is `2015.07`.
 
@@ -36,7 +36,7 @@ Perl `5.22` and Python `2.7.9` each with a number of modules is included.
 1. HDMI (`bbb-hdmi.dtb`) not for the [BBG][bbg]
 2. No HDMI (`bbb-nohdmi.dtb`)
 3. [4DCape 7-inch resistive touchscreen cape][4dcape] (`bbb-4dcape70t.dtb`)
-4. Newhaven 5-inch capacitive touchscreen cape (`bbb-nh5cape.dtb`) 
+4. [Newhaven 5-inch capacitive touchscreen cape][nh5cape] (`bbb-nh5cape.dtb`)
 
 My custom DTBs all support the *eMMC*.
 
@@ -561,6 +561,7 @@ An implementation of this idea is described here [An Upgrade strategy for the BB
 [opkg-repo]: http://www.jumpnowtek.com/yocto/Using-your-build-workstation-as-a-remote-package-repository.html
 [bbb-uboot]: http://www.jumpnowtek.com/beaglebone/Beaglebone-Black-U-Boot-Notes.html
 [4dcape]: http://www.4dsystems.com.au/product/4DCAPE_70T/
+[nh5cape]: http://elinux.org/Nh5cape
 [bitbake]: https://www.yoctoproject.org/docs/1.8/bitbake-user-manual/bitbake-user-manual.html
 [source-script]: http://stackoverflow.com/questions/4779756/what-is-the-difference-between-source-script-sh-and-script-sh
 [zeromq]: http://zeromq.org/
