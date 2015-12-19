@@ -35,6 +35,8 @@ Perl `5.22` and Python `2.7.9` each with a number of modules is included.
 
 [omxplayer][omxplayer] for playing video and audio files from the command line, hardware accelerated.
 
+[Raspicam][raspicam] command line tools for using the Raspberry Pi camera module.
+
 ### Ubuntu Workstation Setup
 
 I have been using *Ubuntu 15.04* and *15.10* 64-bit workstations to build these systems.
@@ -473,15 +475,13 @@ Then using `wget` on the *RPi*
 
 #### Using the Raspberry Pi Camera
 
-The [raspicam][raspicam] command line tools are installed
+The [raspicam][rpi_camera_module] command line tools are installed with the `console-image`.
 
 * raspistill
 * raspivid
 * raspiyuv
 
-More documentation on the tools can be found [here][rpi_camera_module].
-
-To enable the RPi camera, add/edit the following in the RPi `config.txt`
+To enable the RPi camera, add or edit the following in the RPi configuration file `config.txt`
 
     start_x=1
     gpu_mem=128
@@ -495,9 +495,14 @@ Then edit, save and reboot.
 
     root@rpi# vi /mnt/config.txt
 
-Example to test the camera for 60 seconds (rotating the image because of the way I have my camera mounted)
+or
 
-    root@rpi2# raspistill -t 60000 --hflip --vflip
+	root@rpi# nano /mnt/config.txt
+
+
+A quick test of the camera for 60 seconds (flipping the image because of the way I have my camera mounted)
+
+    root@rpi2# raspistill -t 60000 -hf -vf
 
 
 
