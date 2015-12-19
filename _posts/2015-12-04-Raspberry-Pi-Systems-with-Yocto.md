@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2015-12-08 16:48:00
+date: 2015-12-19 15:35:00
 categories: rpi
 tags: [linux, rpi, yocto]
 ---
@@ -23,7 +23,7 @@ I'm using the Yocto `meta-raspberrypi` layer which has the kernel and bootloader
 
 The Yocto version is `2.0` the `[jethro]` branch.
 
-The `4.1` Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
+The `4.1.15` Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
 
 These are **sysvinit** systems.
 
@@ -471,6 +471,36 @@ Then using `wget` on the *RPi*
     Subtitle count: 0, state: off, index: 1, delay: 0
     V:PortSettingsChanged: 1920x800@24.00 interlace:0 deinterlace:0 anaglyph:0 par:1.00 layer:0 alpha:255
 
+#### Using the Raspberry Pi Camera
+
+The [raspicam][raspicam] command line tools are installed
+
+* raspistill
+* raspivid
+* raspiyuv
+
+More documentation on the tools can be found [here][rpi_camera_module].
+
+To enable the RPi camera, add/edit the following in the RPi `config.txt`
+
+    start_x=1
+    gpu_mem=128
+    disable_camera_led=1   # optional for disabling the red LED on the camera
+
+To get access to `config.txt`, mount the boot partition first
+
+    root@rpi# mount /dev/mmcblk0p1 /mnt
+
+Then edit, save and reboot.
+
+    root@rpi# vi /mnt/config.txt
+
+Example to test the camera for 60 seconds (rotating the image because of the way I have my camera mounted)
+
+    root@rpi2# raspistill -t 60000 --hflip --vflip
+
+
+
 [rpi]: https://www.raspberrypi.org/
 [raspbian]: https://www.raspbian.org/
 [rpi-distros]: https://www.raspberrypi.org/downloads/
@@ -488,3 +518,5 @@ Then using `wget` on the *RPi*
 [bitbake]: https://www.yoctoproject.org/docs/1.8/bitbake-user-manual/bitbake-user-manual.html
 [source-script]: http://stackoverflow.com/questions/4779756/what-is-the-difference-between-source-script-sh-and-script-sh
 [zeromq]: http://zeromq.org/
+[raspicam]: https://www.raspberrypi.org/documentation/usage/camera/raspicam/README.md
+[rpi_camera_module]: https://www.raspberrypi.org/documentation/raspbian/applications/camera.md
