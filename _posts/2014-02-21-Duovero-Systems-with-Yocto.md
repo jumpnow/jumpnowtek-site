@@ -2,7 +2,7 @@
 layout: post
 title: Building Duovero Systems with Yocto
 description: "Building customized systems for Gumstix Duovero using tools from the Yocto Project"
-date: 2015-11-26 06:30:00
+date: 2015-12-24 11:30:00
 categories: gumstix-linux 
 tags: [linux, gumstix, duovero, yocto]
 ---
@@ -17,7 +17,7 @@ I use this as a template when starting new *Duovero* projects.
 
 The Yocto version is `2.0` the `[jethro]` branch.
 
-The `4.3` Linux kernel comes from the [linux-stable][linux-stable] repository.
+The `4.4-rc6` Linux kernel comes from the [linux-stable][linux-stable] repository.
 
 The [u-boot][uboot] version is `2015.07`.
 
