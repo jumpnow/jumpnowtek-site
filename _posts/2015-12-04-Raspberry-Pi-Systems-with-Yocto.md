@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2015-12-19 15:35:00
+date: 2015-12-24 10:20:00
 categories: rpi
 tags: [linux, rpi, yocto]
 ---
@@ -18,6 +18,12 @@ This layer is targeted more at small, dedicated systems usually having only a fe
 One reason you might choose *Yocto* is to generate *read-only* systems, reducing your risk of SD card corruption. *Yocto* makes this very easy.
 
 I'm using the Yocto `meta-raspberrypi` layer which has the kernel and bootloader recipes for the `BCM2836` quad-core *RPi 2* and `BCM2835` single-core *RPi* boards.
+
+### Downloads
+
+If you would like to test drive the type of system these instructions will build, you can download an example for the *RPi 2* image [here][downloads].
+
+Instructions for installing onto an SD card are in the [README][readme].
 
 ### System Info
 
@@ -525,3 +531,5 @@ A quick test of the camera for 60 seconds (flipping the image because of the way
 [zeromq]: http://zeromq.org/
 [raspicam]: https://www.raspberrypi.org/documentation/usage/camera/raspicam/README.md
 [rpi_camera_module]: https://www.raspberrypi.org/documentation/raspbian/applications/camera.md
+[downloads]: http://www.jumpnowtek.com/downloads/rpi/
+[readme]: http://www.jumpnowtek.com/downloads/rpi/README.txt
