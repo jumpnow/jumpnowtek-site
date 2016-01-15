@@ -2,7 +2,7 @@
 layout: post
 title: Building BeagleBone Black Systems with Yocto
 description: "Building customized systems for the BeagleBone Black using tools from the Yocto Project"
-date: 2016-01-11 18:20:00
+date: 2016-01-15 05:00:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
@@ -209,6 +209,7 @@ There are two custom images available in the *meta-bbb* layer. The recipes for t
 
 * console-image.bb
 * qt5-image.bb
+* installer-image.bb
 
 You should add your own custom images to this same directory.
 
@@ -231,6 +232,10 @@ which is `poky-jethro/meta/classes/core-image.bbclass` and pulls in some require
 
 This image includes the `console-image` and adds `Qt5` with the associated development headers and `qmake`.
 
+#### installer-image
+
+This is a minimal image meant only to run from an SD card and whose only purpose is to perform an eMMC installation.
+
 ### Build
 
 To build the `console-image` run the following command
@@ -251,6 +256,10 @@ And then continue with the full build.
 To build the `qt5-image` it would be
 
     scott@octo:~/bbb/build$ bitbake qt5-image
+
+Or the `installer-image`
+
+    scott@octo:~/bbb/build$ bitbake installer-image
 
 The `cleansstate` command (with two s's) works for image recipes as well.
 
@@ -387,53 +396,77 @@ On a system that booted from an SD card, `/dev/mmcblk0` is the SD card and `/dev
 
 ### Installing to the eMMC
 
-Typically you'll want to use the *eMMC* over the SD card since the *eMMC* is faster.
+Normally you will want to use the *eMMC* over the SD card since the *eMMC* is a little faster.
 
 You need a running system to install to the *eMMC*, since it is not accessible otherwise.
 
 The Linux userland tools see the *eMMC* similar to an SD card, so the same scripts slightly modified and this time run from the *BBB* can be used install a system onto the *eMMC*.
 
-There are some scripts under `meta-bbb/scripts` that are customized for an *eMMC* installation.
+There is a recipe under `meta-bbb/recipes-support/emmc-installer` that adds some scripts to an image for performing an *eMMC* installation.
 
-* emmc\_copy\_boot.sh - a modified copy\_boot.sh
-* emmc\_copy\_rootfs.sh - a modified copy\_rootfs.sh
-* emmc\_install.sh - a wrapper script
-* emmc-uEnv.txt - a modified `uEnv.txt` for an *eMMC* system
+The *emmc-installer* package is included in the *console* and *installer* images.
 
-The above scripts are meant to be run on the *BBB*.
+The *emmc-installer* scripts need some data files for the actual installation. The files needed are
 
-This final script is meant to be run on the workstation and is used to copy the above scripts and the image binaries to the SD card.
+* MLO
+* u-boot.img
+* uEnv.txt
+* A compressed image file like `console-image-beaglebone.tar.xz`
 
-* copy\_emmc\_install.sh
+Under `meta-bbb/scripts` is a script called *copy\_emmc\_install.sh* that will copy these files to the SD card.
 
 The arguments to *copy\_emmc\_install* are the SD card device and the image you want to later install on the *eMMC*. It should be run after the *copy\_rootfs.sh* script.
 
     scott@octo:~$ cd bbb/meta-bbb/scripts
     scott@octo:~/bbb/meta-bbb/scripts$ ./copy_boot.sh sdb
-    scott@octo:~/bbb/meta-bbb/scripts$ ./copy_rootfs.sh sdb qt5
-    scott@octo:~/bbb/meta-bbb/scripts$ ./copy_emmc_install.sh sdb qt5
+    scott@octo:~/bbb/meta-bbb/scripts$ ./copy_rootfs.sh sdb console
+    scott@octo:~/bbb/meta-bbb/scripts$ ./copy_emmc_install.sh sdb console
 
-Once you boot this SD card, you'll find the following under `/home/root/emmc` 
+Once you boot this SD card, you will find the following under `/home/root/emmc` 
 
     root@bbb:~/emmc# ls -l
-    total 53096
-    -rwxr-xr-x 1 root root    64408 Aug 10 05:37 MLO-beaglebone
-    -rw-r--r-- 1 root root     1112 Aug 10 05:37 emmc-uEnv.txt
-    -rwxr-xr-x 1 root root     1629 Aug 10 05:37 emmc_copy_boot.sh
-    -rwxr-xr-x 1 root root     1825 Aug 10 05:37 emmc_copy_rootfs.sh
-    -rwxr-xr-x 1 root root      675 Aug 10 05:37 emmc_install.sh
-    -rwxr-xr-x 1 root root     1240 Aug 10 05:37 mk2parts.sh
-    -rw-r--r-- 1 root root 53870180 Aug 10 05:37 qt5-image-beaglebone.tar.xz
-    -rwxr-xr-x 1 root root   410860 Aug 10 05:37 u-boot-beaglebone.img
+    total 54616
+    -rwxr-xr-x 1 root root    63828 Jan 15  2016 MLO-beaglebone
+    -rw-r--r-- 1 root root 55440552 Jan 15  2016 console-image-beaglebone.tar.xz
+    -rw-r--r-- 1 root root     1084 Jan 15  2016 emmc-uEnv.txt
+    -rwxr-xr-x 1 root root   410108 Jan 15  2016 u-boot-beaglebone.img
 
 
-To install the *qt5-image* onto the *eMMC*, run the `emmc_install.sh` script like this
+To install the *console-image* onto the *eMMC*, run the `/etc/init.d/emmc_install` script with no arguments
 
-    root@beaglebone:~/emmc# ./emmc_install.sh qt5
+    root@beaglebone:~# /etc/init.d/emmc_install
 
 It should take less then a minute to run.
 
-When it completes, reboot you will be running the *qt5-image* from the *eMMC*.
+When it completes, power off, pull the SD card and reboot and you will be running the *console-image* from the *eMMC*.
+
+The `/etc/init.d/emmc_install` script uses some environment variables in `/etc/default/emmc_install` for the *eMMC* partitioning and location of the image files. The defaults will work, but you can override the defaults by exporting different environment variables.
+
+The reason for putting the *eMMC* installation script in `/etc/init.d` is to facilitate use with the *installer-image* explained next. The *installer-image* is typically the only user of `/etc/init.d/emmc_install`.
+ 
+#### Using the installer-image
+
+If you always want to run from the *eMMC*, there is a quicker way to get started using the *installer-image*.
+
+Again suppose you wanted to install the *console-image* onto the *eMMC*.
+
+First make sure you build both the *console-image* and the *installer-image* using bitbake.
+
+Then when copying to the SD card, use these steps
+
+    scott@octo:~$ export OETMP=<your-tmp-dir>
+    scott@octo:~$ cd bbb/meta-bbb/scripts
+    scott@octo:~/bbb/meta-bbb/scripts$ ./copy_boot.sh sdb
+    scott@octo:~/bbb/meta-bbb/scripts$ ./copy_rootfs.sh sdb installer [<hostname>]
+    scott@octo:~/bbb/meta-bbb/scripts$ ./copy_emmc_install.sh sdb console
+
+When you boot from the SD card this time, it will automatically launch the *eMMC* installation of the *console-image*.
+
+When the BBB LEDs stop flashing in *cylon-mode*, the *eMMC* installation is complete.
+
+It should take a little over a minute from the time you apply power.
+
+Power off, pull the SD card and reboot.
 
 #### Modifying uEnv.txt
 
