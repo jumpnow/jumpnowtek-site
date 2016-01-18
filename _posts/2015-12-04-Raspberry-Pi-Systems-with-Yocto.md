@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2015-12-24 10:20:00
+date: 2016-01-18 16:55:00
 categories: rpi
 tags: [linux, rpi, yocto]
 ---
@@ -239,6 +239,12 @@ This image installs the lightweight *Matchbox* X11 desktop using the Yocto Sato 
 #### qt5-x11-image
 
 This image includes the `x11-image` and adds `Qt5` with the associated development headers and `qmake`.
+
+#### audio-image
+
+A small image for use with an [IQaudIO Pi-DigiAMP+][digiamp-plus] board and including [pianobar][pianobar], a console-based client for [Pandora][pandora] internet radio.
+
+See this [post][rpi-pandora] post for details on using this image.
 
 ### Build
 
@@ -533,3 +539,7 @@ A quick test of the camera for 60 seconds (flipping the image because of the way
 [rpi_camera_module]: https://www.raspberrypi.org/documentation/raspbian/applications/camera.md
 [downloads]: http://www.jumpnowtek.com/downloads/rpi/
 [readme]: http://www.jumpnowtek.com/downloads/rpi/README.txt
+[digiamp-plus]: http://www.iqaudio.co.uk/home/9-pi-digiamp-0712411999650.html
+[pianobar]: https://6xq.net/pianobar/
+[pandora]: http://www.pandora.com
+[rpi-pandora]: http://www.jumpnowtek.com/rpi/Raspberry-Pi-Pandora-music-player.html
