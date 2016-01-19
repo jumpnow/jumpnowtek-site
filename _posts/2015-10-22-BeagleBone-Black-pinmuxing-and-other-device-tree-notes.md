@@ -2,7 +2,7 @@
 layout: post
 title: BeagleBone Black pinmuxing and other device tree notes
 description: "References for various dts registers and offsets"
-date: 2015-10-22 16:00:00
+date: 2016-01-19 10:00:00
 categories: beaglebone
 tags: [linux, beaglebone, device tree]
 ---
@@ -19,15 +19,15 @@ Collecting some notes on the source of various register, address and other *magi
 
 ## PinMux Modes
 
-Most of the AM335x *pads* can support multiple modes of operation.
+Most of the AM335x pads can support multiple modes of operation.
 
-The pinmux modes available for each pad come from the `sprs717 datasheet`, Section 4.2, Table 4-1.
+The pinmux modes available for each pad come from the `sprs717` datasheet, Section 4.2, Table 4-1.
 
 The BBB chips use the ZCZ package.
 
 ##### Example: **GPMC\_CSN1**
 
-From the `sprs717 datasheet` Table 4-1
+From the `sprs717` datasheet Table 4-1
 
 	ZCZ Ball Number: U9
 	Pin Name: GPMC_CSN1
@@ -42,7 +42,7 @@ From the `sprs717 datasheet` Table 4-1
 
 ##### Example: **SPI0\_CS0**
 
-From the `sprs717 datasheet` Table 4-1
+From the `sprs717` datasheet Table 4-1
 
 	ZCZ Ball Number: A16
 	Pin Name: SPI0_CS0
@@ -57,15 +57,15 @@ From the `sprs717 datasheet` Table 4-1
 	
 ## Pinmux Register Offsets
 
-The pinmux register offsets come from the `spruh73 TRM` Section 9.3.1, Table 9-7.
+The pinmux register offsets come from the `spruh73` TRM, Section 9.3.1, Table 9-7.
 
-Look up the pad with `conf_` prepended to the lower case pin name (mux mode 0).
+Look up the pad with **conf_** prepended to the lower case pin name (mux mode 0).
 
 The device tree pinmux definitions want the offset from the base of the control module.
 
-This base `0x800` needs to be subtracted from the *Table 9-7* value.
+This **0x800** base needs to be subtracted from the values in Table 9-7.
   
-##### Example: **UART0\_RXD** and **UART0\_TXD**
+##### Example: UART0\_RXD and UART0\_TXD
 
 From `am335x-bone-common.dtsi`
 
@@ -76,13 +76,13 @@ From `am335x-bone-common.dtsi`
         >;
     };
 
-From `spruh73 TRM` Table 9-7
+From `spruh73` TRM, Table 9-7
 
 	970h	conf_uart0_rxd
 	974h	conf_uart0_txd
 
 
-##### Example: eMMC clock (**GPMC\_CSN1**)
+##### Example: eMMC clock (GPMC\_CSN1)
 
 From `am335x-boneblack.dts`
 
@@ -94,12 +94,12 @@ From `am335x-boneblack.dts`
 		>;
     };
 
-From `spruh73 TRM` Table 9-7
+From `spruh73` TRM, Table 9-7
 
 	880h	conf_gpmc_csn1
  
 	
-##### Example: **LCD\_VSYNC**
+##### Example: LCD\_VSYNC
 
 From `am335x-boneblack.dts`
 
@@ -111,15 +111,15 @@ From `am335x-boneblack.dts`
 		>;
 	};
 
-From `spruh73 TRM` Table 9-7
+From `spruh73` TRM, Table 9-7
 
 	8e0h	conf_lcd_vsync
 
 ## DMA Event Channels
 	
-EDMA event definitions come from the `spruh73 TRM` Section 11.3.20, Table 11-23 *Direct Mapped* and Table 11-24 *Crossbar Mapped*.
+EDMA event definitions come from the `spruh73` TRM, Section 11.3.20, Table 11-23 Direct Mapped and Table 11-24 Crossbar Mapped.
 
-Section 9.2.3 `EDMA Event Multiplexing` explains the purpose of the *Crossbar Mapped* table.
+Section 9.2.3, EDMA Event Multiplexing explains the purpose of the Crossbar Mapped table.
 
 ##### Example: mmc0 (mmc1 in dts)
 
@@ -140,7 +140,7 @@ From `am33xx.dtsi`
         status = "disabled";
     };
 
-From `spruh73 TRM` Table 11-23 *Direct Mapped*
+From `spruh73` TRM, Table 11-23 Direct Mapped
 
 	24	SDTXEVT0	MMCHS0
 	25	SDRXEVT0	MMCHS0
@@ -166,7 +166,7 @@ From `am33xx.dtsi`
         status = "disabled";
     };
 
-From `spruh73 TRM` Table 11-23 *Direct Mapped*
+From `spruh73` TRM, Table 11-23 Direct Mapped
 
 	16	SPIXEVT0	MCSPI0
 	17	SPIREVT0	MCSPI0
@@ -188,12 +188,12 @@ From `spruh73 TRM` Table 11-23 *Direct Mapped*
         ...
     };
 
-From `spruh73 TRM` Table 11-24 *Crossbar Mapped*
+From `spruh73` TRM, Table 11-24 Crossbar Mapped
 
     1	SDTXEVT2	MMCHS2
 	2	SDRXEVT2	MMCHS2
 
-and from `spruh73 TRM` Table 11-23 *Direct Mapped*
+and from `spruh73` TRM, Table 11-23 Direct Mapped
 
     12	Open	Open
     13	Open	Open
@@ -201,7 +201,7 @@ and from `spruh73 TRM` Table 11-23 *Direct Mapped*
 
 ## Interrupts
 	
-Interrupt numbers come from the `spruh73k TRM` Section 6.3, Table 6-1
+Interrupt numbers come from the `spruh73k` TRM, Section 6.3, Table 6-1
 
 ##### Example: gpio bank 0
 
@@ -218,7 +218,7 @@ From `am33xx.dtsi`
         interrupts = <96>;
     };
 
-From `spruh73k TRM` Table 6-1
+From `spruh73k` TRM, Table 6-1
 
 	96		GPIOINT0A	GPI0		POINTRPEND1
 
@@ -235,7 +235,7 @@ From `am33xx.dtsi`
         ti,timer-pwm;
     };
 
-From `spruh73k TRM` Table 6-1
+From `spruh73k` TRM, Table 6-1
 
 	92		TINT4		DMTIMER4	POINTR_PEND
 
@@ -255,7 +255,7 @@ From `am33xx.dtsi`
     };
 
 
-From `spruh73k TRM` Table 6-1	
+From `spruh73k` TRM, Table 6-1	
 
 	30		I2C2INT		I2C2INT		POINTRPEND1
 
