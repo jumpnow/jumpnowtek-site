@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-01-18 16:55:00
+date: 2016-01-20 04:42:00
 categories: rpi
 tags: [linux, rpi, yocto]
 ---
@@ -126,7 +126,9 @@ Copy them to the `build/conf` directory (removing the '-sample')
 
 If you used the `oe-init-build-env` script to create the build directory, it generated some generic configuration files in the `build/conf` directory. It is okay to copy over them.
 
-You may want to customize the configuration files before your first build.
+It is not necessary, but you may want to customize the configuration files before your first build.
+
+Do not use the '**~**' character when defining directory paths in the configuration files. 
 
 ### Edit bblayers.conf
 
@@ -208,11 +210,12 @@ You need to [source][source-script] the Yocto environment into your shell before
 
 I don't use those *Common targets*, but instead use my own custom image recipes.
 
-There are three custom images available in the *meta-rpi* layer. The recipes for the images can be found in `meta-rpi/images/`
+There are four custom images available in the *meta-rpi* layer. The recipes for the images can be found in `meta-rpi/images/`
 
 * console-image.bb
 * x11-image.bb
 * qt5-x11-image.bb
+* audio-image.bb
 
 You should add your own custom images to this same directory.
 
@@ -242,7 +245,7 @@ This image includes the `x11-image` and adds `Qt5` with the associated developme
 
 #### audio-image
 
-A small image for use with an [IQaudIO Pi-DigiAMP+][digiamp-plus] board and including [pianobar][pianobar], a console-based client for [Pandora][pandora] internet radio.
+A small image for use with an [IQaudIO Pi-DigiAMP+][digiamp-plus] add-on board and including [pianobar][pianobar], a console-based client for [Pandora][pandora] internet radio.
 
 See this [post][rpi-pandora] post for details on using this image.
 
