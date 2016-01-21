@@ -2,14 +2,14 @@
 layout: post
 title: A Raspberry Pi Pandora music player
 description: "Using an IQAudio Pi-DigiAMP+ and pianobar for a Pandora music player"
-date: 2016-01-20 04:45:00
+date: 2016-01-21 09:00:00
 categories: rpi
 tags: [linux, rpi, yocto, iqaudio, pianobar, pandora]
 ---
 
 Here is a minimal [Pandora][pandora] internet radio player using a [Raspberry Pi 2][rpi] with an [IQaudIO Pi-DigiAMP+][digiamp-plus] combination *DAC/AMP* board and using the console-based [pianobar][pianobar] client.
 
-Rasberry Pi boards (not the RPi 2) probably work as well. The only non-RPi2 board I have has the old header layout and the DAC board doesn't fit.
+Single core Rasberry Pi boards probably work as well, but I don't have any RPi A+ or B+ boards and the DAC board doesn't fit the old header layout.
 
 Support for the DAC board, the kernel drivers and *dts*, are already included in the Linux kernel I am using. The systems are built using [Yocto][yocto] with instruction from [here][rpi-yocto].
 
