@@ -2,7 +2,7 @@
 layout: post
 title: A Raspberry Pi Pandora music player
 description: "Using an IQAudio Pi-DigiAMP+ and pianobar for a Pandora music player"
-date: 2016-01-21 09:00:00
+date: 2016-01-22 10:00:00
 categories: rpi
 tags: [linux, rpi, yocto, iqaudio, pianobar, pandora]
 ---
@@ -104,7 +104,9 @@ Run `pianobar` from a console without any arguments.
     root@rpi2:# pianobar
 
 It should just work.
- 
+
+I have the RPi audio system running headless in a corner of my office. I control pianobar (which also has volume controls) over an ssh session. This works for me since I spend most of my day in front of ssh terminal sessions.
+
 [digiamp-plus]: http://www.iqaudio.co.uk/home/9-pi-digiamp-0712411999650.html
 [pianobar]: https://6xq.net/pianobar/
 [rpi-yocto]: http://www.jumpnowtek.com/rpi/Raspberry-Pi-Systems-with-Yocto.html
