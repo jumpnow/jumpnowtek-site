@@ -2,7 +2,7 @@
 layout: post
 title: BeagleBone Black pinmuxing and other device tree notes
 description: "References for various dts registers and offsets"
-date: 2016-01-19 10:00:00
+date: 2016-01-22 09:35:00
 categories: beaglebone
 tags: [linux, beaglebone, device tree]
 ---
@@ -17,6 +17,8 @@ Collecting some notes on the source of various register, address and other *magi
 4. From linux-stable 4.2.3 [arch/arm/boot/dts/am335x-bone-common.dtsi][am335x-bone-common.dtsi]
 5. From linux-stable 4.2.3 [arch/arm/boot/dts/am335x-boneblack.dts][am335x-boneblack.dts]
 
+[Texas Instruments][ti] also has an interactive web application [TI PinMux][ti-pinmux-app] to assist with pinmuxing and device tree configuration. A free TI account is required for use. 
+ 
 ## PinMux Modes
 
 Most of the AM335x pads can support multiple modes of operation.
@@ -266,3 +268,5 @@ From `spruh73k` TRM, Table 6-1
 [am33xx.dtsi]: https://git.kernel.org/cgit/linux/kernel/git/stable/linux-stable.git/tree/arch/arm/boot/dts/am33xx.dtsi?id=refs/tags/v4.2.3
 [am335x-bone-common.dtsi]: https://git.kernel.org/cgit/linux/kernel/git/stable/linux-stable.git/tree/arch/arm/boot/dts/am335x-bone-common.dtsi?id=refs/tags/v4.2.3
 [am335x-boneblack.dts]: https://git.kernel.org/cgit/linux/kernel/git/stable/linux-stable.git/tree/arch/arm/boot/dts/am335x-boneblack.dts?id=refs/tags/v4.2.3
+[ti-pinmux-app]: https://dev.ti.com/pinmux/app.html#/default/
+[ti]: http://www.ti.com/
