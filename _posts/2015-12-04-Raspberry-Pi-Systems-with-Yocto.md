@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-01-20 04:42:00
+date: 2016-01-25 10:20:00
 categories: rpi
 tags: [linux, rpi, yocto]
 ---
@@ -42,6 +42,8 @@ Perl `5.22` and Python `2.7.9` each with a number of modules is included.
 [omxplayer][omxplayer] for playing video and audio files from the command line, hardware accelerated.
 
 [Raspicam][raspicam] command line tools for using the Raspberry Pi camera module.
+
+An example Raspberry Pi [music system][rpi-pandora] using an [IQaudIO Pi-DigiAMP+][digiamp-plus] add-on board and [pianobar][pianobar], a console-based client for [Pandora][pandora] internet radio.
 
 ### Ubuntu Workstation Setup
 
@@ -245,9 +247,7 @@ This image includes the `x11-image` and adds `Qt5` with the associated developme
 
 #### audio-image
 
-A small image for use with an [IQaudIO Pi-DigiAMP+][digiamp-plus] add-on board and including [pianobar][pianobar], a console-based client for [Pandora][pandora] internet radio.
-
-See this [post][rpi-pandora] post for details on using this image.
+See this [post][rpi-pandora] for details on using this image.
 
 ### Build
 
