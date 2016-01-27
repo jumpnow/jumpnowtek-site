@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-01-25 10:20:00
+date: 2016-01-27 09:45:00
 categories: rpi
 tags: [linux, rpi, yocto]
 ---
@@ -27,9 +27,9 @@ Instructions for installing onto an SD card are in the [README][readme].
 
 ### System Info
 
-The Yocto version is `2.0` the `[jethro]` branch.
+The Yocto version is `2.0.1` the `[jethro]` branch.
 
-The `4.1.15` Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
+The `4.1.16` Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
 
 These are **sysvinit** systems.
 
