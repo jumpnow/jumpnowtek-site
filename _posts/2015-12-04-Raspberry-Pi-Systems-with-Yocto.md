@@ -2,26 +2,30 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-01-27 09:45:00
+date: 2016-01-29 09:55:00
 categories: rpi
 tags: [linux, rpi, yocto]
 ---
 
 Building systems for [Raspberry Pi][rpi] boards using tools from the [Yocto Project][Yocto].
 
-The [meta-rpi][meta-rpi] *layer* generates basic systems with packages to support C, C++, [Qt5][qt], Perl and Python development.
+The [meta-rpi][meta-rpi] layer builds systems to support C, C++, [Qt5][qt], Perl and Python development.
 
-If you are looking for a fancy desktop experience you should probably stick with [Raspbian][raspbian] or another one of the full-featured [RPi Distros][rpi-distros].
+If you are looking for a full-featured desktop experience you should probably stick with [Raspbian][raspbian] or another one of the full-featured [RPi Distros][rpi-distros].
 
 This layer is targeted more at small, dedicated systems usually having only a few functions.
 
-One reason you might choose *Yocto* is to generate *read-only* systems, reducing your risk of SD card corruption. *Yocto* makes this very easy.
+*Yocto* enables building *read-only* systems very easy, reducing the risk of SD card corruption.
 
-I'm using the Yocto `meta-raspberrypi` layer which has the kernel and bootloader recipes for the `BCM2836` quad-core *RPi 2* and `BCM2835` single-core *RPi* boards.
+I am using the Yocto `meta-raspberrypi` layer which has kernel and bootloader recipes for both the `BCM2836` quad-core *RPi 2* and `BCM2835` single-core *RPi* boards.
+
+Most of my testing is with *RPi 2* boards. 
+
+The [meta-rpi][meta-rpi] layer is using a slightly more updated kernel then the upstream Yocto `meta-raspberrypi` layer.
 
 ### Downloads
 
-If you would like to test drive the type of system these instructions will build, you can download an example for the *RPi 2* image [here][downloads].
+If you would like to test drive the type of system that gets built, you can download an example for the *RPi 2* image [here][downloads].
 
 Instructions for installing onto an SD card are in the [README][readme].
 
