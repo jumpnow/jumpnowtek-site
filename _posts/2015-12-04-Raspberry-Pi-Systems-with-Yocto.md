@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-02-02 03:22:00
+date: 2016-02-16 16:24:00
 categories: rpi
 tags: [linux, rpi, yocto]
 ---
@@ -13,7 +13,7 @@ The [meta-rpi][meta-rpi] layer builds systems to support C, C++, [Qt5][qt], Perl
 
 If you are looking for a full-featured desktop experience you should probably stick with [Raspbian][raspbian] or another one of the full-featured [RPi Distros][rpi-distros].
 
-This layer is targeted more at small, dedicated systems usually having only a few functions.
+This layer is targeted more at small, dedicated systems.
 
 *Yocto* enables building *read-only* systems very easy, reducing the risk of SD card corruption.
 
@@ -48,6 +48,45 @@ Perl `5.22` and Python `2.7.9` each with a number of modules is included.
 [Raspicam][raspicam] command line tools for using the Raspberry Pi camera module.
 
 An example Raspberry Pi [music system][rpi-pandora] using an [IQaudIO Pi-DigiAMP+][digiamp-plus] add-on board and [pianobar][pianobar], a console-based client for [Pandora][pandora] internet radio.
+
+As of 2016-02-16, here is the list of DTS overlays that are installed
+
+    root@rpi2:~# ls /mnt/fat/overlays/
+    ads7846-overlay.dtb             pitft28-resistive-overlay.dtb
+    at86rf233-overlay.dtb           pps-gpio-overlay.dtb
+    bmp085_i2c-sensor-overlay.dtb   pwm-2chan-overlay.dtb
+    dht11-overlay.dtb               pwm-overlay.dtb
+    enc28j60-overlay.dtb            raspidac3-overlay.dtb
+    gpio-ir-overlay.dtb             rpi-backlight-overlay.dtb
+    gpio-poweroff-overlay.dtb       rpi-dac-overlay.dtb
+    hifiberry-amp-overlay.dtb       rpi-display-overlay.dtb
+    hifiberry-dac-overlay.dtb       rpi-ft5406-overlay.dtb
+    hifiberry-dacplus-overlay.dtb   rpi-proto-overlay.dtb
+    hifiberry-digi-overlay.dtb      rpi-sense-overlay.dtb
+    hy28a-overlay.dtb               sdhost-overlay.dtb
+    hy28b-overlay.dtb               sdio-overlay.dtb
+    i2c-gpio-overlay.dtb            smi-dev-overlay.dtb
+    i2c-rtc-overlay.dtb             smi-nand-overlay.dtb
+    i2s-mmap-overlay.dtb            smi-overlay.dtb
+    iqaudio-dac-overlay.dtb         spi-bcm2708-overlay.dtb
+    iqaudio-dacplus-overlay.dtb     spi-bcm2835-overlay.dtb
+    lirc-rpi-overlay.dtb            spi-dma-overlay.dtb
+    mcp2515-can0-overlay.dtb        tinylcd35-overlay.dtb
+    mcp2515-can1-overlay.dtb        uart1-overlay.dtb
+    mmc-overlay.dtb                 vc4-kms-v3d-overlay.dtb
+    mz61581-overlay.dtb             vga666-overlay.dtb
+    piscreen-overlay.dtb            w1-gpio-overlay.dtb
+    piscreen2r-overlay.dtb          w1-gpio-pullup-overlay.dtb
+    pitft28-capacitive-overlay.dtb
+
+The few I've tested work fine
+
+* hifiberry-amp
+* iqaudio-dacplus
+* i2s-mmap
+* sdhost
+
+They all come from the official Raspberry Pi kernel tree.
 
 ### Ubuntu Workstation Setup
 
@@ -522,7 +561,6 @@ or
 A quick test of the camera for 60 seconds (flipping the image because of the way I have my camera mounted)
 
     root@rpi2# raspistill -t 60000 -hf -vf
-
 
 
 [rpi]: https://www.raspberrypi.org/
