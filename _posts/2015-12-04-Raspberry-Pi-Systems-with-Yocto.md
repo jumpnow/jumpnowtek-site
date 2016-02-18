@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-02-16 16:24:00
+date: 2016-02-18 09:00:00
 categories: rpi
 tags: [linux, rpi, yocto]
 ---
@@ -33,7 +33,7 @@ Instructions for installing onto an SD card are in the [README][readme].
 
 The Yocto version is `2.0.1` the `[jethro]` branch.
 
-The `4.1.17` Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
+The `4.1.18` Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
 
 These are **sysvinit** systems.
 
@@ -48,6 +48,8 @@ Perl `5.22` and Python `2.7.9` each with a number of modules is included.
 [Raspicam][raspicam] command line tools for using the Raspberry Pi camera module.
 
 An example Raspberry Pi [music system][rpi-pandora] using an [IQaudIO Pi-DigiAMP+][digiamp-plus] add-on board and [pianobar][pianobar], a console-based client for [Pandora][pandora] internet radio.
+
+That system also works with the [HiFiBerry Amp+][hifiberry-amp] board.
 
 As of 2016-02-16, here is the list of DTS overlays that are installed
 
@@ -84,7 +86,7 @@ The few I've tested work fine
 * hifiberry-amp
 * iqaudio-dacplus
 * i2s-mmap
-* sdhost
+* sdhost (now the default, but you can overclock)
 
 They all come from the official Raspberry Pi kernel tree.
 
@@ -588,3 +590,4 @@ A quick test of the camera for 60 seconds (flipping the image because of the way
 [pianobar]: https://6xq.net/pianobar/
 [pandora]: http://www.pandora.com
 [rpi-pandora]: http://www.jumpnowtek.com/rpi/Raspberry-Pi-Pandora-music-player.html
+[hifiberry-amp]: https://www.hifiberry.com/ampplus/
