@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-02-18 09:00:00
+date: 2016-02-22 17:25:00
 categories: rpi
 tags: [linux, rpi, yocto]
 ---
@@ -17,9 +17,7 @@ This layer is targeted more at small, dedicated systems.
 
 *Yocto* enables building *read-only* systems very easy, reducing the risk of SD card corruption.
 
-I am using the Yocto `meta-raspberrypi` layer which has kernel and bootloader recipes for both the `BCM2836` quad-core *RPi 2* and `BCM2835` single-core *RPi* boards.
-
-Most of my testing is with *RPi 2* boards. 
+I am using the Yocto `meta-raspberrypi` layer which has kernel and bootloader recipes for both the `BCM2836` quad-core [RPi 2][rpi2-b] and `BCM2835` single-core *RPi* boards such as the [Raspberry Pi Compute Module][rpi-compute].
 
 The [meta-rpi][meta-rpi] layer is using a slightly more updated kernel then the upstream Yocto `meta-raspberrypi` layer.
 
@@ -591,3 +589,5 @@ A quick test of the camera for 60 seconds (flipping the image because of the way
 [pandora]: http://www.pandora.com
 [rpi-pandora]: http://www.jumpnowtek.com/rpi/Raspberry-Pi-Pandora-music-player.html
 [hifiberry-amp]: https://www.hifiberry.com/ampplus/
+[rpi-compute]: https://www.raspberrypi.org/products/compute-module/
+[rpi2-b]: https://www.raspberrypi.org/products/raspberry-pi-2-model-b/
