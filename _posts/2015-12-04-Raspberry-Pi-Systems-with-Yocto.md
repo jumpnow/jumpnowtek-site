@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-02-22 17:25:00
+date: 2016-02-23 13:45:00
 categories: rpi
 tags: [linux, rpi, yocto]
 ---
@@ -318,11 +318,13 @@ The `cleansstate` command (with two s's) works for image recipes as well.
 The image files won't get deleted from the *TMPDIR* until the next time you build.
 
  
-### Copying the binaries to an SD card
+### Copying the binaries to an SD card (or eMMC)
 
 After the build completes, the bootloader, kernel and rootfs image files can be found in `<TMPDIR>/deploy/images/raspberrypi2/` or `<TMPDIR>/deploy/images/raspberrypi` depending on `MACHINE`.
 
 The `meta-rpi/scripts` directory has some helper scripts to format and copy the files to a microSD card.
+
+See [this post][rpi-compute-post] for an additional first step required for the [RPi Compute][rpi-compute] eMMC.
 
 #### mk2parts.sh
 
@@ -591,3 +593,4 @@ A quick test of the camera for 60 seconds (flipping the image because of the way
 [hifiberry-amp]: https://www.hifiberry.com/ampplus/
 [rpi-compute]: https://www.raspberrypi.org/products/compute-module/
 [rpi2-b]: https://www.raspberrypi.org/products/raspberry-pi-2-model-b/
+[rpi-compute-post]: http://www.jumpnowtek.com/rpi/Working-with-the-raspberry-pi-compute.html
