@@ -11,8 +11,7 @@ I'm building my [Raspberry Pi Compute][rpi-compute] Linux systems using tools fr
 
 ### Copying the system to the eMMC
 
-The same *copy* scripts described in the [instructions post][rpi-yocto] will also work
-to copy the files directly to the RPi Compute eMMC.
+The same *copy* scripts described in the [instructions post][rpi-yocto] will also work to copy the files directly to the RPi Compute eMMC.
 
 First you need to mount the RPi eMMC as *disk* device on your workstation using using the `rpiboot` utility from the [github.com/raspberrypi/tools][rpi-tools] project.
 
@@ -34,8 +33,7 @@ Here's the disk situation on the workstation before mounting the RPi eMMC.
     ├─sda9    8:9    0   100G  0 part /oe9
     └─sda10   8:10   0 215.5G  0 part /oe10
 
-Put the RPi Compute `J4` jumper to the *USB Slave* position, and plug the `J15`
-USB cable to the workstation.
+Put the RPi Compute `J4` jumper to the *USB Slave* position, and plug the `J15` USB cable to the workstation.
 
 Now run `rpiboot`. 
 
@@ -153,8 +151,7 @@ Format the second partition as *ext4* and copy the rootfs.
     Unmounting /dev/sdc2
     Done
 
-Power off, move the `J4` jumper to the *Boot Enable* position and remove the `J15`
-USB cable.
+Power off, move the `J4` jumper to the *Boot Enable* position and remove the `J15` USB cable.
 
 Then power up the system again and you should boot into the console image.
 
