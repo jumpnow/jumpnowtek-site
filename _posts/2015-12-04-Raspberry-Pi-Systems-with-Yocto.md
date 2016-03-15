@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-03-15 08:25:00
+date: 2016-03-15 09:43:00
 categories: rpi
 tags: [linux, rpi, yocto]
 ---
@@ -49,37 +49,42 @@ An example Raspberry Pi [music system][rpi-pandora] using an [IQaudIO Pi-DigiAMP
 
 That system also works with the [HiFiBerry Amp+][hifiberry-amp] board.
 
-As of 2016-03-06, here is the list of DTS overlays that are installed
+As of 2016-03-15, here is the list of DTS overlays that are installed with the `4.4.5` kernel
 
-    root@iqaudio:~# ls /mnt/fat/overlays
-    ads7846-overlay.dtb            pitft28-capacitive-overlay.dtb
-    at86rf233-overlay.dtb          pitft28-resistive-overlay.dtb
-    bmp085_i2c-sensor-overlay.dtb  pps-gpio-overlay.dtb
-    dht11-overlay.dtb              pwm-2chan-overlay.dtb
-    enc28j60-overlay.dtb           pwm-overlay.dtb
-    gpio-ir-overlay.dtb            qca7000-overlay.dtb
-    gpio-poweroff-overlay.dtb      raspidac3-overlay.dtb
-    hifiberry-amp-overlay.dtb      rpi-backlight-overlay.dtb
-    hifiberry-dac-overlay.dtb      rpi-dac-overlay.dtb
-    hifiberry-dacplus-overlay.dtb  rpi-display-overlay.dtb
-    hifiberry-digi-overlay.dtb     rpi-ft5406-overlay.dtb
-    hy28a-overlay.dtb              rpi-proto-overlay.dtb
-    hy28b-overlay.dtb              rpi-sense-overlay.dtb
-    i2c-gpio-overlay.dtb           sdhost-overlay.dtb
-    i2c-rtc-overlay.dtb            sdio-1bit-overlay.dtb
-    i2c0-bcm2708-overlay.dtb       sdio-overlay.dtb
-    i2c1-bcm2708-overlay.dtb       smi-dev-overlay.dtb
-    i2s-mmap-overlay.dtb           smi-nand-overlay.dtb
-    iqaudio-dac-overlay.dtb        smi-overlay.dtb
-    iqaudio-dacplus-overlay.dtb    spi-bcm2708-overlay.dtb
-    lirc-rpi-overlay.dtb           spi-bcm2835-overlay.dtb
-    mcp2515-can0-overlay.dtb       spi-dma-overlay.dtb
-    mcp2515-can1-overlay.dtb       tinylcd35-overlay.dtb
-    mmc-overlay.dtb                uart1-overlay.dtb
-    mz61581-overlay.dtb            vc4-kms-v3d-overlay.dtb
-    pi3-disable-bt-overlay.dtb     vga666-overlay.dtb
-    piscreen-overlay.dtb           w1-gpio-overlay.dtb
-    piscreen2r-overlay.dtb         w1-gpio-pullup-overlay.dtb
+    root@iqaudio:/mnt/fat/overlays# ls
+    ads7846-overlay.dtb             pitft28-resistive-overlay.dtb
+    at86rf233-overlay.dtb           pps-gpio-overlay.dtb
+    bmp085_i2c-sensor-overlay.dtb   pwm-2chan-overlay.dtb
+    dht11-overlay.dtb               pwm-overlay.dtb
+    dwc-otg-overlay.dtb             raspidac3-overlay.dtb
+    dwc2-overlay.dtb                rpi-backlight-overlay.dtb
+    enc28j60-overlay.dtb            rpi-dac-overlay.dtb
+    gpio-ir-overlay.dtb             rpi-display-overlay.dtb
+    gpio-poweroff-overlay.dtb       rpi-ft5406-overlay.dtb
+    hifiberry-amp-overlay.dtb       rpi-proto-overlay.dtb
+    hifiberry-dac-overlay.dtb       rpi-sense-overlay.dtb
+    hifiberry-dacplus-overlay.dtb   sdhost-overlay.dtb
+    hifiberry-digi-overlay.dtb      sdio-overlay.dtb
+    hy28a-overlay.dtb               sdtweak-overlay.dtb
+    hy28b-overlay.dtb               smi-dev-overlay.dtb
+    i2c-gpio-overlay.dtb            smi-nand-overlay.dtb
+    i2c-rtc-overlay.dtb             smi-overlay.dtb
+    i2c0-bcm2708-overlay.dtb        spi-gpio35-39-overlay.dtb
+    i2c1-bcm2708-overlay.dtb        spi1-1cs-overlay.dtb
+    i2s-mmap-overlay.dtb            spi1-2cs-overlay.dtb
+    iqaudio-dac-overlay.dtb         spi1-3cs-overlay.dtb
+    iqaudio-dacplus-overlay.dtb     spi2-1cs-overlay.dtb
+    lirc-rpi-overlay.dtb            spi2-2cs-overlay.dtb
+    mcp2515-can0-overlay.dtb        spi2-3cs-overlay.dtb
+    mcp2515-can1-overlay.dtb        tinylcd35-overlay.dtb
+    mmc-overlay.dtb                 uart1-overlay.dtb
+    mz61581-overlay.dtb             vc4-kms-v3d-overlay.dtb
+    pi3-disable-bt-overlay.dtb      vga666-overlay.dtb
+    pi3-miniuart-bt-overlay.dtb     w1-gpio-overlay.dtb
+    piscreen-overlay.dtb            w1-gpio-pullup-overlay.dtb
+    piscreen2r-overlay.dtb          wittypi-overlay.dtb
+    pitft28-capacitive-overlay.dtb
+
 
 I've only tested a few
 
@@ -89,6 +94,18 @@ I've only tested a few
 * sdhost (now the default, but you can overclock)
 
 They all come from the official Raspberry Pi kernel tree so I have confidence they all work fine. I need  more hardware to test most of them.
+
+NOTE: For now at least, 4.4 *dtoverlay* definitions in `config.txt` require the full dtb name
+
+For example
+
+    dtoverlay=iqaudio-dacplus-overlay.dtb
+
+instead of something like this that worked with 4.1 kernels
+
+    dtoverlay=iqaudio-dacplus
+
+I did not go back an check whether the full dtb name works in 4.1 kernels, I'm only using 4.4 kernels now. If you are sticking with 4.1 kernels and find issues with overlays loading, I would go back to using the shortened name.
 
 ### Ubuntu Workstation Setup
 
