@@ -2,7 +2,7 @@
 layout: post
 title: Building Wandboard Systems with Yocto
 description: "Building customized systems for Wandboards using tools from the Yocto Project"
-date: 2016-02-22 04:42:00
+date: 2016-03-19 13:23:00
 categories: wandboard 
 tags: [linux, wandboard, yocto]
 ---
@@ -17,7 +17,7 @@ I use this as a template when starting new *Wandboard* projects.
 
 The Yocto version is `2.0.1` the `[jethro]` branch.
 
-The `4.4.2` Linux kernel comes from the [linux-stable][linux-stable] repository.
+The `4.4.6` Linux kernel comes from the [linux-stable][linux-stable] repository.
 
 The [u-boot][uboot] version is `2015.07`.
 
