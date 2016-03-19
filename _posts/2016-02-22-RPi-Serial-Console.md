@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Raspberry Pi Serial Console
-date: 2016-02-22 17:30:00
+date: 2016-03-19 11:40:00
 categories: rpi
 tags: [linux, rpi, serial, console]
 ---
@@ -15,7 +15,6 @@ For an [RPi2 Model B][rpi2-b], the pin connections are
     RXI              08 TXD0
     TXO              10 RXD0
 
-
 Using an [RPi Compute Module][rpi-compute], the pin connections are
 
 	FTDI Breakout    RPi Compute Module Dev Kit Header
@@ -25,6 +24,8 @@ Using an [RPi Compute Module][rpi-compute], the pin connections are
 
     
 The serial parameters are `1152008N1` with no flow control.
+
+I'm having a problem right now with a serial console on the *RPi3*. I see data, but it's garbled. Investigating...
 
 [sparkfun-ftdi-basic]: https://www.sparkfun.com/products/9873
 [rpi-compute]: https://www.raspberrypi.org/products/compute-module/
