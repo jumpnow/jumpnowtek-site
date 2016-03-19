@@ -33,7 +33,7 @@ Instructions for installing onto an SD card are in the [README][readme].
 
 The Yocto version is `2.0.1` the `[jethro]` branch.
 
-The `4.5.0` Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
+The `4.5.0` Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository. You can switch to another kernel in `local.conf` described below.
 
 These are **sysvinit** systems.
 
