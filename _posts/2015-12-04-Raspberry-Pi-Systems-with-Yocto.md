@@ -2,9 +2,9 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-03-18 08:46:00
+date: 2016-03-19 11:35:00
 categories: rpi
-tags: [linux, rpi, yocto]
+tags: [linux, rpi, yocto, rpi2, rpi3, rpi compute]
 ---
 
 Building systems for [Raspberry Pi][rpi] boards using tools from the [Yocto Project][Yocto].
@@ -17,13 +17,15 @@ This layer is targeted more at small, dedicated systems.
 
 *Yocto* enables building *read-only* systems very easy, reducing the risk of SD card corruption.
 
-I am using the Yocto `meta-raspberrypi` layer which has kernel and bootloader recipes for both the `BCM2836` quad-core [RPi 2][rpi2-b] and `BCM2835` single-core *RPi* boards such as the [Raspberry Pi Compute Module][rpi-compute].
+I am still using the Yocto `meta-raspberrypi` layer, but have updated recipes for the Linux kernel, bootloader and some userland components. Eventually I plan to move away from using `meta-raspberry` altogether since they tend to lag behind the latest RPi developments.
 
-The [meta-rpi][meta-rpi] layer is using a slightly more updated kernel then the upstream Yocto `meta-raspberrypi` layer.
+I've tested [RPi3][rpi3-b], [RPi2][rpi2-b], RPi original B and [RPi compute modules][rpi-compute] and all appear to be working fine. I just received the *RPi3* and haven't done much with it yet.
+
+I have two different *RPi compute* boards, the original from Raspberry Pi foundation and another from [Gumstix][gumstix-pi-compute]. Both are easily flashed and boot okay, but I haven't done much else with them. Waiting on some downtime...
 
 ### Downloads
 
-If you would like to test drive the type of system that gets built, you can download an example for the *RPi 2* image [here][downloads].
+If you would like to test drive the type of system that gets built, you can download an example for the *RPi 2/3* image [here][downloads].
 
 Instructions for installing onto an SD card are in the [README][readme].
 
@@ -31,7 +33,7 @@ Instructions for installing onto an SD card are in the [README][readme].
 
 The Yocto version is `2.0.1` the `[jethro]` branch.
 
-The `4.4.6` Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
+The `4.5.0` Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
 
 These are **sysvinit** systems.
 
@@ -49,41 +51,41 @@ An example Raspberry Pi [music system][rpi-pandora] using an [IQaudIO Pi-DigiAMP
 
 That system also works with the [HiFiBerry Amp+][hifiberry-amp] board.
 
-As of 2016-03-15, here is the list of DTS overlays that are installed with the `4.4.5` kernel
+As of 2016-03-19, here is the list of DTS overlays that are installed with the `4.5.0` kernel running on an RPi3
 
-    root@iqaudio:/mnt/fat/overlays# ls
+    root@rpi3:/mnt/fat/overlays# ls
     ads7846-overlay.dtb             pitft28-resistive-overlay.dtb
     at86rf233-overlay.dtb           pps-gpio-overlay.dtb
     bmp085_i2c-sensor-overlay.dtb   pwm-2chan-overlay.dtb
     dht11-overlay.dtb               pwm-overlay.dtb
-    dwc-otg-overlay.dtb             raspidac3-overlay.dtb
-    dwc2-overlay.dtb                rpi-backlight-overlay.dtb
-    enc28j60-overlay.dtb            rpi-dac-overlay.dtb
-    gpio-ir-overlay.dtb             rpi-display-overlay.dtb
-    gpio-poweroff-overlay.dtb       rpi-ft5406-overlay.dtb
-    hifiberry-amp-overlay.dtb       rpi-proto-overlay.dtb
-    hifiberry-dac-overlay.dtb       rpi-sense-overlay.dtb
-    hifiberry-dacplus-overlay.dtb   sdhost-overlay.dtb
-    hifiberry-digi-overlay.dtb      sdio-overlay.dtb
-    hy28a-overlay.dtb               sdtweak-overlay.dtb
-    hy28b-overlay.dtb               smi-dev-overlay.dtb
-    i2c-gpio-overlay.dtb            smi-nand-overlay.dtb
-    i2c-rtc-overlay.dtb             smi-overlay.dtb
-    i2c0-bcm2708-overlay.dtb        spi-gpio35-39-overlay.dtb
-    i2c1-bcm2708-overlay.dtb        spi1-1cs-overlay.dtb
-    i2s-mmap-overlay.dtb            spi1-2cs-overlay.dtb
-    iqaudio-dac-overlay.dtb         spi1-3cs-overlay.dtb
-    iqaudio-dacplus-overlay.dtb     spi2-1cs-overlay.dtb
-    lirc-rpi-overlay.dtb            spi2-2cs-overlay.dtb
-    mcp2515-can0-overlay.dtb        spi2-3cs-overlay.dtb
-    mcp2515-can1-overlay.dtb        tinylcd35-overlay.dtb
-    mmc-overlay.dtb                 uart1-overlay.dtb
-    mz61581-overlay.dtb             vc4-kms-v3d-overlay.dtb
-    pi3-disable-bt-overlay.dtb      vga666-overlay.dtb
-    pi3-miniuart-bt-overlay.dtb     w1-gpio-overlay.dtb
-    piscreen-overlay.dtb            w1-gpio-pullup-overlay.dtb
-    piscreen2r-overlay.dtb          wittypi-overlay.dtb
-    pitft28-capacitive-overlay.dtb
+    dwc-otg-overlay.dtb             qca7000-overlay.dtb
+    dwc2-overlay.dtb                raspidac3-overlay.dtb
+    enc28j60-overlay.dtb            rpi-backlight-overlay.dtb
+    gpio-ir-overlay.dtb             rpi-dac-overlay.dtb
+    gpio-poweroff-overlay.dtb       rpi-display-overlay.dtb
+    hifiberry-amp-overlay.dtb       rpi-ft5406-overlay.dtb
+    hifiberry-dac-overlay.dtb       rpi-proto-overlay.dtb
+    hifiberry-dacplus-overlay.dtb   rpi-sense-overlay.dtb
+    hifiberry-digi-overlay.dtb      sdhost-overlay.dtb
+    hy28a-overlay.dtb               sdio-1bit-overlay.dtb
+    hy28b-overlay.dtb               sdio-overlay.dtb
+    i2c-gpio-overlay.dtb            smi-dev-overlay.dtb
+    i2c-rtc-overlay.dtb             smi-nand-overlay.dtb
+    i2c0-bcm2708-overlay.dtb        smi-overlay.dtb
+    i2c1-bcm2708-overlay.dtb        spi-gpio35-39-overlay.dtb
+    i2s-mmap-overlay.dtb            spi1-1cs-overlay.dtb
+    iqaudio-dac-overlay.dtb         spi1-2cs-overlay.dtb
+    iqaudio-dacplus-overlay.dtb     spi1-3cs-overlay.dtb
+    lirc-rpi-overlay.dtb            spi2-1cs-overlay.dtb
+    mcp2515-can0-overlay.dtb        spi2-2cs-overlay.dtb
+    mcp2515-can1-overlay.dtb        spi2-3cs-overlay.dtb
+    mmc-overlay.dtb                 tinylcd35-overlay.dtb
+    mz61581-overlay.dtb             uart1-overlay.dtb
+    pi3-disable-bt-overlay.dtb      vc4-kms-v3d-overlay.dtb
+    pi3-miniuart-bt-overlay.dtb     vga666-overlay.dtb
+    piscreen-overlay.dtb            w1-gpio-overlay.dtb
+    piscreen2r-overlay.dtb          w1-gpio-pullup-overlay.dtb
+    pitft28-capacitive-overlay.dtb  wittypi-overlay.dtb
 
 
 I've only tested a few
@@ -95,7 +97,7 @@ I've only tested a few
 
 They all come from the official Raspberry Pi kernel tree so I have confidence they all work fine. I need  more hardware to test most of them.
 
-NOTE: For now at least, 4.4 *dtoverlay* definitions in `config.txt` require the full dtb name
+NOTE: For now at least, 4.4 or 4.5 *dtoverlay* definitions in `config.txt` require the full dtb name
 
 For example
 
@@ -105,7 +107,7 @@ instead of something like this that worked with 4.1 kernels
 
     dtoverlay=iqaudio-dacplus
 
-I did not go back an check whether the full dtb name works in 4.1 kernels, I'm only using 4.4 kernels now. If you are sticking with 4.1 kernels and find issues with overlays loading, I would go back to using the shortened name.
+I did not go back an check whether the full dtb name works in 4.1 kernels, I'm only using 4.4 and 4.5 kernels now. If you are sticking with 4.1 kernels and find issues with overlays loading, I would go back to using the shortened name.
 
 ### Ubuntu Workstation Setup
 
@@ -227,6 +229,8 @@ The defaults for all of these work fine. Adjustments are optional.
 ##### MACHINE
 
 The choices are **raspberrypi2** the default or **raspberrypi**.
+
+Use **raspberrypi2** for the RPi3.
 
 You can only build for one type of board at a time since they have different processors with different instruction sets.
 
@@ -613,3 +617,5 @@ A quick test of the camera for 60 seconds (flipping the image because of the way
 [rpi-compute]: https://www.raspberrypi.org/products/compute-module/
 [rpi2-b]: https://www.raspberrypi.org/products/raspberry-pi-2-model-b/
 [rpi-compute-post]: http://www.jumpnowtek.com/rpi/Working-with-the-raspberry-pi-compute.html
+[rpi3-b]: https://www.raspberrypi.org/products/raspberry-pi-3-model-b/
+[gumstix-pi-compute]: https://store.gumstix.com/expansion/partners-3rd-party/gumstix-pi-compute-dev-board.html
