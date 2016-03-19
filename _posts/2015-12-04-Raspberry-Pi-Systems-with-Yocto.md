@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-03-19 11:35:00
+date: 2016-03-19 12:35:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi compute]
 ---
@@ -19,7 +19,7 @@ This layer is targeted more at small, dedicated systems.
 
 I am still using the Yocto `meta-raspberrypi` layer, but have updated recipes for the Linux kernel, bootloader and some userland components. Eventually I plan to move away from using `meta-raspberry` altogether since they tend to lag behind the latest RPi developments.
 
-I've tested [RPi3][rpi3-b], [RPi2][rpi2-b], RPi original B and [RPi compute modules][rpi-compute] and all appear to be working fine. I just received the *RPi3* and haven't done much with it yet.
+I've tested [RPi3][rpi3-b], [RPi2][rpi2-b], RPi original B and [RPi compute modules][rpi-compute] and all appear to be working fine. I just received the *RPi3* and haven't done much with it other then test the new wifi (which seems to work fine). I'm still waiting on my [Pi Zero][rpi-zero].
 
 I have two different *RPi compute* boards, the original from Raspberry Pi foundation and another from [Gumstix][gumstix-pi-compute]. Both are easily flashed and boot okay, but I haven't done much else with them. Waiting on some downtime...
 
@@ -619,3 +619,4 @@ A quick test of the camera for 60 seconds (flipping the image because of the way
 [rpi-compute-post]: http://www.jumpnowtek.com/rpi/Working-with-the-raspberry-pi-compute.html
 [rpi3-b]: https://www.raspberrypi.org/products/raspberry-pi-3-model-b/
 [gumstix-pi-compute]: https://store.gumstix.com/expansion/partners-3rd-party/gumstix-pi-compute-dev-board.html
+[rpi-zero]: https://www.raspberrypi.org/products/pi-zero/
