@@ -25,11 +25,9 @@ Using an [RPi Compute Module][rpi-compute], the pin connections are
     
 The serial parameters are `1152008N1` with no flow control.
 
-For the [RPi3][rpi3-b] **UART0** is normally used for the onboard *BlueTooth* radio.
+On the [RPi3][rpi3-b] **UART0** is normally used for the onboard *BlueTooth* radio.
 
-To use the **UART0** pins on the header as a serial console, disable the *BlueTooth* usage with a device tree overlay.
-
-Append this to your `config.txt`
+To use the **UART0** pins on the header as a serial console, disable the *BlueTooth* usage with a device tree overlay by appending this to your `config.txt`
 
     dtoverlay=pi3-disable-bt-overlay.dtb
 
