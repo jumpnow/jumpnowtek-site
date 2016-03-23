@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-03-23 07:00:00
+date: 2016-03-23 11:15:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
 ---
@@ -13,13 +13,13 @@ The [meta-rpi][meta-rpi] layer builds systems to support C, C++, [Qt5][qt], Perl
 
 If you are looking for a full-featured desktop experience you should probably stick with [Raspbian][raspbian] or another one of the full-featured [RPi Distros][rpi-distros].
 
-This layer is targeted more at small, dedicated systems.
+For me Yocto works best as a tool for building minimal, very customized systems like single function hacking projects or (importantly for my work) commercial products.
 
-*Yocto* makes building *read-only* systems very easy, reducing the risk of SD card corruption when your project goes to production.
+For instance Yocto makes building *read-only* systems very easy.
 
-I am still using the Yocto `meta-raspberrypi` layer, but have updated recipes for the Linux kernel, *bootfiles* and some *userland* components. Eventually I plan to move away from using `meta-raspberry` altogether since they tend to lag behind the latest RPi developments.
+I am still using the Yocto `meta-raspberrypi` layer, but have updated recipes for the Linux kernel, [bootfiles][firmware-repo] and some [userland][userland-repo] components. Eventually I plan to move away from using `meta-raspberry` altogether, similar to [meta-bbb][meta-bbb], since the Yocto repo tends to lag  behind the latest RPi developments.
 
-I've minimally tested the following boards with a `4.5.0` kernel
+I've minimally tested the following boards with the `4.5.0` kernel
 
 * [RPi3][rpi3-b]
 * [RPi2][rpi2-b]
@@ -28,9 +28,9 @@ I've minimally tested the following boards with a `4.5.0` kernel
 * [RPi compute module][rpi-compute] with the [Raspberry Pi Compute Module Dev Kit][rpi-compute-dev-kit]
 * [RPi compute module][rpi-compute] with the [Gumstix Pi Compute Dev Board][gumstix-pi-compute]
 
-All boot fine, networking works where applicable, HDMI and USB work, [RPi3][rpi3-b] wifi works. I've verified *SPI* (spidev) is configurable for use and run some simple tests. The serial console works at least on the [RPi2][rpi2-b], [RPi3][rpi3-b] and [RPi compute][rpi-compute] boards. I haven't tried a serial console with the [RPi Zero][rpi-zero].
+All boot fine. Ethernet works where applicable. HDMI and USB work. [RPi3][rpi3-b] wifi works. I've configured *SPI* (spidev) and run some simple tests. The serial console works at least on the [RPi2][rpi2-b], [RPi3][rpi3-b] and [RPi compute][rpi-compute] boards. I haven't tried a serial console with the [RPi Zero][rpi-zero].
 
-Currently only one of the [RPi2][rpi2-b] boards gets daily use. It's the [music system][rpi-pandora] in my office.
+Currently only one of the [RPi2][rpi2-b] boards gets daily use. It's the [music system][rpi-pandora] in my office and usually runs all day.
 
 ### Downloads
 
@@ -603,6 +603,7 @@ A quick test of the camera for 60 seconds (flipping the image because of the way
 [qt]: http://www.qt.io/
 [yocto]: https://www.yoctoproject.org/
 [meta-rpi]: https://github.com/jumpnow/meta-rpi
+[meta-bbb]: https://github.com/jumpnow/meta-bbb
 [omxplayer]: http://elinux.org/Omxplayer
 [rpi-kernel]: https://github.com/raspberrypi/linux
 [tspress]: https://github.com/scottellis/tspress
@@ -631,3 +632,5 @@ A quick test of the camera for 60 seconds (flipping the image because of the way
 [rpi-zero]: https://www.raspberrypi.org/products/pi-zero/
 [rpi-compute-dev-kit]: https://www.raspberrypi.org/products/compute-module-development-kit/
 [rpi1-model-b]: https://www.raspberrypi.org/products/model-b/
+[firmware-repo]: https://github.com/raspberrypi/firmware
+[userland-repo]: https://github.com/raspberrypi/userland
