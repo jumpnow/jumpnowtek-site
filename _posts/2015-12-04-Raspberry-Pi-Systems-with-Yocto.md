@@ -2,9 +2,9 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-03-19 12:35:00
+date: 2016-03-23 07:00:00
 categories: rpi
-tags: [linux, rpi, yocto, rpi2, rpi3, rpi compute]
+tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
 ---
 
 Building systems for [Raspberry Pi][rpi] boards using tools from the [Yocto Project][Yocto].
@@ -15,17 +15,26 @@ If you are looking for a full-featured desktop experience you should probably st
 
 This layer is targeted more at small, dedicated systems.
 
-*Yocto* enables building *read-only* systems very easy, reducing the risk of SD card corruption.
+*Yocto* makes building *read-only* systems very easy, reducing the risk of SD card corruption when your project goes to production.
 
-I am still using the Yocto `meta-raspberrypi` layer, but have updated recipes for the Linux kernel, bootloader and some userland components. Eventually I plan to move away from using `meta-raspberry` altogether since they tend to lag behind the latest RPi developments.
+I am still using the Yocto `meta-raspberrypi` layer, but have updated recipes for the Linux kernel, *bootfiles* and some *userland* components. Eventually I plan to move away from using `meta-raspberry` altogether since they tend to lag behind the latest RPi developments.
 
-I've tested [RPi3][rpi3-b], [RPi2][rpi2-b], RPi original B and [RPi compute modules][rpi-compute] and all appear to be working fine. I just received the *RPi3* and haven't done much with it other then test the new wifi (which seems to work fine). I'm still waiting on my [Pi Zero][rpi-zero].
+I've minimally tested the following boards with a `4.5.0` kernel
 
-I have two different *RPi compute* boards, the original from Raspberry Pi foundation and another from [Gumstix][gumstix-pi-compute]. Both are easily flashed and boot okay, but I haven't done much else with them. Waiting on some downtime...
+* [RPi3][rpi3-b]
+* [RPi2][rpi2-b]
+* [RPi Zero][rpi-zero]
+* [RPi 1 Model B][rpi1-model-b]
+* [RPi compute module][rpi-compute] with the [Raspberry Pi Compute Module Dev Kit][rpi-compute-dev-kit]
+* [RPi compute module][rpi-compute] with the [Gumstix Pi Compute Dev Board][gumstix-pi-compute]
+
+All boot fine, networking works where applicable, HDMI and USB work, [RPi3][rpi3-b] wifi works. I've verified *SPI* (spidev) is configurable for use and run some simple tests. The serial console works at least on the [RPi2][rpi2-b], [RPi3][rpi3-b] and [RPi compute][rpi-compute] boards. I haven't tried a serial console with the [RPi Zero][rpi-zero].
+
+Currently only one of the [RPi2][rpi2-b] boards gets daily use. It's the [music system][rpi-pandora] in my office.
 
 ### Downloads
 
-If you would like to test drive the type of system that gets built, you can download an example for the *RPi 2/3* image [here][downloads].
+If you want a quick look at the resulting systems, you can download an example for the *RPi 2/3* image [here][downloads]. 
 
 Instructions for installing onto an SD card are in the [README][readme].
 
@@ -620,3 +629,5 @@ A quick test of the camera for 60 seconds (flipping the image because of the way
 [rpi3-b]: https://www.raspberrypi.org/products/raspberry-pi-3-model-b/
 [gumstix-pi-compute]: https://store.gumstix.com/expansion/partners-3rd-party/gumstix-pi-compute-dev-board.html
 [rpi-zero]: https://www.raspberrypi.org/products/pi-zero/
+[rpi-compute-dev-kit]: https://www.raspberrypi.org/products/compute-module-development-kit/
+[rpi1-model-b]: https://www.raspberrypi.org/products/model-b/
