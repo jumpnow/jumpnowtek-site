@@ -7,20 +7,20 @@ title: Jumpnow Technologies
   <p><img src="/assets/jumpnow-header.png" alt="jumpnow-logo"></p>
   <p>
     <b>Jumpnow Technologies</b> is a software consulting company specializing <br />
-    in embedded Linux systems running on <a href="http://processors.wiki.ti.com/index.php/OMAP">TI OMAP</a>,
-    <a href="http://processors.wiki.ti.com/index.php/Sitara_AM335x_Portal">TI Sitara</a> and <br />
-    <a href="http://www.freescale.com/webapp/sps/site/taxonomy.jsp?code=IMX6X_SERIES">Freescale i.MX6</a>
-    hardware.
+    in embedded Linux systems running on <a href="http://processors.wiki.ti.com/index.php/OMAP">TI OMAP/</a>,
+    <a href="http://processors.wiki.ti.com/index.php/Sitara_AM335x_Portal">TI Sitara</a>,
+    <a href="http://www.freescale.com/webapp/sps/site/taxonomy.jsp?code=IMX6X_SERIES">Freescale i.MX6</a> <br />
+    and <a href="http://www.raspberrypi.org">Raspberry Pi</a> hardware.
   </p>
-  <h1>BeagleBone</h1>
-  <ul class="posts">
-    {% for post in site.categories['beaglebone'] %}
-      <li><span>{{ post.date | date_to_string }}</span> &raquo; <a href="{{ post.url }}">{{ post.title }}</a></li>
-    {% endfor %}
-  </ul>
   <h1>Raspberry Pi</h1>
   <ul class="posts">
     {% for post in site.categories['rpi'] %}
+      <li><span>{{ post.date | date_to_string }}</span> &raquo; <a href="{{ post.url }}">{{ post.title }}</a></li>
+    {% endfor %}
+  </ul>
+  <h1>BeagleBone</h1>
+  <ul class="posts">
+    {% for post in site.categories['beaglebone'] %}
       <li><span>{{ post.date | date_to_string }}</span> &raquo; <a href="{{ post.url }}">{{ post.title }}</a></li>
     {% endfor %}
   </ul>
