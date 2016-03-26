@@ -2,24 +2,22 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-03-24 08:15:00
+date: 2016-03-26 06:38:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
 ---
 
 Building systems for [Raspberry Pi][rpi] boards using tools from the [Yocto Project][Yocto].
 
-The [meta-rpi][meta-rpi] layer builds systems to support C, C++, [Qt5][qt], Perl and Python development.
+The example images in [meta-rpi][meta-rpi] build systems to support C, C++, [Qt5][qt], Perl and Python development, the languages and tools that I commonly use. Other languages are supported.
+
+Yocto is a good tool for building minimal, customized systems like single function hacking projects or industrial / commercial products.
 
 If you are looking for a full-featured desktop experience you should probably stick with [Raspbian][raspbian] or another one of the full-featured [RPi Distros][rpi-distros].
 
-For me Yocto works best as a tool for building minimal, very customized systems like single function hacking projects or (importantly for my work) commercial products.
+I am using the Yocto [meta-raspberrypi][meta-raspberrypi] layer, but have updated recipes for the Linux kernel, [bootfiles][firmware-repo] and some [userland][userland-repo] components. Eventually I will probably move away from using meta-raspberry altogether, similar to [meta-bbb][meta-bbb], since the Yocto repo tends to lag behind the latest RPi developments.
 
-For instance Yocto makes building *read-only* systems very easy.
-
-I am still using the Yocto `meta-raspberrypi` layer, but have updated recipes for the Linux kernel, [bootfiles][firmware-repo] and some [userland][userland-repo] components. Eventually I plan to move away from using `meta-raspberry` altogether, similar to [meta-bbb][meta-bbb], since the Yocto repo tends to lag  behind the latest RPi developments.
-
-I've minimally tested the following boards with the `4.5.0` kernel
+I've done some testing with the following boards using a `4.5.0` kernel
 
 * [RPi3][rpi3-b]
 * [RPi2][rpi2-b]
@@ -28,9 +26,15 @@ I've minimally tested the following boards with the `4.5.0` kernel
 * [RPi compute module][rpi-compute] with the [Raspberry Pi Compute Module Dev Kit][rpi-compute-dev-kit]
 * [RPi compute module][rpi-compute] with the [Gumstix Pi Compute Dev Board][gumstix-pi-compute]
 
-All boot fine. Ethernet works where applicable. HDMI and USB work. [RPi3][rpi3-b] wifi works. I've configured *SPI* (spidev) and run some simple tests. The serial console works at least on the [RPi2][rpi2-b], [RPi3][rpi3-b] and [RPi compute][rpi-compute] boards. I haven't tried a serial console with the [RPi Zero][rpi-zero].
+All boot fine. Ethernet works where applicable. HDMI and USB work. RPi3 wifi works, I haven't tried the bluetooth. 
 
-Currently only one of the [RPi2][rpi2-b] boards gets daily use. It's the [music system][rpi-pandora] in my office and usually runs all day.
+The serial console works at least on the [RPi2][rpi2-b], [RPi3][rpi3-b] and [RPi compute][rpi-compute] boards. I haven't hooked up an [RPi Zero][rpi-zero] console.
+
+*SPI*, *I2C* and generic *GPIO* are all standard embedded Linux stuff. *DTS* overlays are available for common configurations.
+
+I have one RPi2 running as my office [music system][rpi-pandora].
+
+I use RPi2/3s as Linux test platforms for Qt applications. I do most Qt development on Windows, but have to test on Linux and MacOS. The quad-core RPis work great for both compiling and running Qt5 applications.
 
 ### Downloads
 
@@ -60,7 +64,7 @@ An example Raspberry Pi [music system][rpi-pandora] using an [IQaudIO Pi-DigiAMP
 
 That system also works with the [HiFiBerry Amp+][hifiberry-amp] board.
 
-As of 2016-03-24, here is the list of DTS overlays that are installed with the `4.5.0` kernel running on an RPi3
+As of 2016-03-24, here is the list of DTS overlays that are installed with the `4.5.0` kernel running on an RPi2/3
 
     root@rpi3:~# ls /mnt/fat/overlays/
     ads7846-overlay.dtb            pitft28-capacitive-overlay.dtb
@@ -635,3 +639,4 @@ A quick test of the camera for 60 seconds (flipping the image because of the way
 [rpi1-model-b]: https://www.raspberrypi.org/products/model-b/
 [firmware-repo]: https://github.com/raspberrypi/firmware
 [userland-repo]: https://github.com/raspberrypi/userland
+[meta-raspberrypi]: http://git.yoctoproject.org/cgit/cgit.cgi/meta-raspberrypi
