@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-03-26 06:38:00
+date: 2016-03-26 10:10:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
 ---
@@ -14,6 +14,8 @@ The example images in [meta-rpi][meta-rpi] build systems to support C, C++, [Qt5
 Yocto is a good tool for building minimal, customized systems like single function hacking projects or industrial / commercial products.
 
 If you are looking for a full-featured desktop experience you should probably stick with [Raspbian][raspbian] or another one of the full-featured [RPi Distros][rpi-distros].
+
+If things like quick boot times, small image sizes or read-only rootfs are important to your project, then Yocto might be a good option.
 
 I am using the Yocto [meta-raspberrypi][meta-raspberrypi] layer, but have updated recipes for the Linux kernel, [bootfiles][firmware-repo] and some [userland][userland-repo] components. Eventually I will probably move away from using meta-raspberry altogether, similar to [meta-bbb][meta-bbb], since the Yocto repo tends to lag behind the latest RPi developments.
 
