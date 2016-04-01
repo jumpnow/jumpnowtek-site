@@ -2,24 +2,24 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-03-26 10:10:00
+date: 2016-04-01 15:00:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
 ---
 
 Building systems for [Raspberry Pi][rpi] boards using tools from the [Yocto Project][Yocto].
 
-The example images in [meta-rpi][meta-rpi] build systems to support C, C++, [Qt5][qt], Perl and Python development, the languages and tools that I commonly use. Other languages are supported.
+The example images in [meta-rpi][meta-rpi] build systems to support C, C++, [Qt5][qt], Perl and Python development, the languages and tools that I commonly use. Other languages are supported, but you'll have to add the packages to your image recipe.
 
-Yocto is a good tool for building minimal, customized systems like single function hacking projects or industrial / commercial products.
+Yocto is a good tool for building minimal, customized systems like single function hacking projects or industrial / commercial embedded products.
 
-If you are looking for a full-featured desktop experience you should probably stick with [Raspbian][raspbian] or another one of the full-featured [RPi Distros][rpi-distros].
+If you are looking for a full-featured desktop experience you will be better off sticking with [Raspbian][raspbian] or another one of the full-featured [RPi distributions][rpi-distros].
 
 If things like quick boot times, small image sizes or read-only rootfs are important to your project, then Yocto might be a good option.
 
 I am using the Yocto [meta-raspberrypi][meta-raspberrypi] layer, but have updated recipes for the Linux kernel, [bootfiles][firmware-repo] and some [userland][userland-repo] components. Eventually I will probably move away from using meta-raspberry altogether, similar to [meta-bbb][meta-bbb], since the Yocto repo tends to lag behind the latest RPi developments.
 
-I've done some testing with the following boards using a `4.5.0` kernel
+I have done some testing with the following boards using a `4.5.0` kernel
 
 * [RPi3][rpi3-b]
 * [RPi2][rpi2-b]
@@ -28,19 +28,21 @@ I've done some testing with the following boards using a `4.5.0` kernel
 * [RPi compute module][rpi-compute] with the [Raspberry Pi Compute Module Dev Kit][rpi-compute-dev-kit]
 * [RPi compute module][rpi-compute] with the [Gumstix Pi Compute Dev Board][gumstix-pi-compute]
 
-All boot fine. Ethernet works where applicable. HDMI and USB work. RPi3 wifi works, I haven't tried the bluetooth. 
+All boot fine. Ethernet works where applicable. HDMI and USB work. RPi3 wifi works, I have not tried the RPi3 bluetooth. I have it disabled so I can use the serial console.
 
-The serial console works at least on the [RPi2][rpi2-b], [RPi3][rpi3-b] and [RPi compute][rpi-compute] boards. I haven't hooked up an [RPi Zero][rpi-zero] console.
+The serial console works at least on the [RPi2][rpi2-b], [RPi3][rpi3-b] and [RPi compute][rpi-compute] boards. I have not hooked up an [RPi Zero][rpi-zero] console.
 
 *SPI*, *I2C* and generic *GPIO* are all standard embedded Linux stuff. *DTS* overlays are available for common configurations.
 
 I have one RPi2 running as my office [music system][rpi-pandora].
 
-I use RPi2/3s as Linux test platforms for Qt applications. I do most Qt development on Windows, but have to test on Linux and MacOS. The quad-core RPis work great for both compiling and running Qt5 applications.
+I use RPi2s and now the RPi3 frequently as Linux test platforms for Qt applications. I do most Qt development on Windows, but eventually most applications have to run on Linux and MacOS as well. The quad-core RPis work great both for compiling and running Qt5 applications.
+
+NOTE: The included *qt5-x11-image* recipe builds Qt5 assuming the X11 window manager, but that's just for show. You can also build Qt5 to use the Linux frame-buffer directly without requiring X11. This is usually how I build Qt systems, since there is typically just one full-screen GUI application that needs to run. X11 is unnecessary.
 
 ### Downloads
 
-If you want a quick look at the resulting systems, you can download an example for the *RPi 2/3* image [here][downloads]. 
+If you want a quick look at the resulting systems, you can download an example for the RPi 2/3 image [here][downloads]. 
 
 Instructions for installing onto an SD card are in the [README][readme].
 
