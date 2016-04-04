@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-04-01 15:00:00
+date: 2016-04-04 05:00:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
 ---
@@ -30,7 +30,7 @@ I have done some testing with the following boards using a `4.5.0` kernel
 
 All boot fine. Ethernet works where applicable. HDMI and USB work. RPi3 wifi works, I have not tried the RPi3 bluetooth. I have it disabled so I can use the serial console.
 
-The serial console works at least on the [RPi2][rpi2-b], [RPi3][rpi3-b] and [RPi compute][rpi-compute] boards. I have not hooked up an [RPi Zero][rpi-zero] console.
+The serial console works off the header pins on all the boards.  
 
 *SPI*, *I2C* and generic *GPIO* are all standard embedded Linux stuff. *DTS* overlays are available for common configurations.
 
