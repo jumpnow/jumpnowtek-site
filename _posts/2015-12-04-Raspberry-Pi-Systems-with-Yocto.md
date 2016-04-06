@@ -2,20 +2,20 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-04-04 05:00:00
+date: 2016-04-06 08:54:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
 ---
 
 Building systems for [Raspberry Pi][rpi] boards using tools from the [Yocto Project][Yocto].
 
-The example images in [meta-rpi][meta-rpi] build systems to support C, C++, [Qt5][qt], Perl and Python development, the languages and tools that I commonly use. Other languages are supported, but you'll have to add the packages to your image recipe.
+The example images in [meta-rpi][meta-rpi] build systems that support C, C++, [Qt5][qt], Perl and Python development, the languages and tools that I commonly use. Other languages are supported, but you will have to add the packages to your image recipe.
 
 Yocto is a good tool for building minimal, customized systems like single function hacking projects or industrial / commercial embedded products.
 
 If you are looking for a full-featured desktop experience you will be better off sticking with [Raspbian][raspbian] or another one of the full-featured [RPi distributions][rpi-distros].
 
-If things like quick boot times, small image sizes or read-only rootfs are important to your project, then Yocto might be a good option.
+If things like quick boot times, small image sizes or read-only rootfs are important to your project, then you might want to try Yocto.
 
 I am using the Yocto [meta-raspberrypi][meta-raspberrypi] layer, but have updated recipes for the Linux kernel, [bootfiles][firmware-repo] and some [userland][userland-repo] components. Eventually I will probably move away from using meta-raspberry altogether, similar to [meta-bbb][meta-bbb], since the Yocto repo tends to lag behind the latest RPi developments.
 
@@ -38,7 +38,7 @@ I have one RPi2 running as my office [music system][rpi-pandora].
 
 I use RPi2s and now the RPi3 frequently as Linux test platforms for Qt applications. I do most Qt development on Windows, but eventually most applications have to run on Linux and MacOS as well. The quad-core RPis work great both for compiling and running Qt5 applications.
 
-NOTE: The included *qt5-x11-image* recipe builds Qt5 assuming the X11 window manager, but that's just for show. You can also build Qt5 to use the Linux frame-buffer directly without requiring X11. This is usually how I build Qt systems, since there is typically just one full-screen GUI application that needs to run. X11 is unnecessary.
+NOTE: The included *qt5-x11-image* recipe builds Qt5 assuming the X11 window manager, but that's just for show. You can also build Qt5 to use the Linux frame-buffer directly without requiring X11. This is usually how I build Qt systems for embedded boards, since there is typically just one full-screen GUI application that needs to run. X11 and a desktop are unnecessary.
 
 ### Downloads
 
@@ -68,43 +68,46 @@ An example Raspberry Pi [music system][rpi-pandora] using an [IQaudIO Pi-DigiAMP
 
 That system also works with the [HiFiBerry Amp+][hifiberry-amp] board.
 
-As of 2016-03-24, here is the list of DTS overlays that are installed with the `4.5.0` kernel running on an RPi2/3
+As of 2016-04-06, here is the list of DTS overlays that are installed with the `4.5.0` kernel running on an RPi2/3
+
+    root@rpi3:~# uname -a
+    Linux rpi3 4.5.0 #1 SMP Wed Apr 6 06:28:52 EDT 2016 armv7l GNU/Linux
 
     root@rpi3:~# ls /mnt/fat/overlays/
-    ads7846-overlay.dtb            pitft28-capacitive-overlay.dtb
-    at86rf233-overlay.dtb          pitft28-resistive-overlay.dtb
-    bmp085_i2c-sensor-overlay.dtb  pps-gpio-overlay.dtb
-    dht11-overlay.dtb              pwm-2chan-overlay.dtb
-    dwc-otg-overlay.dtb            pwm-overlay.dtb
-    dwc2-overlay.dtb               qca7000-overlay.dtb
-    enc28j60-overlay.dtb           raspidac3-overlay.dtb
-    gpio-ir-overlay.dtb            rpi-backlight-overlay.dtb
-    gpio-poweroff-overlay.dtb      rpi-dac-overlay.dtb
-    hifiberry-amp-overlay.dtb      rpi-display-overlay.dtb
-    hifiberry-dac-overlay.dtb      rpi-ft5406-overlay.dtb
-    hifiberry-dacplus-overlay.dtb  rpi-proto-overlay.dtb
-    hifiberry-digi-overlay.dtb     rpi-sense-overlay.dtb
-    hy28a-overlay.dtb              sdhost-overlay.dtb
-    hy28b-overlay.dtb              sdio-1bit-overlay.dtb
-    i2c-gpio-overlay.dtb           sdio-overlay.dtb
-    i2c-mux-pca9548a-overlay.dtb   smi-dev-overlay.dtb
-    i2c-rtc-overlay.dtb            smi-nand-overlay.dtb
-    i2c0-bcm2708-overlay.dtb       smi-overlay.dtb
-    i2c1-bcm2708-overlay.dtb       spi-gpio35-39-overlay.dtb
-    i2s-mmap-overlay.dtb           spi1-1cs-overlay.dtb
-    iqaudio-dac-overlay.dtb        spi1-2cs-overlay.dtb
-    iqaudio-dacplus-overlay.dtb    spi1-3cs-overlay.dtb
-    lirc-rpi-overlay.dtb           spi2-1cs-overlay.dtb
-    mcp2515-can0-overlay.dtb       spi2-2cs-overlay.dtb
-    mcp2515-can1-overlay.dtb       spi2-3cs-overlay.dtb
-    mmc-overlay.dtb                tinylcd35-overlay.dtb
-    mz61581-overlay.dtb            uart1-overlay.dtb
-    pi3-act-led-overlay.dtb        vc4-kms-v3d-overlay.dtb
-    pi3-disable-bt-overlay.dtb     vga666-overlay.dtb
-    pi3-miniuart-bt-overlay.dtb    w1-gpio-overlay.dtb
-    piscreen-overlay.dtb           w1-gpio-pullup-overlay.dtb
-    piscreen2r-overlay.dtb         wittypi-overlay.dtb
-
+    ads7846-overlay.dtb             pitft28-resistive-overlay.dtb
+    at86rf233-overlay.dtb           pps-gpio-overlay.dtb
+    bmp085_i2c-sensor-overlay.dtb   pwm-2chan-overlay.dtb
+    dht11-overlay.dtb               pwm-overlay.dtb
+    dwc-otg-overlay.dtb             qca7000-overlay.dtb
+    dwc2-overlay.dtb                raspidac3-overlay.dtb
+    enc28j60-overlay.dtb            rpi-backlight-overlay.dtb
+    gpio-ir-overlay.dtb             rpi-dac-overlay.dtb
+    gpio-poweroff-overlay.dtb       rpi-display-overlay.dtb
+    hifiberry-amp-overlay.dtb       rpi-ft5406-overlay.dtb
+    hifiberry-dac-overlay.dtb       rpi-proto-overlay.dtb
+    hifiberry-dacplus-overlay.dtb   rpi-sense-overlay.dtb
+    hifiberry-digi-overlay.dtb      sdhost-overlay.dtb
+    hy28a-overlay.dtb               sdio-1bit-overlay.dtb
+    hy28b-overlay.dtb               sdio-overlay.dtb
+    i2c-gpio-overlay.dtb            sdtweak-overlay.dtb
+    i2c-mux-pca9548a-overlay.dtb    smi-dev-overlay.dtb
+    i2c-rtc-overlay.dtb             smi-nand-overlay.dtb
+    i2c0-bcm2708-overlay.dtb        smi-overlay.dtb
+    i2c1-bcm2708-overlay.dtb        spi-gpio35-39-overlay.dtb
+    i2s-mmap-overlay.dtb            spi1-1cs-overlay.dtb
+    iqaudio-dac-overlay.dtb         spi1-2cs-overlay.dtb
+    iqaudio-dacplus-overlay.dtb     spi1-3cs-overlay.dtb
+    lirc-rpi-overlay.dtb            spi2-1cs-overlay.dtb
+    mcp2515-can0-overlay.dtb        spi2-2cs-overlay.dtb
+    mcp2515-can1-overlay.dtb        spi2-3cs-overlay.dtb
+    mmc-overlay.dtb                 tinylcd35-overlay.dtb
+    mz61581-overlay.dtb             uart1-overlay.dtb
+    pi3-act-led-overlay.dtb         vc4-kms-v3d-overlay.dtb
+    pi3-disable-bt-overlay.dtb      vga666-overlay.dtb
+    pi3-miniuart-bt-overlay.dtb     w1-gpio-overlay.dtb
+    piscreen-overlay.dtb            w1-gpio-pullup-overlay.dtb
+    piscreen2r-overlay.dtb          wittypi-overlay.dtb
+    pitft28-capacitive-overlay.dtb
 
 I've only tested a few
 
@@ -112,6 +115,7 @@ I've only tested a few
 * iqaudio-dacplus
 * i2s-mmap
 * sdhost (the default, but you can overclock now)
+* pi3-disable-bt-overlay
 
 They all come from the official Raspberry Pi kernel tree so I have confidence they all work fine. I need  some more hardware to test many of them.
 
