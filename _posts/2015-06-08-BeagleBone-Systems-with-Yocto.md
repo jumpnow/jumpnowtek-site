@@ -2,22 +2,22 @@
 layout: post
 title: Building BeagleBone Black Systems with Yocto
 description: "Building customized systems for the BeagleBone Black using tools from the Yocto Project"
-date: 2016-03-18 17:10:00
+date: 2016-04-08 08:30:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
 
 Building systems for [BeagleBone Black][bbb] and [BeagleBone Green][bbg] boards using tools from the [Yocto Project][Yocto].
 
-The [meta-bbb][meta-bbb] *layer* generates some basic systems with packages to support C, C++, [Qt5][qt], Perl and Python development.
+The [meta-bbb][meta-bbb] *layer* generates some basic systems with packages that support C, C++, [Qt5][qt], Perl and Python development, the languages and tools I commonly use. Other languages are supported of course. 
 
-I use this as a template when starting new *BeagleBone* projects.
+I use this layer as a template when starting new *BeagleBone* projects.
 
 ### System Info
 
 The Yocto version is `2.0.1` the `[jethro]` branch.
 
-The `4.5` Linux kernel comes from the [linux-stable][linux-stable] repository. Switching to another kernel like the `4.4.6` or `4.1.20` *LTS* kernels is a one-liner in `local.conf`.
+The `4.5.0` Linux kernel comes from the [linux-stable][linux-stable] repository. Switching to another kernel like the `4.4.6` or `4.1.21` *LTS* kernels is a one-liner in `local.conf`.
 
 The [u-boot][uboot] version is `2016.01`.
 
