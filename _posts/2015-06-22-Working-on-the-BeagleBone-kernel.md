@@ -2,7 +2,7 @@
 layout: post
 title: Working on the BeagleBone Kernel
 description: "Working on and customizing the BeagleBone Black kernel"
-date: 2015-11-10 08:30:00
+date: 2016-04-21 06:20:00
 categories: beaglebone 
 tags: [linux, beaglebone, kernel]
 ---
@@ -28,55 +28,60 @@ Which kernel to use comes from this line in `meta-bbb/conf/machine/beaglebone.co
 
 Kernel recipes are here `meta-bbb/recipes-kernel/linux/`
 
-The default kernel recipe is `linux-stable_4.3.bb`
+The default kernel recipe is `linux-stable_4.5.bb`
 
-Kernel patches and config file are searched for under `meta-bbb/recipes-kernel/linux/linux-stable-4.3/` because of this line in the kernel recipe
+Kernel patches and config file are searched for under `meta-bbb/recipes-kernel/linux/linux-stable-4.5/` because of this line in the kernel recipe
 
-    FILESEXTRAPATHS_prepend := "${THISDIR}/linux-stable-4.3:"
+    FILESEXTRAPATHS_prepend := "${THISDIR}/linux-stable-4.5:"
 
-The kernel config file is `meta-bbb/recipes-kernel/linux/linux-stable-4.3/beaglebone/defconfig`.
+The kernel config file is `meta-bbb/recipes-kernel/linux/linux-stable-4.5/beaglebone/defconfig`.
 
-If you had multiple *linux-stable* recipes, maybe *linux-stable_4.1.bb* and *linux-stable_4.3.bb* then the highest revision number, **4.3** in this case, would be used. To specify an earlier version, you could use a line like this in `build/conf/local.conf`
+If you had multiple *linux-stable* recipes, maybe 
 
-    PREFERRED_VERSION_linux-stable = "4.1"
+* linux-stable_4.1.bb
+* linux-stable_4.4.bb
+* linux-stable_4.5.bb 
+ 
+then the highest revision number, **4.5** in this case, would be used. 
 
-When Yocto builds the *linux-stable-4.3* kernel, it does so under this directory
+To specify an earlier version, you could use a line like this in `build/conf/local.conf`
 
-    <TMPDIR>/work/beaglebone-poky-linux-gnueabi/linux-stable/4.3-r1
+    PREFERRED_VERSION_linux-stable = "4.4"
 
-The *r1* revision comes from this line in the kernel recipe
+When Yocto builds the *linux-stable-4.5* kernel, it does so under this directory
 
-    PR = "r1"
+    <TMPDIR>/work/beaglebone-poky-linux-gnueabi/linux-stable/4.5-r4
+
+The *r4* revision comes from this line in the kernel recipe
+
+    PR = "r4"
 
 It is a good idea to update the *PR* value if you make any changes to the kernel recipe. This will force a rebuild of the kernel the next time you build an image.
 
 Here's a look at that kernel work directory after a build
 
-    scott@octo:/oe7/bbb/tmp-poky-jethro-build/work/beaglebone-poky-linux-gnueabi/linux-stable/4.3-r1$ ls -l
-    total 196
-    -rw-r--r--  1 scott scott   704 Nov  9 02:32 0001-spidev-Add-a-generic-compatible-id.patch
-    -rw-r--r--  1 scott scott  1955 Nov  9 02:32 0002-dts-Revoke-Beaglebone-i2c2-definitions.patch
-    -rw-r--r--  1 scott scott  5824 Nov  9 02:32 0003-dts-Add-some-dtsi-files-for-common-controllers.patch
-    -rw-r--r--  1 scott scott  3243 Nov  9 02:32 0004-dts-Add-bbb-hdmi-dts.patch
-    -rw-r--r--  1 scott scott  6851 Nov  9 02:32 0005-dts-Add-bbb-4dcape70t-dts.patch
-    -rw-r--r--  1 scott scott 15059 Nov  9 02:32 0006-Add-ft5x06_ts-touchscreen-driver.patch
-    -rw-r--r--  1 scott scott  5355 Nov  9 02:32 0007-dts-Add-bbb-nh5cape-dts.patch
-    -rw-r--r--  1 scott scott 88509 Nov  9 02:32 defconfig
-    drwxr-xr-x  3 scott scott  4096 Nov  9 03:13 deploy-ipks
-    drwxr-xr-x  2 scott scott  4096 Nov  9 03:05 deploy-linux-stable
-    lrwxrwxrwx  1 scott scott    67 Nov  9 02:32 git -> /oe7/bbb/tmp-poky-jethro-build/work-shared/beaglebone/kernel-source
-    drwxr-xr-x  5 scott scott  4096 Nov  9 03:05 image
-    drwxrwxr-x  3 scott scott  4096 Nov  9 02:33 license-destdir
-    drwxr-xr-x 21 scott scott  4096 Nov  9 03:05 linux-beaglebone-standard-build
-    drwxr-xr-x  4 scott scott  4096 Nov  9 03:05 package
-    drwxr-xr-x 84 scott scott  4096 Nov  9 03:14 packages-split
-    drwxr-xr-x  7 scott scott  4096 Nov  9 03:05 pkgdata
-    drwxrwxr-x  2 scott scott  4096 Nov  9 03:13 pseudo
-    drwxr-xr-x  3 scott scott  4096 Nov  9 03:05 sysroot-destdir
-    drwxrwxr-x  2 scott scott 12288 Nov  9 03:14 temp
+    scott@fractal:~$ ls -l /oe7/bbb/tmp-jethro/work/beaglebone-poky-linux-gnueabi/linux-stable/4.5-r4/
+    total 208
+    -rw-r--r--   1 scott scott   704 Apr 20 10:14 0001-spidev-Add-a-generic-compatible-id.patch
+    -rw-r--r--   1 scott scott  2089 Apr 20 10:14 0002-dts-Revoke-Beaglebone-i2c2-definitions.patch
+    -rw-r--r--   1 scott scott 15062 Apr 20 10:14 0003-Add-ft5x06_ts-touchscreen-driver.patch
+    -rw-r--r--   1 scott scott 29324 Apr 20 10:14 0004-dts-Add-custom-dts-files.patch
+    -rw-r--r--   1 scott scott 98550 Apr 20 10:14 defconfig
+    drwxr-xr-x   3 scott scott  4096 Apr 20 10:20 deploy-ipks
+    drwxr-xr-x   2 scott scott  4096 Apr 20 10:20 deploy-linux-stable
+    lrwxrwxrwx   1 scott scott    56 Apr 20 10:14 git -> /oe7/bbb/tmp-jethro/work-shared/beaglebone/kernel-source
+    drwxr-xr-x   5 scott scott  4096 Apr 20 10:20 image
+    drwxrwxr-x   3 scott scott  4096 Apr 20 10:14 license-destdir
+    drwxr-xr-x  22 scott scott  4096 Apr 20 10:20 linux-beaglebone-standard-build
+    drwxr-xr-x   4 scott scott  4096 Apr 20 10:20 package
+    drwxr-xr-x 107 scott scott  4096 Apr 20 10:20 packages-split
+    drwxr-xr-x   7 scott scott  4096 Apr 20 10:20 pkgdata
+    drwxrwxr-x   2 scott scott  4096 Apr 20 10:20 pseudo
+    drwxr-xr-x   3 scott scott  4096 Apr 20 10:20 sysroot-destdir
+    drwxrwxr-x   2 scott scott 12288 Apr 20 10:20 temp
 
 
-The patches and defconfig are the same files from `meta-bbb/recipes-kernel/linux/linux-stable-4.3/`
+The patches and defconfig are the same files from `meta-bbb/recipes-kernel/linux/linux-stable-4.5/`
 
 The files under `git` are the Linux source after the kernel recipe patches have been applied.
 
@@ -91,17 +96,17 @@ You can invoke the standard kernel configuration editor using bitbake
 
 After you make your changes and save them, the new configuration file can be found here
 
-    <TMPDIR>/work/beaglebone-poky-linux-gnueabi/linux-stable/4.3-r1/linux-beaglebone-standard-build/.config
+    <TMPDIR>/work/beaglebone-poky-linux-gnueabi/linux-stable/4.5-r4/linux-beaglebone-standard-build/.config
 
 Copy that `.config` file to
 
-    ~/bbb/meta-bbb/recipes-kernel/linux/linux-stable-4.3/beaglebone/defconfig
+    ~/bbb/meta-bbb/recipes-kernel/linux/linux-stable-4.5/beaglebone/defconfig
 
 Then rebuild your kernel
 
     ~/bbb/build$ bitbake -c cleansstate virtual/kernel && bitbake virtual/kernel
 
-Finally you'll probably want to rebuild your image to get the new kernel and modules into the *rootfs* for installation onto an SD card.
+If that is successful, you then want to rebuild your image to get the new kernel and modules included in the *rootfs* for installation.
 
 ## Working outside of Yocto
 
@@ -123,27 +128,27 @@ Then after the normal setting up of the Yocto build environment
 
     ~$ source poky-jethro/oe-init-build-env ~/bbb/build
 
-build the sdk installer with the *populate_sdk* command, specifying the same image file you are using in your project.
+build the sdk installer with the *populate_sdk* command, usually specifying the same image file you are using in your project
     
-    ~/bbb/build$ bitbake -c populate_sdk qt5-image
+    ~/bbb/build$ bitbake -c populate_sdk console-image
 
 When finished, the sdk installer will end up here
 
-    <TMPDIR>/deploy/sdk/poky-glibc-x86_64-qt5-image-cortexa8hf-vfp-neon-toolchain-2.0.sh
+    <TMPDIR>/deploy/sdk/poky-glibc-x86_64-console-image-cortexa8hf-vfp-neon-toolchain-2.0.1.sh
 
-If you run it and accept the defaults, the cross-tools will get installed under `/opt/poky/2.0`.
+If you run it and accept the defaults, the cross-tools will get installed under `/opt/poky/2.0.1`.
 
 
 ### Fetch the Linux source
 
-The kernel recipe *linux-stable_4.3.bb* has the repository location, branch and commit of the kernel source used in the Yocto build.
+The kernel recipe *linux-stable_4.5.bb* has the repository location, branch and commit of the kernel source used in the Yocto build.
 
 These lines have the details
 
-    # v4.3
-    SRCREV = "6a13feb9c82803e2b815eca72fa7a9f5561d7861"
+    # v4.5.2
+    SRCREV = "92b8a3b2136d3051170ed6b14f21bac7808acc09"
     SRC_URI = " \
-        git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git;branch=master \
+        git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git;branch=linux-4.5.y \
 
 
 Be sure to pay attention to the branch.
@@ -156,15 +161,15 @@ Here are the commands to checkout that same kernel source
 	
 If a branch other then [master] was used, then you would need to switch branches here as well.
 
-For example, if you were using the 4.1 kernel
+For example, if you were using the 4.4 kernel
 	
-    $ git checkout -b linux-4.1.y origin/linux-4.1.y
+    $ git checkout -b linux-4.4.y origin/linux-4.4.y
 
 That gets you to the correct git branch, but depending on whether I've kept the `meta-bbb` repository up-to-date, the current commit on the branch may or may not match the **SRCREV** in the recipe. If they don't match, you can checkout a particular older commit explicitly or you can modify the recipe to use the latest commit. Checking out the same branch is usually sufficient.
 
 ### Apply existing patches
 
-Currently the `meta-bbb/recipes-kernel/linux/linux-stable_4.3.bb` recipe has a number of patches that I've included to add support for *spidev*, *i2c*, *uart4* and a few touchscreens. These are all completely optional and you probably want your own patches instead. 
+Currently the `meta-bbb/recipes-kernel/linux/linux-stable_4.4.bb` recipe has a number of patches that I've included to add support for *spidev*, *i2c*, *uart4* and a few touchscreens. These are all completely optional and you probably want your own patches instead. 
 
 Whatever patches you decide to use when building with *Yocto*, you can use *git* to apply these same patches to the Linux source repository outside of *Yocto*.
 
@@ -175,7 +180,7 @@ I usually start by creating a working branch
 
 And if you wanted to apply all of the patches at once
 
-    ~/bbb/linux-stable$ git am ../meta-bbb/recipes-kernel/linux/linux-stable-4.3/*.patch
+    ~/bbb/linux-stable$ git am ../meta-bbb/recipes-kernel/linux/linux-stable-4.5/*.patch
 
 Or you could apply selective patches individually.
 
@@ -183,7 +188,7 @@ Or you could apply selective patches individually.
 
 Copy the kernel config file that Yocto used to the new linux-stable repository.
 
-    cp ~/bbb/meta-bbb/recipes-kernel/linux/linux-stable-4.3/beaglebone/defconfig ~/bbb/linux-stable/.config
+    cp ~/bbb/meta-bbb/recipes-kernel/linux/linux-stable-4.5/beaglebone/defconfig ~/bbb/linux-stable/.config
 
 If you make changes to the config that you want to keep, make sure to copy it back to `meta-bbb/.../defconfig`
 
@@ -193,7 +198,7 @@ If you make changes to the config that you want to keep, make sure to copy it ba
 Source the cross-tools environment
 
     ~$ cd bbb/linux-stable
-    ~/bbb/linux-stable$ source /opt/poky/2.0/environment-setup-cortexa8hf-vfp-neon-poky-linux-gnueabi
+    ~/bbb/linux-stable$ source /opt/poky/2.0.1/environment-setup-cortexa8hf-vfp-neon-poky-linux-gnueabi
 
 Build a zImage, unset **LOCALVERSION** so modules already on the bbb rootfs will still load
 
