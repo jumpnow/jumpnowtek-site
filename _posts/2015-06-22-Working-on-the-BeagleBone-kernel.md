@@ -26,15 +26,9 @@ Which kernel to use comes from this line in `meta-bbb/conf/machine/beaglebone.co
 
     PREFERRED_PROVIDER_virtual/kernel = "linux-stable"
 
-Kernel recipes are here `meta-bbb/recipes-kernel/linux/`
+The kernel recipes are found here `meta-bbb/recipes-kernel/linux/`
 
 The default kernel recipe is `linux-stable_4.5.bb`
-
-Kernel patches and config file are searched for under `meta-bbb/recipes-kernel/linux/linux-stable-4.5/` because of this line in the kernel recipe
-
-    FILESEXTRAPATHS_prepend := "${THISDIR}/linux-stable-4.5:"
-
-The kernel config file is `meta-bbb/recipes-kernel/linux/linux-stable-4.5/beaglebone/defconfig`.
 
 If you had multiple *linux-stable* recipes, maybe 
 
@@ -47,6 +41,12 @@ then the highest revision number, **4.5** in this case, would be used.
 To specify an earlier version, you could use a line like this in `build/conf/local.conf`
 
     PREFERRED_VERSION_linux-stable = "4.4"
+
+Kernel patches and config file are searched for under `meta-bbb/recipes-kernel/linux/linux-stable-4.5/` because of this line in the kernel recipe
+
+    FILESEXTRAPATHS_prepend := "${THISDIR}/linux-stable-4.5:"
+
+The kernel config file is `meta-bbb/recipes-kernel/linux/linux-stable-4.5/beaglebone/defconfig`.
 
 When Yocto builds the *linux-stable-4.5* kernel, it does so under this directory
 
