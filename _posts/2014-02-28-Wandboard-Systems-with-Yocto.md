@@ -2,7 +2,7 @@
 layout: post
 title: Building Wandboard Systems with Yocto
 description: "Building customized systems for Wandboards using tools from the Yocto Project"
-date: 2016-03-19 13:23:00
+date: 2016-04-23 07:52:00
 categories: wandboard 
 tags: [linux, wandboard, yocto]
 ---
@@ -40,9 +40,9 @@ The following device tree binaries (dtbs) from the *linux-stable* repository are
 
 *U-Boot* should detect the correct *dtb* to load at boot time.
 
-### Ubuntu Workstation Setup
+### Ubuntu Setup
 
-I have been using *Ubuntu 15.04* and *15.10* 64-bit workstations to build these systems.
+I primarily use Ubuntu *15.10* 64-bit server installations. Other versions should work.
 
 You will need at least the following packages installed
 
@@ -64,6 +64,25 @@ You also want to change the default Ubuntu shell from `dash` to `bash` by runnin
     sudo dpkg-reconfigure dash
 
 Choose **No** to dash when prompted.
+
+### Fedora Setup
+
+I have used Fedora *23* 64-bit workstations.
+
+The extra packages I needed to install for Yocto were
+
+    chrpath
+    perl-bignum
+    perl-Thread-Queue
+    texinfo
+
+and the package group
+
+    Development Tools
+
+There might be more packages required since I had already installed *qt-creator* and the *Development Tools* group before I did the first build with Yocto.
+
+Fedora already uses `bash` as the shell. 
 
 ### Clone the dependency repositories
 

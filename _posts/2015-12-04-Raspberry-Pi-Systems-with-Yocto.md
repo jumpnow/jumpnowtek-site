@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-04-19 09:31:00
+date: 2016-04-23 07:48:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
 ---
@@ -135,9 +135,9 @@ instead of something like this that worked with 4.1 kernels
 
 I did not go back an check whether the full dtb name works in 4.1 kernels, I'm only using 4.4 and 4.5 kernels now. If you are sticking with 4.1 kernels and find issues with overlays loading, I would go back to using the shortened name.
 
-### Ubuntu Workstation Setup
+### Ubuntu Setup
 
-I have been using *Ubuntu 15.04* and *15.10* 64-bit workstations to build these systems.
+I primarily use Ubuntu *15.10* 64-bit server installations. Other versions should work.
 
 You will need at least the following packages installed
 
@@ -159,6 +159,25 @@ You also want to change the default Ubuntu shell from `dash` to `bash` by runnin
     sudo dpkg-reconfigure dash
 
 Choose **No** to dash when prompted.
+
+### Fedora Setup
+
+I have used Fedora *23* 64-bit workstations.
+
+The extra packages I needed to install for Yocto were
+
+    chrpath
+    perl-bignum
+    perl-Thread-Queue
+    texinfo
+
+and the package group
+
+    Development Tools
+
+There might be more packages required since I had already installed *qt-creator* and the *Development Tools* group before I did the first build with Yocto.
+
+Fedora already uses `bash` as the shell. 
 
 ### Clone the dependency repositories
 

@@ -2,7 +2,7 @@
 layout: post
 title: Building Duovero Systems with Yocto
 description: "Building customized systems for Gumstix Duovero using tools from the Yocto Project"
-date: 2016-03-21 09:30:00
+date: 2016-04-23 07:51:00
 categories: gumstix-linux 
 tags: [linux, gumstix, duovero, yocto]
 ---
@@ -66,11 +66,11 @@ There are some simple loopback test programs included in the console image.
 
 There is a Qt5 test program [tspress][tspress] in the *qt5-image*.
 
-### Ubuntu Packages
+### Ubuntu Setup
 
-I have been using *Ubuntu 15.04* and *15.10* 64-bit workstations to build these systems.
+I primarily use Ubuntu *15.10* 64-bit server installations. Other versions should work.
 
-You'll need at least the following packages installed
+You will need at least the following packages installed
 
     bc
     build-essential
@@ -85,11 +85,30 @@ You'll need at least the following packages installed
     texinfo
     u-boot-tools
 
-You'll also want to change the default Ubuntu shell from `dash` to `bash` by running this command from a shell
+You also want to change the default Ubuntu shell from `dash` to `bash` by running this command from a shell
  
     sudo dpkg-reconfigure dash
 
 Choose **No** to dash when prompted.
+
+### Fedora Setup
+
+I have used Fedora *23* 64-bit workstations.
+
+The extra packages I needed to install for Yocto were
+
+    chrpath
+    perl-bignum
+    perl-Thread-Queue
+    texinfo
+
+and the package group
+
+    Development Tools
+
+There might be more packages required since I had already installed *qt-creator* and the *Development Tools* group before I did the first build with Yocto.
+
+Fedora already uses `bash` as the shell. 
 
 ### Clone the dependency repositories
 
