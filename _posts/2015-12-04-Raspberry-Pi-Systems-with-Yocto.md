@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-04-23 07:48:00
+date: 2016-04-26 05:35:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
 ---
@@ -52,7 +52,7 @@ Instructions for installing onto an SD card are in the [README][readme].
 
 The Yocto version is `2.0.1` the `[jethro]` branch.
 
-The `4.4.7` Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository. You can switch to another kernel in `local.conf` described below.
+The `4.4.8` Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository. You can switch to another kernel in `local.conf` described below.
 
 These are **sysvinit** systems.
 
@@ -73,33 +73,34 @@ That system also works with the [HiFiBerry Amp+][hifiberry-amp] board.
 As of 2016-04-19, here is the list of DTS overlays that are installed with the `4.4.7` kernel running on an RPi2/3
 
     root@iqaudio:~# uname -a
-    Linux iqaudio 4.4.7 #1 SMP Tue Apr 19 07:52:28 EDT 2016 armv7l GNU/Linux
+    Linux iqaudio 4.4.8 #1 SMP Tue Apr 26 04:44:16 EDT 2016 armv7l GNU/Linux
 
     root@iqaudio:~# ls /mnt/fat/overlays/
     ads7846-overlay.dtb            piscreen2r-overlay.dtb
-    at86rf233-overlay.dtb          pitft28-capacitive-overlay.dtb
-    bmp085_i2c-sensor-overlay.dtb  pitft28-resistive-overlay.dtb
-    boomberry-dac-overlay.dtb      pps-gpio-overlay.dtb
-    boomberry-digi-overlay.dtb     pwm-2chan-overlay.dtb
-    dht11-overlay.dtb              pwm-overlay.dtb
-    dpi24-overlay.dtb              qca7000-overlay.dtb
-    dwc-otg-overlay.dtb            raspidac3-overlay.dtb
-    dwc2-overlay.dtb               rpi-backlight-overlay.dtb
-    enc28j60-overlay.dtb           rpi-dac-overlay.dtb
-    gpio-ir-overlay.dtb            rpi-display-overlay.dtb
-    gpio-poweroff-overlay.dtb      rpi-ft5406-overlay.dtb
-    hifiberry-amp-overlay.dtb      rpi-proto-overlay.dtb
-    hifiberry-dac-overlay.dtb      rpi-sense-overlay.dtb
-    hifiberry-dacplus-overlay.dtb  sdhost-overlay.dtb
-    hifiberry-digi-overlay.dtb     sdio-1bit-overlay.dtb
-    hy28a-overlay.dtb              sdio-overlay.dtb
-    hy28b-overlay.dtb              sdtweak-overlay.dtb
-    i2c-gpio-overlay.dtb           smi-dev-overlay.dtb
-    i2c-mux-pca9548a-overlay.dtb   smi-nand-overlay.dtb
-    i2c-pwm-pca9685a-overlay.dtb   smi-overlay.dtb
-    i2c-rtc-overlay.dtb            spi-gpio35-39-overlay.dtb
-    i2c0-bcm2708-overlay.dtb       spi1-1cs-overlay.dtb
-    i2c1-bcm2708-overlay.dtb       spi1-2cs-overlay.dtb
+    at86rf233-overlay.dtb          pitft22-overlay.dtb
+    bmp085_i2c-sensor-overlay.dtb  pitft28-capacitive-overlay.dtb
+    boomberry-dac-overlay.dtb      pitft28-resistive-overlay.dtb
+    boomberry-digi-overlay.dtb     pps-gpio-overlay.dtb
+    dht11-overlay.dtb              pwm-2chan-overlay.dtb
+    dpi24-overlay.dtb              pwm-overlay.dtb
+    dwc-otg-overlay.dtb            qca7000-overlay.dtb
+    dwc2-overlay.dtb               raspidac3-overlay.dtb
+    enc28j60-overlay.dtb           rpi-backlight-overlay.dtb
+    gpio-ir-overlay.dtb            rpi-dac-overlay.dtb
+    gpio-poweroff-overlay.dtb      rpi-display-overlay.dtb
+    hifiberry-amp-overlay.dtb      rpi-ft5406-overlay.dtb
+    hifiberry-dac-overlay.dtb      rpi-proto-overlay.dtb
+    hifiberry-dacplus-overlay.dtb  rpi-sense-overlay.dtb
+    hifiberry-digi-overlay.dtb     sdhost-overlay.dtb
+    hy28a-overlay.dtb              sdio-1bit-overlay.dtb
+    hy28b-overlay.dtb              sdio-overlay.dtb
+    i2c-gpio-overlay.dtb           sdtweak-overlay.dtb
+    i2c-mux-pca9548a-overlay.dtb   smi-dev-overlay.dtb
+    i2c-pwm-pca9685a-overlay.dtb   smi-nand-overlay.dtb
+    i2c-rtc-overlay.dtb            smi-overlay.dtb
+    i2c0-bcm2708-overlay.dtb       spi-gpio35-39-overlay.dtb
+    i2c1-bcm2708-overlay.dtb       spi1-1cs-overlay.dtb
+    i2s-gpio28-31-overlay.dtb      spi1-2cs-overlay.dtb
     i2s-mmap-overlay.dtb           spi1-3cs-overlay.dtb
     iqaudio-dac-overlay.dtb        spi2-1cs-overlay.dtb
     iqaudio-dacplus-overlay.dtb    spi2-2cs-overlay.dtb
@@ -112,6 +113,7 @@ As of 2016-04-19, here is the list of DTS overlays that are installed with the `
     pi3-disable-bt-overlay.dtb     w1-gpio-pullup-overlay.dtb
     pi3-miniuart-bt-overlay.dtb    wittypi-overlay.dtb
     piscreen-overlay.dtb
+
 
 I've only tested a few
 
