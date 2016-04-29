@@ -2,7 +2,7 @@
 layout: post
 title: Building Duovero Systems with Yocto
 description: "Building customized systems for Gumstix Duovero using tools from the Yocto Project"
-date: 2016-04-23 07:51:00
+date: 2016-04-29 18:15:00
 categories: gumstix-linux 
 tags: [linux, gumstix, duovero, yocto]
 ---
@@ -114,16 +114,16 @@ Fedora already uses `bash` as the shell.
 
 First the main Yocto project `poky` repository
 
-    scott@octo:~ git clone -b fido git://git.yoctoproject.org/poky.git poky-fido
+    scott@octo:~ git clone -b jethro git://git.yoctoproject.org/poky.git poky-jethro
 
 Then the `meta-openembedded` repository
 
-    scott@octo:~$ cd poky-fido
-    scott@octo:~/poky-fido$ git clone -b fido git://git.openembedded.org/meta-openembedded
+    scott@octo:~$ cd poky-jethro
+    scott@octo:~/poky-jethro$ git clone -b jethro git://git.openembedded.org/meta-openembedded
 
 And the `meta-qt5` repository
 
-    scott@octo:~/poky-fido$ git clone -b fido https://github.com/meta-qt5/meta-qt5.git
+    scott@octo:~/poky-jethro$ git clone -b jethro https://github.com/meta-qt5/meta-qt5.git
 
 
 I usually keep these repositories separated since they can be shared between projects and different boards.
@@ -134,7 +134,7 @@ Create a sub-directory for the `meta-duovero` repository before cloning
 
     scott@octo:~$ mkdir ~/duovero
     scott@octo:~$ cd ~/duovero
-    scott@octo:~/duovero$ git clone -b fido git://github.com/jumpnow/meta-duovero
+    scott@octo:~/duovero$ git clone -b jethro git://github.com/jumpnow/meta-duovero
 
 The `meta-duovero/README.md` file has the last commits from the dependency repositories that I tested. You can always checkout those commits explicitly if you run into problems.
 
@@ -150,7 +150,7 @@ You could manually create the directory structure like this
 
 Or you could use the *Yocto* environment script `oe-init-build-env` like this passing in the path to the build directory
 
-    scott@octo:~$ source poky-fido/oe-init-build-env ~/duovero/build
+    scott@octo:~$ source poky-jethro/oe-init-build-env ~/duovero/build
 
 The *Yocto* environment script will create the build directory if it does not already exist.
  
@@ -174,7 +174,7 @@ In `bblayers.conf` file replace `${HOME}` with the appropriate path to the meta-
 For example, if your directory structure does not look exactly like this, you will need to modify `bblayers.conf`
 
 
-    ~/poky-fido/
+    ~/poky-jethro/
          meta-openembedded/
          meta-qt5/
          ...
@@ -219,7 +219,7 @@ The default location is in the `build` directory, `~/duovero/build/sstate-cache`
 
 You need to source the environment every time you want to run a build. The `oe-init-build-env` when run a second time will not overwrite your customized conf files.
 
-    scott@octo:~$ source poky-fido/oe-init-build-env ~/duovero/build
+    scott@octo:~$ source poky-jethro/oe-init-build-env ~/duovero/build
 
     ### Shell environment set up for builds. ###
 
@@ -261,7 +261,7 @@ The *console-image* has a line
 
     inherit core-image
 
-which is `poky-fido/meta/classes/core-image.bbclass` and pulls in some required base packages. This is useful to know if you create your own image recipe.
+which is `poky-jethro/meta/classes/core-image.bbclass` and pulls in some required base packages. This is useful to know if you create your own image recipe.
 
 #### qt5-image
 
@@ -418,7 +418,7 @@ Check the *README* in the [tspress][tspress] repository for usage.
 
 To display the list of available packages from the `meta-` repositories included in *bblayers.conf*
 
-    scott@octo:~$ source poky-fido/oe-init-build-env ~/duovero/build
+    scott@octo:~$ source poky-jethro/oe-init-build-env ~/duovero/build
 
     scott@octo:~/duovero/build$ bitbake -s
 
