@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-04-26 05:35:00
+date: 2016-05-01 09:15:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
 ---
@@ -70,49 +70,49 @@ An example Raspberry Pi [music system][rpi-pandora] using an [IQaudIO Pi-DigiAMP
 
 That system also works with the [HiFiBerry Amp+][hifiberry-amp] board.
 
-As of 2016-04-19, here is the list of DTS overlays that are installed with the `4.4.7` kernel running on an RPi2/3
+As of 2016-05-01, here is the list of DTS overlays that are installed with the `4.4.8` kernel running on an RPi2/3
 
-    root@iqaudio:~# uname -a
-    Linux iqaudio 4.4.8 #1 SMP Tue Apr 26 04:44:16 EDT 2016 armv7l GNU/Linux
+    root@rpi3:~# uname -a
+    Linux rpi3 4.4.8 #1 SMP Sun May 1 07:18:39 EDT 2016 armv7l GNU/Linux
 
-    root@iqaudio:~# ls /mnt/fat/overlays/
-    ads7846-overlay.dtb            piscreen2r-overlay.dtb
-    at86rf233-overlay.dtb          pitft22-overlay.dtb
-    bmp085_i2c-sensor-overlay.dtb  pitft28-capacitive-overlay.dtb
-    boomberry-dac-overlay.dtb      pitft28-resistive-overlay.dtb
-    boomberry-digi-overlay.dtb     pps-gpio-overlay.dtb
-    dht11-overlay.dtb              pwm-2chan-overlay.dtb
-    dpi24-overlay.dtb              pwm-overlay.dtb
-    dwc-otg-overlay.dtb            qca7000-overlay.dtb
-    dwc2-overlay.dtb               raspidac3-overlay.dtb
-    enc28j60-overlay.dtb           rpi-backlight-overlay.dtb
-    gpio-ir-overlay.dtb            rpi-dac-overlay.dtb
-    gpio-poweroff-overlay.dtb      rpi-display-overlay.dtb
-    hifiberry-amp-overlay.dtb      rpi-ft5406-overlay.dtb
-    hifiberry-dac-overlay.dtb      rpi-proto-overlay.dtb
-    hifiberry-dacplus-overlay.dtb  rpi-sense-overlay.dtb
-    hifiberry-digi-overlay.dtb     sdhost-overlay.dtb
-    hy28a-overlay.dtb              sdio-1bit-overlay.dtb
-    hy28b-overlay.dtb              sdio-overlay.dtb
-    i2c-gpio-overlay.dtb           sdtweak-overlay.dtb
-    i2c-mux-pca9548a-overlay.dtb   smi-dev-overlay.dtb
-    i2c-pwm-pca9685a-overlay.dtb   smi-nand-overlay.dtb
-    i2c-rtc-overlay.dtb            smi-overlay.dtb
-    i2c0-bcm2708-overlay.dtb       spi-gpio35-39-overlay.dtb
-    i2c1-bcm2708-overlay.dtb       spi1-1cs-overlay.dtb
-    i2s-gpio28-31-overlay.dtb      spi1-2cs-overlay.dtb
-    i2s-mmap-overlay.dtb           spi1-3cs-overlay.dtb
-    iqaudio-dac-overlay.dtb        spi2-1cs-overlay.dtb
-    iqaudio-dacplus-overlay.dtb    spi2-2cs-overlay.dtb
-    lirc-rpi-overlay.dtb           spi2-3cs-overlay.dtb
-    mcp2515-can0-overlay.dtb       tinylcd35-overlay.dtb
-    mcp2515-can1-overlay.dtb       uart1-overlay.dtb
-    mmc-overlay.dtb                vc4-kms-v3d-overlay.dtb
-    mz61581-overlay.dtb            vga666-overlay.dtb
-    pi3-act-led-overlay.dtb        w1-gpio-overlay.dtb
-    pi3-disable-bt-overlay.dtb     w1-gpio-pullup-overlay.dtb
-    pi3-miniuart-bt-overlay.dtb    wittypi-overlay.dtb
-    piscreen-overlay.dtb
+    root@rpi3:~# ls /mnt/fat/overlays/
+    ads7846-overlay.dtb              piscreen-overlay.dtb
+    akkordion-iqdacplus-overlay.dtb  piscreen2r-overlay.dtb
+    at86rf233-overlay.dtb            pitft22-overlay.dtb
+    bmp085_i2c-sensor-overlay.dtb    pitft28-capacitive-overlay.dtb
+    boomberry-dac-overlay.dtb        pitft28-resistive-overlay.dtb
+    boomberry-digi-overlay.dtb       pps-gpio-overlay.dtb
+    dht11-overlay.dtb                pwm-2chan-overlay.dtb
+    dpi24-overlay.dtb                pwm-overlay.dtb
+    dwc-otg-overlay.dtb              qca7000-overlay.dtb
+    dwc2-overlay.dtb                 raspidac3-overlay.dtb
+    enc28j60-overlay.dtb             rpi-backlight-overlay.dtb
+    gpio-ir-overlay.dtb              rpi-dac-overlay.dtb
+    gpio-poweroff-overlay.dtb        rpi-display-overlay.dtb
+    hifiberry-amp-overlay.dtb        rpi-ft5406-overlay.dtb
+    hifiberry-dac-overlay.dtb        rpi-proto-overlay.dtb
+    hifiberry-dacplus-overlay.dtb    rpi-sense-overlay.dtb
+    hifiberry-digi-overlay.dtb       sdhost-overlay.dtb
+    hy28a-overlay.dtb                sdio-1bit-overlay.dtb
+    hy28b-overlay.dtb                sdio-overlay.dtb
+    i2c-gpio-overlay.dtb             sdtweak-overlay.dtb
+    i2c-mux-pca9548a-overlay.dtb     smi-dev-overlay.dtb
+    i2c-pwm-pca9685a-overlay.dtb     smi-nand-overlay.dtb
+    i2c-rtc-overlay.dtb              smi-overlay.dtb
+    i2c0-bcm2708-overlay.dtb         spi-gpio35-39-overlay.dtb
+    i2c1-bcm2708-overlay.dtb         spi1-1cs-overlay.dtb
+    i2s-gpio28-31-overlay.dtb        spi1-2cs-overlay.dtb
+    i2s-mmap-overlay.dtb             spi1-3cs-overlay.dtb
+    iqaudio-dac-overlay.dtb          spi2-1cs-overlay.dtb
+    iqaudio-dacplus-overlay.dtb      spi2-2cs-overlay.dtb
+    lirc-rpi-overlay.dtb             spi2-3cs-overlay.dtb
+    mcp2515-can0-overlay.dtb         tinylcd35-overlay.dtb
+    mcp2515-can1-overlay.dtb         uart1-overlay.dtb
+    mmc-overlay.dtb                  vc4-kms-v3d-overlay.dtb
+    mz61581-overlay.dtb              vga666-overlay.dtb
+    pi3-act-led-overlay.dtb          w1-gpio-overlay.dtb
+    pi3-disable-bt-overlay.dtb       w1-gpio-pullup-overlay.dtb
+    pi3-miniuart-bt-overlay.dtb      wittypi-overlay.dtb
 
 
 I've only tested a few
@@ -602,6 +602,15 @@ Then using `wget` on the *RPi*
     Audio codec aac channels 2 samplerate 44100 bitspersample 16
     Subtitle count: 0, state: off, index: 1, delay: 0
     V:PortSettingsChanged: 1920x800@24.00 interlace:0 deinterlace:0 anaglyph:0 par:1.00 layer:0 alpha:255
+
+If you get errors like this
+
+    COMXAudio::Decode timeout
+
+Increase memory allocated to the GPU in `config.txt`
+
+    gpu_mem=128
+
 
 #### Using the Raspberry Pi Camera
 
