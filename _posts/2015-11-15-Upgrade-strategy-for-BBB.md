@@ -13,7 +13,7 @@ This is for *full-system* upgrades, everything but the *bootloader*.
 
 A reason to prefer *full-system* upgrades is to keep the upgrade operation *atomic* and thereby easier to rollback to a known good system.
 
-This is harder to do when an upgrade is split up into packages with dependencies that might install okay, but may not work correctly at runtime.
+This is harder to do when an upgrade is split up into packages with dependencies that might install okay, but may not work correctly together at runtime.
 
 *Full-system* upgrades also make it easier to track the exact version of software a system is running.
 

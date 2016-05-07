@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-05-07 10:00:00
+date: 2016-05-07 10:56:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
 ---
@@ -13,9 +13,9 @@ The example images in [meta-rpi][meta-rpi] build systems that support C, C++, [Q
 
 Yocto is a good tool for building minimal, customized systems like single function hacking projects or industrial / commercial embedded products.
 
-If you are looking for a full-featured desktop experience you will be better off sticking with [Raspbian][raspbian] or another one of the full-featured [RPi distributions][rpi-distros].
+If you are looking for a full-featured desktop experience you will probably be better off sticking with [Raspbian][raspbian] or another one of the full-featured [RPi distributions][rpi-distros].
 
-If things like quick boot times, small image sizes or read-only rootfs are important to your project, then you might want to try Yocto.
+If things like quick boot times, small image sizes or read-only rootfs are important to your project, then you might want to use Yocto.
 
 I am using the Yocto [meta-raspberrypi][meta-raspberrypi] layer, but have updated recipes for the Linux kernel, [bootfiles][firmware-repo] and some [userland][userland-repo] components.
 
@@ -49,7 +49,7 @@ Instructions for installing onto an SD card are in the [README][readme].
 
 The Yocto version is `2.1` the `[krogoth]` branch.
 
-The `4.4.8` Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository. You can switch to another kernel in `local.conf` described below.
+The `4.4.8` Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
 
 These are **sysvinit** systems using [eudev][eudev].
 
