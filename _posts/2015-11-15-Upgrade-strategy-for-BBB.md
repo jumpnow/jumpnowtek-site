@@ -2,38 +2,36 @@
 layout: post
 title: Upgrading BeagleBone Black Systems
 description: "Implementing a simple upgrade strategy for deployed BBB systems"
-date: 2015-12-04 16:30:00
+date: 2016-01-14 10:30:00
 categories: beaglebone 
 tags: [linux, beaglebone, upgrade]
 ---
 
-A simple upgrade strategy for deployed BeagleBone Black systems running off the *eMMC*.
+Here is a simple upgrade strategy for deployed BeagleBone Black systems running off the *eMMC*.
 
-This is a *full-system* upgrade strategy, everything but the bootloader.
+This is for *full-system* upgrades, everything but the *bootloader*.
 
-One reason to prefer a *full-system* upgrade is to keep the upgrade operation *atomic* and thereby easier to rollback to a known good state.
+A reason to prefer *full-system* upgrades is to keep the upgrade operation *atomic* and thereby easier to rollback to a known good system.
 
-This is harder to do when an upgrade is split up into individual packages with various inter-dependencies.
+This is harder to do when an upgrade is split up into packages with dependencies that might install okay, but may not work correctly at runtime.
 
-*Full-system* upgrades also make it easier to track the exact software a system is running. 
+*Full-system* upgrades also make it easier to track the exact version of software a system is running.
 
-The idea described here could easily be extended to systems running off an SD card, opening it up to other boards like [Raspberry Pis][rpi], *Gumstix* [Overos][overo] and [Duoveros][duovero] or *i.MX6* systems like the [Wandboards][wandboard].
-
-A sample implementation for the BBB can be found on [github][bbb-upgrader].
+A working implementation for [Yocto][yocto] built systems can be found in this recipe [github.com/jumpnow/meta-bbb/recipes-support/emmc-upgrader][emmc-upgrader].
 
 ### Background
 
 The core idea is nothing new. There will be two *rootfs* partitions, one active and potentially **read-only** and the other inactive and not mounted.
 
-The upgrade will mount and install the new *rootfs* on the non-active partition and then make whatever changes are necessary to let the bootloader know which partition to use on the next boot. 
+The upgrade will mount and install the new *rootfs* on the non-active partition and then make whatever changes are necessary to let the bootloader (UBoot) know which partition to use on the next boot. 
 
-The current Rev C BBBs have a 4GB *eMMC*. Older revisions had a 2GB *eMMC*, but since projects I'm working on assume a Rev C. That's what I'll do here. 
+The current Rev C BBBs have a 4GB *eMMC*. Older revisions had a 2GB *eMMC*, but since projects I'm working on all assume a Rev C or greater board, that's what I'll do here. The partition sizes described below could be modified to support 2GB *eMMCs*. 
 
 The BBB projects I work on tend to be small, dedicated systems where there is more then enough space on the *eMMC* to support a multiple *rootfs* strategy.
 
 I use *Yocto* to [build BBB systems][bbb-build]. The systems are typically less then **500MB** when installed. Most are much smaller.
 
-This won't work with the **+2GB** [Debian desktop][bbb-debian] systems that come factory installed on the BBB.
+Note that this strategy won't work with the **+2GB** [Debian desktop][bbb-debian] systems that come factory installed on the BBB.
 
 ### Requirements
 
@@ -65,9 +63,9 @@ System upgrades might happen automatically or they might be user initiated.
 
 There also needs to be some sort of validation that the image file is not corrupted and that the image is appropriate for this system.
 
-I'm going to skip over this part for now since these details tend to have a lot of project specific nuances that don't affect the low-level implementation I am covering here. 
+I'm going to skip over this part for now since these details tend to have a lot of project specific nuances that don't immediately affect the low-level implementation I am covering here. 
 
-### Implementation
+### Preparation
 
 One of the requirements was that an initial install previously setup some partitions on the *eMMC*.
 
@@ -90,11 +88,19 @@ Here's the kind of partitioning I'm planning on
     /dev/mmcblk1p6      4462592 7667711 3205120  1.5G 83 Linux
 
 
-The two *rootfs* partitions for this system would be `/dev/mmcblk0p2` and `/dev/mmcblk0p3`.
+The two *rootfs* partitions for this system would be `/dev/mmcblk0p2` ( **p2** )and `/dev/mmcblk0p3` ( **p3** ).
 
 `/dev/mmcblk0p5` will be used for some *flag* files.
 
 `/dev/mmcblk0p6` is there for application use and general storage. (The *rootfs* is **read-only**.) 
+
+Here is another *bitbake recipe* that installs scripts to perform an initial installation to the BBB *eMMC* with the partitioning required by the *upgrader*
+
+[github.com/jumpnow/meta-bbb/tree/jethro/recipes-support/emmc-installer][emmc-installer]
+
+
+
+### Implementation
 
 Here are some of the things the upgrade script needs to check, nothing too difficult.
 
@@ -140,13 +146,13 @@ The plan is to use a small dedicated partition `/dev/mmcblk0p5` formatted as FAT
 
 There will be at most three flag files at any one time.
 
-If `/dev/mmcblk0p2` is the *rootfs*, the files would be
+If **p2** is the *rootfs* partition, the files would be
 
     two
     two_tried
     two_ok
 
-or if `/dev/mmcblk0p3` is the *rootfs*, they would be
+or if **p3** is the *rootfs*, they would be
 
     three
     three_tried
@@ -159,21 +165,12 @@ The files `two` or `three` indicate which partition should be used. This file is
 
 The `tried` flag files tell u-boot that it has tried this partition once before. This file is managed by u-boot (`uEnv.txt`) and ensures u-boot won't keep retrying a partition that doesn't boot.
 
-The `ok` flag files tell u-boot that the partition is OK to use. This file is managed by Linux once the system has booted successfully.
+The `ok` flag files tell u-boot that the partition is good to use. This file is managed by Linux once the system has booted successfully.
 
 
 Here's some pseudo code for the u-boot use of the **flags** partition
 
-    if test -e two then
-        if test -e two_ok then
-            boot two
-        elif test -e two_tried then
-            boot three
-        else
-            write two_tried
-            boot two
-        fi
-    else test -e three then
+    if test -e three then
         if test -e three_ok then
             boot three
         elif test -e three_tried then
@@ -182,10 +179,18 @@ Here's some pseudo code for the u-boot use of the **flags** partition
             write three_tried
             boot three
         fi
-	fi
+	else if test -e two then
+        if test -e two_ok then
+            boot two
+        elif test -e two_tried then
+            boot three
+        else
+            write two_tried
+            boot two
+        fi
+    fi
 
-
-Here is an example `uEnv.txt` implementation optimized somewhat knowing that *boot_two* is the default.
+Here is an example `uEnv.txt` implementation optimized somewhat knowing that **p2** is the default.
 
     rootpart=1:2
     flagpart=1:5
@@ -263,24 +268,11 @@ Once the new system has booted successfully, Linux will run a script like this s
 
 If Linux doesn't update the **flags** partition, the system will revert back to the previous *rootfs* on the next boot.
 
-### Issues / Improvements / TODOs
-
-1. `uEnv.txt` could add some additional checks so that if it doesn't find a kernel or *dtb* on the partition it is supposed to boot from it will automatically fall back to the other partition. This is really the job of the upgrade script though.
-
-2. The two `/dev/mmcblkboot` partitions on the *eMMC* seem ideal for placing the *flag* file instead of a fifth partition.
- 
-  * Can the `/dev/mmcblkboot` partitions be accessed from the u-boot *Hush* shell?
-  * Can we format the `/dev/mmcblkboot` partitions as ext4 or FAT so we can test for a file using the shell?
-
 
 [busybox]: https://en.wikipedia.org/wiki/BusyBox
 [hush]: http://www.denx.de/wiki/view/DULG/CommandLineParsing#Section_14.2.17.2.
-[bbb-upgrader]: https://github.com/jumpnow/bbb-upgrader
+[emmc-upgrader]: https://github.com/jumpnow/meta-bbb/tree/jethro/recipes-support/emmc-upgrader
+[emmc-installer]: https://github.com/jumpnow/meta-bbb/tree/jethro/recipes-support/emmc-installer
 [yocto]: http://www.yoctoproject.org
 [bbb-build]: http://www.jumpnowtek.com/beaglebone/BeagleBone-Systems-with-Yocto.html
 [bbb-debian]: http://elinux.org/Beagleboard:BeagleBoneBlack_Debian
-[overo]: https://store.gumstix.com/coms/overo-coms.html
-[duovero]: https://store.gumstix.com/coms/duovero-coms.html
-[wandboard]: http://www.wandboard.org/
-[technexion]: http://www.technexion.com/products/edm/edm-som
-[rpi]: https://www.raspberrypi.org/

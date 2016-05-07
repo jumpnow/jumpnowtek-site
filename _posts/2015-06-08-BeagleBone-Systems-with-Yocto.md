@@ -2,7 +2,7 @@
 layout: post
 title: Building BeagleBone Black Systems with Yocto
 description: "Building customized systems for the BeagleBone Black using tools from the Yocto Project"
-date: 2016-04-23 07:50:00
+date: 2016-05-07 10:00:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
@@ -15,21 +15,21 @@ I use this layer as a template when starting new *BeagleBone* projects.
 
 ### System Info
 
-The Yocto version is `2.0.1` the `[jethro]` branch.
+The Yocto version is `2.1` the `[krogoth]` branch.
 
-The `4.5.2` Linux kernel comes from the [linux-stable][linux-stable] repository. Switching to another kernel like the `4.4.8` or `4.1.22` *LTS* kernels is a one-liner in `local.conf`.
+The `4.4.9` Linux kernel comes from the [linux-stable][linux-stable] repository. Switching to another kernel like the latest stable `4.5.3` is a one-liner in `local.conf`.
 
-The [u-boot][uboot] version is `2016.01`.
+The [u-boot][uboot] version is `2016.05-rc3+`.
 
-These are **sysvinit** systems.
+These are **sysvinit** systems using [eudev][eudev].
 
-The Qt version is `5.5.1`. There is no *X11* and no desktop installed. [Qt][qt] GUI applications can be run using the `-platform linuxfb` switch.
+The Qt version is `5.6.0`. There is no *X11* and no desktop installed. [Qt][qt] GUI applications can be run using the `-platform linuxfb` switch.
 
 A light-weight *X11* desktop can be added with minimal changes to the build configuration. (*X11* is needed to run Java GUI apps.)
 
-[ZeroMQ][zeromq] version `4.1.3` with development headers and libs is included.
+[ZeroMQ][zeromq] version `4.1.4` with development headers and libs is included.
 
-Perl `5.22` and Python `2.7.9` each with a number of modules is included.
+Perl `5.22` and Python `2.7.11` each with a number of modules is included.
 
 *Device tree* binaries are generated and installed that support
 
@@ -52,11 +52,10 @@ There are some simple loopback test programs included in the console image.
   
 ### Ubuntu Setup
 
-I primarily use Ubuntu *15.10* 64-bit server installations. Other versions should work.
+I primarily use Ubuntu *15.10* and *16.04* 64-bit server installations. Other versions should work.
 
 You will need at least the following packages installed
 
-    bc
     build-essential
     chrpath
     diffstat
@@ -67,7 +66,6 @@ You will need at least the following packages installed
     subversion
     texi2html
     texinfo
-    u-boot-tools
 
 You also want to change the default Ubuntu shell from `dash` to `bash` by running this command from a shell
  
@@ -77,7 +75,7 @@ Choose **No** to dash when prompted.
 
 ### Fedora Setup
 
-I have used Fedora *23* 64-bit workstations.
+I have used Fedora *23* 64-bit workstation.
 
 The extra packages I needed to install for Yocto were
 
@@ -98,16 +96,16 @@ Fedora already uses `bash` as the shell.
 
 First the main Yocto project `poky` repository
 
-    scott@octo:~ git clone -b jethro git://git.yoctoproject.org/poky.git poky-jethro
+    scott@octo:~ git clone -b krogoth git://git.yoctoproject.org/poky.git poky-krogoth
 
 Then the `meta-openembedded` repository
 
-    scott@octo:~$ cd poky-jethro
-    scott@octo:~/poky-jethro$ git clone -b jethro git://git.openembedded.org/meta-openembedded
+    scott@octo:~$ cd poky-krogoth
+    scott@octo:~/poky-krogoth$ git clone -b krogoth git://git.openembedded.org/meta-openembedded
 
 And the `meta-qt5` repository
 
-    scott@octo:~/poky-jethro$ git clone -b jethro https://github.com/meta-qt5/meta-qt5.git
+    scott@octo:~/poky-krogoth$ git clone -b krogoth https://github.com/meta-qt5/meta-qt5.git
 
 
 I usually keep these repositories separated since they can be shared between projects and different boards.
@@ -118,7 +116,7 @@ Create a sub-directory for the `meta-bbb` repository before cloning
 
     scott@octo:~$ mkdir ~/bbb
     scott@octo:~$ cd ~/bbb
-    scott@octo:~/bbb$ git clone -b jethro git://github.com/jumpnow/meta-bbb
+    scott@octo:~/bbb$ git clone -b krogoth git://github.com/jumpnow/meta-bbb
 
 The `meta-bbb/README.md` file has the last commits from the dependency repositories that I tested. You can always checkout those commits explicitly if you run into problems.
 
@@ -135,7 +133,7 @@ You could manually create the directory structure like this
 
 Or you could use the *Yocto* environment script `oe-init-build-env` like this passing in the path to the build directory
 
-    scott@octo:~$ source poky-jethro/oe-init-build-env ~/bbb/build
+    scott@octo:~$ source poky-krogoth/oe-init-build-env ~/bbb/build
 
 The *Yocto* environment script will create the build directory if it does not already exist.
  
@@ -159,7 +157,7 @@ In `bblayers.conf` file replace `${HOME}` with the appropriate path to the meta-
 For example, if your directory structure does not look exactly like this, you will need to modify `bblayers.conf`
 
 
-    ~/poky-jethro/
+    ~/poky-krogoth/
          meta-openembedded/
          meta-qt5/
          ...
@@ -190,7 +188,7 @@ If you specify an alternate location as I do in the example conf file make sure 
 
 ##### DL_DIR
 
-This is where the downloaded source files will be stored. You can share this among configurations and build files so I created a general location for this outside my home directory. Make sure the build user has write permission to the directory you decide on.
+This is where the downloaded source files will be stored. You can share this among configurations and build files so I created a general location for this outside the project directory. Make sure the build user has write permission to the directory you decide on.
 
 The default location is in the `build` directory, `~/bbb/build/sources`.
 
@@ -204,7 +202,7 @@ The default location is in the `build` directory, `~/bbb/build/sstate-cache`.
 
 You need to [source][source-script] the Yocto environment into your shell before you can use [bitbake][bitbake]. The `oe-init-build-env` will not overwrite your customized conf files.
 
-    scott@octo:~$ source poky-jethro/oe-init-build-env ~/bbb/build
+    scott@octo:~$ source poky-krogoth/oe-init-build-env ~/bbb/build
 
     ### Shell environment set up for builds. ###
 
@@ -245,7 +243,7 @@ The *console-image* has a line
 
     inherit core-image
 
-which is `poky-jethro/meta/classes/core-image.bbclass` and pulls in some required base packages.  This is useful to know if you create your own image recipe.
+which is `poky-krogoth/meta/classes/core-image.bbclass` and pulls in some required base packages.  This is useful to know if you create your own image recipe.
 
 #### qt5-image
 
@@ -355,11 +353,11 @@ This *copy_boot.sh* script needs to know the `TMPDIR` to find the binaries. It l
 
 For instance, if I had this in the `local.conf`
 
-    TMPDIR = "/oe9/bbb/tmp-jethro"
+    TMPDIR = "/oe9/bbb/tmp-krogoth"
 
 Then I would export this environment variable before running `copy_boot.sh`
 
-    scott@octo:~/bbb/meta-bbb/scripts$ export OETMP=/oe9/bbb/tmp-jethro
+    scott@octo:~/bbb/meta-bbb/scripts$ export OETMP=/oe9/bbb/tmp-krogoth
 
 Then run the `copy_boot.sh` script passing the location of SD card
 
@@ -391,7 +389,7 @@ Here's a realistic example session where I want to copy already built images to 
 
     scott@octo:~$ sudo umount /dev/sdb1
     scott@octo:~$ sudo umount /dev/sdb2
-    scott@octo:~$ export OETMP=/oe9/bbb/tmp-jethro
+    scott@octo:~$ export OETMP=/oe9/bbb/tmp-krogoth
     scott@octo:~$ cd bbb/meta-bbb/scripts
     scott@octo:~/bbb/meta-bbb/scripts$ ./copy_boot.sh sdb
     scott@octo:~/bbb/meta-bbb/scripts$ ./copy_rootfs.sh sdb console bbb2
@@ -564,7 +562,7 @@ Check the *README* in the [tspress][tspress] repository for usage.
 
 To display the list of available packages from the `meta-` repositories included in *bblayers.conf*
 
-    scott@octo:~$ source poky-jethro/oe-init-build-env ~/bbb/build
+    scott@octo:~$ source poky-krogoth/oe-init-build-env ~/bbb/build
 
     scott@octo:~/bbb/build$ bitbake -s
 
@@ -614,7 +612,8 @@ An implementation of this idea is described here [An Upgrade strategy for the BB
 [bbb-uboot]: http://www.jumpnowtek.com/beaglebone/Beaglebone-Black-U-Boot-Notes.html
 [4dcape]: http://www.4dsystems.com.au/product/4DCAPE_70T/
 [nh5cape]: http://elinux.org/Nh5cape
-[bitbake]: https://www.yoctoproject.org/docs/1.8/bitbake-user-manual/bitbake-user-manual.html
+[bitbake]: http://www.yoctoproject.org/docs/2.1/bitbake-user-manual/bitbake-user-manual.html
 [source-script]: http://stackoverflow.com/questions/4779756/what-is-the-difference-between-source-script-sh-and-script-sh
 [zeromq]: http://zeromq.org/
 [bbb-upgrades]: http://www.jumpnowtek.com/beaglebone/Upgrade-strategy-for-BBB.html
+[eudev]: https://wiki.gentoo.org/wiki/Project:Eudev

@@ -2,7 +2,7 @@
 layout: post
 title: Working with the Raspberry Pi Compute Board
 description: "Miscellaneous notes regarding the RPi compute"
-date: 2016-02-23 10:30:00
+date: 2016-03-06 12:00:00
 categories: rpi
 tags: [linux, rpi compute, yocto]
 ---
@@ -16,6 +16,21 @@ The same *copy* scripts described in the [instructions post][rpi-yocto] will als
 First you need to mount the RPi eMMC as *disk* device on your workstation using using the `rpiboot` utility from the [github.com/raspberrypi/tools][rpi-tools] project.
 
 Instructions for obtaining and building `rpiboot` are here : [Flashing the Compute Module eMMC][rpiboot-instructions]
+
+Here is the *TLDR* version
+
+Install the *libusb-1.0* dependency if you don't already have it 
+
+    scott@fractal:~/rpi$ sudo apt-get install libusb-1.0-0-dev 
+
+Then fetch and build the `rpiboot` utility
+
+    scott@octo:~/rpi$ git clone git://github.com/raspberrypi/tools.git
+
+    scott@octo:~/rpi$ cd tools/usbboot
+
+    scott@fractal:~/rpi/tools/usbboot$ make && sudo make install
+
 
 Here's the disk situation on the workstation before mounting the RPi eMMC.
 
@@ -37,7 +52,7 @@ Put the RPi Compute `J4` jumper to the *USB Slave* position, and plug the `J15` 
 
 Now run `rpiboot`. 
 
-    scott@octo:~/rpi/tools/usbboot$ sudo ./rpiboot
+    scott@octo:~/rpi$ sudo rpiboot
     Waiting for BCM2835 ...
     Found serial = 0: writing file ./usbbootcode.bin
     Failed : 0x7Waiting for BCM2835 ...

@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-05-07 09:00:00
+date: 2016-05-07 10:00:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
 ---
@@ -51,9 +51,9 @@ The Yocto version is `2.1` the `[krogoth]` branch.
 
 The `4.4.8` Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository. You can switch to another kernel in `local.conf` described below.
 
-These are **sysvinit** systems.
+These are **sysvinit** systems using [eudev][eudev].
 
-The Qt version is `5.6.0+`.
+The Qt version is `5.6.0`. There is no *X11* and no desktop installed. [Qt][qt] GUI applications can be run using the `-platform linuxfb` switch.
 
 Perl `5.22` and Python `2.7.11` each with a number of modules is included.
 
@@ -640,7 +640,7 @@ A quick test of the camera for 60 seconds (flipping the image because of the way
 [serialecho]: https://github.com/scottellis/serialecho
 [lsblk]: http://linux.die.net/man/8/lsblk
 [opkg-repo]: http://www.jumpnowtek.com/yocto/Using-your-build-workstation-as-a-remote-package-repository.html
-[bitbake]: https://www.yoctoproject.org/docs/1.8/bitbake-user-manual/bitbake-user-manual.html
+[bitbake]: http://www.yoctoproject.org/docs/2.1/bitbake-user-manual/bitbake-user-manual.html
 [source-script]: http://stackoverflow.com/questions/4779756/what-is-the-difference-between-source-script-sh-and-script-sh
 [raspicam]: https://www.raspberrypi.org/documentation/usage/camera/raspicam/README.md
 [rpi_camera_module]: https://www.raspberrypi.org/documentation/raspbian/applications/camera.md
@@ -662,3 +662,4 @@ A quick test of the camera for 60 seconds (flipping the image because of the way
 [firmware-repo]: https://github.com/raspberrypi/firmware
 [userland-repo]: https://github.com/raspberrypi/userland
 [meta-raspberrypi]: http://git.yoctoproject.org/cgit/cgit.cgi/meta-raspberrypi
+[eudev]: https://wiki.gentoo.org/wiki/Project:Eudev
