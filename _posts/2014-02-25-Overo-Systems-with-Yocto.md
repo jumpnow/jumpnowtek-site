@@ -2,7 +2,7 @@
 layout: post
 title: Building Overo Systems with Yocto
 description: "Building customized systems for Gumstix Overo using tools from the Yocto Project"
-date: 2016-05-07 10:30:00
+date: 2016-05-07 16:00:00
 categories: gumstix-linux 
 tags: [linux, gumstix, overo, yocto]
 ---
@@ -307,9 +307,17 @@ You only have to create this directory once.
 
 #### copy_boot.sh
 
-This script copies the bootloader (MLO, u-boot) to the boot partition of the SD card.
+This script copies the bootloader (MLO, u-boot) and a u-boot script `uEnv.txt` to the boot partition of the SD card.
 
-This script needs to know the `TMPDIR` to find the binaries. It looks for an environment variable called `OETMP`.
+A `uEnv.txt` is required until I upgrade u-boot. The reason is I'm using an *ext4* filesystem since *ext3* was deprecated in the newest kernels. But the default u-boot environment thinks the rootfs will be *ext3*. 
+
+There is a default `uEnv.txt` provided (assumes an Overo Storm and a Tobi expansion board)
+
+    meta-overo/scripts/uEnv.txt
+
+It's a simple text file. Modify it to suit your COM, board, configuration, etc...
+
+This `copy_boot.sh` script needs to know the `TMPDIR` to find the binaries. It looks for an environment variable called `OETMP`.
 
 For instance, if I had this in the `local.conf`
 
