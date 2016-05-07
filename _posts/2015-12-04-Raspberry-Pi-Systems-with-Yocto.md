@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-05-01 09:15:00
+date: 2016-05-07 09:00:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
 ---
@@ -17,9 +17,9 @@ If you are looking for a full-featured desktop experience you will be better off
 
 If things like quick boot times, small image sizes or read-only rootfs are important to your project, then you might want to try Yocto.
 
-I am using the Yocto [meta-raspberrypi][meta-raspberrypi] layer, but have updated recipes for the Linux kernel, [bootfiles][firmware-repo] and some [userland][userland-repo] components. Eventually I will probably move away from using meta-raspberry altogether, similar to [meta-bbb][meta-bbb], since the Yocto repo tends to lag behind the latest RPi developments.
+I am using the Yocto [meta-raspberrypi][meta-raspberrypi] layer, but have updated recipes for the Linux kernel, [bootfiles][firmware-repo] and some [userland][userland-repo] components.
 
-I have done some testing with the following boards using `4.4.7` and `4.5.0` kernels
+I have done some testing with the following boards using the `4.4.8` kernel
 
 * [RPi3][rpi3-b]
 * [RPi2][rpi2-b]
@@ -38,9 +38,6 @@ I have one RPi2 running as my office [music system][rpi-pandora].
 
 I use RPi2s and now the RPi3 frequently as Linux test platforms for Qt applications. I do most Qt development on Windows, but eventually most applications have to run on Linux and MacOS as well. The quad-core RPis work great both for compiling and running Qt5 applications.
 
-NOTE: The included *qt5-x11-image* recipe builds Qt5 assuming the X11 window manager, but that's just for show. You can also build Qt5 to use the Linux frame-buffer directly without requiring X11. This is usually how I build Qt systems for embedded boards, since there is typically just one full-screen GUI application that needs to run. X11 and a desktop are unnecessary.
-
-NOTE2: The `4.5` kernel is not getting as much developer attention as `4.6` lately so I've stopped updating the `4.5` recipe. The `4.4` kernel is the current stable kernel and does get frequent updates so I'm using that for most things. I'll add a `4.6` recipe in the near future.
  
 ### Downloads
 
@@ -50,17 +47,15 @@ Instructions for installing onto an SD card are in the [README][readme].
 
 ### System Info
 
-The Yocto version is `2.0.1` the `[jethro]` branch.
+The Yocto version is `2.1` the `[krogoth]` branch.
 
 The `4.4.8` Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository. You can switch to another kernel in `local.conf` described below.
 
 These are **sysvinit** systems.
 
-The Qt version is `5.5.1`.
+The Qt version is `5.6.0+`.
 
-[ZeroMQ][zeromq] version `4.1.3` with development headers and libs is included.
-
-Perl `5.22` and Python `2.7.9` each with a number of modules is included.
+Perl `5.22` and Python `2.7.11` each with a number of modules is included.
 
 [omxplayer][omxplayer] for playing video and audio files from the command line, hardware accelerated.
 
@@ -70,10 +65,10 @@ An example Raspberry Pi [music system][rpi-pandora] using an [IQaudIO Pi-DigiAMP
 
 That system also works with the [HiFiBerry Amp+][hifiberry-amp] board.
 
-As of 2016-05-01, here is the list of DTS overlays that are installed with the `4.4.8` kernel running on an RPi2/3
+As of 2016-05-07, here is the list of DTS overlays that are installed with the `4.4.8` kernel running on an RPi2/3
 
     root@rpi3:~# uname -a
-    Linux rpi3 4.4.8 #1 SMP Sun May 1 07:18:39 EDT 2016 armv7l GNU/Linux
+    Linux rpi3 4.4.8 #1 SMP Fri May 6 11:28:59 EDT 2016 armv7l armv7l armv7l GNU/Linux
 
     root@rpi3:~# ls /mnt/fat/overlays/
     ads7846-overlay.dtb              piscreen-overlay.dtb
@@ -125,25 +120,13 @@ I've only tested a few
 
 They all come from the official Raspberry Pi kernel tree so I have confidence they all work fine. I need  some more hardware to test many of them.
 
-NOTE: The last time I checked, 4.4 or 4.5 *dtoverlay* definitions in `config.txt` require the full dtb name
-
-For example
-
-    dtoverlay=iqaudio-dacplus-overlay.dtb
-
-instead of something like this that worked with 4.1 kernels
-
-    dtoverlay=iqaudio-dacplus
-
-I did not go back an check whether the full dtb name works in 4.1 kernels, I'm only using 4.4 and 4.5 kernels now. If you are sticking with 4.1 kernels and find issues with overlays loading, I would go back to using the shortened name.
 
 ### Ubuntu Setup
 
-I primarily use Ubuntu *15.10* 64-bit server installations. Other versions should work.
+I primarily use Ubuntu *15.10* or *16.04* 64-bit server installations. Other versions should work.
 
 You will need at least the following packages installed
 
-    bc
     build-essential
     chrpath
     diffstat
@@ -154,9 +137,8 @@ You will need at least the following packages installed
     subversion
     texi2html
     texinfo
-    u-boot-tools
 
-You also want to change the default Ubuntu shell from `dash` to `bash` by running this command from a shell
+You will also want to change the default Ubuntu shell from `dash` to `bash` by running this command from a shell
  
     sudo dpkg-reconfigure dash
 
@@ -164,7 +146,7 @@ Choose **No** to dash when prompted.
 
 ### Fedora Setup
 
-I have used Fedora *23* 64-bit workstations.
+I have used a Fedora *23* 64-bit workstation.
 
 The extra packages I needed to install for Yocto were
 
@@ -185,21 +167,22 @@ Fedora already uses `bash` as the shell.
 
 First the main Yocto project `poky` repository
 
-    scott@octo:~ git clone -b jethro git://git.yoctoproject.org/poky.git poky-jethro
+    scott@octo:~ git clone -b krogoth git://git.yoctoproject.org/poky.git poky-krogoth
 
 The `meta-openembedded` repository
 
-    scott@octo:~$ cd poky-jethro
-    scott@octo:~/poky-jethro$ git clone -b jethro git://git.openembedded.org/meta-openembedded
+    scott@octo:~$ cd poky-krogoth
+    scott@octo:~/poky-krogoth$ git clone -b krogoth git://git.openembedded.org/meta-openembedded
 
 The `meta-qt5` repository
 
-    scott@octo:~/poky-jethro$ git clone -b jethro https://github.com/meta-qt5/meta-qt5.git
+    scott@octo:~/poky-krogoth$ git clone -b krogoth https://github.com/meta-qt5/meta-qt5.git
 
-And finally the `meta-raspberrypi` repository
+And finally the `meta-raspberrypi` repository. There is no `[krogoth]` branch yet, so use `[master]`
 
-    scott@octo:~/poky-jethro$ git clone -b jethro git://git.yoctoproject.org/meta-raspberrypi
+    scott@octo:~/poky-krogoth$ git clone -b master git://git.yoctoproject.org/meta-raspberrypi
 
+Those 4 repositories shouldn't need modifications other then updates and can be reused for different projects and different boards.
 
 ### Clone the meta-rpi repository
 
@@ -207,7 +190,7 @@ Create a separate sub-directory for the `meta-rpi` repository before cloning. Th
 
     scott@octo:~$ mkdir ~/rpi
     scott@octo:~$ cd ~/rpi
-    scott@octo:~/rpi$ git clone -b jethro git://github.com/jumpnow/meta-rpi
+    scott@octo:~/rpi$ git clone -b krogoth git://github.com/jumpnow/meta-rpi
 
 The `meta-rpi/README.md` file has the last commits from the dependency repositories that I tested. You can always checkout those commits explicitly if you run into problems.
 
@@ -224,7 +207,7 @@ You could manually create the directory structure like this
 
 Or you could use the *Yocto* environment script `oe-init-build-env` like this passing in the path to the build directory
 
-    scott@octo:~$ source poky-jethro/oe-init-build-env ~/rpi/build
+    scott@octo:~$ source poky-krogoth/oe-init-build-env ~/rpi/build
 
 The *Yocto* environment script will create the build directory if it does not already exist.
  
@@ -250,7 +233,7 @@ In `bblayers.conf` file replace `${HOME}` with the appropriate path to the meta-
 For example, if your directory structure does not look exactly like this, you will need to modify `bblayers.conf`
 
 
-    ~/poky-jethro/
+    ~/poky-krogoth/
          meta-openembedded/
          meta-qt5/
          meta-raspberrypi
@@ -271,6 +254,7 @@ The variables you may want to customize are the following:
 - DL\_DIR
 - SSTATE\_DIR
 
+
 The defaults for all of these work fine. Adjustments are optional.
 
 ##### MACHINE
@@ -279,7 +263,9 @@ The choices are **raspberrypi2** the default or **raspberrypi**.
 
 Use **raspberrypi2** for the RPi3.
 
-You can only build for one type of board at a time since they have different processors with different instruction sets.
+There is a new **raspberrypi3** MACHINE option with `[krogoth]`, but all it adds to the **raspberrypi2** configuration is the RPi3 wifi drivers. I prefer to add drivers like that explicitly in my *image* recipe if I need them.
+
+You can only build for one type of MACHINE at a time because of the different instruction sets.
 
 ##### TMPDIR
 
@@ -291,7 +277,7 @@ If you specify an alternate location as I do in the example conf file make sure 
 
 ##### DL_DIR
 
-This is where the downloaded source files will be stored. You can share this among configurations and build files so I created a general location for this outside my home directory. Make sure the build user has write permission to the directory you decide on.
+This is where the downloaded source files will be stored. You can share this among configurations and builds so I always create a general location for this outside the project directory. Make sure the build user has write permission to the directory you decide on.
 
 The default location is in the `build` directory, `~/rpi/build/sources`.
 
@@ -305,7 +291,7 @@ The default location is in the `build` directory, `~/rpi/build/sstate-cache`.
 
 You need to [source][source-script] the Yocto environment into your shell before you can use [bitbake][bitbake]. The `oe-init-build-env` will not overwrite your customized conf files.
 
-    scott@octo:~$ source poky-jethro/oe-init-build-env ~/rpi/build
+    scott@octo:~$ source poky-krogoth/oe-init-build-env ~/rpi/build
 
     ### Shell environment set up for builds. ###
 
@@ -328,8 +314,7 @@ I don't use those *Common targets*, but instead use my own custom image recipes.
 There are four custom images available in the *meta-rpi* layer. The recipes for the images can be found in `meta-rpi/images/`
 
 * console-image.bb
-* x11-image.bb
-* qt5-x11-image.bb
+* qt5-image.bb
 * audio-image.bb
 
 You should add your own custom images to this same directory.
@@ -348,15 +333,11 @@ The *console-image* has a line
 
     inherit core-image
 
-which is `poky-jethro/meta/classes/core-image.bbclass` and pulls in some required base packages.  This is useful to know if you create your own image recipe.
+which is `poky-krogoth/meta/classes/core-image.bbclass` and pulls in some required base packages.  This is useful to know if you create your own image recipe.
 
-#### x11-image
+#### qt5-image
 
-This image installs the lightweight *Matchbox* X11 desktop using the Yocto Sato theme.
-
-#### qt5-x11-image
-
-This image includes the `x11-image` and adds `Qt5` with the associated development headers and `qmake`.
+This image includes the `console-image` and adds `Qt5` with the associated development headers and `qmake`.
 
 #### audio-image
 
@@ -379,9 +360,9 @@ And then continue with the full build.
 
     scott@octo:~/rpi/build$ bitbake console-image
 
-To build the `qt5-x11-image` it would be
+To build the `qt5-image` it would be
 
-    scott@octo:~/rpi/build$ bitbake qt5-x11-image
+    scott@octo:~/rpi/build$ bitbake qt5-image
 
 The `cleansstate` command (with two s's) works for image recipes as well.
 
@@ -450,11 +431,11 @@ This *copy_boot.sh* script needs to know the `TMPDIR` to find the binaries. It l
 
 For instance, if I had this in the `local.conf`
 
-    TMPDIR = "/oe8/rpi/tmp-jethro"
+    TMPDIR = "/oe8/rpi/tmp-krogoth"
 
 Then I would export this environment variable before running `copy_boot.sh`
 
-    scott@octo:~/rpi/meta-rpi/scripts$ export OETMP=/oe8/rpi/tmp-jethro
+    scott@octo:~/rpi/meta-rpi/scripts$ export OETMP=/oe8/rpi/tmp-krogoth
 
 If you didn't override the default `TMPDIR` in `local.conf`, then set it to the default `TMPDIR`
 
@@ -501,7 +482,7 @@ Here's a realistic example session where I want to copy already built images to 
 
     scott@octo:~$ sudo umount /dev/sdb1
     scott@octo:~$ sudo umount /dev/sdb2
-    scott@octo:~$ export OETMP=/oe8/rpi/tmp-jethro
+    scott@octo:~$ export OETMP=/oe8/rpi/tmp-krogoth
     scott@octo:~$ export MACHINE=raspberrypi2
     scott@octo:~$ cd rpi/meta-rpi/scripts
     scott@octo:~/rpi/meta-rpi/scripts$ ./copy_boot.sh sdb
@@ -538,15 +519,15 @@ The *bitbake recipe* is here
 
 To display the list of available packages from the `meta-` repositories included in *bblayers.conf*
 
-    scott@octo:~$ source poky-jethro/oe-init-build-env ~/rpi/build
+    scott@octo:~$ source poky-krogoth/oe-init-build-env ~/rpi/build
 
     scott@octo:~/rpi/build$ bitbake -s
 
 Once you have the package name, you can choose to either
 
-1. Add the new package to the `console-image`, `x11-image` or `qt5-x11-image`, whichever you are using.
+1. Add the new package to the `console-image` or `qt5-image`, whichever you are using.
 
-2. Create a new image file and either include the `console-image` the way the `x11-image` does or create a   complete new image recipe. The `console-image` can be used as a template.
+2. Create a new image file and either include the `console-image` the way the `qt5-image` does or create a complete new image recipe. The `console-image` can be used as a template.
 
 The new package needs to get included directly in the *IMAGE_INSTALL* variable or indirectly through another variable in the image file.
 
@@ -556,7 +537,7 @@ I did not install any movies in the default `meta-rpi` images. They can be prett
 
 Recipes for a few sample movies can be found here
 
-    scott@octo:~$ ls -l poky-jethro/meta-openembedded/meta-multimedia/recipes-multimedia/sample-content/
+    scott@octo:~$ ls -l poky-krogoth/meta-openembedded/meta-multimedia/recipes-multimedia/sample-content/
     total 16
     -rw-rw-r-- 1 scott scott 656 Oct 30 08:56 bigbuckbunny-1080p.bb
     -rw-rw-r-- 1 scott scott 661 Oct 30 08:56 bigbuckbunny-480p.bb
@@ -575,7 +556,7 @@ Here's an example using one of the sample movies in `meta-openembedded` (*Tears 
 
 Get the *URI* from the recipe
 
-    scott@fractal:~$ cat poky-jethro/meta-openembedded/meta-multimedia/recipes-multimedia/sample-content/tearsofsteel-1080p.bb
+    scott@fractal:~$ cat poky-krogoth/meta-openembedded/meta-multimedia/recipes-multimedia/sample-content/tearsofsteel-1080p.bb
     SUMMARY = "Tears of Steel movie - 1080P"
     LICENSE = "CC-BY-3.0"
     LIC_FILES_CHKSUM = "file://${COREBASE}/meta/files/common-licenses/CC-BY-3.0;md5=dfa02b5755629022e267f10b9c0a2ab7"
@@ -628,15 +609,16 @@ To enable the RPi camera, add or edit the following in the RPi configuration fil
 
 To get access to `config.txt`, mount the boot partition first
 
-    root@rpi# mount /dev/mmcblk0p1 /mnt
+    root@rpi# mkdir /mnt/fat
+    root@rpi# mount /dev/mmcblk0p1 /mnt/fat
 
 Then edit, save and reboot.
 
-    root@rpi# vi /mnt/config.txt
+    root@rpi# vi /mnt/fat/config.txt
 
 or
 
-	root@rpi# nano /mnt/config.txt
+	root@rpi# nano /mnt/fat/config.txt
 
 
 A quick test of the camera for 60 seconds (flipping the image because of the way I have my camera mounted)
@@ -650,7 +632,6 @@ A quick test of the camera for 60 seconds (flipping the image because of the way
 [qt]: http://www.qt.io/
 [yocto]: https://www.yoctoproject.org/
 [meta-rpi]: https://github.com/jumpnow/meta-rpi
-[meta-bbb]: https://github.com/jumpnow/meta-bbb
 [omxplayer]: http://elinux.org/Omxplayer
 [rpi-kernel]: https://github.com/raspberrypi/linux
 [tspress]: https://github.com/scottellis/tspress
@@ -661,7 +642,6 @@ A quick test of the camera for 60 seconds (flipping the image because of the way
 [opkg-repo]: http://www.jumpnowtek.com/yocto/Using-your-build-workstation-as-a-remote-package-repository.html
 [bitbake]: https://www.yoctoproject.org/docs/1.8/bitbake-user-manual/bitbake-user-manual.html
 [source-script]: http://stackoverflow.com/questions/4779756/what-is-the-difference-between-source-script-sh-and-script-sh
-[zeromq]: http://zeromq.org/
 [raspicam]: https://www.raspberrypi.org/documentation/usage/camera/raspicam/README.md
 [rpi_camera_module]: https://www.raspberrypi.org/documentation/raspbian/applications/camera.md
 [downloads]: http://www.jumpnowtek.com/downloads/rpi/
