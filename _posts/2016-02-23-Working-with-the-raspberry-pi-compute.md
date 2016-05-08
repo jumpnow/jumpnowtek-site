@@ -2,16 +2,18 @@
 layout: post
 title: Working with the Raspberry Pi Compute Board
 description: "Miscellaneous notes regarding the RPi compute"
-date: 2016-03-06 12:00:00
+date: 2016-05-08 11:11:00
 categories: rpi
 tags: [linux, rpi compute, yocto]
 ---
 
 I'm building my [Raspberry Pi Compute][rpi-compute] Linux systems using tools from the [Yocto Project][yocto] and some specific RPi instructions [here][rpi-yocto].
 
+Make sure to set the **MACHINE** variable to *raspberrypi* in `local.conf`.
+
 ### Copying the system to the eMMC
 
-The same *copy* scripts described in the [instructions post][rpi-yocto] will also work to copy the files directly to the RPi Compute eMMC.
+The same *copy* scripts described in the [instructions linked above][rpi-yocto] will also work to copy the files directly to the RPi Compute eMMC.
 
 First you need to mount the RPi eMMC as *disk* device on your workstation using using the `rpiboot` utility from the [github.com/raspberrypi/tools][rpi-tools] project.
 
@@ -19,7 +21,7 @@ Instructions for obtaining and building `rpiboot` are here : [Flashing the Compu
 
 Here is the *TLDR* version
 
-Install the *libusb-1.0* dependency if you don't already have it 
+Install the *libusb-1.0-dev* dependency if you don't already have it 
 
     scott@fractal:~/rpi$ sudo apt-get install libusb-1.0-0-dev 
 
@@ -48,19 +50,24 @@ Here's the disk situation on the workstation before mounting the RPi eMMC.
     ├─sda9    8:9    0   100G  0 part /oe9
     └─sda10   8:10   0 215.5G  0 part /oe10
 
-Put the RPi Compute `J4` jumper to the *USB Slave* position, and plug the `J15` USB cable to the workstation.
+Put the RPi Compute `J4` jumper to the *USB Slave Enable* position, and plug the `J15` USB cable to the workstation and power the board through the `J2` USB connector.
 
 Now run `rpiboot`. 
 
     scott@octo:~/rpi$ sudo rpiboot
     Waiting for BCM2835 ...
-    Found serial = 0: writing file ./usbbootcode.bin
-    Failed : 0x7Waiting for BCM2835 ...
-    Found serial = 1: writing file ./msd.elf
+    Initialised device correctly
+    Found serial number 0
+    Found serial = 0: writing file /usr/share/rpiboot/usbbootcode.bin
+    Failed : 0xe7762b40Waiting for BCM2835 ...
+    Initialised device correctly
+    Found serial number 1
+    Found serial = 1: writing file /usr/share/rpiboot/msd.elf
+    Successful read 4 bytes
 
 When `rpiboot` exits, there should be a new drive, `/dev/sdc` on my system.
 
-    scott@octo:~/rpi/tools/usbboot$ lsblk
+    scott@octo:~/rpi$ lsblk
     NAME    MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
     sda       8:0    0 931.5G  0 disk
     ├─sda1    8:1    0  93.1G  0 part /
@@ -80,9 +87,9 @@ When `rpiboot` exits, there should be a new drive, `/dev/sdc` on my system.
 Initialize the host environment for the *copy* scripts
 
     scott@octo:~/rpi/build$ grep TMPDIR conf/local.conf
-    TMPDIR = "/oe8/rpi/tmp-jethro"
+    TMPDIR = "/oe9/rpi1/tmp-krogoth"
 
-    scott@octo:~/rpi/build$ export OETMP=/oe8/rpi/tmp-jethro
+    scott@octo:~/rpi/build$ export OETMP=/oe9/rpi1/tmp-krogoth
     scott@octo:~/rpi/build$ export MACHINE=raspberrypi
     scott@octo:~/rpi/build$ cd ../meta-rpi/scripts/
 
@@ -91,7 +98,6 @@ Format the eMMC (this only needs to be done once)
 The `mk2parts` script creates the minimum two partitions.
 
     scott@octo:~/rpi/meta-rpi/scripts$ sudo ./mk2parts.sh sdc
-    [sudo] password for scott:
 
     Working on /dev/sdc
 
@@ -105,7 +111,7 @@ The `mk2parts` script creates the minimum two partitions.
 
     1024+0 records in
     1024+0 records out
-    1048576 bytes (1.0 MB) copied, 0.512869 s, 2.0 MB/s
+    1048576 bytes (1.0 MB, 1.0 MiB) copied, 0.522676 s, 2.0 MB/s
 
     === Creating 2 partitions ===
 
@@ -116,7 +122,7 @@ The `mk2parts` script creates the minimum two partitions.
     Sector size (logical/physical): 512 bytes / 512 bytes
     I/O size (minimum/optimal): 512 bytes / 512 bytes
 
-    >>> Created a new DOS disklabel with disk identifier 0x1485162a.
+    >>> Created a new DOS disklabel with disk identifier 0xfcd562ff.
     Created a new partition 1 of type 'W95 FAT32 (LBA)' and of size 64 MiB.
     /dev/sdc2: Created a new partition 2 of type 'Linux' and of size 3.6 GiB.
     /dev/sdc3:
@@ -132,86 +138,91 @@ The `mk2parts` script creates the minimum two partitions.
 
     === Done! ===
 
-Format the first partition as a *FAT* filesystem and copy the bootfiles. 
+
+Use the `copy_boot.sh` script to format the first partition as a *FAT* filesystem and copy the bootfiles. 
 
     scott@octo:~/rpi/meta-rpi/scripts$ ./copy_boot.sh sdc
 
-    OETMP: /oe8/rpi/tmp-jethro
+    OETMP: /oe9/rpi1/tmp-krogoth
     Formatting FAT partition on /dev/sdc1
     mkfs.fat 3.0.28 (2015-05-16)
     Mounting /dev/sdc1
     Copying bootloader files
     Creating overlay directory
     Copying overlay dtbs
+    Renaming overlay dtbs
     Copying dtbs
     Copying kernel
     Unmounting /dev/sdc1
     Done
 
-Format the second partition as *ext4* and copy the rootfs.
 
-    scott@octo:~/rpi/meta-rpi/scripts$ ./copy_rootfs.sh sdc console rpi
+Use the `copy_roofts.sh` script to format the second partition as *ext4* and copy the rootfs.
 
-    OETMP: /oe8/rpi/tmp-jethro
-    IMAGE: console
-    HOSTNAME: rpi
+    scott@octo:~/rpi/meta-rpi/scripts$ ./copy_rootfs.sh sdc qt5 cm
+
+    OETMP: /oe9/rpi1/tmp-krogoth
+    IMAGE: qt5
+    HOSTNAME: cm
 
     Formatting /dev/sdc2 as ext4
     /dev/sdc2 contains a ext4 file system labelled 'ROOT'
-            last mounted on / on Wed Dec 31 19:00:01 1969
+            last mounted on /media/card on Sun May  8 09:46:57 2016
     Proceed anyway? (y,n) y
     Mounting /dev/sdc2
-    Extracting console-image-raspberrypi.tar.bz2 to /media/card
-    Writing hostname to /etc/hostname
+    Extracting qt5-image-raspberrypi.tar.bz2 to /media/card
+    Writing cm to /etc/hostname
     Unmounting /dev/sdc2
     Done
 
-Power off, move the `J4` jumper to the *Boot Enable* position and remove the `J15` USB cable.
+
+Power off, move the `J4` jumper to the *Slave Boot Disable* position and remove the `J15` USB cable.
 
 Then power up the system again and you should boot into the console image.
 
-Watching the boot with a serial console
+Watching the boot with a [serial console][rpi-serial-console]
 
     [    0.000000] Booting Linux on physical CPU 0x0
     [    0.000000] Initializing cgroup subsys cpuset
     [    0.000000] Initializing cgroup subsys cpu
     [    0.000000] Initializing cgroup subsys cpuacct
-    [    0.000000] Linux version 4.1.18 (scott@octo) (gcc version 5.2.0 (GCC) ) #1 Mon Feb 22 16:52:07 EST 2016
+    [    0.000000] Linux version 4.4.8 (scott@octo) (gcc version 5.3.0 (GCC) ) #1 Sun May 8 10:48:00 EDT  2016
     [    0.000000] CPU: ARMv6-compatible processor [410fb767] revision 7 (ARMv7), cr=00c5387d
     [    0.000000] CPU: PIPT / VIPT nonaliasing data cache, VIPT nonaliasing instruction cache
-    [    0.000000] Machine: BCM2708
+    [    0.000000] Machine model: Raspberry Pi Compute Module Rev 1.0
+
 
     ...
 
     Starting syslogd/klogd: done
-    
-    Poky (Yocto Project Reference Distro) 2.0.1 rpi /dev/ttyAMA0
-    
-    rpi login: root
 
-    root@rpi:~# uname -a
-    Linux rpi 4.1.18 #1 Tue Feb 23 05:05:33 EST 2016 armv6l GNU/Linux
+    Poky (Yocto Project Reference Distro) 2.1 cm /dev/ttyAMA0
 
-    root@rpi:~# free
+    cm login: root
+
+    root@cm:~# uname -a
+    Linux cm 4.4.8 #1 Sun May 8 10:48:00 EDT 2016 armv6l armv6l armv6l GNU/Linux
+
+     root@cm:~# free
                   total        used        free      shared  buff/cache   available
-    Mem:         445372        9408      408448        1272       27516      409416
+    Mem:         445064       13012      387408         180       44644      404292
     Swap:             0           0           0
 
-    root@rpi:~# df -h
+    root@cm:~# df -h
     Filesystem      Size  Used Avail Use% Mounted on
-    /dev/root       3.5G  379M  2.9G  12% /
+    /dev/root       3.5G  512M  2.8G  16% /
     devtmpfs        214M     0  214M   0% /dev
-    tmpfs           218M  1.2M  217M   1% /run
+    tmpfs           218M  128K  218M   1% /run
     tmpfs           218M   52K  218M   1% /var/volatile
 
 
-That *console-image* is not customized for the *RPi Compute*, it tries to start a network, ntpd, etc... 
+And if you had an HDMI display attached, this would show Qt apps work
 
-But it's very easy to create a custom image using Yocto from this point. 
-
+    root@cm:~# qcolorcheck -platform linuxfb
 
 [yocto]: https://www.yoctoproject.org
 [rpi-yocto]: http://www.jumpnowtek.com/rpi/Raspberry-Pi-Systems-with-Yocto.html
 [rpi-compute]: https://www.raspberrypi.org/products/compute-module/
 [rpi-tools]: https://github.com/raspberrypi/tools
 [rpiboot-instructions]: https://www.raspberrypi.org/documentation/hardware/computemodule/cm-emmc-flashing.md
+[rpi-serial-console]: http://www.jumpnowtek.com/rpi/RPi-Serial-Console.html
