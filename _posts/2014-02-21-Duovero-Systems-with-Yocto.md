@@ -2,7 +2,7 @@
 layout: post
 title: Building Duovero Systems with Yocto
 description: "Building customized systems for Gumstix Duovero using tools from the Yocto Project"
-date: 2016-04-29 18:15:00
+date: 2016-05-08 08:08:00
 categories: gumstix-linux 
 tags: [linux, gumstix, duovero, yocto]
 ---
@@ -15,21 +15,19 @@ I use this as a template when starting new *Duovero* projects.
 
 ### System Info
 
-The Yocto version is `2.0.1` the `[jethro]` branch.
+The Yocto version is `2.1` the `[krogoth]` branch.
 
-The `4.4.6` Linux kernel comes from the [linux-stable][linux-stable] repository.
+The `4.4.9` Linux kernel comes from the [linux-stable][linux-stable] repository.
 
 The [u-boot][uboot] version is `2015.07`.
 
-These are **sysvinit** systems.
+These are **sysvinit** systems using [eudev][eudev].
 
-The Qt version is `5.5.1`. By default there is no *X11* and no desktop installed. [Qt][qt] gui applications can be run using the `-platform linuxfb` switch.
+The Qt version is `5.6`. By default there is no *X11* and no desktop installed. [Qt][qt] gui applications can be run using the `-platform linuxfb` switch.
 
 A light-weight *X11* desktop can be added with minimal changes to the build configuration.
 
-Perl `5.22` with a number of modules is included.
-
-Python `2.7.9` is included with at least enough packages to run [Bottle python][bottle-python] web applications. Additional packages are easily added.
+Perl `5.22` and Python `2.7.11` each with a number of modules is included.
 
 The Duovero [Zephyr][duovero-zephyr] COM has a built-in Wifi/Bluetooth radio. The kernel and software to support both are included. Access point mode is supported. Some [instructions here][jumpnow-duovero-ap].
 
@@ -68,11 +66,10 @@ There is a Qt5 test program [tspress][tspress] in the *qt5-image*.
 
 ### Ubuntu Setup
 
-I primarily use Ubuntu *15.10* 64-bit server installations. Other versions should work.
+I primarily use Ubuntu *15.10* and *16.04* 64-bit server installations. Other versions should work.
 
 You will need at least the following packages installed
 
-    bc
     build-essential
     chrpath
     diffstat
@@ -83,7 +80,6 @@ You will need at least the following packages installed
     subversion
     texi2html
     texinfo
-    u-boot-tools
 
 You also want to change the default Ubuntu shell from `dash` to `bash` by running this command from a shell
  
@@ -93,7 +89,7 @@ Choose **No** to dash when prompted.
 
 ### Fedora Setup
 
-I have used Fedora *23* 64-bit workstations.
+I have also used a Fedora *23* 64-bit workstation.
 
 The extra packages I needed to install for Yocto were
 
@@ -114,16 +110,16 @@ Fedora already uses `bash` as the shell.
 
 First the main Yocto project `poky` repository
 
-    scott@octo:~ git clone -b jethro git://git.yoctoproject.org/poky.git poky-jethro
+    scott@octo:~ git clone -b krogoth git://git.yoctoproject.org/poky.git poky-krogoth
 
 Then the `meta-openembedded` repository
 
-    scott@octo:~$ cd poky-jethro
-    scott@octo:~/poky-jethro$ git clone -b jethro git://git.openembedded.org/meta-openembedded
+    scott@octo:~$ cd poky-krogoth
+    scott@octo:~/poky-krogoth$ git clone -b krogoth git://git.openembedded.org/meta-openembedded
 
 And the `meta-qt5` repository
 
-    scott@octo:~/poky-jethro$ git clone -b jethro https://github.com/meta-qt5/meta-qt5.git
+    scott@octo:~/poky-krogoth$ git clone -b krogoth https://github.com/meta-qt5/meta-qt5.git
 
 
 I usually keep these repositories separated since they can be shared between projects and different boards.
@@ -134,7 +130,7 @@ Create a sub-directory for the `meta-duovero` repository before cloning
 
     scott@octo:~$ mkdir ~/duovero
     scott@octo:~$ cd ~/duovero
-    scott@octo:~/duovero$ git clone -b jethro git://github.com/jumpnow/meta-duovero
+    scott@octo:~/duovero$ git clone -b krogoth git://github.com/jumpnow/meta-duovero
 
 The `meta-duovero/README.md` file has the last commits from the dependency repositories that I tested. You can always checkout those commits explicitly if you run into problems.
 
@@ -150,7 +146,7 @@ You could manually create the directory structure like this
 
 Or you could use the *Yocto* environment script `oe-init-build-env` like this passing in the path to the build directory
 
-    scott@octo:~$ source poky-jethro/oe-init-build-env ~/duovero/build
+    scott@octo:~$ source poky-krogoth/oe-init-build-env ~/duovero/build
 
 The *Yocto* environment script will create the build directory if it does not already exist.
  
@@ -174,7 +170,7 @@ In `bblayers.conf` file replace `${HOME}` with the appropriate path to the meta-
 For example, if your directory structure does not look exactly like this, you will need to modify `bblayers.conf`
 
 
-    ~/poky-jethro/
+    ~/poky-krogoth/
          meta-openembedded/
          meta-qt5/
          ...
@@ -204,7 +200,7 @@ If you specify an alternate location as I do in the example conf file make sure 
 
 ##### DL_DIR
 
-This is where the downloaded source files will be stored. You can share this among configurations and build files so I created a general location for this outside my home directory. Make sure the build user has write permission to the directory you decide on.
+This is where the downloaded source files will be stored. You can share this among configurations and build files so I created a general location for this outside the project directory. Make sure the build user has write permission to the directory you decide on.
 
 The default location is in the `build` directory, `~/duovero/build/sources`.
 
@@ -219,7 +215,7 @@ The default location is in the `build` directory, `~/duovero/build/sstate-cache`
 
 You need to source the environment every time you want to run a build. The `oe-init-build-env` when run a second time will not overwrite your customized conf files.
 
-    scott@octo:~$ source poky-jethro/oe-init-build-env ~/duovero/build
+    scott@octo:~$ source poky-krogoth/oe-init-build-env ~/duovero/build
 
     ### Shell environment set up for builds. ###
 
@@ -261,7 +257,7 @@ The *console-image* has a line
 
     inherit core-image
 
-which is `poky-jethro/meta/classes/core-image.bbclass` and pulls in some required base packages. This is useful to know if you create your own image recipe.
+which is `poky-krogoth/meta/classes/core-image.bbclass` and pulls in some required base packages. This is useful to know if you create your own image recipe.
 
 #### qt5-image
 
@@ -352,11 +348,11 @@ This script needs to know the `TMPDIR` to find the binaries. It looks for an env
 
 For instance, if I had this in the `local.conf`
 
-    TMPDIR = "/oe9/duo/tmp-jethro"
+    TMPDIR = "/oe9/duo/tmp-krogoth"
 
 Then I would export this environment variable before running `copy_boot.sh`
 
-    scott@octo:~/duovero/meta-duovero/scripts$ export OETMP=/oe9/duo/tmp-jethro
+    scott@octo:~/duovero/meta-duovero/scripts$ export OETMP=/oe9/duo/tmp-krogoth
 
 Then run the `copy_boot.sh` script passing the location of SD card
 
@@ -388,7 +384,7 @@ Here's a realistic example session where I want to copy already built images to 
 
     scott@octo:~$ sudo umount /dev/sdb1
     scott@octo:~$ sudo umount /dev/sdb2
-    scott@octo:~$ export OETMP=/oe9/duo/tmp-jethro
+    scott@octo:~$ export OETMP=/oe9/duo/tmp-krogoth
     scott@octo:~$ cd duovero/meta-duovero/scripts
     scott@octo:~/duovero/meta-duovero/scripts$ ./copy_boot.sh sdb
     scott@octo:~/duovero/meta-duovero/scripts$ ./copy_rootfs.sh sdb console duo2
@@ -418,7 +414,7 @@ Check the *README* in the [tspress][tspress] repository for usage.
 
 To display the list of available packages from the `meta-` repositories included in *bblayers.conf*
 
-    scott@octo:~$ source poky-jethro/oe-init-build-env ~/duovero/build
+    scott@octo:~$ source poky-krogoth/oe-init-build-env ~/duovero/build
 
     scott@octo:~/duovero/build$ bitbake -s
 
@@ -458,3 +454,4 @@ To add or upgrade packages to the system, you might be interested in using the b
 [bbb-kernel]: http://www.jumpnowtek.com/beaglebone/Working-on-the-BeagleBone-kernel.html
 [bottle-python]: http://bottlepy.org/docs/dev/index.html
 [jumpnow-duovero-ap]: http://www.jumpnowtek.com/gumstix-linux/Duovero-Access-Point.html
+[eudev]: https://wiki.gentoo.org/wiki/Project:Eudev
