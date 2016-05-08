@@ -2,7 +2,7 @@
 layout: post
 title: Working with the Raspberry Pi Compute Board
 description: "Miscellaneous notes regarding the RPi compute"
-date: 2016-05-08 11:11:00
+date: 2016-05-08 15:12:00
 categories: rpi
 tags: [linux, rpi compute, yocto]
 ---
@@ -220,9 +220,22 @@ And if you had an HDMI display attached, this would show Qt apps work
 
     root@cm:~# qcolorcheck -platform linuxfb
 
+Using an adapter board, some jumper wires and the `dt-blob.bin` as described on the Raspberry Pi [CMIO-CAMERA][rpi-cm-camera] page, the camera module works fine. The [raspicam][raspicam] tools operate just like on the other RPi boards.
+
+The *Compute Module* supports two cameras, but I only have one camera currently.
+
+I do have a couple of the new [v2 camera modules][camera-module-v2] on order.
+
+TODO: Start generating my own device trees blobs for the Compute Module GPU.
+
+
+
 [yocto]: https://www.yoctoproject.org
 [rpi-yocto]: http://www.jumpnowtek.com/rpi/Raspberry-Pi-Systems-with-Yocto.html
 [rpi-compute]: https://www.raspberrypi.org/products/compute-module/
 [rpi-tools]: https://github.com/raspberrypi/tools
 [rpiboot-instructions]: https://www.raspberrypi.org/documentation/hardware/computemodule/cm-emmc-flashing.md
 [rpi-serial-console]: http://www.jumpnowtek.com/rpi/RPi-Serial-Console.html
+[rpi-cm-camera]: https://www.raspberrypi.org/documentation/hardware/computemodule/cmio-camera.md
+[raspicam]: https://www.raspberrypi.org/documentation/raspbian/applications/camera.md
+[camera-module-v2]: https://www.raspberrypi.org/products/camera-module-v2/ 
