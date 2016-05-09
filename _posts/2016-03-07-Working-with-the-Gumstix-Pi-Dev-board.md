@@ -8,9 +8,9 @@ tags: [linux, gumstix, rpi compute, yocto]
 
 [Gumstix][gumstix] makes a [RPi Compute Module][rpi-compute] development board that can be used as an alternative to the [Compute Module Development Kit][rpi-compute-module-dev-kit] from the Raspberry Pi foundation.
 
-The Gumstix [Pi Development Board][gumstix-pi-dev-board] is just one example of a custom board that can be designed using [Gepetto][gumstix-gepetto] their online board design/layout tool.
+The Gumstix [Pi Compute Development Board][gumstix-pi-dev-board] is just one example of a custom board that can be designed using [Gepetto][gumstix-gepetto] their online board design/layout tool.
 
-I am using [Yocto Project][yocto] tools build the software stack for the [RPi CM][rpi-compute], similar to the way I build systems for the other RPi boards.
+I am using [Yocto Project][yocto] tools build the software stack for the *CM*, similar to the way I build systems for the other RPi boards.
 
 Some instructions for that can be found [here][jumpnow-yocto-rpi].
 
@@ -173,7 +173,7 @@ I'm anticipating the [RPi CM3][cm3-soon] that's rumored to [exist][cm3-post], bu
 [gumstix]: http://www.gumstix.com
 [rpi-compute]: https://www.raspberrypi.org/products/compute-module/
 [rpi-compute-module-dev-kit]: https://www.raspberrypi.org/products/compute-module-development-kit/
-[gumstix-pi-dev-board]: https://www.gumstix.com/raspberry-pi-family/
+[gumstix-pi-dev-board]: https://store.gumstix.com/expansion/gumstix-pi-compute-dev-board.html
 [gumstix-gepetto]: https://www.gumstix.com/geppetto/
 [yocto]: https://www.yoctoproject.org
 [jumpnow-yocto-rpi]: http://www.jumpnowtek.com/rpi/Raspberry-Pi-Systems-with-Yocto.html
