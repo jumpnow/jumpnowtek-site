@@ -2,7 +2,7 @@
 layout: post
 title: Upgrading BeagleBone Black Systems
 description: "Implementing a simple upgrade strategy for deployed BBB systems"
-date: 2016-01-14 10:30:00
+date: 2016-05-09 10:23:00
 categories: beaglebone 
 tags: [linux, beaglebone, upgrade]
 ---
@@ -93,11 +93,6 @@ The two *rootfs* partitions for this system would be `/dev/mmcblk0p2` ( **p2** )
 `/dev/mmcblk0p5` will be used for some *flag* files.
 
 `/dev/mmcblk0p6` is there for application use and general storage. (The *rootfs* is **read-only**.) 
-
-Here is another *bitbake recipe* that installs scripts to perform an initial installation to the BBB *eMMC* with the partitioning required by the *upgrader*
-
-[github.com/jumpnow/meta-bbb/tree/jethro/recipes-support/emmc-installer][emmc-installer]
-
 
 
 ### Implementation
