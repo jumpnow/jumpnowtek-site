@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Working with the Gumstix Pi Dev Board
+title: Working with the Gumstix Pi Compute Dev Board
 date: 2016-05-09 05:20:00
 categories: rpi
 tags: [linux, gumstix, rpi compute, yocto]
