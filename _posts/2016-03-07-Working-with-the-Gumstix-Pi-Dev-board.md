@@ -168,7 +168,7 @@ After that you can use the [raspicam][raspicam] tools installed on either the of
     root@cm:~# raspistill -t 300000 -hf -vf
 
 
-I'm anticipating the [RPi CM3][cm3-soon] that's rumored to [exist][cm3-post], but with no release date yet.
+Anticipation is high for the [RPi CM3][cm3-soon] that's rumored to [exist][cm3-post], but with no release date.
 
 [gumstix]: http://www.gumstix.com
 [rpi-compute]: https://www.raspberrypi.org/products/compute-module/
