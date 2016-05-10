@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Working with the Gumstix Pi Compute Dev Board
-date: 2016-05-09 05:20:00
+date: 2016-05-10 13:02:00
 categories: rpi
 tags: [linux, gumstix, rpi compute, yocto]
 ---
@@ -20,7 +20,7 @@ You cannot use the Gumstix *Pi Dev Board* the same way since it does not have th
 
 Instead, Gumstix sells a [Pi Fast Flash Board][gumstix-pi-fast-flash-board] just for flashing the *RPi CM*. The *Fast Flash Board* does the equivalent of the **J4 Jumper** in the *USB Slave* position on the *RPi Compute Module Dev* board
 
-Separating this functionality from the main board is more in line with how you might build a *production* board that gets flashed at the factory.
+The *Pi Fast Flash Board* is much more convenient when you are flashing multiple boards in succession.
 
 Once you have an initial image on the *RPi CM* there are other methods you can use for updates or full-upgrades. For example, the method I'm using for [BeagleBone Black upgrades][bbb-upgrades] will work just as well with the *CM*.
 
@@ -34,7 +34,7 @@ Install the *RPi CM* on the Gumstix *Pi Fast Flash Board*
 
 Connect a USB cable from the *Pi Fast Flash Board* to the Host computer. (I did not require separate power, the USB was enough).
 
-Run the `rpiboot` utility. When it exits you should have a new mass storage device showing up.
+Run the `rpiboot` utility, to bring up the *CM* as a mass storage device.
 
 
     scott@octo:~$ sudo rpiboot
@@ -48,7 +48,7 @@ Run the `rpiboot` utility. When it exits you should have a new mass storage devi
     Found serial = 1: writing file /usr/share/rpiboot/msd.elf
     Successful read 4 bytes
 
-When `rpiboot` exits, there should be a new drive, `/dev/sdc` on my system.
+When `rpiboot` exits, there should be a new device, `/dev/sdc` on my system.
 
     scott@octo:~$ lsblk
     NAME    MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
@@ -67,16 +67,17 @@ When `rpiboot` exits, there should be a new drive, `/dev/sdc` on my system.
     ├─sdc1    8:33   1    64M  0 part
     └─sdc2    8:34   1   3.6G  0 part
 
-`/dev/sdc is the new *RPi COM* on this system. 
 
 If this is the first time flashing your *RPi CM* the device probably won't have any partitions.
 
-To partition the *eMMC*, there is a simple 2 partition script in `meta-rpi/scripts`.
+This particular *CM* has already been partitioned, but there is no harm in re-partitioning. 
+
+To partition the RPi *eMMC*, there is a simple 2 partition script in `meta-rpi/scripts`.
 
     scott@octo:~/rpi/meta-rpi/scripts$ sudo ./mk2parts.sh sdc
 
 
-Then after making sure the environment variables are set correctly you can use the *copy_* scripts from   the *meta-rpi* repository. 
+Then after making sure the environment variables are set correctly you can use the *copy_* scripts from   the *meta-rpi* repository to copy the bootloader and O/S. 
 
     scott@octo:~/rpi/meta-rpi/scripts$ export OETMP=/oe9/rpi1/tmp-krogoth
     scott@octo:~/rpi/meta-rpi/scripts$ export MACHINE=raspberrypi
@@ -122,7 +123,7 @@ If you want to use the camera (see below), now is a good time to copy the `dt-bl
 
 You can now move the *RPi CM* to the *Pi Dev Board* and boot it.
 
-One nice feature with the *Pi Dev Board* is the built-in USB serial console port.
+One of the nice features of the *Pi Dev Board* is the built-in USB serial console.
 
     ...
     Poky (Yocto Project Reference Distro) 2.1 cm /dev/ttyAMA0
@@ -150,7 +151,7 @@ Plug in an HDMI display and run this
 
     root@cm:~# qcolorcheck -platform linuxfb
 
-The Gumstix *Pi Dev Board* has a camera connector that is a little more convenient to use with the official RPi camera modules. The Gumstix board does not require an extra adapter or jumper wires to connect power and I2C the way you need to do using the RPi compute board.
+The Gumstix *Pi Dev Board* has a camera connector that is a little more convenient to use with the official RPi camera modules because it does not require an extra adapter board or jumpers to connect power and I2C the way you need to do using the RPi compute board.
 
 You do still need a `dt-blob.bin` to reconfigure some GPU pins for the camera. You can download the blob from the instructions [here][rpi-cm-camera].
 
@@ -168,7 +169,7 @@ After that you can use the [raspicam][raspicam] tools installed on either the of
     root@cm:~# raspistill -t 300000 -hf -vf
 
 
-Anticipation is high for the [RPi CM3][cm3-soon] that's rumored to [exist][cm3-post], but with no release date.
+Anticipation is high for the hopefully pin-compatible [RPi CM3][cm3-soon] that's rumored to [exist][cm3-post].
 
 [gumstix]: http://www.gumstix.com
 [rpi-compute]: https://www.raspberrypi.org/products/compute-module/

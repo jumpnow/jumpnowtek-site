@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-05-07 10:56:00
+date: 2016-05-10 13:00:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
 ---
@@ -311,7 +311,7 @@ You need to [source][source-script] the Yocto environment into your shell before
 
 I don't use those *Common targets*, but instead use my own custom image recipes.
 
-There are four custom images available in the *meta-rpi* layer. The recipes for the images can be found in `meta-rpi/images/`
+There are three example images available in the *meta-rpi* layer. The recipes for the images can be found in `meta-rpi/images/`
 
 * console-image.bb
 * qt5-image.bb
@@ -328,6 +328,7 @@ A basic console developer image. See the recipe `meta-rpi/images/console-image.b
     ssh/scp server and client
     perl and python with a number of modules
     omxplayer
+    raspicam utilities
 
 The *console-image* has a line
 
