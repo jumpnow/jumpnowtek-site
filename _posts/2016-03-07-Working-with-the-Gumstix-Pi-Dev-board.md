@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Working with the Gumstix Pi Compute Dev Board
-date: 2016-05-10 13:02:00
+date: 2016-05-10 13:20:00
 categories: rpi
 tags: [linux, gumstix, rpi compute, yocto]
 ---
@@ -20,7 +20,7 @@ You cannot use the Gumstix *Pi Dev Board* the same way since it does not have th
 
 Instead, Gumstix sells a [Pi Fast Flash Board][gumstix-pi-fast-flash-board] just for flashing the *RPi CM*. The *Fast Flash Board* does the equivalent of the **J4 Jumper** in the *USB Slave* position on the *RPi Compute Module Dev* board
 
-The *Pi Fast Flash Board* is much more convenient when you are flashing multiple boards in succession.
+The Gumstix *Fast Flash Board* is much more convenient when you are flashing multiple boards in succession.
 
 Once you have an initial image on the *RPi CM* there are other methods you can use for updates or full-upgrades. For example, the method I'm using for [BeagleBone Black upgrades][bbb-upgrades] will work just as well with the *CM*.
 
@@ -147,11 +147,11 @@ One of the nice features of the *Pi Dev Board* is the built-in USB serial consol
 
 The *qt5-image* has some demo apps you can use to test that Qt5 apps will run.
 
-Plug in an HDMI display and run this
+For example, plug in an HDMI display and run this
 
     root@cm:~# qcolorcheck -platform linuxfb
 
-The Gumstix *Pi Dev Board* has a camera connector that is a little more convenient to use with the official RPi camera modules because it does not require an extra adapter board or jumpers to connect power and I2C the way you need to do using the RPi compute board.
+The Gumstix *Pi Dev Board* has a camera connector that is more convenient to use with the official RPi camera modules because it does not require an extra adapter board or jumpers to connect power and I2C the way you need to do using the RPi compute board.
 
 You do still need a `dt-blob.bin` to reconfigure some GPU pins for the camera. You can download the blob from the instructions [here][rpi-cm-camera].
 
@@ -169,7 +169,7 @@ After that you can use the [raspicam][raspicam] tools installed on either the of
     root@cm:~# raspistill -t 300000 -hf -vf
 
 
-Anticipation is high for the hopefully pin-compatible [RPi CM3][cm3-soon] that's rumored to [exist][cm3-post].
+I'm waiting now for the hopefully pin-compatible [RPi CM3][cm3-soon] that's rumored to [exist][cm3-post].
 
 [gumstix]: http://www.gumstix.com
 [rpi-compute]: https://www.raspberrypi.org/products/compute-module/
