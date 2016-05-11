@@ -2,7 +2,7 @@
 layout: post
 title: Building Overo Systems with Yocto
 description: "Building customized systems for Gumstix Overo using tools from the Yocto Project"
-date: 2016-05-07 16:00:00
+date: 2016-05-11 14:38:00
 categories: gumstix-linux 
 tags: [linux, gumstix, overo, yocto]
 ---
@@ -17,7 +17,7 @@ I use this as a template when starting new *Overo* projects.
 
 The Yocto version is `2.1` the `[krogoth]` branch.
 
-The `4.4.9` Linux kernel comes from the [linux-stable][linux-stable] repository.
+The `4.4.10` Linux kernel comes from the [linux-stable][linux-stable] repository.
 
 The [u-boot][uboot] version is `2015.07` (soon to be `2016.05`)
 
