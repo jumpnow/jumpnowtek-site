@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-05-12 08:47:00
+date: 2016-05-12 10:46:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
 ---
@@ -27,6 +27,7 @@ I have done some testing with the following boards using the `4.4.8` kernel
 * [RPi 1 Model B][rpi1-model-b]
 * [RPi compute module][rpi-compute] with the [Raspberry Pi Compute Module Dev Kit][rpi-compute-dev-kit]
 * [RPi compute module][rpi-compute] with the [Gumstix Pi Compute Dev Board][gumstix-pi-compute]
+* [RPi compute module][rpi-compute] with the [Western Digital Media Stick][wd-media-stick]
 
 All boot fine. Ethernet works where applicable. HDMI and USB work. RPi3 wifi works, I have not tried the RPi3 bluetooth. I have it disabled so I can use the serial console.
 
@@ -664,3 +665,4 @@ A quick test of the camera for 60 seconds (flipping the image because of the way
 [userland-repo]: https://github.com/raspberrypi/userland
 [meta-raspberrypi]: http://git.yoctoproject.org/cgit/cgit.cgi/meta-raspberrypi
 [eudev]: https://wiki.gentoo.org/wiki/Project:Eudev
+[wd-media-stick]: http://store.wdc.com/store/wdus/en_US/DisplayAccesoryProductDetailsPage/ThemeID.40718400/Accessories/Media_Stick_for_Raspberry_Pi/productID.331153900/categoryId.70262300
