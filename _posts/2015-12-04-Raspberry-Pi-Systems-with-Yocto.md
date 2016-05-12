@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-05-10 13:00:00
+date: 2016-05-12 06:05:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
 ---
@@ -49,7 +49,7 @@ Instructions for installing onto an SD card are in the [README][readme].
 
 The Yocto version is `2.1` the `[krogoth]` branch.
 
-The `4.4.8` Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
+The `4.4.9` Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
 
 These are **sysvinit** systems using [eudev][eudev].
 
@@ -65,10 +65,10 @@ An example Raspberry Pi [music system][rpi-pandora] using an [IQaudIO Pi-DigiAMP
 
 That system also works with the [HiFiBerry Amp+][hifiberry-amp] board.
 
-As of 2016-05-07, here is the list of DTS overlays that are installed with the `4.4.8` kernel running on an RPi2/3
+As of 2016-05-12, here is the list of DTS overlays that are installed with the `4.4.9` kernel running on an RPi2/3
 
     root@rpi3:~# uname -a
-    Linux rpi3 4.4.8 #1 SMP Fri May 6 11:28:59 EDT 2016 armv7l armv7l armv7l GNU/Linux
+    Linux rpi3 4.4.9 #1 SMP Wed May 11 16:07:57 EDT 2016 armv7l armv7l armv7l GNU/Linux
 
     root@rpi3:~# ls /mnt/fat/overlays/
     ads7846-overlay.dtb              piscreen-overlay.dtb
@@ -91,7 +91,7 @@ As of 2016-05-07, here is the list of DTS overlays that are installed with the `
     hy28a-overlay.dtb                sdio-1bit-overlay.dtb
     hy28b-overlay.dtb                sdio-overlay.dtb
     i2c-gpio-overlay.dtb             sdtweak-overlay.dtb
-    i2c-mux-pca9548a-overlay.dtb     smi-dev-overlay.dtb
+    i2c-mux-overlay.dtb              smi-dev-overlay.dtb
     i2c-pwm-pca9685a-overlay.dtb     smi-nand-overlay.dtb
     i2c-rtc-overlay.dtb              smi-overlay.dtb
     i2c0-bcm2708-overlay.dtb         spi-gpio35-39-overlay.dtb
@@ -108,7 +108,6 @@ As of 2016-05-07, here is the list of DTS overlays that are installed with the `
     pi3-act-led-overlay.dtb          w1-gpio-overlay.dtb
     pi3-disable-bt-overlay.dtb       w1-gpio-pullup-overlay.dtb
     pi3-miniuart-bt-overlay.dtb      wittypi-overlay.dtb
-
 
 I've only tested a few
 
