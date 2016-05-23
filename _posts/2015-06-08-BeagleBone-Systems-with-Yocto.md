@@ -2,7 +2,7 @@
 layout: post
 title: Building BeagleBone Black Systems with Yocto
 description: "Building customized systems for the BeagleBone Black using tools from the Yocto Project"
-date: 2016-05-11 14:26:00
+date: 2016-05-23 05:38:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
@@ -17,9 +17,9 @@ I use this layer as a template when starting new *BeagleBone* projects.
 
 The Yocto version is `2.1` the `[krogoth]` branch.
 
-The `4.4.10` Linux kernel comes from the [linux-stable][linux-stable] repository. Switching to another kernel like the latest stable `4.5.4` is a one-line change to `local.conf`.
+The `4.4.11` Linux kernel comes from the [linux-stable][linux-stable] repository. Switching to another kernel like `4.5.5` is a one-line change to `local.conf`.
 
-The [u-boot][uboot] version is `2016.05-rc3+`.
+The [u-boot][uboot] version is `2016.05`.
 
 These are **sysvinit** systems using [eudev][eudev].
 
