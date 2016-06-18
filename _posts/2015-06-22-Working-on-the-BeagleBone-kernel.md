@@ -141,7 +141,7 @@ build the sdk installer with the *populate_sdk* command, usually specifying the 
 
 When finished, the sdk installer will end up here
 
-    <TMPDIR>/deploy/sdk/poky-glibc-x86_64-console-image-cortexa8hf-neon-toolchain-2.1.sh
+    <TMPDIR>/deploy/sdk/poky-glibc-x86_64-console-image-cortexa8hf-vfp-neon-toolchain-2.1.sh
 
 If you run it and accept the defaults, the cross-tools will get installed under `/opt/poky/2.1`.
 
