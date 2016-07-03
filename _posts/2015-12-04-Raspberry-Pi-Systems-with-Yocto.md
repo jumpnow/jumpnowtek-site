@@ -11,9 +11,9 @@ Building systems for [Raspberry Pi][rpi] boards using tools from the [Yocto Proj
 
 The example images in [meta-rpi][meta-rpi] build systems that support C, C++, [Qt5][qt], Perl and Python development, the languages and tools that I commonly use. Other languages are supported, but you will have to add the packages to your image recipe.
 
-Yocto is a good tool for building minimal, customized systems like single function hacking projects or industrial / commercial embedded products.
+Yocto is a good tool for building minimal, customized systems like one for a dedicated hacking project or more commonly for industrial or commercial embedded products.
 
-If you are looking for a full-featured desktop experience you will probably be better off sticking with [Raspbian][raspbian] or another one of the full-featured [RPi distributions][rpi-distros].
+If you are looking for a full-featured desktop experience you will probably be better off sticking with [Raspbian][raspbian] or another of the more popular, user friendly [RPi distributions][rpi-distros].
 
 If things like quick boot times, small image sizes or read-only rootfs are important to your project, then you might want to use Yocto.
 
