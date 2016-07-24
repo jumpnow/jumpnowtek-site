@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-05-12 10:46:00
+date: 2016-07-24 08:40:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
 ---
@@ -19,7 +19,7 @@ If things like quick boot times, small image sizes or read-only rootfs are impor
 
 I am using the Yocto [meta-raspberrypi][meta-raspberrypi] layer, but have updated recipes for the Linux kernel, [bootfiles][firmware-repo] and some [userland][userland-repo] components.
 
-I have done some testing with the following boards using the `4.4.8` kernel
+I have done some testing with the following boards using the `4.4.15` kernel
 
 * [RPi3][rpi3-b]
 * [RPi2][rpi2-b]
@@ -50,7 +50,7 @@ Instructions for installing onto an SD card are in the [README][readme].
 
 The Yocto version is `2.1` the `[krogoth]` branch.
 
-The `4.4.9` Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
+The `4.4.15` Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
 
 These are **sysvinit** systems using [eudev][eudev].
 
@@ -66,50 +66,55 @@ An example Raspberry Pi [music system][rpi-pandora] using an [IQaudIO Pi-DigiAMP
 
 That system also works with the [HiFiBerry Amp+][hifiberry-amp] board.
 
-As of 2016-05-12, here is the list of DTS overlays that are installed with the `4.4.9` kernel running on an RPi2/3
+As of 2016-07-24, here is the list of DTS overlays that are installed with the `4.4.15` kernel running on an RPi2/3
 
     root@rpi3:~# uname -a
-    Linux rpi3 4.4.9 #1 SMP Thu May 12 08:20:50 EDT 2016 armv7l armv7l armv7l GNU/Linux
+    Linux rpi3 4.4.15 #1 SMP Sat Jul 23 16:20:08 EDT 2016 armv7l armv7l armv7l GNU/Linux
 
     root@rpi3:~# ls /mnt/fat/overlays/
-    adau1977-adc-overlay.dtb         piscreen-overlay.dtb
-    ads7846-overlay.dtb              piscreen2r-overlay.dtb
-    akkordion-iqdacplus-overlay.dtb  pitft22-overlay.dtb
-    at86rf233-overlay.dtb            pitft28-capacitive-overlay.dtb
-    bmp085_i2c-sensor-overlay.dtb    pitft28-resistive-overlay.dtb
-    boomberry-dac-overlay.dtb        pps-gpio-overlay.dtb
-    boomberry-digi-overlay.dtb       pwm-2chan-overlay.dtb
-    dht11-overlay.dtb                pwm-overlay.dtb
-    dpi24-overlay.dtb                qca7000-overlay.dtb
-    dwc-otg-overlay.dtb              raspidac3-overlay.dtb
-    dwc2-overlay.dtb                 rpi-backlight-overlay.dtb
-    enc28j60-overlay.dtb             rpi-dac-overlay.dtb
-    gpio-ir-overlay.dtb              rpi-display-overlay.dtb
-    gpio-poweroff-overlay.dtb        rpi-ft5406-overlay.dtb
-    hifiberry-amp-overlay.dtb        rpi-proto-overlay.dtb
-    hifiberry-dac-overlay.dtb        rpi-sense-overlay.dtb
-    hifiberry-dacplus-overlay.dtb    sdhost-overlay.dtb
-    hifiberry-digi-overlay.dtb       sdio-1bit-overlay.dtb
-    hy28a-overlay.dtb                sdio-overlay.dtb
-    hy28b-overlay.dtb                sdtweak-overlay.dtb
-    i2c-gpio-overlay.dtb             smi-dev-overlay.dtb
-    i2c-mux-overlay.dtb              smi-nand-overlay.dtb
-    i2c-pwm-pca9685a-overlay.dtb     smi-overlay.dtb
-    i2c-rtc-overlay.dtb              spi-gpio35-39-overlay.dtb
-    i2c0-bcm2708-overlay.dtb         spi1-1cs-overlay.dtb
-    i2c1-bcm2708-overlay.dtb         spi1-2cs-overlay.dtb
-    i2s-gpio28-31-overlay.dtb        spi1-3cs-overlay.dtb
-    i2s-mmap-overlay.dtb             spi2-1cs-overlay.dtb
-    iqaudio-dac-overlay.dtb          spi2-2cs-overlay.dtb
-    iqaudio-dacplus-overlay.dtb      spi2-3cs-overlay.dtb
-    lirc-rpi-overlay.dtb             tinylcd35-overlay.dtb
-    mcp2515-can0-overlay.dtb         uart1-overlay.dtb
-    mcp2515-can1-overlay.dtb         vc4-kms-v3d-overlay.dtb
-    mmc-overlay.dtb                  vga666-overlay.dtb
-    mz61581-overlay.dtb              w1-gpio-overlay.dtb
-    pi3-act-led-overlay.dtb          w1-gpio-pullup-overlay.dtb
-    pi3-disable-bt-overlay.dtb       wittypi-overlay.dtb
-    pi3-miniuart-bt-overlay.dtb
+    adau1977-adc.dtbo                pi3-miniuart-bt.dtbo
+    ads1015.dtbo                     piscreen.dtbo
+    ads7846.dtbo                     piscreen2r.dtbo
+    akkordion-iqdacplus.dtbo         pitft22.dtbo
+    at86rf233.dtbo                   pitft28-capacitive.dtbo
+    audioinjector-wm8731-audio.dtbo  pitft28-resistive.dtbo
+    bmp085_i2c-sensor.dtbo           pps-gpio.dtbo
+    dht11.dtbo                       pwm-2chan.dtbo
+    dionaudio-loco.dtbo              pwm.dtbo
+    dpi24.dtbo                       qca7000.dtbo
+    dwc-otg.dtbo                     raspidac3.dtbo
+    dwc2.dtbo                        rpi-backlight.dtbo
+    enc28j60.dtbo                    rpi-dac.dtbo
+    gpio-ir.dtbo                     rpi-display.dtbo
+    gpio-poweroff.dtbo               rpi-ft5406.dtbo
+    hifiberry-amp.dtbo               rpi-proto.dtbo
+    hifiberry-dac.dtbo               rpi-sense.dtbo
+    hifiberry-dacplus.dtbo           rra-digidac1-wm8741-audio.dtbo
+    hifiberry-digi.dtbo              sc16is752-spi1.dtbo
+    hy28a.dtbo                       sdhost.dtbo
+    hy28b.dtbo                       sdio-1bit.dtbo
+    i2c-gpio.dtbo                    sdio.dtbo
+    i2c-mux.dtbo                     sdtweak.dtbo
+    i2c-pwm-pca9685a.dtbo            smi-dev.dtbo
+    i2c-rtc.dtbo                     smi-nand.dtbo
+    i2c0-bcm2708.dtbo                smi.dtbo
+    i2c1-bcm2708.dtbo                spi-gpio35-39.dtbo
+    i2s-gpio28-31.dtbo               spi-rtc.dtbo
+    i2s-mmap.dtbo                    spi0-hw-cs.dtbo
+    iqaudio-dac.dtbo                 spi1-1cs.dtbo
+    iqaudio-dacplus.dtbo             spi1-2cs.dtbo
+    iqaudio-digi-wm8804-audio.dtbo   spi1-3cs.dtbo
+    justboom-dac.dtbo                spi2-1cs.dtbo
+    justboom-digi.dtbo               spi2-2cs.dtbo
+    lirc-rpi.dtbo                    spi2-3cs.dtbo
+    mcp23017.dtbo                    tinylcd35.dtbo
+    mcp2515-can0.dtbo                uart1.dtbo
+    mcp2515-can1.dtbo                vc4-kms-v3d.dtbo
+    mmc.dtbo                         vga666.dtbo
+    mz61581.dtbo                     w1-gpio-pullup.dtbo
+    pi3-act-led.dtbo                 w1-gpio.dtbo
+    pi3-disable-bt.dtbo              wittypi.dtbo
+
 
 I've only tested a few
 
