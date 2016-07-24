@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-07-24 08:40:00
+date: 2016-07-24 10:00:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
 ---
@@ -39,6 +39,7 @@ I have one RPi2 running as my office [music system][rpi-pandora].
 
 I use RPi2s and now the RPi3 frequently as Linux test platforms for Qt applications. I do most Qt development on Windows, but eventually most applications have to run on Linux and MacOS as well. The quad-core RPis work great both for compiling and running Qt5 applications.
 
+The [Pi Foundation's 7" Touchscreen Display][pi-display] works without problems at least with an RPi3 (the only board I tried). 
  
 ### Downloads
 
@@ -671,3 +672,4 @@ A quick test of the camera for 60 seconds (flipping the image because of the way
 [meta-raspberrypi]: http://git.yoctoproject.org/cgit/cgit.cgi/meta-raspberrypi
 [eudev]: https://wiki.gentoo.org/wiki/Project:Eudev
 [wd-media-stick]: http://store.wdc.com/store/wdus/en_US/DisplayAccesoryProductDetailsPage/ThemeID.40718400/Accessories/Media_Stick_for_Raspberry_Pi/productID.331153900/categoryId.70262300
+[pi-display]: https://www.raspberrypi.org/blog/the-eagerly-awaited-raspberry-pi-display/
