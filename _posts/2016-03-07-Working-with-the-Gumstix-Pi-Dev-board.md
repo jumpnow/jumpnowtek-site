@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Working with the Gumstix Pi Compute Dev Board
-date: 2016-05-10 13:20:00
+date: 2016-07-27 07:32:00
 categories: rpi
 tags: [linux, gumstix, rpi compute, yocto]
 ---
@@ -22,8 +22,6 @@ Instead, Gumstix sells a [Pi Fast Flash Board][gumstix-pi-fast-flash-board] just
 
 The Gumstix *Fast Flash Board* is much more convenient when you are flashing multiple boards in succession.
 
-Once you have an initial image on the *RPi CM* there are other methods you can use for updates or full-upgrades. For example, the method I'm using for [BeagleBone Black upgrades][bbb-upgrades] will work just as well with the *CM*.
-
 Assuming then that you have built your custom Yocto image using the instructions linked earlier. 
 
 And also assuming you have already built the RaspberryPi tool `rpiboot` from the [RPi Compute][jumpnow-rpi-compute] instructions.
@@ -36,13 +34,13 @@ Connect a USB cable from the *Pi Fast Flash Board* to the Host computer. (I did 
 
 Run the `rpiboot` utility, to bring up the *CM* as a mass storage device.
 
-
-    scott@octo:~$ sudo rpiboot
+    scott@fractal:~/rpi$ sudo rpiboot
     Waiting for BCM2835 ...
     Initialised device correctly
     Found serial number 0
     Found serial = 0: writing file /usr/share/rpiboot/usbbootcode.bin
-    Failed : 0xd6f10f90Waiting for BCM2835 ...
+    Successful read 4 bytes
+    Waiting for BCM2835 ...
     Initialised device correctly
     Found serial number 1
     Found serial = 1: writing file /usr/share/rpiboot/msd.elf
@@ -50,22 +48,21 @@ Run the `rpiboot` utility, to bring up the *CM* as a mass storage device.
 
 When `rpiboot` exits, there should be a new device, `/dev/sdc` on my system.
 
-    scott@octo:~$ lsblk
-    NAME    MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
-    sda       8:0    0 931.5G  0 disk
-    ├─sda1    8:1    0  93.1G  0 part /
-    ├─sda2    8:2    0  93.1G  0 part /home
-    ├─sda3    8:3    0  29.8G  0 part [SWAP]
-    ├─sda4    8:4    0     1K  0 part
-    ├─sda5    8:5    0   100G  0 part /oe5
-    ├─sda6    8:6    0   100G  0 part /oe6
-    ├─sda7    8:7    0   100G  0 part /oe7
-    ├─sda8    8:8    0   100G  0 part /oe8
-    ├─sda9    8:9    0   100G  0 part /oe9
-    └─sda10   8:10   0 215.5G  0 part /oe10
-    sdc       8:32   1   3.7G  0 disk
-    ├─sdc1    8:33   1    64M  0 part
-    └─sdc2    8:34   1   3.6G  0 part
+    scott@fractal:~/rpi1/build$ lsblk
+    NAME   MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
+    sda      8:0    0 931.5G  0 disk
+    ├─sda1   8:1    0  93.1G  0 part /
+    ├─sda2   8:2    0 186.3G  0 part /home
+    ├─sda3   8:3    0  29.8G  0 part [SWAP]
+    ├─sda4   8:4    0   100G  0 part /oe4
+    ├─sda5   8:5    0   100G  0 part /oe5
+    ├─sda6   8:6    0   100G  0 part /oe6
+    ├─sda7   8:7    0   100G  0 part /oe7
+    ├─sda8   8:8    0   100G  0 part /oe8
+    └─sda9   8:9    0   100G  0 part /oe9
+    sdc      8:32   1   3.7G  0 disk
+    ├─sdc1   8:33   1    64M  0 part
+    └─sdc2   8:34   1   3.6G  0 part
 
 
 If this is the first time flashing your *RPi CM* the device probably won't have any partitions.
@@ -77,39 +74,48 @@ To partition the RPi *eMMC*, there is a simple 2 partition script in `meta-rpi/s
     scott@octo:~/rpi/meta-rpi/scripts$ sudo ./mk2parts.sh sdc
 
 
-Then after making sure the environment variables are set correctly you can use the *copy_* scripts from   the *meta-rpi* repository to copy the bootloader and O/S. 
+Then after making sure the environment variables are set correctly you can use the *copy_* scripts from   the *meta-rpi* repository to copy the bootloader and O/S.
 
-    scott@octo:~/rpi/meta-rpi/scripts$ export OETMP=/oe9/rpi1/tmp-krogoth
-    scott@octo:~/rpi/meta-rpi/scripts$ export MACHINE=raspberrypi
+The *copy_* scripts use a temporary mount point `/media/card` on the workstation to use when copying files. Create it first if it does not already exist.
 
-    scott@octo:~/rpi/meta-rpi/scripts$ ./copy_boot.sh sdc
+    scott@fractal:~/rpi$ sudo mkdir -p /media/card
 
-    OETMP: /oe9/rpi1/tmp-krogoth
+Then export some environment variables for the scripts. (See the [instructions][jumpnow-yocto-rpi] for an explanation.) 
+
+    scott@fractal:~/rpi/meta-rpi/scripts$ export OETMP=/oe5/rpi/tmp-krogoth
+    scott@fractal:~/rpi/meta-rpi/scripts$ export MACHINE=raspberrypi
+
+The boot partition
+
+    scott@fractal:~/rpi/meta-rpi/scripts$ ./copy_boot.sh sdc
+
+    OETMP: /oe5/rpi/tmp-krogoth
     Formatting FAT partition on /dev/sdc1
     mkfs.fat 3.0.28 (2015-05-16)
     Mounting /dev/sdc1
     Copying bootloader files
     Creating overlay directory
     Copying overlay dtbs
-    Renaming overlay dtbs
+    Renaming overlay dtbs to dtbos
     Copying dtbs
     Copying kernel
     Unmounting /dev/sdc1
     Done
 
+The root file system
 
-    scott@octo:~/rpi/meta-rpi/scripts$ ./copy_rootfs.sh sdc qt5 cm
+    scott@fractal:~/rpi/meta-rpi/scripts$ ./copy_rootfs.sh sdc console cm
 
-    OETMP: /oe9/rpi1/tmp-krogoth
-    IMAGE: qt5
+    OETMP: /oe5/rpi/tmp-krogoth
+    IMAGE: console
     HOSTNAME: cm
 
     Formatting /dev/sdc2 as ext4
     /dev/sdc2 contains a ext4 file system labelled 'ROOT'
-            last mounted on / on Wed Dec 31 19:00:01 1969
+            last mounted on / on Wed Dec 31 19:00:07 1969
     Proceed anyway? (y,n) y
     Mounting /dev/sdc2
-    Extracting qt5-image-raspberrypi.tar.bz2 to /media/card
+    Extracting console-image-raspberrypi.tar.xz to /media/card
     Writing cm to /etc/hostname
     Unmounting /dev/sdc2
     Done
@@ -126,24 +132,27 @@ You can now move the *RPi CM* to the *Pi Dev Board* and boot it.
 One of the nice features of the *Pi Dev Board* is the built-in USB serial console.
 
     ...
-    Poky (Yocto Project Reference Distro) 2.1 cm /dev/ttyAMA0
+    Poky (Yocto Project Reference Distro) 2.1.1 cm /dev/ttyAMA0
 
     cm login: root
-
+    
     root@cm:~# uname -a
-    Linux cm 4.4.8 #1 Sun May 8 10:48:00 EDT 2016 armv6l armv6l armv6l GNU/Linux
+    Linux cm 4.4.15 #1 Wed Jul 27 04:19:42 EDT 2016 armv6l armv6l armv6l GNU/Linux
+
+    root@cm:~# lsblk
+    NAME         MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+    mmcblk0rpmb  179:96   0  512K  0 disk
+    mmcblk0boot0 179:32   0    4M  1 disk
+    mmcblk0boot1 179:64   0    4M  1 disk
+    mmcblk0      179:0    0  3.7G  0 disk
+    |-mmcblk0p1  179:1    0   64M  0 part
+    `-mmcblk0p2  179:2    0  3.6G  0 part /
 
     root@cm:~# free
                   total        used        free      shared  buff/cache   available
-    Mem:         380104       13076      324852         180       42176      339252
+    Mem:         445052       13196      389092         140       42764      404232
     Swap:             0           0           0
 
-    root@cm:~# df -h
-    Filesystem      Size  Used Avail Use% Mounted on
-    /dev/root       3.5G  512M  2.8G  16% /
-    devtmpfs        182M     0  182M   0% /dev
-    tmpfs           186M  128K  186M   1% /run
-    tmpfs           186M   52K  186M   1% /var/volatile
 
 The *qt5-image* has some demo apps you can use to test that Qt5 apps will run.
 
