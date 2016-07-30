@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-07-24 10:00:00
+date: 2016-07-30 11:51:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
 ---
@@ -19,7 +19,7 @@ If things like quick boot times, small image sizes or read-only rootfs are impor
 
 I am using the Yocto [meta-raspberrypi][meta-raspberrypi] layer, but have updated recipes for the Linux kernel, [bootfiles][firmware-repo] and some [userland][userland-repo] components.
 
-I have done some testing with the following boards using the `4.4.15` kernel
+I have done some testing with the following boards using the `4.4.16` kernel
 
 * [RPi3][rpi3-b]
 * [RPi2][rpi2-b]
@@ -67,10 +67,10 @@ An example Raspberry Pi [music system][rpi-pandora] using an [IQaudIO Pi-DigiAMP
 
 That system also works with the [HiFiBerry Amp+][hifiberry-amp] board.
 
-As of 2016-07-24, here is the list of DTS overlays that are installed with the `4.4.15` kernel running on an RPi2/3
+As of 2016-07-30, here is the list of DTS overlays that are installed with the `4.4.16` kernel running on an RPi2/3
 
     root@rpi3:~# uname -a
-    Linux rpi3 4.4.15 #1 SMP Sat Jul 23 16:20:08 EDT 2016 armv7l armv7l armv7l GNU/Linux
+    Linux rpi3 4.4.16 #1 SMP Sat Jul 30 10:51:59 EDT 2016 armv7l armv7l armv7l GNU/Linux
 
     root@rpi3:~# ls /mnt/fat/overlays/
     adau1977-adc.dtbo                pi3-miniuart-bt.dtbo
