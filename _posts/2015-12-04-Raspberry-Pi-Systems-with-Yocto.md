@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-07-30 11:51:00
+date: 2016-07-31 09:21:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
 ---
@@ -37,10 +37,20 @@ The serial console works off the header pins on all the boards.
 
 I have one RPi2 running as my office [music system][rpi-pandora].
 
-I use RPi2s and now the RPi3 frequently as Linux test platforms for Qt applications. I do most Qt development on Windows, but eventually most applications have to run on Linux and MacOS as well. The quad-core RPis work great both for compiling and running Qt5 applications.
+I have another system with a [Pi Foundation's 7" Touchscreen Display][pi-display] and an [RPi Camera V2][rpi-cam-v2] that displays video on the touchscreen while simultaneously streaming it using *netcat* to another Linux machine running *mplayer*. 
 
-The [Pi Foundation's 7" Touchscreen Display][pi-display] works without problems at least with an RPi3 (the only board I tried). 
- 
+On the RPi
+
+    root@rpi3:~# raspivid -t 0 -w 1920 -h 1080 -hf -rot 90 -ih -fps 30 -o - | nc -l -p 2222
+
+On the workstation
+
+    $ mplayer -fps 200 -demuxer h264es ffmpeg://tcp://192.168.10.101:2222
+
+Where `192.168.10.101` is the RPi address. The latency is really good even at this resolution.
+
+I also frequently use RPis as my Linux test platform for Qt applications. I do most Qt development on Windows, but eventually most applications have to run on Linux and MacOS as well. The RPi3s work great both for compiling and running Qt5 applications.
+
 ### Downloads
 
 If you want a quick look at the resulting systems, you can download an example for the RPi 2/3 image [here][downloads]. 
@@ -652,6 +662,7 @@ A quick test of the camera for 60 seconds (flipping the image because of the way
 [source-script]: http://stackoverflow.com/questions/4779756/what-is-the-difference-between-source-script-sh-and-script-sh
 [raspicam]: https://www.raspberrypi.org/documentation/usage/camera/raspicam/README.md
 [rpi_camera_module]: https://www.raspberrypi.org/documentation/raspbian/applications/camera.md
+[rpi-cam-v2]: https://www.raspberrypi.org/products/camera-module-v2/
 [downloads]: http://www.jumpnowtek.com/downloads/rpi/
 [readme]: http://www.jumpnowtek.com/downloads/rpi/README.txt
 [digiamp-plus]: http://www.iqaudio.co.uk/home/9-pi-digiamp-0712411999650.html
