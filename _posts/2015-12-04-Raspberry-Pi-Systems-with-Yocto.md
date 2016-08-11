@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-07-31 09:21:00
+date: 2016-08-11 15:00:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
 ---
@@ -344,6 +344,7 @@ A basic console developer image. See the recipe `meta-rpi/images/console-image.b
     git
     ssh/scp server and client
     perl and python with a number of modules
+    pi-blaster
     omxplayer
     raspicam utilities
 
@@ -643,6 +644,15 @@ A quick test of the camera for 60 seconds (flipping the image because of the way
 
     root@rpi2# raspistill -t 60000 -hf -vf
 
+#### PWM with Pi-Blaster
+
+One of the programs RPi specific programs included in the `console-image` is [pi-blaster][pi-blaster], a utility to efficiently drive PWM outputs from some of the gpio pins. 
+
+The version I included is slightly modified from upstream. 
+
+You may or may not want those changes. 
+
+See [this post][pi-blaster-post] for a description.
 
 [rpi]: https://www.raspberrypi.org/
 [raspbian]: https://www.raspbian.org/
@@ -684,3 +694,5 @@ A quick test of the camera for 60 seconds (flipping the image because of the way
 [eudev]: https://wiki.gentoo.org/wiki/Project:Eudev
 [wd-media-stick]: http://store.wdc.com/store/wdus/en_US/DisplayAccesoryProductDetailsPage/ThemeID.40718400/Accessories/Media_Stick_for_Raspberry_Pi/productID.331153900/categoryId.70262300
 [pi-display]: https://www.raspberrypi.org/blog/the-eagerly-awaited-raspberry-pi-display/
+[pi-blaster]: https://github.com/sarfata/pi-blaster
+[pi-blaster-post]: http://www.jumpnowtek.com/rpi/Working-with-pi-blaster-on-the-RPi.html
