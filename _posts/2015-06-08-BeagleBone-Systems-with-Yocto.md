@@ -2,22 +2,22 @@
 layout: post
 title: Building BeagleBone Black Systems with Yocto
 description: "Building customized systems for the BeagleBone Black using tools from the Yocto Project"
-date: 2016-08-13 17:00:00
+date: 2016-08-22 03:50:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
 
 Building systems for [BeagleBone Black][bbb] and [BeagleBone Green][bbg] boards using tools from the [Yocto Project][Yocto].
 
-The [meta-bbb][meta-bbb] *layer* generates some basic systems with packages that support C, C++, [Qt5][qt], Perl and Python development, the languages and tools I commonly use. Other languages are supported of course. 
+The [meta-bbb][meta-bbb] layer generates some basic systems with packages that support C, C++, [Qt5][qt], Perl and Python development, the languages and tools I commonly use. Other languages are supported of course. 
 
-I use this layer as a template when starting new *BeagleBone* projects.
+I use this layer as a template when starting new BeagleBone projects.
 
 ### System Info
 
 The Yocto version is `2.1.1` the `[krogoth]` branch.
 
-The `4.4.17` Linux kernel comes from the [linux-stable][linux-stable] repository.
+The `4.4.19` Linux kernel comes from the [linux-stable][linux-stable] repository.
 
 The [u-boot][uboot] version is `2016.07`.
 
@@ -96,7 +96,7 @@ Fedora already uses `bash` as the shell.
 
 First the main Yocto project `poky` repository
 
-    scott@octo:~ git clone -b krogoth git://git.yoctoproject.org/poky.git poky-krogoth
+    scott@octo:~$ git clone -b krogoth git://git.yoctoproject.org/poky.git poky-krogoth
 
 Then the `meta-openembedded` repository
 
