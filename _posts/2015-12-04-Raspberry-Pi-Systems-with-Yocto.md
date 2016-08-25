@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-08-22 09:54:00
+date: 2016-08-25 07:30:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
 ---
@@ -19,7 +19,7 @@ If things like quick boot times, small image sizes or read-only rootfs are impor
 
 I am using the Yocto [meta-raspberrypi][meta-raspberrypi] layer, but have updated recipes for the Linux kernel, [bootfiles][firmware-repo] and some [userland][userland-repo] components.
 
-I have done some testing with the following boards using the `4.4.18` kernel
+I have done some testing with the following boards using the `4.4.19` kernel
 
 * [RPi3][rpi3-b]
 * [RPi2][rpi2-b]
@@ -59,9 +59,9 @@ Instructions for installing onto an SD card are in the [README][readme].
 
 ### System Info
 
-The Yocto version is `2.1` the `[krogoth]` branch.
+The Yocto version is `2.1.1` the `[krogoth]` branch.
 
-The `4.4.18` Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
+The `4.4.19` Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
 
 These are **sysvinit** systems using [eudev][eudev].
 
@@ -77,10 +77,10 @@ An example Raspberry Pi [music system][rpi-pandora] using an [IQaudIO Pi-DigiAMP
 
 That system also works with the [HiFiBerry Amp+][hifiberry-amp] board.
 
-As of 2016-07-30, here is the list of DTS overlays that are installed with the `4.4.16` kernel running on an RPi2/3
+As of 2016-08-25, here is the list of DTS overlays that are installed with the `4.4.19` kernel running on an RPi2/3
 
     root@rpi3:~# uname -a
-    Linux rpi3 4.4.18 #1 SMP Mon Aug 22 04:25:13 EDT 2016 armv7l armv7l armv7l GNU/Linux
+    Linux rpi3 4.4.19 #1 SMP Thu Aug 25 05:15:18 EDT 2016 armv7l armv7l armv7l GNU/Linux
 
     root@rpi3:~# ls /mnt/fat/overlays/
     adau1977-adc.dtbo                pi3-disable-bt.dtbo
@@ -102,32 +102,31 @@ As of 2016-07-30, here is the list of DTS overlays that are installed with the `
     hifiberry-amp.dtbo               rpi-proto.dtbo
     hifiberry-dac.dtbo               rpi-sense.dtbo
     hifiberry-dacplus.dtbo           rra-digidac1-wm8741-audio.dtbo
-    hifiberry-digi-pro.dtbo          sc16is752-spi1.dtbo
-    hifiberry-digi.dtbo              sdhost.dtbo
-    hy28a.dtbo                       sdio-1bit.dtbo
-    hy28b.dtbo                       sdio.dtbo
-    i2c-gpio.dtbo                    sdtweak.dtbo
-    i2c-mux.dtbo                     smi-dev.dtbo
-    i2c-pwm-pca9685a.dtbo            smi-nand.dtbo
-    i2c-rtc.dtbo                     smi.dtbo
-    i2c0-bcm2708.dtbo                spi-gpio35-39.dtbo
-    i2c1-bcm2708.dtbo                spi-rtc.dtbo
-    i2s-gpio28-31.dtbo               spi0-hw-cs.dtbo
-    i2s-mmap.dtbo                    spi1-1cs.dtbo
-    iqaudio-dac.dtbo                 spi1-2cs.dtbo
-    iqaudio-dacplus.dtbo             spi1-3cs.dtbo
-    iqaudio-digi-wm8804-audio.dtbo   spi2-1cs.dtbo
-    justboom-dac.dtbo                spi2-2cs.dtbo
-    justboom-digi.dtbo               spi2-3cs.dtbo
-    lirc-rpi.dtbo                    tinylcd35.dtbo
-    mcp23017.dtbo                    uart1.dtbo
-    mcp23s17.dtbo                    vc4-kms-v3d.dtbo
-    mcp2515-can0.dtbo                vga666.dtbo
-    mcp2515-can1.dtbo                w1-gpio-pullup.dtbo
-    mmc.dtbo                         w1-gpio.dtbo
-    mz61581.dtbo                     wittypi.dtbo
-    pi3-act-led.dtbo
-
+    hifiberry-digi-pro.dtbo          sc16is750-i2c.dtbo
+    hifiberry-digi.dtbo              sc16is752-spi1.dtbo
+    hy28a.dtbo                       sdhost.dtbo
+    hy28b.dtbo                       sdio-1bit.dtbo
+    i2c-gpio.dtbo                    sdio.dtbo
+    i2c-mux.dtbo                     sdtweak.dtbo
+    i2c-pwm-pca9685a.dtbo            smi-dev.dtbo
+    i2c-rtc.dtbo                     smi-nand.dtbo
+    i2c0-bcm2708.dtbo                smi.dtbo
+    i2c1-bcm2708.dtbo                spi-gpio35-39.dtbo
+    i2s-gpio28-31.dtbo               spi-rtc.dtbo
+    i2s-mmap.dtbo                    spi0-hw-cs.dtbo
+    iqaudio-dac.dtbo                 spi1-1cs.dtbo
+    iqaudio-dacplus.dtbo             spi1-2cs.dtbo
+    iqaudio-digi-wm8804-audio.dtbo   spi1-3cs.dtbo
+    justboom-dac.dtbo                spi2-1cs.dtbo
+    justboom-digi.dtbo               spi2-2cs.dtbo
+    lirc-rpi.dtbo                    spi2-3cs.dtbo
+    mcp23017.dtbo                    tinylcd35.dtbo
+    mcp23s17.dtbo                    uart1.dtbo
+    mcp2515-can0.dtbo                vc4-kms-v3d.dtbo
+    mcp2515-can1.dtbo                vga666.dtbo
+    mmc.dtbo                         w1-gpio-pullup.dtbo
+    mz61581.dtbo                     w1-gpio.dtbo
+    pi3-act-led.dtbo                 wittypi.dtbo
 
 I've only tested a few
 
