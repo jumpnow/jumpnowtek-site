@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-08-25 07:30:00
+date: 2016-08-28 13:35:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
 ---
@@ -15,7 +15,11 @@ Yocto is a good tool for building minimal, customized systems like one for a ded
 
 If you are looking for a full-featured desktop experience you will probably be better off sticking with [Raspbian][raspbian] or another of the more popular, user friendly [RPi distributions][rpi-distros].
 
-If things like quick boot times, small image sizes or read-only rootfs are important to your project, then you might want to use Yocto.
+If you like quick boot times, small image sizes or a read-only rootfs, then you might want to try Yocto.
+
+If you are [Qt5][qt] developer then you will appreciate that the RPi comes with working OpenGL drivers for the GPU. This means [Qt OpenGL][qt-opengl] or [Qt QuickControls2][qt-quickcontrols2] applications work when using the [eglfs][qt-eglfs] platform plugin.
+
+**NOTE:** The `eglfs` plugin is what I'm using now for Qt5 images built with [meta-rpi][meta-rpi]. It used to be `linuxfb`. If you were previously using [meta-rpi][meta-rpi] you should update `local.conf` and add `opengl` to `DISTRO_FEATURES`.
 
 I am using the Yocto [meta-raspberrypi][meta-raspberrypi] layer, but have updated recipes for the Linux kernel, [bootfiles][firmware-repo] and some [userland][userland-repo] components.
 
@@ -65,7 +69,7 @@ The `4.4.19` Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kern
 
 These are **sysvinit** systems using [eudev][eudev].
 
-The Qt version is `5.6.1`. There is no *X11* and no desktop installed. [Qt][qt] GUI applications can be run using the `-platform linuxfb` switch.
+The Qt version is `5.7.0`. There is no *X11* and no desktop installed. [Qt][qt] GUI applications can be run fullscreen using the `-platform eglfs` switch.
 
 Perl `5.22` and Python `2.7.11` each with a number of modules is included.
 
@@ -183,24 +187,24 @@ Fedora already uses `bash` as the shell.
 
 ### Clone the dependency repositories
 
-First the main Yocto project `poky` repository
+First the main Yocto project `poky` repository, the `[krogoth]` branch
 
     scott@octo:~ git clone -b krogoth git://git.yoctoproject.org/poky.git poky-krogoth
 
-The `meta-openembedded` repository
+The `meta-openembedded` repository, the `[krogoth]` branch
 
     scott@octo:~$ cd poky-krogoth
     scott@octo:~/poky-krogoth$ git clone -b krogoth git://git.openembedded.org/meta-openembedded
 
-The `meta-qt5` repository
+The `meta-qt5` repository, the `[master]` branch for Qt 5.7 and some build patches for [eglfs][qt-eglfs]
 
-    scott@octo:~/poky-krogoth$ git clone -b krogoth https://github.com/meta-qt5/meta-qt5.git
+    scott@octo:~/poky-krogoth$ git clone -b master https://github.com/meta-qt5/meta-qt5.git
 
 And finally the `meta-raspberrypi` repository. There is no `[krogoth]` branch yet, so use `[master]`
 
     scott@octo:~/poky-krogoth$ git clone -b master git://git.yoctoproject.org/meta-raspberrypi
 
-Those 4 repositories shouldn't need modifications other then updates and can be reused for different projects and different boards.
+Those 4 repositories shouldn't need modifications other then updates and can be reused for different projects or different boards.
 
 ### Clone the meta-rpi repository
 
@@ -281,7 +285,7 @@ The choices are **raspberrypi2** the default or **raspberrypi**.
 
 Use **raspberrypi2** for the RPi3.
 
-There is a new **raspberrypi3** MACHINE option with `[krogoth]`, but all it adds to the **raspberrypi2** configuration is the RPi3 wifi drivers. I prefer to add drivers like that explicitly in my *image* recipe if I need them.
+There is a new **raspberrypi3** MACHINE option with `[krogoth]`, but all it adds to the **raspberrypi2** configuration is the RPi3 wifi drivers. I prefer to add drivers like that explicitly in my *image* recipe if I need them. The RPi wifi drivers are in the `console-image`, but that's because it's just a demo.
 
 You can only build for one type of MACHINE at a time because of the different instruction sets.
 
@@ -355,10 +359,31 @@ The *console-image* has a line
 
 which is `poky-krogoth/meta/classes/core-image.bbclass` and pulls in some required base packages.  This is useful to know if you create your own image recipe.
 
+#### qt5-basic-image
+
+This image includes the `console-image` and adds `Qt5` with the associated development headers and `qmake` sufficient to develop basic `QWidgets` apps. This is typically all I use.
+
 #### qt5-image
 
-This image includes the `console-image` and adds `Qt5` with the associated development headers and `qmake`.
+Adds to the `qt5-basic-image` the following Qt packages with libs, header files and mkspecs
 
+* qt3d
+* qtcharts
+* qtconnectivity
+* qtdeclarative
+* qtgraphicaleffects
+* qtlocation
+* qtmultimedia
+* qtquickcontrols2
+* qtsensors
+* qtserialbus
+* qtsvg
+* qtwebsockets
+* qtvirtualkeyboard
+* qtxmlpatterns
+
+I am not normally a `QML` or Qt OpenGL developer, but I did test a number of the [Qt Examples][qt-examples] and all that I tried compiled and worked.
+ 
 #### audio-image
 
 See this [post][rpi-pandora] for details on using this image.
@@ -521,19 +546,14 @@ The *bitbake recipe* that builds and packages *spiloop* is here
 
 Use it to test the *spidev* driver before and after placing a jumper between pins *19* and *21*.
 
-[tspress][tspress] is a Qt5 GUI application installed in `/usr/bin` with the *qt5-x11-image*.
+[tspress][tspress] is a Qt5 GUI application installed in `/usr/bin` with the *qt5-image*. I use it for testing touchscreens.
 
-The *bitbake recipe* is here
+The *bitbake recipe* is here and can be used a guide for your own applications.
 
     meta-rpi/recipes-qt/tspress/tspress.bb
 
 Check the *README* in the [tspress][tspress] repository for usage.
 
-[qcolorcheck][qcolorcheck] is another simple Qt5 GUI application. I use it when working on new display drivers. It gets installed in `/usr/bin` with the *qt5-x11-image*.
-
-The *bitbake recipe* is here
-
-    meta-rpi/recipes-qt/qcolorcheck/qcolorcheck.bb
 
 #### Adding additional packages
 
@@ -697,3 +717,7 @@ See [this post][pi-blaster-post] for a description.
 [pi-display]: https://www.raspberrypi.org/blog/the-eagerly-awaited-raspberry-pi-display/
 [pi-blaster]: https://github.com/sarfata/pi-blaster
 [pi-blaster-post]: http://www.jumpnowtek.com/rpi/Working-with-pi-blaster-on-the-RPi.html
+[qt-eglfs]: http://doc.qt.io/qt-5/embedded-linux.html
+[qt-quickcontrols2]: http://doc.qt.io/qt-5/qtquickcontrols2-index.html
+[qt-examples]: http://doc.qt.io/qt-5/qtexamplesandtutorials.html
+[qt-opengl]: http://doc.qt.io/qt-5/qtopengl-index.html
