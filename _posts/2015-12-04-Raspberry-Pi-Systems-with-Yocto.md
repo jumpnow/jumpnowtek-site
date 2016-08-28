@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-08-28 13:35:00
+date: 2016-08-28 14:30:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
 ---
@@ -17,7 +17,7 @@ If you are looking for a full-featured desktop experience you will probably be b
 
 If you like quick boot times, small image sizes or a read-only rootfs, then you might want to try Yocto.
 
-If you are [Qt5][qt] developer then you will appreciate that the RPi comes with working OpenGL drivers for the GPU. This means [Qt OpenGL][qt-opengl] or [Qt QuickControls2][qt-quickcontrols2] applications work when using the [eglfs][qt-eglfs] platform plugin.
+If you are [Qt5][qt] developer then you will appreciate that the RPi comes with working OpenGL drivers for the GPU. This means [Qt OpenGL][qt-opengl] and [Qt QuickControls2][qt-quickcontrols2] applications work when using the [eglfs][qt-eglfs] platform plugin.
 
 **NOTE:** The `eglfs` plugin is what I'm using now for Qt5 images built with [meta-rpi][meta-rpi]. It used to be `linuxfb`. If you were previously using [meta-rpi][meta-rpi] you should update `local.conf` and add `opengl` to `DISTRO_FEATURES`.
 
