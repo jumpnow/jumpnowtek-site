@@ -1,8 +1,8 @@
 ---
 layout: post
-title: Qt5 and the Raspberry Pi
+title: Qt5 and QML Development with the Raspberry Pi
 description: "Using Qt5 with hardware acceleration on the RPi"
-date: 2016-08-31 07:36:00
+date: 2016-08-31 07:43:00
 categories: rpi
 tags: [rpi, qt5, eglfs, opengl, qml, yocto]
 ---
