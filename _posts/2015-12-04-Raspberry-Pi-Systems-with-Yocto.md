@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-08-28 14:30:00
+date: 2016-08-30 13:40:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
 ---
@@ -573,56 +573,19 @@ The new package needs to get included directly in the *IMAGE_INSTALL* variable o
 
 #### Playing videos
 
-I did not install any movies in the default `meta-rpi` images. They can be pretty big.
+The RPi project has a hardware-accelerated, command-line video player called [omxplayer][omxplayer].
 
-Recipes for a few sample movies can be found here
+Here's a reasonably sized example from the [Blender][blender] project to test
 
-    scott@octo:~$ ls -l poky-krogoth/meta-openembedded/meta-multimedia/recipes-multimedia/sample-content/
-    total 16
-    -rw-rw-r-- 1 scott scott 656 Oct 30 08:56 bigbuckbunny-1080p.bb
-    -rw-rw-r-- 1 scott scott 661 Oct 30 08:56 bigbuckbunny-480p.bb
-    -rw-rw-r-- 1 scott scott 653 Oct 30 08:56 bigbuckbunny-720p.bb
-    -rw-rw-r-- 1 scott scott 576 Oct 30 08:56 tearsofsteel-1080p.bb
+    root@rpi3:~# wget https://download.blender.org/demo/movies/Cycles_Demoreel_2015.mov
 
-If you add one or more of them to the *IMAGE_INSTALL* list in your image recipe, they will get installed under `/usr/share/movies`.
-
-Assuming you have an HDMI display attached, you can play them with `omxplayer` like this
-
-    root@rpi:~# omxplayer -o hdmi /usr/share/movies/ToS-4k-1920.mov
-
-You could also copy videos to the *RPi* after it's running.
-
-Here's an example using one of the sample movies in `meta-openembedded` (*Tears of Steel*).
-
-Get the *URI* from the recipe
-
-    scott@fractal:~$ cat poky-krogoth/meta-openembedded/meta-multimedia/recipes-multimedia/sample-content/tearsofsteel-1080p.bb
-    SUMMARY = "Tears of Steel movie - 1080P"
-    LICENSE = "CC-BY-3.0"
-    LIC_FILES_CHKSUM = "file://${COREBASE}/meta/files/common-licenses/CC-BY-3.0;md5=dfa02b5755629022e267f10b9c0a2ab7"
+You can play it like this (*-o hdmi* for hdmi audio)
     
-    SRC_URI = "http://ftp.nluug.nl/pub/graphics/blender/demo/movies/ToS/ToS-4k-1920.mov"
-    SRC_URI[md5sum] = "e3fee55b1779c553e37b1d3988e6fad6"
-    SRC_URI[sha256sum] = "bd2b5bc6c16d4085034f47ef7e4b3938afe86b4eec4ac3cf2685367d3b0b23b0"
-
-    inherit allarch
-
-    do_install() {
-            install -d ${D}${datadir}/movies
-            install -m 0644 ${WORKDIR}/ToS-4k-1920.mov ${D}${datadir}/movies/
-    }
-
-    FILES_${PN} += "${datadir}/movies"
-
-Then using `wget` on the *RPi*
-
-    root@rpi2:~# wget http://ftp.nluug.nl/pub/graphics/blender/demo/movies/ToS/ToS-4k-1920.mov
-    
-    root@rpi2:~# omxplayer -o hdmi ToS-4k-1920.mov
-    Video codec omx-h264 width 1920 height 800 profile 100 fps 24.000000
-    Audio codec aac channels 2 samplerate 44100 bitspersample 16
+    root@rpi3:~# omxplayer -o hdmi Cycles_Demoreel_2015.mov
+    Video codec omx-h264 width 1920 height 1080 profile 77 fps 25.000000
+    Audio codec aac channels 2 samplerate 48000 bitspersample 16
     Subtitle count: 0, state: off, index: 1, delay: 0
-    V:PortSettingsChanged: 1920x800@24.00 interlace:0 deinterlace:0 anaglyph:0 par:1.00 layer:0 alpha:255
+    V:PortSettingsChanged: 1920x1080@25.00 interlace:0 deinterlace:0 anaglyph:0 par:1.25 display:0 layer:0 alpha:255 aspectMode:0
 
 If you get errors like this
 
@@ -632,6 +595,15 @@ Increase memory allocated to the GPU in `config.txt`
 
     gpu_mem=128
 
+The RPi GPU can support more then one display, (the DSI display is the default), though apps have to be built specifically to support the second display. Omxplayer is an app with this ability.
+
+So for example, with the RPi DSI touchscreen and an HDMI display attached at the same time, you could run a video on the HDMI display from the touchscreen this way
+
+    root@rpi3:~# omxplayer --display=5 -o hdmi Cycles_Demoreel_2015.mov
+    Video codec omx-h264 width 1920 height 1080 profile 77 fps 25.000000
+    Audio codec aac channels 2 samplerate 48000 bitspersample 16
+    Subtitle count: 0, state: off, index: 1, delay: 0
+    V:PortSettingsChanged: 1920x1080@25.00 interlace:0 deinterlace:0 anaglyph:0 par:1.25 display:5 layer:0 alpha:255 aspectMode:0
 
 #### Using the Raspberry Pi Camera
 
@@ -721,3 +693,5 @@ See [this post][pi-blaster-post] for a description.
 [qt-quickcontrols2]: http://doc.qt.io/qt-5/qtquickcontrols2-index.html
 [qt-examples]: http://doc.qt.io/qt-5/qtexamplesandtutorials.html
 [qt-opengl]: http://doc.qt.io/qt-5/qtopengl-index.html
+[omxplayer]: http://elinux.org/Omxplayer
+[blender]: https://www.blender.org/
