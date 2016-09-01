@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-09-01 19:23:00
+date: 2016-09-01 19:32:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
 ---
@@ -608,6 +608,8 @@ So for example, with the RPi DSI touchscreen and an HDMI display attached at the
     Subtitle count: 0, state: off, index: 1, delay: 0
     V:PortSettingsChanged: 1920x1080@25.00 interlace:0 deinterlace:0 anaglyph:0 par:1.25 display:5 layer:0 alpha:255 aspectMode:0
 
+I was not able to run a `eglfs` Qt app on the RPi DSI display while playing a movie with omxplayer on the HDMI display. Perhaps a `linuxfb` Qt app that doesn't use the GPU could run simultaneously. Some more testing is needed.
+
 #### Using the Raspberry Pi Camera
 
 The [raspicam][rpi_camera_module] command line tools are installed with the `console-image`.
@@ -636,13 +638,13 @@ or
 	root@rpi# nano /mnt/fat/config.txt
 
 
-A quick test of the camera for 60 seconds (flipping the image because of the way I have my camera mounted)
+A quick test of the camera, flipping the image because of the way I have my camera mounted and a timeout of zero so it runs until stopped.
 
-    root@rpi2# raspistill -t 60000 -hf -vf
+    root@rpi2# raspistill -t 0 -hf -vf
 
 #### PWM with Pi-Blaster
 
-One of the programs RPi specific programs included in the `console-image` is [pi-blaster][pi-blaster], a utility to efficiently drive PWM outputs from some of the gpio pins. 
+One RPi specific program included in the `console-image` is [pi-blaster][pi-blaster], a utility to efficiently drive PWM outputs from some of the gpio pins.
 
 The version I included is slightly modified from upstream. 
 
