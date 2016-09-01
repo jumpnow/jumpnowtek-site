@@ -2,7 +2,7 @@
 layout: post
 title: Qt5 and QML Development with the Raspberry Pi
 description: "Using Qt5 with hardware acceleration on the RPi"
-date: 2016-08-31 07:43:00
+date: 2016-09-01 09:54:00
 categories: rpi
 tags: [rpi, qt5, eglfs, opengl, qml, yocto]
 ---
@@ -31,12 +31,9 @@ I recommend you build your own images though. Mine only contain packages that se
 
 On these systems Qt5 has been configured to use the use the [EGLFS platform plugin][qpa-eglfs]. This means only one GUI process at a time, but that's typical for products I help develop.
 
-I usually follow the latest stable branch of Yocto for the different *meta-layers* used to build these systems. Currently that is the `[krogoth]` release, Yocto Project 2.1.1.
+The majority of the system is from the latest stable branch of Yocto, currently 2.1.1, the `[krogoth]` branch.
 
-The `[krogoth]` branch of [meta-qt5][meta-qt5] is using Qt 5.6 and is also missing some patches that correctly build Qt to use the OpenGL drivers provided by the [RPi userland][rpi-userland] package.
-
-The `[master]` branch of [meta-qt5][meta-qt5] is Qt 5.7 and has the build patches for OpenGL so that's what I'm using. The rest of the system is still `[krogoth]` though.
-
+I am using the `[master]` branch of [meta-qt5][meta-qt5] because it uses Qt 5.7 and has the build patches for OpenGL from the [RPi userland][rpi-userland] package.
 
 Here's a sample of what's currently installed on my `qt5-images`
 
@@ -140,8 +137,9 @@ The environment customization comes from `/etc/profile.d/qt5-env.sh` which in tu
 
 Useful to know if you want to modify it.
 
-I also have **QT\_QPA\_EGLFS\_PHYSICAL\_WIDTH** and **QT\_QPA\_EGLFS\_PHYSICAL\_HEIGHT** set for the RPi 
-Touchscreen.
+I also have **QT\_QPA\_EGLFS\_PHYSICAL\_WIDTH** and **QT\_QPA\_EGLFS\_PHYSICAL\_HEIGHT** set for the RPi Touchscreen.
+
+Details on the **QPA\_EGLFS** environment variables can be found [here][qpa-eglfs].
 
 #### Building Qt Apps on the RPi
 
@@ -149,14 +147,14 @@ Native building is the quickest way to get started.
 
 *Git* is installed, so you can pull source from a *Github* repo.
 
-The *qqtest* project is just the default *Qt Quick Controls 2* skeleton app that *Qt Creator 4.0.2* generates 
+The *qqtest* project is just the default *Qt Quick Controls 2* skeleton app that *Qt Creator 4.0.2* generates with an *Exit* button added
 
     root@rpi3:~# git clone https://github.com/scottellis/qqtest.git
     Cloning into 'qqtest'...
-    remote: Counting objects: 10, done.
-    remote: Compressing objects: 100% (10/10), done.
-    remote: Total 10 (delta 0), reused 10 (delta 0), pack-reused 0
-    Unpacking objects: 100% (10/10), done.
+    remote: Counting objects: 17, done.
+    remote: Compressing objects: 100% (12/12), done.
+    remote: Total 17 (delta 5), reused 17 (delta 5), pack-reused 0
+    Unpacking objects: 100% (17/17), done.
     Checking connectivity... done.
 
     root@rpi3:~# cd qqtest/
@@ -171,8 +169,18 @@ The *qqtest* project is just the default *Qt Quick Controls 2* skeleton app that
     root@rpi3:~/qqtest# ./qqtest
     qml: Button 1 clicked.
     qml: Button 2 clicked.
+    qml: Button 1 clicked.
+    qml: Button 2 clicked.
+    qml: Exit clicked
 
-    ^Croot@rpi3:~/qqtest#
+Another run
+
+    root@rpi3:~/qqtest# ./qqtest
+    qml: Exit clicked
+    *** Error in `./qqtest': double free or corruption (fasttop): 0x72700920 ***
+    Aborted
+
+Hmm, an ugly error on exit. See this [post][qpa-exit-errors] for some analysis.
 
 
 [rpi]: https://www.raspberrypi.org/
@@ -188,3 +196,4 @@ The *qqtest* project is just the default *Qt Quick Controls 2* skeleton app that
 [meta-qt5]: https://github.com/meta-qt5/meta-qt5
 [rpi-userland]: https://github.com/raspberrypi/userland
 [pi-display]: https://www.raspberrypi.org/blog/the-eagerly-awaited-raspberry-pi-display/
+[qpa-exit-errors]: http://www.jumpnowtek.com/yocto/Qt5-Errors-On-Exit-with-QPA.html
