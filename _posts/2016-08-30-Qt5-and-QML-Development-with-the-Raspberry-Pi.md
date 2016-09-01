@@ -2,7 +2,7 @@
 layout: post
 title: Qt5 and QML Development with the Raspberry Pi
 description: "Using Qt5 with hardware acceleration on the RPi"
-date: 2016-09-01 09:54:00
+date: 2016-09-01 14:54:00
 categories: rpi
 tags: [rpi, qt5, eglfs, opengl, qml, yocto]
 ---
@@ -27,15 +27,15 @@ My development systems are built using [Yocto][yocto].
 
 You can find [instructions here][yocto-jumpnow-build] and [download images here][jumpnow-build-download].
 
-I recommend you build your own images though. Mine only contain packages that seem interesting to me.
+I recommend you build your own images though. The *meta-rpi* images contain packages that are interesting to me.
 
-On these systems Qt5 has been configured to use the use the [EGLFS platform plugin][qpa-eglfs]. This means only one GUI process at a time, but that's typical for products I help develop.
+On these systems Qt5 has been configured to use the use the [EGLFS platform plugin][qpa-eglfs]. This means only one full-screen GUI process at a time, but that's fairly typical for the embedded products I work on.
 
 The majority of the system is from the latest stable branch of Yocto, currently 2.1.1, the `[krogoth]` branch.
 
 I am using the `[master]` branch of [meta-qt5][meta-qt5] because it uses Qt 5.7 and has the build patches for OpenGL from the [RPi userland][rpi-userland] package.
 
-Here's a sample of what's currently installed on my `qt5-images`
+Here's a sample of the Qt stuff currently installed on my `qt5-images`
 
     root@rpi3:~# g++ --version
     g++ (GCC) 5.3.0
@@ -181,6 +181,90 @@ Another run
     Aborted
 
 Hmm, an ugly error on exit. See this [post][qpa-exit-errors] for some analysis.
+
+#### Manually Cross-compiling Qt Apps
+
+This is not something I typically do, but the setup is not difficult. It does assume you have already built [your system][yocto-jumpnow-build] with Yocto.
+
+*Source* your bitbake environment as normal and then build the `meta-toolchain-qt5` recipe.
+
+Make sure you have **SDKMACHINE** in `local.conf` set appropriately for the target workstation you plan on using the SDK. The SDK is self-contained and can be transferred to other machines.
+
+    scott@fractal:~$ source poky-krogoth/oe-init-build-env ~/rpi/build
+    
+    scott@fractal:~/rpi/build$ bitbake meta-toolchain-qt5
+
+When that completes, install the SDK by running the installation script.
+
+I have a **TMPDIR=/oe4/rpi/tmp-krogoth** in my `local.conf`, so the SDK installer can be found here
+
+    scott@fractal:~/rpi/build$ cd /oe4/rpi/tmp-krogoth/deploy/sdk
+    
+    scott@fractal:/oe4/rpi/tmp-krogoth/deploy/sdk$ 
+    
+    scott@fractal:/oe4/rpi/tmp-krogoth/deploy/sdk$ ls -l
+    total 601760
+    -rw-r--r-- 1 scott scott     10154 Sep  1 13:54 poky-glibc-x86_64-meta-toolchain-qt5-cortexa7hf-neon-vfpv4-toolchain-2.1.1.host.manifest
+    -rwxr-xr-x 1 scott scott 616157351 Sep  1 13:57 poky-glibc-x86_64-meta-toolchain-qt5-cortexa7hf-neon-vfpv4-toolchain-2.1.1.sh
+    -rw-r--r-- 1 scott scott     24508 Sep  1 13:54 poky-glibc-x86_64-meta-toolchain-qt5-cortexa7hf-neon-vfpv4-toolchain-2.1.1.target.manifest
+    
+Run the installer as root (I haven't tried a non-root install)
+
+    scott@fractal:/oe4/rpi/tmp-krogoth/deploy/sdk$ sudo ./poky-glibc-x86_64-meta-toolchain-qt5-cortexa7hf-neon-vfpv4-toolchain-2.1.1.sh
+
+The default install location is `/opt/poky/2.1.1`, but you can change it.
+
+To use the SDK, *source* the SDK environment using a provided script
+
+    /opt/poky/2.1.1/environment-setup-cortexa7hf-neon-vfpv4-poky-linux-gnueabi
+
+Here is a complete cross-build example run from a headless 64-bit Linux server that does not have any native Qt software installed. 
+
+The meta-qt5 SDK was installed to `/opt/poky/rpi-meta-qt5/2.2.1`.
+
+    scott@fractal:~$ cd projects/
+
+    scott@fractal:~/projects$ git clone https://github.com/scottellis/qqtest
+    Cloning into 'qqtest'...
+    remote: Counting objects: 20, done.
+    remote: Compressing objects: 100% (17/17), done.
+    remote: Total 20 (delta 7), reused 16 (delta 3), pack-reused 0
+    Unpacking objects: 100% (20/20), done.
+    Checking connectivity... done.
+
+    scott@fractal:~/projects$ cd qqtest/
+
+    scott@fractal:~/projects/qqtest$ source /opt/poky/rpi-meta-qt5-2.1.1/environment-setup-cortexa7hf-neon-vfpv4-poky-linux-gnueabi
+
+    scott@fractal:~/projects/qqtest$ qmake && make -j8
+    Cannot read /opt/poky/rpi-meta-qt5-2.1.1/sysroots/cortexa7hf-neon-vfpv4-poky-linux-gnueabi/usr/lib/qt5/mkspecs/oe-device-extra.pri: No such file or directory
+    sh: OE_QMAKE_CXX: command not found
+    sh: OE_QMAKE_CXXFLAGS: command not found
+    Info: creating stash file /home/scott/projects/qqtest/.qmake.stash
+    arm-poky-linux-gnueabi-g++  -march=armv7ve -marm -mfpu=neon-vfpv4  -mfloat-abi=hard -mcpu=cortex-a7 --sysroot=/opt/poky/rpi-meta-qt5-2.1.1/sysroots/cortexa7hf-neon-vfpv4-poky-linux-gnueabi -c -pipe  -O2 -pipe -g -feliminate-unused-debug-types -fdebug-prefix-map=/oe4/rpi/tmp-krogoth/work/x86_64-nativesdk-pokysdk-linux/meta-environment-raspberrypi2/1.0-r8=/usr/src/debug/meta-environment-raspberrypi2/1.0-r8 -fdebug-prefix-map=/oe4/rpi/tmp-krogoth/sysroots/x86_64-linux= -fdebug-prefix-map=/oe4/rpi/tmp-krogoth/sysroots/x86_64-nativesdk-pokysdk-linux=  -O2 -std=gnu++11 -Wall -W -D_REENTRANT -fPIC -DQT_NO_DEBUG -DQT_QUICK_LIB -DQT_GUI_LIB -DQT_QML_LIB -DQT_NETWORK_LIB -DQT_CORE_LIB -I. -I/opt/poky/rpi-meta-qt5-2.1.1/sysroots/cortexa7hf-neon-vfpv4-poky-linux-gnueabi/usr/include/qt5 -I/opt/poky/rpi-meta-qt5-2.1.1/sysroots/cortexa7hf-neon-vfpv4-poky-linux-gnueabi/usr/include/qt5/QtQuick -I/opt/poky/rpi-meta-qt5-2.1.1/sysroots/cortexa7hf-neon-vfpv4-poky-linux-gnueabi/usr/include/qt5/QtGui -I/opt/poky/rpi-meta-qt5-2.1.1/sysroots/cortexa7hf-neon-vfpv4-poky-linux-gnueabi/usr/include/qt5/QtQml -I/opt/poky/rpi-meta-qt5-2.1.1/sysroots/cortexa7hf-neon-vfpv4-poky-linux-gnueabi/usr/include/qt5/QtNetwork -I/opt/poky/rpi-meta-qt5-2.1.1/sysroots/cortexa7hf-neon-vfpv4-poky-linux-gnueabi/usr/include/qt5/QtCore -I. -I/opt/poky/rpi-meta-qt5-2.1.1/sysroots/cortexa7hf-neon-vfpv4-poky-linux-gnueabi/usr/lib/qt5/mkspecs/linux-oe-g++ -o main.o main.cpp
+    /opt/poky/rpi-meta-qt5-2.1.1/sysroots/x86_64-pokysdk-linux/usr/bin/qt5/rcc -name qml qml.qrc -o qrc_qml.cpp
+    arm-poky-linux-gnueabi-g++  -march=armv7ve -marm -mfpu=neon-vfpv4  -mfloat-abi=hard -mcpu=cortex-a7 --sysroot=/opt/poky/rpi-meta-qt5-2.1.1/sysroots/cortexa7hf-neon-vfpv4-poky-linux-gnueabi -c -pipe  -O2 -pipe -g -feliminate-unused-debug-types -fdebug-prefix-map=/oe4/rpi/tmp-krogoth/work/x86_64-nativesdk-pokysdk-linux/meta-environment-raspberrypi2/1.0-r8=/usr/src/debug/meta-environment-raspberrypi2/1.0-r8 -fdebug-prefix-map=/oe4/rpi/tmp-krogoth/sysroots/x86_64-linux= -fdebug-prefix-map=/oe4/rpi/tmp-krogoth/sysroots/x86_64-nativesdk-pokysdk-linux=  -O2 -std=gnu++11 -Wall -W -D_REENTRANT -fPIC -DQT_NO_DEBUG -DQT_QUICK_LIB -DQT_GUI_LIB -DQT_QML_LIB -DQT_NETWORK_LIB -DQT_CORE_LIB -I. -I/opt/poky/rpi-meta-qt5-2.1.1/sysroots/cortexa7hf-neon-vfpv4-poky-linux-gnueabi/usr/include/qt5 -I/opt/poky/rpi-meta-qt5-2.1.1/sysroots/cortexa7hf-neon-vfpv4-poky-linux-gnueabi/usr/include/qt5/QtQuick -I/opt/poky/rpi-meta-qt5-2.1.1/sysroots/cortexa7hf-neon-vfpv4-poky-linux-gnueabi/usr/include/qt5/QtGui -I/opt/poky/rpi-meta-qt5-2.1.1/sysroots/cortexa7hf-neon-vfpv4-poky-linux-gnueabi/usr/include/qt5/QtQml -I/opt/poky/rpi-meta-qt5-2.1.1/sysroots/cortexa7hf-neon-vfpv4-poky-linux-gnueabi/usr/include/qt5/QtNetwork -I/opt/poky/rpi-meta-qt5-2.1.1/sysroots/cortexa7hf-neon-vfpv4-poky-linux-gnueabi/usr/include/qt5/QtCore -I. -I/opt/poky/rpi-meta-qt5-2.1.1/sysroots/cortexa7hf-neon-vfpv4-poky-linux-gnueabi/usr/lib/qt5/mkspecs/linux-oe-g++ -o qrc_qml.o qrc_qml.cpp
+    arm-poky-linux-gnueabi-g++  -march=armv7ve -marm -mfpu=neon-vfpv4  -mfloat-abi=hard -mcpu=cortex-a7 --sysroot=/opt/poky/rpi-meta-qt5-2.1.1/sysroots/cortexa7hf-neon-vfpv4-poky-linux-gnueabi -Wl,-O1 -Wl,--hash-style=gnu -Wl,--as-needed -Wl,-O1 -o qqtest main.o qrc_qml.o   -L/opt/poky/rpi-meta-qt5-2.1.1/sysroots/cortexa7hf-neon-vfpv4-poky-linux-gnueabi/usr/lib -lQt5Quick -L/oe4/rpi/tmp-krogoth/sysroots/raspberrypi2/usr/lib -lQt5Gui -lQt5Qml -lQt5Network -lQt5Core -lGLESv2 -lpthread
+
+    scott@fractal:~/projects/qqtest$ ls -l qqtest
+    -rwxrwxr-x 1 scott scott 399172 Sep  1 14:29 qqtest
+
+You can verify the executable is for an ARM board
+
+    scott@fractal:~/projects/qqtest$ file qqtest
+    qqtest: ELF 32-bit LSB executable, ARM, EABI5 version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux-armhf.so.3, for GNU/Linux 2.6.32, BuildID[sha1]=c15301ddc862ea976d8928fad21e45e9615846e3, not stripped
+
+Copy it to the RPi
+
+    scott@fractal:~/projects/qqtest$ scp qqtest root@192.168.10.114:/home/root
+    Warning: Permanently added '192.168.10.114' (ECDSA) to the list of known hosts.
+    qqtest                                                                                                    
+
+Then over on the RPi, the *qqtest* app should run fine.
+
+#### Creating recipes for your Qt apps
+
+TODO: But you can find some examples under `meta-rpi/recipes-qt`.
 
 
 [rpi]: https://www.raspberrypi.org/
