@@ -2,7 +2,7 @@
 layout: post
 title: Qt5 and QML Development with the Raspberry Pi
 description: "Using Qt5 with hardware acceleration on the RPi"
-date: 2016-09-01 14:54:00
+date: 2016-09-01 15:03:00
 categories: rpi
 tags: [rpi, qt5, eglfs, opengl, qml, yocto]
 ---
@@ -220,7 +220,7 @@ To use the SDK, *source* the SDK environment using a provided script
 
 Here is a complete cross-build example run from a headless 64-bit Linux server that does not have any native Qt software installed. 
 
-The meta-qt5 SDK was installed to `/opt/poky/rpi-meta-qt5/2.2.1`.
+The meta-qt5 SDK was installed to `/opt/poky/rpi-meta-qt5-2.2.1`.
 
     scott@fractal:~$ cd projects/
 

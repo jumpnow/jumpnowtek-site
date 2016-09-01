@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-08-31 12:48:00
+date: 2016-09-01 15:06:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
 ---
@@ -17,11 +17,13 @@ If you are looking for a full-featured desktop experience you will probably be b
 
 If you like quick boot times, small image sizes or a read-only rootfs, then you might want to try Yocto.
 
-If you are [Qt5][qt] developer then you will appreciate that the RPi comes with working OpenGL drivers for the GPU. This means [Qt OpenGL][qt-opengl] and [Qt QuickControls2][qt-quickcontrols2] applications now work when using the [eglfs][qt-eglfs] platform plugin. Though I have only ever been a *Qt Widgets* developer, I have started [some notes][rpi-qt5-qml-dev] on doing Qt5 and QML development work with the RPi..
+If you are [Qt5][qt] developer then you will appreciate that the RPi comes with working OpenGL drivers for the GPU. This means [Qt OpenGL][qt-opengl] and [Qt QuickControls2][qt-quickcontrols2] applications now work when using the [eglfs][qt-eglfs] platform plugin. 
+
+I have another post with more details on [developing with Qt5 on the RPi][rpi-qt5-qml-dev].
 
 **NOTE:** The `eglfs` plugin is what I'm using now for Qt5 images built with [meta-rpi][meta-rpi]. It used to be `linuxfb`. If you were previously using [meta-rpi][meta-rpi] you should update `local.conf` and add `opengl` to `DISTRO_FEATURES`.
 
-I am using the Yocto [meta-raspberrypi][meta-raspberrypi] layer, but have updated recipes for the Linux kernel, [bootfiles][firmware-repo] and some [userland][userland-repo] components.
+I am using the Yocto [meta-raspberrypi][meta-raspberrypi] layer, but have updated recipes for the Linux kernel, [gpu firmware][firmware-repo] and some [userland][userland-repo] components.
 
 I have done some testing with the following boards using the `4.4.19` kernel
 
