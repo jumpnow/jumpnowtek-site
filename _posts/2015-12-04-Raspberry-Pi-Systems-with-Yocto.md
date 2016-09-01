@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-09-01 15:06:00
+date: 2016-09-01 19:23:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
 ---
@@ -17,9 +17,9 @@ If you are looking for a full-featured desktop experience you will probably be b
 
 If you like quick boot times, small image sizes or a read-only rootfs, then you might want to try Yocto.
 
-If you are [Qt5][qt] developer then you will appreciate that the RPi comes with working OpenGL drivers for the GPU. This means [Qt OpenGL][qt-opengl] and [Qt QuickControls2][qt-quickcontrols2] applications now work when using the [eglfs][qt-eglfs] platform plugin. 
+If you are [Qt5][qt] developer then you will appreciate that the RPi comes with working OpenGL drivers for the GPU. This means [Qt OpenGL][qt-opengl] and [Qt QuickControls2][qt-quickcontrols2] applications will work when using the [eglfs][qt-eglfs] platform plugin. 
 
-I have another post with more details on [developing with Qt5 on the RPi][rpi-qt5-qml-dev].
+Here is another post with more details on [developing with Qt5 on the RPi][rpi-qt5-qml-dev].
 
 **NOTE:** The `eglfs` plugin is what I'm using now for Qt5 images built with [meta-rpi][meta-rpi]. It used to be `linuxfb`. If you were previously using [meta-rpi][meta-rpi] you should update `local.conf` and add `opengl` to `DISTRO_FEATURES`.
 
@@ -55,7 +55,7 @@ On the workstation
 
 Where `192.168.10.101` is the RPi address. The latency is really good even at this resolution.
 
-I also frequently use RPis as my Linux test platform for Qt applications. I do most Qt development on Windows, but eventually most applications have to run on Linux and MacOS as well. The RPi3s work great both for compiling and running Qt5 applications.
+I also frequently use RPis as my Linux test platform for Qt applications. I do most Qt development on a workstation, usually Windows, but eventually most applications have to run on Linux and MacOS as well. The RPi3s work great both for compiling and running Qt5 applications.
 
 ### Downloads
 
@@ -210,7 +210,7 @@ Those 4 repositories shouldn't need modifications other then updates and can be 
 
 ### Clone the meta-rpi repository
 
-Create a separate sub-directory for the `meta-rpi` repository before cloning. This is where you will be doing customizations.
+Create a separate sub-directory for the `meta-rpi` repository before cloning. This is where you will be doing your customization.
 
     scott@octo:~$ mkdir ~/rpi
     scott@octo:~$ cd ~/rpi
@@ -222,7 +222,7 @@ The `meta-rpi/README.md` file has the last commits from the dependency repositor
 
 Much of the following are only the conventions that I use. All of the paths to the meta-layers are configurable.
  
-First setup a build directory. I tend to do this on a per board and/or per project basis so I can quickly switch between projects. For this example I'll put the build directory under `~/rpi/` with the `meta-rpi` layer.
+Choose a build directory. I tend to do this on a per board and/or per project basis so I can quickly switch between projects. For this example I'll put the build directory under `~/rpi/` with the `meta-rpi` layer.
 
 You could manually create the directory structure like this
 
@@ -338,6 +338,7 @@ I don't use those *Common targets*, but instead use my own custom image recipes.
 There are three example images available in the *meta-rpi* layer. The recipes for the images can be found in `meta-rpi/images/`
 
 * console-image.bb
+* qt5-basic-image.bb
 * qt5-image.bb
 * audio-image.bb
 
@@ -363,7 +364,7 @@ which is `poky-krogoth/meta/classes/core-image.bbclass` and pulls in some requir
 
 #### qt5-basic-image
 
-This image includes the `console-image` and adds `Qt5` with the associated development headers and `qmake` sufficient to develop basic `QWidgets` apps. This is typically all I use.
+This image includes the `console-image` and adds `Qt5` with the associated development headers and `qmake`. This packages included in this image are sufficient to develop basic `QWidgets` apps and typically what I use.
 
 #### qt5-image
 
