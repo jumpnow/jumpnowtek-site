@@ -2,7 +2,7 @@
 layout: post
 title: Qt5 and QML Development with the Raspberry Pi
 description: "Using Qt5 with hardware acceleration on the RPi"
-date: 2016-09-02 06:22:00
+date: 2016-09-02 13:46:00
 categories: rpi
 tags: [rpi, qt5, eglfs, opengl, qml, yocto]
 ---
@@ -13,21 +13,21 @@ With the release of [Qt 5.7][qt-5.7] and the new [Qt Quick Controls 2][qt-quickc
 
 I have been developing with [Qt][qt] for about 5 years primarily targeting embedded Linux systems running small touchscreen displays. It's always been [Qt Widgets][qtwidgets] though, so QML is new for me.
 
-A collection of notes follow.
+A collection of semi-ordered notes follow.
 
 #### Hardware
 
-I am primarily using RPi3s for development though I expect the code to work on any RPi since the underlying GPU is the same.
+I am primarily testing with RPi3s, but I expect the code to work on any RPi since the underlying GPU is the same.
 
-I am testing with both an official [RPi DSI attached 7" touchscreen][pi-display] and an HDMI 1080p display. 
+I am testing with both an official [RPi 7" touchscreen][pi-display] and an HDMI 1080p display. 
 
 #### System Software
 
 My development systems are built using [Yocto][yocto].
 
-You can find [instructions here][yocto-jumpnow-build] and [download images here][jumpnow-build-download].
+You can find [instructions here][yocto-jumpnow-build] and [download an image here][jumpnow-build-download].
 
-I recommend you build your own images though. The *meta-rpi* images contain packages that are interesting to me.
+I recommend you build your own images though. The *meta-rpi* images contain only the packages that are interesting to me.
 
 On these systems Qt5 has been configured to use the use the [EGLFS platform plugin][qpa-eglfs]. This means only one full-screen GUI process at a time, but that's fairly typical for the embedded products I work on.
 
@@ -129,7 +129,7 @@ That's what I've done for the `qt5-images`.
     SSH_CONNECTION=192.168.10.4 50720 192.168.10.101 22
     _=/usr/bin/env
 
-You can see that the PATH has `/usr/bin/qt5` added as well.
+You can see that the **PATH** has `/usr/bin/qt5` added as well.
 
 The environment customization comes from `/etc/profile.d/qt5-env.sh` which in turn comes from this recipe in the Yocto build
 
@@ -196,11 +196,11 @@ Make sure you have **SDKMACHINE** in `local.conf` set appropriately for the targ
 
 When that completes, install the SDK by running the installation script.
 
-I have a **TMPDIR=/oe4/rpi/tmp-krogoth** in my `local.conf`, so the SDK installer can be found here
+Yocto leaves the SDK in `${TMPDIR}/deploy/sdk`.
+
+In my `local.conf` I have **TMPDIR=/oe4/rpi/tmp-krogoth**, so the SDK installer can be found here
 
     scott@fractal:~/rpi/build$ cd /oe4/rpi/tmp-krogoth/deploy/sdk
-    
-    scott@fractal:/oe4/rpi/tmp-krogoth/deploy/sdk$ 
     
     scott@fractal:/oe4/rpi/tmp-krogoth/deploy/sdk$ ls -l
     total 601760
@@ -264,15 +264,15 @@ Then over on the RPi, the *qqtest* app should run fine.
 
 #### Creating Bitbake recipes for your Qt apps
 
-Eventually you will want Yocto to build your app and include it in the image rootfs automatically.
+Eventually you will want Yocto to build and install your app automatically in the image rootfs.
 
-The [Yocto documentation][yocto-docs] is the official resource for recipes. The [meta-qt5][meta-qt5] repository has Qt5 example recipes.
+The [Yocto documentation][yocto-docs] is the official resource for recipes, but I've found the easiest way to learn is looking at existing examples. The [meta-qt5][meta-qt5] repository has a number of Qt5 examples.
  
-The [meta-qt5][meta-qt5] layer provides extra tools that handle the Qt5 specifics (*qt5.inc* brings them in).
+The [meta-qt5][meta-qt5] layer provides some extra tools that handle Qt5 specifics. The *require qt5.inc* line brings them in.
 
 Here is an example recipe for the *qqtest* application. 
 
-The source is pulled from the github repository.
+The source is pulled from the Github repository.
 
     SUMMARY = "Qt5 QML test app"
     HOMEPAGE = "http://www.jumpnowtek.com"

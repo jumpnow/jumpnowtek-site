@@ -1,12 +1,12 @@
 ---
 layout: post
 title: Qt5 Errors on Exit using QPA 
-date: 2016-09-01 07:43:00
+date: 2016-09-02 13:50:00
 categories: yocto
 tags: [qt5, eglfs, linuxfb, qml, yocto]
 ---
 
-When running [Qt5][qt] apps using the [EGLFS][qpa] or [LinuxFB][qpa] platform plugins, I frequently get a memory access error like the following when the app exits normally
+When running [Qt5][qt] apps using the [EGLFS][qpa] or [LinuxFB][qpa] platform plugins, I frequently get a memory access error like the following when the app does a normal exit.
 
 A simple QML app - [qqtest][qqtest]
 
@@ -32,14 +32,14 @@ Another Qt Widgets app - [qcolorcheck][qcolorcheck]
 
 Those runs were from an RPi3 running a [Yocto 2.1][yocto] built system with [Qt 5.7][qt-5.7] and the EGLFS plugin. I was getting the same errors with previous versions of Yocto and Qt on platforms like the [Beaglebone Black][bbb].
 
-The apps are exiting either with a call to *Qt.quit()* in the QML app or a call to *close()* of the **QMainWindow** in the Qt Widgets apps.
+The apps are exiting normally. With the QML app I am calling *Qt.quit()*. For the Qt Widget apps I am calling *close()* for the **QMainWindow**.
 
 Here's what I've gathered
 
 1. It happens with either [QML][qml] or [Qt Widgets][qtwidgets] applications
-2. It happens with the minimal [Qt Creator][qt-creator] generated skeleton apps
-3. The error only occurs when apps are run using the *eglfs* or *linuxfb* [platform plugins][qpa]. The same apps run under a window manager like X11, Win32 or MacOS exit without errors.
-4. The error is generated in the destruction of the **QApplication** object, at least in the case of Qt Widgets apps. This is normally a stack variable in *main()*, but to test you can allocate the  **QApplication** instance on the heap and destroy it manually before exit and generate the same error.
+2. It happens with even the minimal [Qt Creator][qt-creator] generated skeleton apps
+3. The error only occurs when apps are run using the *eglfs* or *linuxfb* [platform plugins][qpa]. The same apps when run under a window manager like *X11*, *Win32* or *MacOS* exit without errors.
+4. The error is generated in the destruction of the **QApplication** object, at least in the case of Qt Widgets apps. This is normally a stack variable in *main()*, but to test you can allocate the  **QApplication** instance on the heap and destroy it manually before leaving *main()* and generate the same error.
 5. The error does not always occur, but I don't see a pattern.
 
 For example, here is a few more consecutive runs of that *qqtest* app
