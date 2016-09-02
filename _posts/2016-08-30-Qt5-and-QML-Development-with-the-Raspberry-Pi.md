@@ -2,7 +2,7 @@
 layout: post
 title: Qt5 and QML Development with the Raspberry Pi
 description: "Using Qt5 with hardware acceleration on the RPi"
-date: 2016-09-01 15:03:00
+date: 2016-09-02 06:22:00
 categories: rpi
 tags: [rpi, qt5, eglfs, opengl, qml, yocto]
 ---
@@ -262,9 +262,46 @@ Copy it to the RPi
 
 Then over on the RPi, the *qqtest* app should run fine.
 
-#### Creating recipes for your Qt apps
+#### Creating Bitbake recipes for your Qt apps
 
-TODO: But you can find some examples under `meta-rpi/recipes-qt`.
+Eventually you will want Yocto to build your app and include it in the image rootfs automatically.
+
+The [Yocto documentation][yocto-docs] is the official resource for recipes. The [meta-qt5][meta-qt5] repository has Qt5 example recipes.
+ 
+The [meta-qt5][meta-qt5] layer provides extra tools that handle the Qt5 specifics (*qt5.inc* brings them in).
+
+Here is an example recipe for the *qqtest* application. 
+
+The source is pulled from the github repository.
+
+    SUMMARY = "Qt5 QML test app"
+    HOMEPAGE = "http://www.jumpnowtek.com"
+    LICENSE = "MIT"
+    LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
+
+    DEPENDS += "qtdeclarative"
+
+    PR = "r0"
+
+    SRCREV = "${AUTOREV}"
+    SRC_URI = "git://github.com/scottellis/qqtest.git"
+
+    S = "${WORKDIR}/git"
+
+    require recipes-qt/qt5/qt5.inc
+
+    do_install() {
+        install -d ${D}${bindir}
+        install -m 0755 ${B}/${PN} ${D}${bindir}
+    }
+
+    FILES_${PN} = "${bindir}"
+
+    RDEPENDS_${PN} = "qtdeclarative-qmlplugins"
+
+You can find the recipe here [meta-rpi/recipes-qt/qqtest/qqtest_git.bb][qqtest-recipe]
+
+And the *qqtest* package was added to the rootfs here [meta-rpi/images/qt5-image.bb][qt5-image-recipe] 
 
 
 [rpi]: https://www.raspberrypi.org/
@@ -281,3 +318,6 @@ TODO: But you can find some examples under `meta-rpi/recipes-qt`.
 [rpi-userland]: https://github.com/raspberrypi/userland
 [pi-display]: https://www.raspberrypi.org/blog/the-eagerly-awaited-raspberry-pi-display/
 [qpa-exit-errors]: http://www.jumpnowtek.com/yocto/Qt5-Errors-On-Exit-with-QPA.html
+[qqtest-recipe]: https://github.com/jumpnow/meta-rpi/blob/krogoth/recipes-qt/qqtest/qqtest_git.bb
+[qt5-image-recipe]: https://github.com/jumpnow/meta-rpi/blob/krogoth/images/qt5-image.bb
+[yocto-docs]: http://www.yoctoproject.org/docs/2.1/mega-manual/mega-manual.html
