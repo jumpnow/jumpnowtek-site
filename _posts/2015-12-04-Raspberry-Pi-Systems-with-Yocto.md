@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-09-01 19:32:00
+date: 2016-09-15 11:40:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
 ---
@@ -25,7 +25,7 @@ Here is another post with more details on [developing with Qt5 on the RPi][rpi-q
 
 I am using the Yocto [meta-raspberrypi][meta-raspberrypi] layer, but have updated recipes for the Linux kernel, [gpu firmware][firmware-repo] and some [userland][userland-repo] components.
 
-I have done some testing with the following boards using the `4.4.19` kernel
+I have done some testing with the following boards using the `4.4.20` kernel
 
 * [RPi3][rpi3-b]
 * [RPi2][rpi2-b]
@@ -67,11 +67,11 @@ Instructions for installing onto an SD card are in the [README][readme].
 
 The Yocto version is `2.1.1` the `[krogoth]` branch.
 
-The `4.4.19` Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
+The `4.4.20` Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
 
 These are **sysvinit** systems using [eudev][eudev].
 
-The Qt version is `5.7.0`. There is no *X11* and no desktop installed. [Qt][qt] GUI applications can be run fullscreen using the `-platform eglfs` switch.
+The Qt version is `5.7.0`. There is no *X11* and no desktop installed. [Qt][qt] GUI applications can be run fullscreen using one of the [Qt embedded linux plugins][embedded-linux-qpa] like *eglfs* or *linuxfb* which are both provided.
 
 Perl `5.22` and Python `2.7.11` each with a number of modules is included.
 
@@ -83,64 +83,74 @@ An example Raspberry Pi [music system][rpi-pandora] using an [IQaudIO Pi-DigiAMP
 
 That system also works with the [HiFiBerry Amp+][hifiberry-amp] board.
 
-As of 2016-08-25, here is the list of DTS overlays that are installed with the `4.4.19` kernel running on an RPi2/3
+The Adafruit [PiTFT 3.5"][pitft35r] and [PiTFT 2.8"][pitft28r] resistive touchscreens work. Support for some other TFT displays is included, but I haven't tested them.
+
+[Raspi2fb][raspi2fb] is included for mirroring the GPU framebuffer to the small TFT displays.
+
+As of 2016-09-15, here is the list of DTS overlays that are installed with the `4.4.20` kernel running on an RPi2/3
 
     root@rpi3:~# uname -a
-    Linux rpi3 4.4.19 #1 SMP Thu Aug 25 05:15:18 EDT 2016 armv7l armv7l armv7l GNU/Linux
+    Linux rpi3 4.4.20 #1 SMP Thu Sep 15 06:29:25 EDT 2016 armv7l armv7l armv7l GNU/Linux
 
     root@rpi3:~# ls /mnt/fat/overlays/
-    adau1977-adc.dtbo                pi3-disable-bt.dtbo
-    ads1015.dtbo                     pi3-miniuart-bt.dtbo
-    ads7846.dtbo                     piscreen.dtbo
-    akkordion-iqdacplus.dtbo         piscreen2r.dtbo
-    at86rf233.dtbo                   pitft22.dtbo
-    audioinjector-wm8731-audio.dtbo  pitft28-capacitive.dtbo
-    audremap.dtbo                    pitft28-resistive.dtbo
+    adau1977-adc.dtbo                pi3-miniuart-bt.dtbo
+    ads1015.dtbo                     piscreen.dtbo
+    ads7846.dtbo                     piscreen2r.dtbo
+    akkordion-iqdacplus.dtbo         pitft22.dtbo
+    at86rf233.dtbo                   pitft28-capacitive.dtbo
+    audioinjector-wm8731-audio.dtbo  pitft28-resistive.dtbo
+    audremap.dtbo                    pitft35-resistive.dtbo
     bmp085_i2c-sensor.dtbo           pps-gpio.dtbo
     dht11.dtbo                       pwm-2chan.dtbo
     dionaudio-loco.dtbo              pwm.dtbo
-    dpi24.dtbo                       qca7000.dtbo
-    dwc-otg.dtbo                     raspidac3.dtbo
-    dwc2.dtbo                        rpi-backlight.dtbo
-    enc28j60.dtbo                    rpi-dac.dtbo
-    gpio-ir.dtbo                     rpi-display.dtbo
-    gpio-poweroff.dtbo               rpi-ft5406.dtbo
-    hifiberry-amp.dtbo               rpi-proto.dtbo
-    hifiberry-dac.dtbo               rpi-sense.dtbo
-    hifiberry-dacplus.dtbo           rra-digidac1-wm8741-audio.dtbo
-    hifiberry-digi-pro.dtbo          sc16is750-i2c.dtbo
-    hifiberry-digi.dtbo              sc16is752-spi1.dtbo
-    hy28a.dtbo                       sdhost.dtbo
-    hy28b.dtbo                       sdio-1bit.dtbo
-    i2c-gpio.dtbo                    sdio.dtbo
-    i2c-mux.dtbo                     sdtweak.dtbo
-    i2c-pwm-pca9685a.dtbo            smi-dev.dtbo
-    i2c-rtc.dtbo                     smi-nand.dtbo
-    i2c0-bcm2708.dtbo                smi.dtbo
-    i2c1-bcm2708.dtbo                spi-gpio35-39.dtbo
-    i2s-gpio28-31.dtbo               spi-rtc.dtbo
-    i2s-mmap.dtbo                    spi0-hw-cs.dtbo
-    iqaudio-dac.dtbo                 spi1-1cs.dtbo
-    iqaudio-dacplus.dtbo             spi1-2cs.dtbo
-    iqaudio-digi-wm8804-audio.dtbo   spi1-3cs.dtbo
-    justboom-dac.dtbo                spi2-1cs.dtbo
-    justboom-digi.dtbo               spi2-2cs.dtbo
-    lirc-rpi.dtbo                    spi2-3cs.dtbo
-    mcp23017.dtbo                    tinylcd35.dtbo
-    mcp23s17.dtbo                    uart1.dtbo
+    dpi18.dtbo                       qca7000.dtbo
+    dpi24.dtbo                       raspidac3.dtbo
+    dwc-otg.dtbo                     rpi-backlight.dtbo
+    dwc2.dtbo                        rpi-dac.dtbo
+    enc28j60.dtbo                    rpi-display.dtbo
+    gpio-ir.dtbo                     rpi-ft5406.dtbo
+    gpio-poweroff.dtbo               rpi-proto.dtbo
+    hifiberry-amp.dtbo               rpi-sense.dtbo
+    hifiberry-dac.dtbo               rra-digidac1-wm8741-audio.dtbo
+    hifiberry-dacplus.dtbo           sc16is750-i2c.dtbo
+    hifiberry-digi-pro.dtbo          sc16is752-spi1.dtbo
+    hifiberry-digi.dtbo              sdhost.dtbo
+    hy28a.dtbo                       sdio-1bit.dtbo
+    hy28b.dtbo                       sdio.dtbo
+    i2c-gpio.dtbo                    sdtweak.dtbo
+    i2c-mux.dtbo                     smi-dev.dtbo
+    i2c-pwm-pca9685a.dtbo            smi-nand.dtbo
+    i2c-rtc.dtbo                     smi.dtbo
+    i2c0-bcm2708.dtbo                spi-gpio35-39.dtbo
+    i2c1-bcm2708.dtbo                spi-rtc.dtbo
+    i2s-gpio28-31.dtbo               spi0-hw-cs.dtbo
+    i2s-mmap.dtbo                    spi1-1cs.dtbo
+    iqaudio-dac.dtbo                 spi1-2cs.dtbo
+    iqaudio-dacplus.dtbo             spi1-3cs.dtbo
+    iqaudio-digi-wm8804-audio.dtbo   spi2-1cs.dtbo
+    justboom-dac.dtbo                spi2-2cs.dtbo
+    justboom-digi.dtbo               spi2-3cs.dtbo
+    lirc-rpi.dtbo                    tinylcd35.dtbo
+    mcp23017.dtbo                    uart1.dtbo
+    mcp23s17.dtbo                    vc4-fkms-v3d.dtbo
     mcp2515-can0.dtbo                vc4-kms-v3d.dtbo
     mcp2515-can1.dtbo                vga666.dtbo
     mmc.dtbo                         w1-gpio-pullup.dtbo
     mz61581.dtbo                     w1-gpio.dtbo
     pi3-act-led.dtbo                 wittypi.dtbo
+    pi3-disable-bt.dtbo
+
 
 I've only tested a few
 
 * hifiberry-amp
-* iqaudio-dacplus
 * i2s-mmap
+* iqaudio-dacplus
+* mcp2515-can0
+* pi3-disable-bt
+* pitft28-resistive
+* pitft35-resistive
 * sdhost (the default, but you can overclock now)
-* pi3-disable-bt-overlay
 
 They all come from the official Raspberry Pi kernel tree so I have confidence they all work fine. I need  some more hardware to test many of them.
 
@@ -701,3 +711,7 @@ See [this post][pi-blaster-post] for a description.
 [omxplayer]: http://elinux.org/Omxplayer
 [blender]: https://www.blender.org/
 [rpi-qt5-qml-dev]: http://www.jumpnowtek.com/rpi/Qt5-and-QML-Development-with-the-Raspberry-Pi.html
+[embedded-linux-qpa]: http://doc.qt.io/qt-5/embedded-linux.html
+[pitft35r]: https://www.adafruit.com/products/2441
+[pitft28r]: https://www.adafruit.com/products/1601
+[raspi2fb]: https://github.com/AndrewFromMelbourne/raspi2fb
