@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Working with pi-blaster on the RPi
-date: 2016-08-11 15:40:00
+date: 2016-09-15 16:32:00
 categories: rpi
 tags: [linux, rpi, yocto, pwm]
 ---
@@ -29,7 +29,7 @@ I changed the pulse period to 50 ms with the following patch
     +#define CYCLE_TIME_US          50000
     +#define SAMPLE_US              50
      #define NUM_SAMPLES            (CYCLE_TIME_US/SAMPLE_US)
-     #define NUM_CBS                        (NUM_SAMPLES*2)
+     #define NUM_CBS                (NUM_SAMPLES*2)
 
 
 Confirming the bug described here [Limits on CYCLE\_TIME\_US vs. SAMPLE\_US][limits-post], I needed to keep the **SAMPLE\_US** at a value where **NUM\_SAMPLES** stays at 1000.
@@ -109,7 +109,7 @@ And to make sure your args made it, check the command line
 
 With my configuration and the pi-blaster daemon running, the following will start a ~1.5 ms servo signal on pin 11 of the RPi3 header (gpio 17).
 
-    root@rpi3:~# echo "17=0.030" > /dev/pi-blaster
+    root@rpi3:~# echo "17=0.03" > /dev/pi-blaster
 
 Use the following formula
 
@@ -117,11 +117,11 @@ Use the following formula
 
 A 2.5 ms pulse width would be
 
-    2.5 / 50 = 0.5
+    2.5 / 50 = 0.05
 
 so
 
-    root@rpi3:~# echo "17=0.050" > /dev/pi-blaster
+    root@rpi3:~# echo "17=0.05" > /dev/pi-blaster
 
 
 And the scope verifies a 2.5 ms pulse.
