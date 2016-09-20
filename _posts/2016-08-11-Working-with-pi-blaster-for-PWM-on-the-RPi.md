@@ -1,14 +1,16 @@
 ---
 layout: post
-title: Working with pi-blaster on the RPi
-date: 2016-09-15 16:32:00
+title: Working with pi-blaster for PWM on the RPi
+date: 2016-09-20 09:04:00
 categories: rpi
 tags: [linux, rpi, yocto, pwm]
 ---
 
-The [pi-blaster][pi-blaster] program allows for generating PWM outputs from select GPIO pins of the RPi.
+The [pi-blaster][pi-blaster] program allows for efficiently generating PWM outputs from GPIO pins on the RPi.
 
-The upstream version defaults to a PWM signal with a period of 10 ms.
+Pi-Blaster is not as efficient or flexible as using [hardware PWM timers][hardware-pwm], but there are only two hardware timers and they are only available on a few pins.
+
+The upstream version of Pi-Blaster defaults to a PWM signal with a period of 10 ms.
 
 For my particular project, I wanted to drive an [SG-5010][sg-5010] servo and the default 10 ms period is just too fast. The servo motor runs continuously.
 
@@ -131,3 +133,4 @@ I haven't done extensive testing with pi-blaster, but so far it is working well 
 [pi-blaster]: https://github.com/sarfata/pi-blaster
 [sg-5010]: https://www.adafruit.com/product/155
 [limits-post]: https://github.com/sarfata/pi-blaster/issues/5
+[hardware-pwm]: http://www.jumpnowtek.com/rpi/Using-the-Raspberry-Pi-Hardware-PWM-timers.html
