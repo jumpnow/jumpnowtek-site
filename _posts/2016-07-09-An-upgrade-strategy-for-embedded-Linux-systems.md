@@ -2,20 +2,20 @@
 layout: post
 title: An upgrade strategy for embedded Linux systems
 description: "Implementing a simple upgrade strategy for deployed embedded Linux systems"
-date: 2016-07-09 14:00:00
-categories: linux 
-tags: [linux, embedded, beaglebone, gumstix, overo, duovero, yocto, upgrade]
+date: 2016-09-21 13:44:00
+categories: yocto 
+tags: [linux, embedded, upgrades, beaglebone, gumstix, overo, duovero]
 ---
 
-Here is a simple upgrade strategy for deployed small board Linux systems like [Gumstix][gumstix], [BeagleBones][beagleboard] or others running off an *SD card* or *eMMC*.
+Here is a simple upgrade strategy for deployed small board Linux systems like [Gumstix][gumstix], [BeagleBones][beaglebone] or others running off an *SD card* or *eMMC*.
 
-These boards use [U-Boot][uboot] for the *bootloader* and when I work with them run a Linux distribution built with tools from the [Yocto Project][yocto].
+These boards use [U-Boot][uboot] for the *bootloader* and run a Linux distribution built with tools from the [Yocto Project][yocto].
 
 The upgrades I am considering here are *full-system* upgrades, everything but the *bootloader*. These are not incremental upgrades using package managers like rpm, apt or opkg.
 
-*Full-system* upgrades are nice because they are *atomic* and easy to rollback to a known good system assuming the previous system was not modified.
+*Full-system* upgrades are nice because they are *atomic* and easy to rollback to a known good state assuming the previous system was not modified.
 
-The drawback to *full-system* upgrades was traditionally the size when distributing (bandwidth) and the system resources when installing (not enough space for two systems). 
+The drawback to *full-system* upgrades is traditionally the size when distributing (bandwidth) and the system resources when installing (not enough space for two systems, takes too long to run the upgrade). 
 
 With the embedded Linux systems I work on these are typically non-issues. 
 
@@ -42,7 +42,7 @@ Here are some of my self-imposed requirements
 1. The upgrade is a full *rootfs* upgrade, not just select packages.
 2. No dependencies other then a Linux shell ([BusyBox][busybox] is sufficient) and some basic disk utilities (dd, sfdisk, mkfs).
 3. The currently running *rootfs* is the fallback if the upgrade fails for any reason.
-4. No modifications to mainline *u-boot*. (Currently using 2016.05).
+4. No modifications to mainline *u-boot*. (Currently using 2016.07).
 5. The upgrade is allowed to modify files on a dedicated partition of the storage device.
 6. Storage has already been partitioned appropriately with some onetime install scripts.
 
@@ -56,9 +56,9 @@ These assumptions could be worked-around or ignored, but for now I am treating t
 
 ### Distribution
 
-An actual implementation will have to handle the details of getting new *rootfs* tarball to the device and checking for corruption and validity.
+An actual implementation will have to handle the details of getting the new *rootfs* tarball onto the device and checking for corruption and validity.
 
-I'm going to skip over this for now since these details tend to have project specific nuances that don't immediately affect the low-level implementation I am covering here. 
+I'm going to skip over this since the details tend to have project specific nuances that don't immediately affect the low-level implementation I am covering here. 
 
 ### Preparation
 
@@ -257,7 +257,6 @@ An example upgrade run over an ssh session looks like this
     total 97656
     drwx------ 2 root root    16384 Jul  9 13:49 lost+found
     -rw-r--r-- 1 root root 56664116 Jul  9 14:50 qt5-image-overo.tar.xz
-    -rw-r--r-- 1 root root 43313652 Jul  9 14:46 upgradable-console-image-overo.tar.xz
 
     root@overo:~# sysupgrade.sh /data/qt5-image-overo.tar.xz
     Finding the current root partition : /dev/mmcblk0p3
@@ -268,9 +267,7 @@ An example upgrade run over an ssh session looks like this
     Check that /dev/mmcblk0p5 is not in use : OK
     Checking if /mnt/upgrade mount point exists : OK
     Checking that /mnt/upgrade is not in use : OK
-    Formatting partition /dev/mmcblk0p2 as ext4 : /dev/mmcblk0p2 contains a ext4 file system labelled 'ROOT'
-            last mounted on / on Fri Dec 31 19:00:04 1999
-    OK
+    Formatting partition /dev/mmcblk0p2 as ext4 : OK
     Mounting /dev/mmcblk0p2 on /mnt/upgrade : OK
     Extracting new root filesystem /data/qt5-image-overo.tar.xz to /mnt/upgrade : OK
     Copying config files from current system : OK
@@ -286,9 +283,10 @@ An example upgrade run over an ssh session looks like this
 
     Reboot to use the new system.
 
-The upgrade took about 90 seconds to run and the system was completely usable while it ran.
+The upgrade script took about 90 seconds and the system was completely usable while it was running.
 
-First boot into the new system, the output of the *bootpart-flags* script looks like this
+On the first boot into the new system, the output from the *bootpart-flags* script looks like this
+
     ...
     Finding the current root partition : /dev/mmcblk0p2
     Checking there is a /dev/mmcblk0p5 partition : OK
