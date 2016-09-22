@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Using the Raspberry Pi hardware PWM timers
-date: 2016-09-20 08:45:00
+date: 2016-09-22 07:17:00
 categories: rpi
 tags: [linux, rpi, yocto, pwm]
 ---
@@ -42,7 +42,7 @@ There are two PWM overlays in the default 4.4 RPi kernels
 * pwm-2chan.dtbo
 
 
-Unfortunately, the PWM clock is not normally enabled in **CPRMAN** and the two PWM overlays in the default 4.4 kernel do not enable it.
+Unfortunately, the PWM source clock is not normally enabled in **CPRMAN** and those two overlays do not enable it.
 
 There are workarounds, such as playing an audio file before using PWM since audio also uses the PWM clocks and that enables the source clock. But that's not very convenient.
 
@@ -55,7 +55,7 @@ Since it's easy enough to do, I added two additional PWM overlays in the `meta-r
 
 You can find the source for them [here][pwm-dts-src].
 
-Use them the same way you would the standard pwm overlays. Refer to the [README][overlays-readme].
+Use them the same way you would the standard pwm overlays.
 
 For example to get a hardware timer on GPIO_18 (pin 12) on any RPi, add this to `config.txt`
 
@@ -69,7 +69,7 @@ Without arguments, GPIO\_18 is the default pin for PWM0 and GPIO\_19 is the defa
 
 Suppose you wanted to use GPIO\_12 for PWM0 and GPIO\_13 for PWM1, then you could provide arguments to the overlay like this
 
-    dtoverlay=pwm-2chan-with-clk, pin=12,func=4,pin2=13,func2=4
+    dtoverlay=pwm-2chan-with-clk, pin=12, func=4, pin2=13, func2=4
 
 When you boot with the pwm overlay loaded, you should see the kernel *pwm\_bcm2835* driver loaded
 
@@ -78,7 +78,7 @@ When you boot with the pwm overlay loaded, you should see the kernel *pwm\_bcm28
 
 It's a standard Linux kernel PWM driver. 
 
-Instructions for using the PWM sysfs interface can be found in the Linux kernel documentation [pwm.txt][pwm-txt].
+Instructions for using the PWM sysfs interface can be found in the Linux documentation [pwm.txt][pwm-txt].
 
 Here is a quick example with the *pwm-2chan-with-clk* overlay loaded.
 
