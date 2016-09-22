@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Using the Raspberry Pi hardware PWM timers
-date: 2016-09-22 07:17:00
+date: 2016-09-22 07:28:00
 categories: rpi
 tags: [linux, rpi, yocto, pwm]
 ---
@@ -69,7 +69,7 @@ Without arguments, GPIO\_18 is the default pin for PWM0 and GPIO\_19 is the defa
 
 Suppose you wanted to use GPIO\_12 for PWM0 and GPIO\_13 for PWM1, then you could provide arguments to the overlay like this
 
-    dtoverlay=pwm-2chan-with-clk, pin=12, func=4, pin2=13, func2=4
+    dtoverlay=pwm-2chan-with-clk,pin=12,func=4,pin2=13,func2=4
 
 When you boot with the pwm overlay loaded, you should see the kernel *pwm\_bcm2835* driver loaded
 
