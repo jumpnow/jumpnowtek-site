@@ -2,7 +2,7 @@
 layout: post
 title: Qt5 and QML Development with the Raspberry Pi
 description: "Using Qt5 with hardware acceleration on the RPi"
-date: 2016-09-02 13:46:00
+date: 2016-09-22 11:41:00
 categories: rpi
 tags: [rpi, qt5, eglfs, opengl, qml, yocto]
 ---
@@ -19,7 +19,15 @@ A collection of semi-ordered notes follow.
 
 I am primarily testing with RPi3s, but I expect the code to work on any RPi since the underlying GPU is the same.
 
-I am testing with both an official [RPi 7" touchscreen][pi-display] and an HDMI 1080p display. 
+I am testing with the following
+
+* The official [RPi 7" touchscreen][pi-display]
+* Standard HDMI 1080p displays
+* Adafruit [3.5 inch][pitft35r] and [2.8 inch][pitft28r] resistive touchscreen displays
+
+For the PiTFTs I'm using a nice little utility from Andrew Duncan called [raspi2fb][raspi2fb] to get the hardware accelerated graphics (i.e. QML) to show up on the SPI connected touchscreens. The *raspi2fb* utility is installed on all my *meta-rpi* images as are the DTS overlays for using the touchscreens.
+
+TODO: A more detailed write up on the RPi TFTs and *raspi2fb*.
 
 #### System Software
 
@@ -321,3 +329,6 @@ And the *qqtest* package was added to the rootfs here [meta-rpi/images/qt5-image
 [qqtest-recipe]: https://github.com/jumpnow/meta-rpi/blob/krogoth/recipes-qt/qqtest/qqtest_git.bb
 [qt5-image-recipe]: https://github.com/jumpnow/meta-rpi/blob/krogoth/images/qt5-image.bb
 [yocto-docs]: http://www.yoctoproject.org/docs/2.1/mega-manual/mega-manual.html
+[pitft35r]: https://www.adafruit.com/products/2441
+[pitft28r]: https://www.adafruit.com/products/1601
+[raspi2fb]: https://github.com/AndrewFromMelbourne/raspi2fb
