@@ -1,14 +1,14 @@
 ---
 layout: post
 title: Using the Raspberry Pi hardware PWM timers
-date: 2016-09-22 07:28:00
+date: 2016-09-23 08:22:00
 categories: rpi
 tags: [linux, rpi, yocto, pwm]
 ---
 
 The Raspberry Pis have two hardware timers capable of generating a PWM signal.
 
-The [README][overlays-readme] in the kernel overlays directory has a note regarding the pins where these timers are available.
+The [README][overlays-readme] in the kernel overlays directory documents the PWM overlays showing the pins where the timers are available.
 
     ...
     Name:   pwm
@@ -42,11 +42,11 @@ There are two PWM overlays in the default 4.4 RPi kernels
 * pwm-2chan.dtbo
 
 
-Unfortunately, the PWM source clock is not normally enabled in **CPRMAN** and those two overlays do not enable it.
+The PWM source clock is not normally enabled in **CPRMAN** and as a result those overlays are not immediately useful. PWM devices will show up, but you won't be able to get an output.
 
-There are workarounds, such as playing an audio file before using PWM since audio also uses the PWM clocks and that enables the source clock. But that's not very convenient.
+There are workarounds, such as playing an audio file before using PWM since audio also uses the PWM clocks and will enable the source clock. But that's not very convenient.
 
-This [mailing list thread][enabling-the-pwm-clock-at-boot] describes a device tree solution to enabling the **BCM2835\_CLOCK\_PWM** in the **CPRMAN** at boot.
+This [mailing list thread][enabling-the-pwm-clock-at-boot] describes a device tree solution to enabling the **BCM2835\_CLOCK\_PWM** in the **CPRMAN** in the dts.
 
 Since it's easy enough to do, I added two additional PWM overlays in the `meta-rpi` repository that implement the solution described in that thread.
 
@@ -117,7 +117,7 @@ Here is a 100 Hz pulse with an 80% duty cycle.
     root@rpi3:/sys/class/pwm/pwmchip0# echo 8000000 > pwm0/duty_cycle
     root@rpi3:/sys/class/pwm/pwmchip0# echo 1 > pwm0/enable
 
-Here is a servo type signal on PWM1, 50 Hz, 2ms pulse
+Here is a servo type signal on PWM1, 20 Hz, 2ms pulse
 
     root@rpi3:/sys/class/pwm/pwmchip0# echo 1 > export
     root@rpi3:/sys/class/pwm/pwmchip0# echo 50000000 > pwm1/period
