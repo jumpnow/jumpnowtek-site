@@ -1,14 +1,14 @@
 ---
 layout: post
 title: Using the Raspberry Pi hardware PWM timers
-date: 2016-09-23 08:22:00
+date: 2016-09-23 11:58:00
 categories: rpi
 tags: [linux, rpi, yocto, pwm]
 ---
 
 The Raspberry Pis have two hardware timers capable of generating a PWM signal.
 
-The [README][overlays-readme] in the kernel overlays directory documents the PWM overlays showing the pins where the timers are available.
+The [README][overlays-readme] in the RPi kernel overlays directory shows pins where the PWM timers are accessible
 
     ...
     Name:   pwm
@@ -46,7 +46,7 @@ The PWM source clock is not normally enabled in **CPRMAN** and as a result those
 
 There are workarounds, such as playing an audio file before using PWM since audio also uses the PWM clocks and will enable the source clock. But that's not very convenient.
 
-This [mailing list thread][enabling-the-pwm-clock-at-boot] describes a device tree solution to enabling the **BCM2835\_CLOCK\_PWM** in the **CPRMAN** in the dts.
+This [mailing list thread][enabling-the-pwm-clock-at-boot] describes a device tree solution to enabling the **BCM2835\_CLOCK\_PWM** in a dts.
 
 Since it's easy enough to do, I added two additional PWM overlays in the `meta-rpi` repository that implement the solution described in that thread.
 
