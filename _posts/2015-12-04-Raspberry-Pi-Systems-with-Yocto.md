@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-09-20 09:13:00
+date: 2016-09-25 07:12:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
 ---
@@ -67,7 +67,7 @@ Instructions for installing onto an SD card are in the [README][readme].
 
 The Yocto version is `2.1.1` the `[krogoth]` branch.
 
-The `4.4.21` Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
+The `4.4.22` Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
 
 These are **sysvinit** systems using [eudev][eudev].
 
@@ -87,10 +87,10 @@ The Adafruit [PiTFT 3.5"][pitft35r] and [PiTFT 2.8"][pitft28r] resistive touchsc
 
 [Raspi2fb][raspi2fb] is included for mirroring the GPU framebuffer to the small TFT displays.
 
-As of 2016-09-19, here is the list of DTS overlays that are installed with the `4.4.21` kernel running on an RPi2/3
+As of 2016-09-25, here is the list of DTS overlays that are installed with the `4.4.22` kernel running on an RPi3
 
     root@rpi3:~# uname -a
-    Linux rpi3 4.4.21 #1 SMP Mon Sep 19 15:17:10 EDT 2016 armv7l armv7l armv7l GNU/Linux
+    Linux rpi3 4.4.22 #1 SMP Sun Sep 25 06:13:30 EDT 2016 armv7l armv7l armv7l GNU/Linux
 
     root@rpi3:~# ls /mnt/fat/overlays/
     adau1977-adc.dtbo                  pi3-miniuart-bt.dtbo
@@ -141,8 +141,7 @@ As of 2016-09-19, here is the list of DTS overlays that are installed with the `
     pi3-act-led.dtbo                   w1-gpio.dtbo
     pi3-disable-bt.dtbo                wittypi.dtbo
 
-
-I've only tested a few
+I've tested a few
 
 * hifiberry-amp
 * i2s-mmap
@@ -157,7 +156,7 @@ I've only tested a few
 * pwm
 * sdhost (the default, but you can overclock now)
 
-They all come from the official Raspberry Pi kernel tree so I have confidence they all work fine. I need  some more hardware to test many of them.
+They all come from the official Raspberry Pi kernel tree so I have confidence they all work fine. I need more hardware to test many of them.
 
 
 ### Ubuntu Setup

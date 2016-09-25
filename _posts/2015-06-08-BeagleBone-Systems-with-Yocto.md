@@ -2,7 +2,7 @@
 layout: post
 title: Building BeagleBone Black Systems with Yocto
 description: "Building customized systems for the BeagleBone Black using tools from the Yocto Project"
-date: 2016-09-18 13:23:00
+date: 2016-09-25 07:10:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
@@ -17,7 +17,7 @@ I use this layer as a template when starting new BeagleBone projects.
 
 The Yocto version is `2.1.1` the `[krogoth]` branch.
 
-The `4.4.21` Linux kernel comes from the [linux-stable][linux-stable] repository.
+The `4.4.22` Linux kernel comes from the [linux-stable][linux-stable] repository.
 
 The [u-boot][uboot] version is `2016.07`.
 
