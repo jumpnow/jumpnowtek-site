@@ -2,28 +2,24 @@
 layout: post
 title: Qt5 and QML Development with the Raspberry Pi
 description: "Using Qt5 with hardware acceleration on the RPi"
-date: 2016-09-22 11:41:00
+date: 2016-09-27 11:31:00
 categories: rpi
 tags: [rpi, qt5, eglfs, opengl, qml, yocto]
 ---
 
 Developing hardware-accelerated Qt5 GUI applications for the Raspberry Pi.
 
-With the release of [Qt 5.7][qt-5.7] and the new [Qt Quick Controls 2][qt-quickcontrols-2] combined with the [RPi3s][rpi] and *working* OpenGL drivers it seems like a good time to try out [QML][qml].
-
-I have been developing with [Qt][qt] for about 5 years primarily targeting embedded Linux systems running small touchscreen displays. It's always been [Qt Widgets][qtwidgets] though, so QML is new for me.
-
-A collection of semi-ordered notes follow.
+With the release of [Qt 5.7][qt-5.7] and the new [Qt Quick Controls 2][qt-quickcontrols-2] combined with the Raspberry Pi's *working* OpenGL hardware drivers (something most SOCs never get right) it seems like a good time to try out [QML][qml].
 
 #### Hardware
 
-I am primarily testing with RPi3s, but I expect the code to work on any RPi since the underlying GPU is the same.
+I am primarily testing with *RPi3s*, but I the same projects work on *RPi2s* and the single core RPi boards including the RPi *compute module*.
 
-I am testing with the following
+I am testing with the following displays
 
 * The official [RPi 7" touchscreen][pi-display]
 * Standard HDMI 1080p displays
-* Adafruit [3.5 inch][pitft35r] and [2.8 inch][pitft28r] resistive touchscreen displays
+* Adafruit [3.5 inch][pitft35r] and [2.8 inch][pitft28r] resistive touchscreens
 
 For the PiTFTs I'm using a nice little utility from Andrew Duncan called [raspi2fb][raspi2fb] to get the hardware accelerated graphics (i.e. QML) to show up on the SPI connected touchscreens. The *raspi2fb* utility is installed on all my *meta-rpi* images as are the DTS overlays for using the touchscreens.
 
@@ -35,9 +31,11 @@ My development systems are built using [Yocto][yocto].
 
 You can find [instructions here][yocto-jumpnow-build] and [download an image here][jumpnow-build-download].
 
-I recommend you build your own images though. The *meta-rpi* images contain only the packages that are interesting to me.
+I recommend you build your own images though. The *meta-rpi* images contain packages that are interesting to me. You might have different interests.
 
 On these systems Qt5 has been configured to use the use the [EGLFS platform plugin][qpa-eglfs]. This means only one full-screen GUI process at a time, but that's fairly typical for the embedded products I work on.
+
+The *linuxfb* platform plugin is also installed, so you can use that instead if you only require Qt Widgets and want to use the GPU for something else. Qt Widgets work fine with the *eglfs* plugin.
 
 The majority of the system is from the latest stable branch of Yocto, currently 2.1.1, the `[krogoth]` branch.
 
@@ -105,7 +103,7 @@ Here's a sample of the Qt stuff currently installed on my `qt5-images`
     libqt5websockets5 - 5.7.0+git0+8d17ddfc2f-r0
     libqt5xmlpatterns5 - 5.7.0+git0+574d92a43e-r0
 
-That's most of the Qt packages in `meta-qt5`, but not all.
+That's most but not all of the Qt packages in `meta-qt5`.
 
 
 #### Running Qt Apps
@@ -232,6 +230,8 @@ The meta-qt5 SDK was installed to `/opt/poky/rpi-meta-qt5-2.2.1`.
 
     scott@fractal:~$ cd projects/
 
+First download a project to build
+
     scott@fractal:~/projects$ git clone https://github.com/scottellis/qqtest
     Cloning into 'qqtest'...
     remote: Counting objects: 20, done.
@@ -242,7 +242,11 @@ The meta-qt5 SDK was installed to `/opt/poky/rpi-meta-qt5-2.2.1`.
 
     scott@fractal:~/projects$ cd qqtest/
 
+Source the Qt cross-build environment
+
     scott@fractal:~/projects/qqtest$ source /opt/poky/rpi-meta-qt5-2.1.1/environment-setup-cortexa7hf-neon-vfpv4-poky-linux-gnueabi
+
+And build
 
     scott@fractal:~/projects/qqtest$ qmake && make -j8
     Cannot read /opt/poky/rpi-meta-qt5-2.1.1/sysroots/cortexa7hf-neon-vfpv4-poky-linux-gnueabi/usr/lib/qt5/mkspecs/oe-device-extra.pri: No such file or directory
@@ -254,10 +258,12 @@ The meta-qt5 SDK was installed to `/opt/poky/rpi-meta-qt5-2.2.1`.
     arm-poky-linux-gnueabi-g++  -march=armv7ve -marm -mfpu=neon-vfpv4  -mfloat-abi=hard -mcpu=cortex-a7 --sysroot=/opt/poky/rpi-meta-qt5-2.1.1/sysroots/cortexa7hf-neon-vfpv4-poky-linux-gnueabi -c -pipe  -O2 -pipe -g -feliminate-unused-debug-types -fdebug-prefix-map=/oe4/rpi/tmp-krogoth/work/x86_64-nativesdk-pokysdk-linux/meta-environment-raspberrypi2/1.0-r8=/usr/src/debug/meta-environment-raspberrypi2/1.0-r8 -fdebug-prefix-map=/oe4/rpi/tmp-krogoth/sysroots/x86_64-linux= -fdebug-prefix-map=/oe4/rpi/tmp-krogoth/sysroots/x86_64-nativesdk-pokysdk-linux=  -O2 -std=gnu++11 -Wall -W -D_REENTRANT -fPIC -DQT_NO_DEBUG -DQT_QUICK_LIB -DQT_GUI_LIB -DQT_QML_LIB -DQT_NETWORK_LIB -DQT_CORE_LIB -I. -I/opt/poky/rpi-meta-qt5-2.1.1/sysroots/cortexa7hf-neon-vfpv4-poky-linux-gnueabi/usr/include/qt5 -I/opt/poky/rpi-meta-qt5-2.1.1/sysroots/cortexa7hf-neon-vfpv4-poky-linux-gnueabi/usr/include/qt5/QtQuick -I/opt/poky/rpi-meta-qt5-2.1.1/sysroots/cortexa7hf-neon-vfpv4-poky-linux-gnueabi/usr/include/qt5/QtGui -I/opt/poky/rpi-meta-qt5-2.1.1/sysroots/cortexa7hf-neon-vfpv4-poky-linux-gnueabi/usr/include/qt5/QtQml -I/opt/poky/rpi-meta-qt5-2.1.1/sysroots/cortexa7hf-neon-vfpv4-poky-linux-gnueabi/usr/include/qt5/QtNetwork -I/opt/poky/rpi-meta-qt5-2.1.1/sysroots/cortexa7hf-neon-vfpv4-poky-linux-gnueabi/usr/include/qt5/QtCore -I. -I/opt/poky/rpi-meta-qt5-2.1.1/sysroots/cortexa7hf-neon-vfpv4-poky-linux-gnueabi/usr/lib/qt5/mkspecs/linux-oe-g++ -o qrc_qml.o qrc_qml.cpp
     arm-poky-linux-gnueabi-g++  -march=armv7ve -marm -mfpu=neon-vfpv4  -mfloat-abi=hard -mcpu=cortex-a7 --sysroot=/opt/poky/rpi-meta-qt5-2.1.1/sysroots/cortexa7hf-neon-vfpv4-poky-linux-gnueabi -Wl,-O1 -Wl,--hash-style=gnu -Wl,--as-needed -Wl,-O1 -o qqtest main.o qrc_qml.o   -L/opt/poky/rpi-meta-qt5-2.1.1/sysroots/cortexa7hf-neon-vfpv4-poky-linux-gnueabi/usr/lib -lQt5Quick -L/oe4/rpi/tmp-krogoth/sysroots/raspberrypi2/usr/lib -lQt5Gui -lQt5Qml -lQt5Network -lQt5Core -lGLESv2 -lpthread
 
+The resulting executable
+
     scott@fractal:~/projects/qqtest$ ls -l qqtest
     -rwxrwxr-x 1 scott scott 399172 Sep  1 14:29 qqtest
 
-You can verify the executable is for an ARM board
+You can verify it is for an ARM board
 
     scott@fractal:~/projects/qqtest$ file qqtest
     qqtest: ELF 32-bit LSB executable, ARM, EABI5 version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux-armhf.so.3, for GNU/Linux 2.6.32, BuildID[sha1]=c15301ddc862ea976d8928fad21e45e9615846e3, not stripped
