@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-09-25 07:12:00
+date: 2016-09-28 16:05:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
 ---
@@ -17,6 +17,8 @@ If you are looking for a full-featured desktop experience you will probably be b
 
 If you like quick boot times, small image sizes or a read-only rootfs, then you might want to try Yocto.
 
+You can build *systemd* systems with Yocto, but the default images built from [meta-rpi][meta-rpi] use *sysvinit*.
+
 If you are [Qt5][qt] developer then you will appreciate that the RPi comes with working OpenGL drivers for the GPU. This means [Qt OpenGL][qt-opengl] and [Qt QuickControls2][qt-quickcontrols2] applications will work when using the [eglfs][qt-eglfs] platform plugin. 
 
 Here is another post with more details on [developing with Qt5 on the RPi][rpi-qt5-qml-dev].
@@ -25,7 +27,7 @@ Here is another post with more details on [developing with Qt5 on the RPi][rpi-q
 
 I am using the Yocto [meta-raspberrypi][meta-raspberrypi] layer, but have updated recipes for the Linux kernel, [gpu firmware][firmware-repo] and some [userland][userland-repo] components.
 
-I have done some testing with the following boards using the `4.4.21` kernel
+I have done some testing with the following boards using the `4.4.22` kernel
 
 * [RPi3][rpi3-b]
 * [RPi2][rpi2-b]
