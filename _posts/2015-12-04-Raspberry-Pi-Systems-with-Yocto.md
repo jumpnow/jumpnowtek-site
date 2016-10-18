@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-10-09 12:11:00
+date: 2016-10-18 06:11:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
 ---
@@ -22,8 +22,6 @@ You can build *systemd* systems with Yocto, but the default images built from [m
 If you are [Qt5][qt] developer then you will appreciate that the RPi comes with working OpenGL drivers for the GPU. This means [Qt OpenGL][qt-opengl] and [Qt QuickControls2][qt-quickcontrols2] applications will work when using the [eglfs][qt-eglfs] platform plugin. 
 
 Here is another post with more details on [developing with Qt5 on the RPi][rpi-qt5-qml-dev].
-
-**NOTE:** The `eglfs` plugin is what I'm using now for Qt5 images built with [meta-rpi][meta-rpi]. It used to be `linuxfb`. If you were previously using [meta-rpi][meta-rpi] you should update `local.conf` and add `opengl` to `DISTRO_FEATURES`.
 
 I am using the Yocto [meta-raspberrypi][meta-raspberrypi] layer, but have updated recipes for the Linux kernel, [gpu firmware][firmware-repo] and some [userland][userland-repo] components.
 
@@ -205,20 +203,20 @@ Fedora already uses `bash` as the shell.
 
 ### Clone the dependency repositories
 
-First the main Yocto project `poky` repository, the `[krogoth]` branch
+First the main Yocto project `poky` repository, use the `[krogoth]` branch
 
     scott@octo:~ git clone -b krogoth git://git.yoctoproject.org/poky.git poky-krogoth
 
-The `meta-openembedded` repository, the `[krogoth]` branch
+The `meta-openembedded` repository, use the `[krogoth]` branch
 
     scott@octo:~$ cd poky-krogoth
     scott@octo:~/poky-krogoth$ git clone -b krogoth git://git.openembedded.org/meta-openembedded
 
-The `meta-qt5` repository, the `[master]` branch for Qt 5.7 and some build patches for [eglfs][qt-eglfs]
+The `meta-qt5` repository, use the `[morty]` branch to get Qt 5.7 and some build patches for [eglfs][qt-eglfs]
 
-    scott@octo:~/poky-krogoth$ git clone -b master https://github.com/meta-qt5/meta-qt5.git
+    scott@octo:~/poky-krogoth$ git clone -b morty https://github.com/meta-qt5/meta-qt5.git
 
-And finally the `meta-raspberrypi` repository. There is no `[krogoth]` branch yet, so use `[master]`
+And finally the `meta-raspberrypi` repository. There is no `[krogoth]` branch, so use `[master]`
 
     scott@octo:~/poky-krogoth$ git clone -b master git://git.yoctoproject.org/meta-raspberrypi
 
