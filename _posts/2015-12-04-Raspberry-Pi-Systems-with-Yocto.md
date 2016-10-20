@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-10-18 06:11:00
+date: 2016-10-20 16:15:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
 ---
@@ -25,7 +25,7 @@ Here is another post with more details on [developing with Qt5 on the RPi][rpi-q
 
 I am using the Yocto [meta-raspberrypi][meta-raspberrypi] layer, but have updated recipes for the Linux kernel, [gpu firmware][firmware-repo] and some [userland][userland-repo] components.
 
-I have done some testing with the following boards using the `4.4.24` kernel
+I have done some testing with the following boards using the `4.4.26` kernel
 
 * [RPi3][rpi3-b]
 * [RPi2][rpi2-b]
@@ -67,7 +67,7 @@ Instructions for installing onto an SD card are in the [README][readme].
 
 The Yocto version is `2.1.1` the `[krogoth]` branch.
 
-The `4.4.24` Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
+The `4.4.26` Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
 
 These are **sysvinit** systems using [eudev][eudev].
 
@@ -87,10 +87,10 @@ The Adafruit [PiTFT 3.5"][pitft35r] and [PiTFT 2.8"][pitft28r] resistive touchsc
 
 [Raspi2fb][raspi2fb] is included for mirroring the GPU framebuffer to the small TFT displays.
 
-As of 2016-10-09, here is the list of DTS overlays that are installed with the `4.4.24` kernel running on an RPi3
+As of 2016-10-20, here is the list of DTS overlays that are installed with the `4.4.26` kernel running on an RPi3
 
     root@rpi3:~# uname -a
-    Linux rpi3 4.4.24 #1 SMP Sun Oct 9 11:32:22 EDT 2016 armv7l armv7l armv7l GNU/Linux
+    Linux rpi3 4.4.26 #1 SMP Thu Oct 20 14:25:33 EDT 2016 armv7l armv7l armv7l GNU/Linux
 
     root@rpi3:~# ls /mnt/fat/overlays/
     adau1977-adc.dtbo                  pi3-miniuart-bt.dtbo
