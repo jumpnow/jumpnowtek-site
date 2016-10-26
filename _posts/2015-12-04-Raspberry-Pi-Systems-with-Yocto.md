@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-10-22 13:53:00
+date: 2016-10-26 05:37:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
 ---
@@ -87,15 +87,15 @@ The Adafruit [PiTFT 3.5"][pitft35r] and [PiTFT 2.8"][pitft28r] resistive touchsc
 
 [Raspi2fb][raspi2fb] is included for mirroring the GPU framebuffer to the small TFT displays.
 
-As of 2016-10-22, here is the list of DTS overlays that are installed with the `4.4.27` kernel running on an RPi3
+As of 2016-10-26, here is the list of DTS overlays that are installed with the `4.4.27` kernel running on an RPi3
 
     root@rpi3:~# uname -a
-    Linux rpi3 4.4.27 #1 SMP Sat Oct 22 12:21:07 EDT 2016 armv7l armv7l armv7l GNU/Linux
+    Linux rpi3 4.4.27 #1 SMP Wed Oct 26 05:11:08 EDT 2016 armv7l armv7l armv7l GNU/Linux
 
     root@rpi3:~# ls /mnt/fat/overlays/
-    adau1977-adc.dtbo                  pi3-miniuart-bt.dtbo
-    ads1015.dtbo                       piscreen.dtbo
-    ads7846.dtbo                       piscreen2r.dtbo
+    adau1977-adc.dtbo                  piscreen.dtbo
+    ads1015.dtbo                       piscreen2r.dtbo
+    ads7846.dtbo                       pisound.dtbo
     akkordion-iqdacplus.dtbo           pitft22.dtbo
     allo-piano-dac-pcm512x-audio.dtbo  pitft28-capacitive.dtbo
     at86rf233.dtbo                     pitft28-resistive.dtbo
@@ -140,6 +140,7 @@ As of 2016-10-22, here is the list of DTS overlays that are installed with the `
     mz61581.dtbo                       w1-gpio-pullup.dtbo
     pi3-act-led.dtbo                   w1-gpio.dtbo
     pi3-disable-bt.dtbo                wittypi.dtbo
+    pi3-miniuart-bt.dtbo
 
 I've tested a few
 
