@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-10-28 10:14:00
+date: 2016-10-28 10:41:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
 ---
@@ -85,7 +85,7 @@ That system also works with the [HiFiBerry Amp+][hifiberry-amp] board.
 
 The Adafruit [PiTFT 3.5"][pitft35r] and [PiTFT 2.8"][pitft28r] resistive touchscreens work. Support for some other TFT displays is included, but I haven't tested them.
 
-[Raspi2fb][raspi2fb] is included for mirroring the GPU framebuffer to the small TFT displays.
+[Raspi2fb][raspi2fb] is included for mirroring the GPU framebuffer to the small TFT displays. This allows for running Qt GUI applications on the TFTs.
 
 As of 2016-10-28, here is the list of DTS overlays that are installed with the `4.4.28` kernel running on an RPi3
 
