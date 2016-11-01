@@ -2,7 +2,7 @@
 layout: post
 title: Using Qt Creator to cross-compile and debug Raspberry Pi Qt5 apps 
 description: "Setup of Qt Creator to use the Yocto RPi SDK"
-date: 2016-11-01 08:00:00
+date: 2016-11-01 09:08:00
 categories: rpi
 tags: [rpi, qt5, qt creator, eglfs, opengl, qml, yocto]
 ---
@@ -51,8 +51,8 @@ Here is where you setup the path to *qmake* for the version of Qt the RPi is run
 
 Give the version whatever name you want, the important thing is the path to *qmake*.
 
-    Version name: RPi 5.7
-    qmake location: /opt/poky/rpi-2.1.1/sysroots/x86_64-pokysdk-linux/usr/bin/qt5/qmake
+* **Version name:** RPi 5.7
+* **qmake location:** /opt/poky/rpi-2.1.1/sysroots/x86_64-pokysdk-linux/usr/bin/qt5/qmake
 
 
 <img src="../assets/qtcreator-version.png" alt="Qt Creator version setup screenshot"/>
@@ -61,19 +61,19 @@ Give the version whatever name you want, the important thing is the path to *qma
 
 Add a new GCC compiler with the following path, again choose any name you want
 
-    Name: GCC for RPi
-    Compiler path: /opt/poky/rpi-2.1.1/sysroots/x86_64-pokysdk-linux/usr/bin/arm-poky-linux-gnueabi/arm-poky-linux-gnueabi-gcc
+* **Name:** GCC for RPi
+* **Compiler path:** /opt/poky/rpi-2.1.1/sysroots/x86_64-pokysdk-linux/usr/bin/arm-poky-linux-gnueabi/arm-poky-linux-gnueabi-gcc
 
 
 <img src="../assets/qtcreator-compiler.png" alt="Qt Creator compiler setup screenshot"/>
 
 #### Add a debugger
 
-    Name: GDB for RPi
-    Path: /opt/poky/rpi-2.1.1/sysroots/x86_64-pokysdk-linux/usr/bin/arm-poky-linux-gnueabi/arm-poky-linux-gnueabi-gdb
-    Type: GDB
-    ABIs: arm-linux-generic-elf-32bit
-    Version: 7.10.1
+* **Name:** GDB for RPi
+* **Path:** /opt/poky/rpi-2.1.1/sysroots/x86_64-pokysdk-linux/usr/bin/arm-poky-linux-gnueabi/arm-poky-linux-gnueabi-gdb
+* **Type:** GDB
+* **ABIs:** arm-linux-generic-elf-32bit
+* **Version:** 7.10.1
 
 <img src="../assets/qtcreator-debugger.png" alt="Qt Creator debugger setup screenshot"/>
 
@@ -81,16 +81,16 @@ Add a new GCC compiler with the following path, again choose any name you want
 
 Add a Qt Creator *kit* using the version, compiler and debugger setups that were just added and specifying a *sysroots* path in the SDK and a *mkspec* to use.
 
-    Name: RPi
-    File system name:
-    Device type: Generic Linux Device
-    Device: RPi (default for Generic Linux)
-    Sysroot: /opt/poky/rpi-2.1.1/sysroots/cortexa7hf-neon-vfp4-poky-linux-gnueabi
-    Compiler: GCC for RPi
-    Environment: No changes to apply.
-    Debugger: GDB for RPi
-    Qt version: RPi 5.7
-    Qt mkspec: linux-oe-g++
+* **Name:** RPi
+* **File system name:**
+* **Device type:** Generic Linux Device
+* **Device:** RPi (default for Generic Linux)
+* **Sysroot:** /opt/poky/rpi-2.1.1/sysroots/cortexa7hf-neon-vfp4-poky-linux-gnueabi
+* **Compiler:** GCC for RPi
+* **Environment:** No changes to apply.
+* **Debugger:** GDB for RPi
+* **Qt version:** RPi 5.7
+* **Qt mkspec:** linux-oe-g++
 
 <img src="../assets/qtcreator-kit.png" alt="Qt Creator kit setup screenshot"/>
 
@@ -137,9 +137,9 @@ You can leave the *GDB server executable* blank. It will be found automatically.
 
 You should now be able to build, run and debug Qt5 applications on the Raspberry Pi from your workstation.
 
-It seems to work okay with my limited testing, but I don't usually develop on a Linux workstation and this is not my typical workflow.
+It seems to work okay with my limited testing, but I don't usually develop on a Linux workstation so this is not my typical workflow.
 
-I'm open to feedback if I am missing some key point.
+Please let me know if I am missed something.
 
 
 [yocto-jumpnow-build]: http://www.jumpnowtek.com/rpi/Raspberry-Pi-Systems-with-Yocto.html

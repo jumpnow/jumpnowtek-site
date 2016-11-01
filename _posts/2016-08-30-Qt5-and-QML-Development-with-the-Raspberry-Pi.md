@@ -2,7 +2,7 @@
 layout: post
 title: Qt5 and QML Development with the Raspberry Pi
 description: "Using Qt5 with hardware acceleration on the RPi"
-date: 2016-09-27 11:31:00
+date: 2016-11-01 09:11:00
 categories: rpi
 tags: [rpi, qt5, eglfs, opengl, qml, yocto]
 ---
@@ -196,13 +196,17 @@ This is not something I typically do, but the setup is not difficult. It does as
 
 Make sure you have **SDKMACHINE** in `local.conf` set appropriately for the target workstation you plan on using the SDK. The SDK is self-contained and can be transferred to other machines.
 
+Setup the Yocto environment as normal
+
     scott@fractal:~$ source poky-krogoth/oe-init-build-env ~/rpi/build
-    
+
+then build the SDK
+
     scott@fractal:~/rpi/build$ bitbake meta-toolchain-qt5
 
-When that completes, install the SDK by running the installation script.
+When that completes, copy and install the SDK on the machine you want to work from. It does not have to be the same machine you built it on.
 
-Yocto leaves the SDK in `${TMPDIR}/deploy/sdk`.
+The SDK installation script can be found in `${TMPDIR}/deploy/sdk`.
 
 In my `local.conf` I have **TMPDIR=/oe4/rpi/tmp-krogoth**, so the SDK installer can be found here
 
@@ -276,6 +280,10 @@ Copy it to the RPi
 
 Then over on the RPi, the *qqtest* app should run fine.
 
+#### Using Qt Creator to cross-compile Qt apps
+
+I have another [post here][qtcreator-setup] on setting up *Qt Creator* to use the Yocto built SDK.
+
 #### Creating Bitbake recipes for your Qt apps
 
 Eventually you will want Yocto to build and install your app automatically in the image rootfs.
@@ -338,3 +346,4 @@ And the *qqtest* package was added to the rootfs here [meta-rpi/images/qt5-image
 [pitft35r]: https://www.adafruit.com/products/2441
 [pitft28r]: https://www.adafruit.com/products/1601
 [raspi2fb]: https://github.com/AndrewFromMelbourne/raspi2fb
+[qtcreator-setup]: http://www.jumpnowtek.com/rpi/Qt-Creator-Setup-for-RPi-cross-development.html
