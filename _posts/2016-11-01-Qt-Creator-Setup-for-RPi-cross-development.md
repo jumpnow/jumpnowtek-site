@@ -2,7 +2,7 @@
 layout: post
 title: Using Qt Creator to cross-compile and debug Raspberry Pi Qt5 apps 
 description: "Setup of Qt Creator to use the Yocto RPi SDK"
-date: 2016-11-01 09:08:00
+date: 2016-11-01 09:14:00
 categories: rpi
 tags: [rpi, qt5, qt creator, eglfs, opengl, qml, yocto]
 ---
@@ -68,6 +68,8 @@ Add a new GCC compiler with the following path, again choose any name you want
 <img src="../assets/qtcreator-compiler.png" alt="Qt Creator compiler setup screenshot"/>
 
 #### Add a debugger
+
+If you want to remotely debug your Qt applications you need to setup the path to *gdb*.
 
 * **Name:** GDB for RPi
 * **Path:** /opt/poky/rpi-2.1.1/sysroots/x86_64-pokysdk-linux/usr/bin/arm-poky-linux-gnueabi/arm-poky-linux-gnueabi-gdb
