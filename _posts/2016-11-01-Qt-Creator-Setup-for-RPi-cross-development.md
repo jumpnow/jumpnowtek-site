@@ -2,7 +2,7 @@
 layout: post
 title: Using Qt Creator to cross-compile and debug Raspberry Pi Qt5 apps 
 description: "Setup of Qt Creator to use the Yocto RPi SDK"
-date: 2016-11-01 09:14:00
+date: 2016-11-01 17:07:00
 categories: rpi
 tags: [rpi, qt5, qt creator, eglfs, opengl, qml, yocto]
 ---
@@ -54,8 +54,7 @@ Give the version whatever name you want, the important thing is the path to *qma
 * **Version name:** RPi 5.7
 * **qmake location:** /opt/poky/rpi-2.1.1/sysroots/x86_64-pokysdk-linux/usr/bin/qt5/qmake
 
-
-<img src="../assets/qtcreator-version.png" alt="Qt Creator version setup screenshot"/>
+Screenshot - [Qt Creator Version Setup][qtcreator-version-screenshot]
 
 #### Add a compiler
 
@@ -64,8 +63,7 @@ Add a new GCC compiler with the following path, again choose any name you want
 * **Name:** GCC for RPi
 * **Compiler path:** /opt/poky/rpi-2.1.1/sysroots/x86_64-pokysdk-linux/usr/bin/arm-poky-linux-gnueabi/arm-poky-linux-gnueabi-gcc
 
-
-<img src="../assets/qtcreator-compiler.png" alt="Qt Creator compiler setup screenshot"/>
+Screenshot - [Qt Creator Compiler Setup][qtcreator-compiler-screenshot]
 
 #### Add a debugger
 
@@ -77,7 +75,7 @@ If you want to remotely debug your Qt applications you need to setup the path to
 * **ABIs:** arm-linux-generic-elf-32bit
 * **Version:** 7.10.1
 
-<img src="../assets/qtcreator-debugger.png" alt="Qt Creator debugger setup screenshot"/>
+Screenshot - [Qt Creator Debugger Setup][qtcreator-debugger-screenshot]
 
 #### Add a kit
 
@@ -94,7 +92,7 @@ Add a Qt Creator *kit* using the version, compiler and debugger setups that were
 * **Qt version:** RPi 5.7
 * **Qt mkspec:** linux-oe-g++
 
-<img src="../assets/qtcreator-kit.png" alt="Qt Creator kit setup screenshot"/>
+Screenshot - [Qt Creator Kit Setup][qtcreator-kit-screenshot]
 
 This *kit* will be remembered by Qt Creator and can be reused for any Qt project.
 
@@ -117,7 +115,7 @@ Then open the project file `qqtest.pro` using `File | Open File or Project...`
 
 You should see an option to use the new *RPi* kit that you just setup.
 
-<img src="../assets/qtcreator-choose-kit.png" alt="Qt Creator choose rpi kit screenshot"/>
+Screenshot - [Qt Creator Kit Selection][qtcreator-choose-kit-screenshot]
 
 Check the *RPi* kit and click *Configure Project*.
 
@@ -127,9 +125,7 @@ For automatic deployment and remote debugging go to the `Tools | Options` dialog
 
 You'll need the IP address of the RPi, in this example mine is `192.168.10.110`.
 
-Here is the setup
-
-<img src="../assets/qtcreator-devices.png" alt="Qt Creator setup devices screenshot"/> 
+Screenshot - [Qt Creator Devices Setup][qtcreator-devices-screenshot]
 
 It's all defaults except for the IP address. Use *root* with no password unless you added one.
 
@@ -147,7 +143,12 @@ Please let me know if I am missed something.
 [yocto-jumpnow-build]: http://www.jumpnowtek.com/rpi/Raspberry-Pi-Systems-with-Yocto.html
 [qt5-image]: https://github.com/jumpnow/meta-rpi/blob/krogoth/images/qt5-image.bb
 [rpi-qt5-qml-dev]: http://www.jumpnowtek.com/rpi/Qt5-and-QML-Development-with-the-Raspberry-Pi.html
-
+[qtcreator-version-screenshot]: http://www.jumpnowtek.com/assets/qtcreator-version.png
+[qtcreator-compiler-screenshot]: http://www.jumpnowtek.com/assets/qtcreator-compiler.png
+[qtcreator-debugger-screenshot]: http://www.jumpnowtek.com/assets/qtcreator-debugger.png
+[qtcreator-kit-screenshot]: http://www.jumpnowtek.com/assets/qtcreator-kit.png
+[qtcreator-choose-kit-screenshot]: http://www.jumpnowtek.com/assets/qtcreator-choose-kit.png
+[qtcreator-devices-screenshot]: http://www.jumpnowtek.com/assets/qtcreator-devices.png
 
 
 
