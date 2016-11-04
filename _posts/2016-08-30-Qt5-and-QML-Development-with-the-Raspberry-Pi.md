@@ -2,7 +2,7 @@
 layout: post
 title: Qt5 and QML Development with the Raspberry Pi
 description: "Using Qt5 with hardware acceleration on the RPi"
-date: 2016-11-01 09:11:00
+date: 2016-11-04 06:12:00
 categories: rpi
 tags: [rpi, qt5, eglfs, opengl, qml, yocto]
 ---
@@ -166,10 +166,7 @@ The *qqtest* project is just the default *Qt Quick Controls 2* skeleton app that
     root@rpi3:~# cd qqtest/
 
     root@rpi3:~/qqtest# qmake && make -j4
-    Info: creating stash file /home/root/qqtest/.qmake.stash
-    g++ -c -pipe -O2 -std=gnu++11 -Wall -W -D_REENTRANT -fPIC -DQT_NO_DEBUG -DQT_QUICK_LIB -DQT_GUI_LIB -DQT_QML_LIB -DQT_NETWORK_LIB -DQT_CORE_LIB -I. -isystem /usr/include/qt5 -isystem /usr/include/qt5/QtQuick -isystem /usr/include/qt5/QtGui -isystem /usr/include/qt5/QtQml -isystem /usr/include/qt5/QtNetwork -isystem /usr/include/qt5/QtCore -I. -I/usr/lib/qt5/mkspecs/linux-g++ -o main.o main.cpp
-    /usr/bin/qt5/rcc -name qml qml.qrc -o qrc_qml.cpp
-    g++ -c -pipe -O2 -std=gnu++11 -Wall -W -D_REENTRANT -fPIC -DQT_NO_DEBUG -DQT_QUICK_LIB -DQT_GUI_LIB -DQT_QML_LIB -DQT_NETWORK_LIB -DQT_CORE_LIB -I. -isystem /usr/include/qt5 -isystem /usr/include/qt5/QtQuick -isystem /usr/include/qt5/QtGui -isystem /usr/include/qt5/QtQml -isystem /usr/include/qt5/QtNetwork -isystem /usr/include/qt5/QtCore -I. -I/usr/lib/qt5/mkspecs/linux-g++ -o qrc_qml.o qrc_qml.cpp
+    ...
     g++ -Wl,-O1 -o qqtest main.o qrc_qml.o   -lQt5Quick -L/oe4/rpi/tmp-krogoth/sysroots/raspberrypi2/usr/lib -lQt5Gui -lQt5Qml -lQt5Network -lQt5Core -lGLESv2 -lpthread
 
     root@rpi3:~/qqtest# ./qqtest
@@ -188,7 +185,11 @@ Another run
 
 Hmm, an ugly error on exit. See this [post][qpa-exit-errors] for some analysis.
 
-#### Manually Cross-compiling Qt Apps
+#### Using Qt Creator to cross-compile, deploy and debug Qt apps
+
+I have another [post here][qtcreator-setup] on setting up *Qt Creator* to use the Yocto built SDK.
+
+#### Cross-compiling Qt apps from the command line
 
 This is not something I typically do, but the setup is not difficult. It does assume you have already built [your system][yocto-jumpnow-build] with Yocto.
 
@@ -279,10 +280,6 @@ Copy it to the RPi
     qqtest                                                                                                    
 
 Then over on the RPi, the *qqtest* app should run fine.
-
-#### Using Qt Creator to cross-compile Qt apps
-
-I have another [post here][qtcreator-setup] on setting up *Qt Creator* to use the Yocto built SDK.
 
 #### Creating Bitbake recipes for your Qt apps
 
