@@ -2,7 +2,7 @@
 layout: post
 title: Using Qt Creator to cross-compile and debug Raspberry Pi Qt5 apps 
 description: "Setup of Qt Creator to use the Yocto RPi SDK"
-date: 2016-11-01 17:07:00
+date: 2016-11-05 08:54:00
 categories: rpi
 tags: [rpi, qt5, qt creator, eglfs, opengl, qml, yocto]
 ---
@@ -133,11 +133,7 @@ You can leave the *GDB server executable* blank. It will be found automatically.
 
 #### Conclusion
 
-You should now be able to build, run and debug Qt5 applications on the Raspberry Pi from your workstation.
-
-It seems to work okay with my limited testing, but I don't usually develop on a Linux workstation so this is not my typical workflow.
-
-Please let me know if I am missed something.
+You should now be able to build, run and debug Qt5 applications on the Raspberry Pi from your Linux workstation.
 
 
 [yocto-jumpnow-build]: http://www.jumpnowtek.com/rpi/Raspberry-Pi-Systems-with-Yocto.html
