@@ -2,7 +2,7 @@
 layout: post
 title: Using Qt Creator to cross-compile and debug Raspberry Pi Qt5 apps 
 description: "Setup of Qt Creator to use the Yocto RPi SDK"
-date: 2016-11-05 08:54:00
+date: 2016-11-07 14:29:00
 categories: rpi
 tags: [rpi, qt5, qt creator, eglfs, opengl, qml, yocto]
 ---
@@ -31,7 +31,7 @@ Copy the script to the workstation you plan to work from and run it.
 
 I built my SDK on an Ubuntu 16.04 server, but for the RPi Qt cross-development I'm going to use a laptop with Fedora 24 installed.
 
-I ran the SDK install script on the laptop as **root** like this
+I ran the SDK installation script on the laptop as **root** like this
 
     scott@t410:~$ sudo poky-glibc-x86_64-meta-toolchain-qt5-cortexa7hf-neon-vfpv4-toolchain-2.1.1.sh
 
@@ -109,7 +109,13 @@ Clone the project.
     Unpacking objects: 100% (29/29), done.
     Checking connectivity... done.
 
-Launch Qt Creator the way you normally would, probably from a desktop menu.
+Source the SDK environment script to setup some initial environment variables.
+
+    scott@t410:~$ source /opt/poky/rpi-2.1.1/environment-setup-cortexa7hf-neon-vfpv4-poky-linux-gnueabi
+
+Launch Qt Creator from that same shell.
+
+    scott@t410:~$ qtcreator
 
 Then open the project file `qqtest.pro` using `File | Open File or Project...`
 
