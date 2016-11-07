@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-11-03 05:20:00
+date: 2016-11-07 15:09:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
 ---
@@ -162,7 +162,7 @@ They all come from the official Raspberry Pi kernel tree so I have confidence th
 
 ### Ubuntu Setup
 
-I primarily use Ubuntu *15.10* or *16.04* 64-bit server installations. Other versions should work.
+I am primarily using *16.04* 64-bit servers for builds. Older versions should work.
 
 You will need at least the following packages installed
 
@@ -177,7 +177,15 @@ You will need at least the following packages installed
     texi2html
     texinfo
 
-You will also want to change the default Ubuntu shell from `dash` to `bash` by running this command from a shell
+For *16.04* you also need to install the *python 2.7* package that the *Yocto 2.1* branch requires
+
+    python2.7
+
+And then create a link for it in `/usr/bin`
+
+    sudo ln -sf /usr/bin/python2.7 /usr/bin/python
+
+For all versions of Ubuntu, you should change the default Ubuntu shell from `dash` to `bash` by running this command from a shell
  
     sudo dpkg-reconfigure dash
 
