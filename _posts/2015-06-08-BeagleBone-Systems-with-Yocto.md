@@ -2,7 +2,7 @@
 layout: post
 title: Building BeagleBone Black Systems with Yocto
 description: "Building customized systems for the BeagleBone Black using tools from the Yocto Project"
-date: 2016-11-07 15:10:00
+date: 2016-11-10 12:10:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
@@ -35,8 +35,9 @@ Perl `5.22` and Python `2.7.11` each with a number of modules is included.
 
 1. HDMI (`bbb-hdmi.dtb`) not for the [BBG][bbg]
 2. No HDMI (`bbb-nohdmi.dtb`)
-3. [4DCape 7-inch resistive touchscreen cape][4dcape] (`bbb-4dcape70t.dtb`)
-4. [Newhaven 5-inch capacitive touchscreen cape][nh5cape] (`bbb-nh5cape.dtb`)
+3. [4DCape 4.3-inch resistive touchscreen cape][4dcape43t] (`bbb-4dcape43t.dtb`)
+4. [4DCape 7-inch resistive touchscreen cape][4dcape70t] (`bbb-4dcape70t.dtb`)
+5. [Newhaven 5-inch capacitive touchscreen cape][nh5cape] (`bbb-nh5cape.dtb`)
 
 My custom DTBs all support the *eMMC*.
 
@@ -618,7 +619,8 @@ An implementation of this idea is described here [An Upgrade strategy for the BB
 [lsblk]: http://linux.die.net/man/8/lsblk
 [opkg-repo]: http://www.jumpnowtek.com/yocto/Using-your-build-workstation-as-a-remote-package-repository.html
 [bbb-uboot]: http://www.jumpnowtek.com/beaglebone/Beaglebone-Black-U-Boot-Notes.html
-[4dcape]: http://www.4dsystems.com.au/product/4DCAPE_70T/
+[4dcape70t]: http://www.4dsystems.com.au/product/4DCAPE_70T/
+[4dcape43t]: http://www.4dsystems.com.au/product/4DCAPE_43/
 [nh5cape]: http://elinux.org/Nh5cape
 [bitbake]: http://www.yoctoproject.org/docs/2.1/bitbake-user-manual/bitbake-user-manual.html
 [source-script]: http://stackoverflow.com/questions/4779756/what-is-the-difference-between-source-script-sh-and-script-sh
