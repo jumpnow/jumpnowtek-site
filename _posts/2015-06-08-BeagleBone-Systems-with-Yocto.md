@@ -2,7 +2,7 @@
 layout: post
 title: Building BeagleBone Black Systems with Yocto
 description: "Building customized systems for the BeagleBone Black using tools from the Yocto Project"
-date: 2016-11-10 12:10:00
+date: 2016-11-17 04:17:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
@@ -17,13 +17,13 @@ I use this layer as a template when starting new BeagleBone projects.
 
 The Yocto version is `2.1.1` the `[krogoth]` branch.
 
-The `4.4.30` Linux kernel comes from the [linux-stable][linux-stable] repository. (4.8.6 also available.)
+The `4.4.32` Linux kernel comes from the [linux-stable][linux-stable] repository. (4.8.8 also available.)
 
 The [u-boot][uboot] version is `2016.07`.
 
 These are **sysvinit** systems using [eudev][eudev].
 
-The Qt version is `5.6.1+`. There is no *X11* and no desktop installed. [Qt][qt] GUI applications can be run using the `-platform linuxfb` switch.
+The Qt version is `5.6.2`. There is no *X11* and no desktop installed. [Qt][qt] GUI applications can be run using the *linuxfb* platform plugin.
 
 A light-weight *X11* desktop can be added with minimal changes to the build configuration. (*X11* is needed to run Java GUI apps.)
 
@@ -39,7 +39,7 @@ Perl `5.22` and Python `2.7.11` each with a number of modules is included.
 4. [4DCape 7-inch resistive touchscreen cape][4dcape70t] (`bbb-4dcape70t.dtb`)
 5. [Newhaven 5-inch capacitive touchscreen cape][nh5cape] (`bbb-nh5cape.dtb`)
 
-My custom DTBs all support the *eMMC*.
+My custom DTBs all enable the *eMMC*.
 
 The DTBs are easy enough to switch between using a [u-boot][uboot] script file `uEnv.txt`
 
