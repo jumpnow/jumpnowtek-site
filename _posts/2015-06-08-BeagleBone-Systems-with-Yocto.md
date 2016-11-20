@@ -2,7 +2,7 @@
 layout: post
 title: Building BeagleBone Black Systems with Yocto
 description: "Building customized systems for the BeagleBone Black using tools from the Yocto Project"
-date: 2016-11-17 04:17:00
+date: 2016-11-20 06:57:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
@@ -15,21 +15,21 @@ I use this layer as a template when starting new BeagleBone projects.
 
 ### System Info
 
-The Yocto version is `2.1.1` the `[krogoth]` branch.
+The Yocto version is `2.2` the `[morty]` branch.
 
-The `4.4.32` Linux kernel comes from the [linux-stable][linux-stable] repository. (4.8.8 also available.)
+The `4.4.33` Linux kernel comes from the [linux-stable][linux-stable] repository. (4.8.9 also available.)
 
 The [u-boot][uboot] version is `2016.07`.
 
 These are **sysvinit** systems using [eudev][eudev].
 
-The Qt version is `5.6.2`. There is no *X11* and no desktop installed. [Qt][qt] GUI applications can be run using the *linuxfb* platform plugin.
+The Qt version is `5.7.0`. There is no *X11* and no desktop installed. [Qt][qt] GUI applications can be run using the *linuxfb* platform plugin.
 
 A light-weight *X11* desktop can be added with minimal changes to the build configuration. (*X11* is needed to run Java GUI apps.)
 
-[ZeroMQ][zeromq] version `4.1.4` with development headers and libs is included.
+[ZeroMQ][zeromq] version `4.1.5` with development headers and libs is included.
 
-Perl `5.22` and Python `2.7.11` each with a number of modules is included.
+Perl `5.22` and Python `2.7.12` each with a number of modules is included.
 
 *Device tree* binaries are generated and installed that support
 
@@ -68,7 +68,7 @@ You will need at least the following packages installed
     texi2html
     texinfo
 
-For *16.04* you also need to install the *python 2.7* package that the *Yocto 2.1* branch requires
+For *16.04* you also need to install the *python 2.7* package that the *Yocto 2.2* branch requires
 
     python2.7
 
@@ -105,16 +105,16 @@ Fedora already uses `bash` as the shell.
 
 First the main Yocto project `poky` repository
 
-    scott@octo:~$ git clone -b krogoth git://git.yoctoproject.org/poky.git poky-krogoth
+    scott@octo:~$ git clone -b morty git://git.yoctoproject.org/poky.git poky-morty
 
 Then the `meta-openembedded` repository
 
-    scott@octo:~$ cd poky-krogoth
-    scott@octo:~/poky-krogoth$ git clone -b krogoth git://git.openembedded.org/meta-openembedded
+    scott@octo:~$ cd poky-morty
+    scott@octo:~/poky-morty$ git clone -b morty git://git.openembedded.org/meta-openembedded
 
 And the `meta-qt5` repository
 
-    scott@octo:~/poky-krogoth$ git clone -b krogoth https://github.com/meta-qt5/meta-qt5.git
+    scott@octo:~/poky-morty$ git clone -b morty https://github.com/meta-qt5/meta-qt5.git
 
 
 I usually keep these repositories separated since they can be shared between projects and different boards.
@@ -125,7 +125,7 @@ Create a sub-directory for the `meta-bbb` repository before cloning
 
     scott@octo:~$ mkdir ~/bbb
     scott@octo:~$ cd ~/bbb
-    scott@octo:~/bbb$ git clone -b krogoth git://github.com/jumpnow/meta-bbb
+    scott@octo:~/bbb$ git clone -b morty git://github.com/jumpnow/meta-bbb
 
 The `meta-bbb/README.md` file has the last commits from the dependency repositories that I tested. You can always checkout those commits explicitly if you run into problems.
 
@@ -142,7 +142,7 @@ You could manually create the directory structure like this
 
 Or you could use the *Yocto* environment script `oe-init-build-env` like this passing in the path to the build directory
 
-    scott@octo:~$ source poky-krogoth/oe-init-build-env ~/bbb/build
+    scott@octo:~$ source poky-morty/oe-init-build-env ~/bbb/build
 
 The *Yocto* environment script will create the build directory if it does not already exist.
  
@@ -152,8 +152,8 @@ There are some sample configuration files in the `meta-bbb/conf` directory.
 
 Copy them to the `build/conf` directory (removing the '-sample')
 
-    scott@octo:~/bbb$ cp meta-bbb/conf/local.conf-sample build/conf/local.conf
-    scott@octo:~/bbb$ cp meta-bbb/conf/bblayers.conf-sample build/conf/bblayers.conf
+    scott@octo:~/bbb$ cp meta-bbb/conf/local.conf.sample build/conf/local.conf
+    scott@octo:~/bbb$ cp meta-bbb/conf/bblayers.conf.sample build/conf/bblayers.conf
 
 If you used the `oe-init-build-env` script to create the build directory, it generated some generic configuration files in the `build/conf` directory. It is okay to copy over them.
 
@@ -166,7 +166,7 @@ In `bblayers.conf` file replace `${HOME}` with the appropriate path to the meta-
 For example, if your directory structure does not look exactly like this, you will need to modify `bblayers.conf`
 
 
-    ~/poky-krogoth/
+    ~/poky-morty/
          meta-openembedded/
          meta-qt5/
          ...
@@ -211,7 +211,7 @@ The default location is in the `build` directory, `~/bbb/build/sstate-cache`.
 
 You need to [source][source-script] the Yocto environment into your shell before you can use [bitbake][bitbake]. The `oe-init-build-env` will not overwrite your customized conf files.
 
-    scott@octo:~$ source poky-krogoth/oe-init-build-env ~/bbb/build
+    scott@octo:~$ source poky-morty/oe-init-build-env ~/bbb/build
 
     ### Shell environment set up for builds. ###
 
@@ -252,7 +252,7 @@ The *console-image* has a line
 
     inherit core-image
 
-which is `poky-krogoth/meta/classes/core-image.bbclass` and pulls in some required base packages.  This is useful to know if you create your own image recipe.
+which is `poky-morty/meta/classes/core-image.bbclass` and pulls in some required base packages.  This is useful to know if you create your own image recipe.
 
 #### qt5-image
 
@@ -362,11 +362,11 @@ This *copy_boot.sh* script needs to know the `TMPDIR` to find the binaries. It l
 
 For instance, if I had this in the `local.conf`
 
-    TMPDIR = "/oe9/bbb/tmp-krogoth"
+    TMPDIR = "/oe7/bbb/tmp-morty"
 
 Then I would export this environment variable before running `copy_boot.sh`
 
-    scott@octo:~/bbb/meta-bbb/scripts$ export OETMP=/oe9/bbb/tmp-krogoth
+    scott@octo:~/bbb/meta-bbb/scripts$ export OETMP=/oe7/bbb/tmp-morty
 
 Then run the `copy_boot.sh` script passing the location of SD card
 
@@ -398,7 +398,7 @@ Here's a realistic example session where I want to copy already built images to 
 
     scott@octo:~$ sudo umount /dev/sdb1
     scott@octo:~$ sudo umount /dev/sdb2
-    scott@octo:~$ export OETMP=/oe9/bbb/tmp-krogoth
+    scott@octo:~$ export OETMP=/oe7/bbb/tmp-morty
     scott@octo:~$ cd bbb/meta-bbb/scripts
     scott@octo:~/bbb/meta-bbb/scripts$ ./copy_boot.sh sdb
     scott@octo:~/bbb/meta-bbb/scripts$ ./copy_rootfs.sh sdb console bbb2
@@ -571,7 +571,7 @@ Check the *README* in the [tspress][tspress] repository for usage.
 
 To display the list of available packages from the `meta-` repositories included in *bblayers.conf*
 
-    scott@octo:~$ source poky-krogoth/oe-init-build-env ~/bbb/build
+    scott@octo:~$ source poky-morty/oe-init-build-env ~/bbb/build
 
     scott@octo:~/bbb/build$ bitbake -s
 

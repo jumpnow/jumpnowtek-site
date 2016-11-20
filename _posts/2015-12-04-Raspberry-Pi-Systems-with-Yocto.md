@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-11-17 03:38:00
+date: 2016-11-20 06:57:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
 ---
@@ -65,7 +65,7 @@ Instructions for installing onto an SD card are in the [README][readme].
 
 ### System Info
 
-The Yocto version is `2.1.1` the `[krogoth]` branch.
+The Yocto version is `2.2.0` the `[morty]` branch.
 
 The `4.4.32` Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
 
@@ -73,7 +73,7 @@ These are **sysvinit** systems using [eudev][eudev].
 
 The Qt version is `5.7.0`. There is no *X11* and no desktop installed. [Qt][qt] GUI applications can be run fullscreen using one of the [Qt embedded linux plugins][embedded-linux-qpa] like *eglfs* or *linuxfb* which are both provided.
 
-Perl `5.22` and Python `2.7.11` each with a number of modules is included.
+Perl `5.22` and Python `2.7.12` each with a number of modules is included.
 
 [omxplayer][omxplayer] for playing video and audio files from the command line, hardware accelerated.
 
@@ -87,7 +87,7 @@ The Adafruit [PiTFT 3.5"][pitft35r] and [PiTFT 2.8"][pitft28r] resistive touchsc
 
 [Raspi2fb][raspi2fb] is included for mirroring the GPU framebuffer to the small TFT displays. This allows for running Qt GUI applications on the TFTs.
 
-As of 2016-11-17, here is the list of DTS overlays that are installed with the `4.4.32` kernel running on an RPi3
+As of 2016-11-18, here is the list of DTS overlays that are installed with the `4.4.32` kernel running on an RPi3
 
     root@rpi3:~# uname -a
     Linux rpi3 4.4.32 #1 SMP Wed Nov 16 06:15:24 EST 2016 armv7l armv7l armv7l GNU/Linux
@@ -177,21 +177,20 @@ You will need at least the following packages installed
     texi2html
     texinfo
 
-For *16.04* you also need to install the *python 2.7* package that the *Yocto 2.1* branch requires
+For *16.04* you also need to install the *python 2.7* package that the *Yocto 2.2* branch requires
 
     python2.7
 
 And then create a link for it in `/usr/bin`
 
     sudo ln -sf /usr/bin/python2.7 /usr/bin/python
-
 For all versions of Ubuntu, you should change the default Ubuntu shell from `dash` to `bash` by running this command from a shell
  
     sudo dpkg-reconfigure dash
 
 Choose **No** to dash when prompted.
 
-### Fedora Setup
+### Fedora Setup (not tested with [morty])
 
 I have used a Fedora *23* 64-bit workstation.
 
@@ -212,22 +211,22 @@ Fedora already uses `bash` as the shell.
 
 ### Clone the dependency repositories
 
-First the main Yocto project `poky` repository, use the `[krogoth]` branch
+First the main Yocto project `poky` repository, use the `[morty]` branch
 
-    scott@octo:~ git clone -b krogoth git://git.yoctoproject.org/poky.git poky-krogoth
+    scott@octo:~ git clone -b morty git://git.yoctoproject.org/poky.git poky-morty
 
-The `meta-openembedded` repository, use the `[krogoth]` branch
+The `meta-openembedded` repository, use the `[morty]` branch
 
-    scott@octo:~$ cd poky-krogoth
-    scott@octo:~/poky-krogoth$ git clone -b krogoth git://git.openembedded.org/meta-openembedded
+    scott@octo:~$ cd poky-morty
+    scott@octo:~/poky-morty$ git clone -b morty git://git.openembedded.org/meta-openembedded
 
-The `meta-qt5` repository, use the `[morty]` branch to get Qt 5.7 and some build patches for [eglfs][qt-eglfs]
+The `meta-qt5` repository, use the `[morty]` branch 
 
-    scott@octo:~/poky-krogoth$ git clone -b morty https://github.com/meta-qt5/meta-qt5.git
+    scott@octo:~/poky-morty$ git clone -b morty https://github.com/meta-qt5/meta-qt5.git
 
-And finally the `meta-raspberrypi` repository. There is no `[krogoth]` branch, so use `[master]`
+And finally the `meta-raspberrypi` repository. There is no `[morty]` branch, so use `[master]`
 
-    scott@octo:~/poky-krogoth$ git clone -b master git://git.yoctoproject.org/meta-raspberrypi
+    scott@octo:~/poky-morty$ git clone -b master git://git.yoctoproject.org/meta-raspberrypi
 
 Those 4 repositories shouldn't need modifications other then updates and can be reused for different projects or different boards.
 
@@ -237,7 +236,7 @@ Create a separate sub-directory for the `meta-rpi` repository before cloning. Th
 
     scott@octo:~$ mkdir ~/rpi
     scott@octo:~$ cd ~/rpi
-    scott@octo:~/rpi$ git clone -b krogoth git://github.com/jumpnow/meta-rpi
+    scott@octo:~/rpi$ git clone -b morty git://github.com/jumpnow/meta-rpi
 
 The `meta-rpi/README.md` file has the last commits from the dependency repositories that I tested. You can always checkout those commits explicitly if you run into problems.
 
@@ -254,7 +253,7 @@ You could manually create the directory structure like this
 
 Or you could use the *Yocto* environment script `oe-init-build-env` like this passing in the path to the build directory
 
-    scott@octo:~$ source poky-krogoth/oe-init-build-env ~/rpi/build
+    scott@octo:~$ source poky-morty/oe-init-build-env ~/rpi/build
 
 The *Yocto* environment script will create the build directory if it does not already exist.
  
@@ -280,7 +279,7 @@ In `bblayers.conf` file replace `${HOME}` with the appropriate path to the meta-
 For example, if your directory structure does not look exactly like this, you will need to modify `bblayers.conf`
 
 
-    ~/poky-krogoth/
+    ~/poky-morty/
          meta-openembedded/
          meta-qt5/
          meta-raspberrypi
@@ -310,7 +309,7 @@ The choices are **raspberrypi2** the default or **raspberrypi**.
 
 Use **raspberrypi2** for the RPi3.
 
-There is a new **raspberrypi3** MACHINE option with `[krogoth]`, but all it adds to the **raspberrypi2** configuration is the RPi3 wifi drivers. I prefer to add drivers like that explicitly in my *image* recipe if I need them. The RPi wifi drivers are in the `console-image`, but that's because it's just a demo.
+There is a new **raspberrypi3** MACHINE option with `[morty]`, but I recommend you stick with using **raspberrypi2** for MACHINE. Nothing is lost.
 
 You can only build for one type of MACHINE at a time because of the different instruction sets.
 
@@ -338,7 +337,7 @@ The default location is in the `build` directory, `~/rpi/build/sstate-cache`.
 
 You need to [source][source-script] the Yocto environment into your shell before you can use [bitbake][bitbake]. The `oe-init-build-env` will not overwrite your customized conf files.
 
-    scott@octo:~$ source poky-krogoth/oe-init-build-env ~/rpi/build
+    scott@octo:~$ source poky-morty/oe-init-build-env ~/rpi/build
 
     ### Shell environment set up for builds. ###
 
@@ -383,7 +382,7 @@ The *console-image* has a line
 
     inherit core-image
 
-which is `poky-krogoth/meta/classes/core-image.bbclass` and pulls in some required base packages.  This is useful to know if you create your own image recipe.
+which is `poky-morty/meta/classes/core-image.bbclass` and pulls in some required base packages.  This is useful to know if you create your own image recipe.
 
 #### qt5-basic-image
 
@@ -502,11 +501,11 @@ This *copy_boot.sh* script needs to know the `TMPDIR` to find the binaries. It l
 
 For instance, if I had this in the `local.conf`
 
-    TMPDIR = "/oe8/rpi/tmp-krogoth"
+    TMPDIR = "/oe8/rpi/tmp-morty"
 
 Then I would export this environment variable before running `copy_boot.sh`
 
-    scott@octo:~/rpi/meta-rpi/scripts$ export OETMP=/oe8/rpi/tmp-krogoth
+    scott@octo:~/rpi/meta-rpi/scripts$ export OETMP=/oe8/rpi/tmp-morty
 
 If you didn't override the default `TMPDIR` in `local.conf`, then set it to the default `TMPDIR`
 
@@ -553,7 +552,7 @@ Here's a realistic example session where I want to copy already built images to 
 
     scott@octo:~$ sudo umount /dev/sdb1
     scott@octo:~$ sudo umount /dev/sdb2
-    scott@octo:~$ export OETMP=/oe8/rpi/tmp-krogoth
+    scott@octo:~$ export OETMP=/oe8/rpi/tmp-morty
     scott@octo:~$ export MACHINE=raspberrypi2
     scott@octo:~$ cd rpi/meta-rpi/scripts
     scott@octo:~/rpi/meta-rpi/scripts$ ./copy_boot.sh sdb
@@ -585,7 +584,7 @@ Check the *README* in the [tspress][tspress] repository for usage.
 
 To display the list of available packages from the `meta-` repositories included in *bblayers.conf*
 
-    scott@octo:~$ source poky-krogoth/oe-init-build-env ~/rpi/build
+    scott@octo:~$ source poky-morty/oe-init-build-env ~/rpi/build
 
     scott@octo:~/rpi/build$ bitbake -s
 
