@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-11-20 06:57:00
+date: 2016-11-20 07:17:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
 ---
@@ -263,8 +263,8 @@ There are some sample configuration files in the `meta-rpi/conf` directory.
 
 Copy them to the `build/conf` directory (removing the '-sample')
 
-    scott@octo:~/rpi$ cp meta-rpi/conf/local.conf-sample build/conf/local.conf
-    scott@octo:~/rpi$ cp meta-rpi/conf/bblayers.conf-sample build/conf/bblayers.conf
+    scott@octo:~/rpi$ cp meta-rpi/conf/local.conf.sample build/conf/local.conf
+    scott@octo:~/rpi$ cp meta-rpi/conf/bblayers.conf.sample build/conf/bblayers.conf
 
 If you used the `oe-init-build-env` script to create the build directory, it generated some generic configuration files in the `build/conf` directory. It is okay to copy over them.
 
