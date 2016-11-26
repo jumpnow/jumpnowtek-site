@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-11-23 15:42:00
+date: 2016-11-26 14:35:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
 ---
@@ -25,10 +25,10 @@ Here is another post with more details on [developing with Qt5 on the RPi][rpi-q
 
 I am using the Yocto [meta-raspberrypi][meta-raspberrypi] layer, but have updated recipes for the Linux kernel, [gpu firmware][firmware-repo] and some [userland][userland-repo] components.
 
-I have done some testing with the following boards using the `4.4.34` kernel
+I have done some testing with the following boards using the `4.4.35` kernel
 
 * [RPi3][rpi3-b]
-* [RPi2][rpi2-b]
+* [RPi2][rpi2-b] including the `Model B v1.2`
 * [RPi Zero][rpi-zero]
 * [RPi 1 Model B][rpi1-model-b]
 * [RPi compute module][rpi-compute] with the [Raspberry Pi Compute Module Dev Kit][rpi-compute-dev-kit]
@@ -73,7 +73,7 @@ These are **sysvinit** systems using [eudev][eudev].
 
 The Qt version is `5.7.0`. There is no *X11* and no desktop installed. [Qt][qt] GUI applications can be run fullscreen using one of the [Qt embedded linux plugins][embedded-linux-qpa] like *eglfs* or *linuxfb* which are both provided.
 
-Perl `5.22` and Python `2.7.12` each with a number of modules is included.
+Perl `5.22`, Python `2.7.12` and Python3 `3.5.2` each with a number of modules is included.
 
 [omxplayer][omxplayer] for playing video and audio files from the command line, hardware accelerated.
 
@@ -87,12 +87,12 @@ The Adafruit [PiTFT 3.5"][pitft35r] and [PiTFT 2.8"][pitft28r] resistive touchsc
 
 [Raspi2fb][raspi2fb] is included for mirroring the GPU framebuffer to the small TFT displays. This allows for running Qt GUI applications on the TFTs.
 
-As of 2016-11-23, here is the list of DTS overlays that are installed with the `4.4.34` kernel running on an RPi3
+As of 2016-11-26, here is the list of DTS overlays that are installed with the `4.4.35` kernel running on an RPi2 v1.2
 
-    root@rpi3:~# uname -a
-    Linux rpi3 4.4.34 #1 SMP Wed Nov 23 13:31:49 EST 2016 armv7l armv7l armv7l GNU/Linux
+    root@rpi2:~# uname -a
+    Linux rpi2 4.4.35 #1 SMP Sat Nov 26 10:21:57 EST 2016 armv7l armv7l armv7l GNU/Linux
 
-    root@rpi3:~# ls /mnt/fat/overlays/
+    root@rpi2:~# ls /mnt/fat/overlays/
     adau1977-adc.dtbo                  piscreen.dtbo
     ads1015.dtbo                       piscreen2r.dtbo
     ads7846.dtbo                       pisound.dtbo
