@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Using the Raspberry Pi hardware PWM timers
-date: 2016-09-23 11:58:00
+date: 2016-12-19 11:12:00
 categories: rpi
 tags: [linux, rpi, yocto, pwm]
 ---
@@ -55,6 +55,23 @@ Since it's easy enough to do, I added two additional PWM overlays in the `meta-r
 
 You can find the source for them [here][pwm-dts-src].
 
+If you are using Yocto built images from my [meta-rpi][meta-rpi] layer ([instructions here][meta-rpi-instructions]), then the custom pwm overlays are already installed.
+
+If you are using [Raspbian][raspbian], then you can build the overlays yourself right on the RPi since a device tree compiler should be installed by default.
+
+Download the dts you want to use, for example `pwm-with-clk-overlay.dts` and build the binary dtb like this
+
+    pi@raspberrypi:~ $ dtc -@ -I dts -O dtb -o pwm-with-clk.dtbo pwm-with-clk-overlay.dts
+
+You'll get some errors complaining about missing references, but you can safely ignore them. This happens because the compiler doesn't have access to all the includes referenced in the source.
+
+Then copy the dtbo to the overlays directory
+
+    pi@raspberrypi:~ $ sudo cp pwm-with-clk.dtbo /boot/overlays
+
+
+## Usage
+
 Use them the same way you would the standard pwm overlays.
 
 For example to get a hardware timer on GPIO_18 (pin 12) on any RPi, add this to `config.txt`
@@ -97,6 +114,13 @@ There are two PWM channels available
 
 Channel 0 is PWM0 and channel 1 is PWM1.
 
+**NOTE:** For the following **echo** commands I am assuming a **root** user to simplify.
+
+On Raspbian you can switch to **root** like this
+
+    pi@raspberrypi:~/overlays $ sudo su -
+
+
 Prior to using a channel you must export it first
 
     root@rpi3:/sys/class/pwm/pwmchip0# echo 0 > export
@@ -136,3 +160,6 @@ The *duty_cycle* should obviously not exceed the *period*.
 [enabling-the-pwm-clock-at-boot]: https://github.com/raspberrypi/linux/issues/1533
 [pwm-dts-src]: https://github.com/jumpnow/meta-rpi/tree/krogoth/recipes-kernel/linux/linux-raspberrypi-4.4/dts
 [pwm-txt]: https://www.kernel.org/doc/Documentation/pwm.txt
+[meta-rpi]: https://github.com/jumpnow/meta-rpi/
+[meta-rpi-instructions]: http://www.jumpnowtek.com/rpi/Raspberry-Pi-Systems-with-Yocto.html
+[raspbian]: https://www.raspberrypi.org/downloads/raspbian/
