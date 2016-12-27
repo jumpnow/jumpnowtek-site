@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Using the Raspberry Pi hardware PWM timers
-date: 2016-12-19 11:12:00
+date: 2016-12-27 15:13:00
 categories: rpi
 tags: [linux, rpi, yocto, pwm]
 ---
@@ -97,7 +97,11 @@ It's a standard Linux kernel PWM driver.
 
 Instructions for using the PWM sysfs interface can be found in the Linux documentation [pwm.txt][pwm-txt].
 
-Here is a quick example with the *pwm-2chan-with-clk* overlay loaded.
+I have a [small Python class][pwmpy] that simplifies working with the PWM sysfs interface, but it's only a convenience and definitely not required to work with the timers. 
+
+You can use any language that can do file I/O including the Linux shell.
+
+Here is a quick CLI example with the *pwm-2chan-with-clk* overlay loaded.
 
     root@rpi3:~# ls /sys/class/pwm
     pwmchip0
@@ -163,3 +167,4 @@ The *duty_cycle* should obviously not exceed the *period*.
 [meta-rpi]: https://github.com/jumpnow/meta-rpi/
 [meta-rpi-instructions]: http://www.jumpnowtek.com/rpi/Raspberry-Pi-Systems-with-Yocto.html
 [raspbian]: https://www.raspberrypi.org/downloads/raspbian/
+[pwmpy]: https://github.com/scottellis/pwmpy
