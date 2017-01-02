@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Raspberry Pi TFT Displays and Qt5
-date: 2017-01-02 10:55:00
+date: 2017-01-02 11:01:00
 categories: rpi
 tags: [rpi, qt5, eglfs, linuxfb, pitft]
 ---
@@ -171,7 +171,7 @@ Several people have already written such *copy* applications for public use. The
 
 ##### config.txt
 
-To facilitate the copy of the framebuffers, setup a custom hdmi display for the GPU to write too. Make it the same dimensions as the TFT display. 
+To facilitate the copy of the framebuffers, setup a custom hdmi display for the GPU to write to. Make it the same dimensions as the TFT display. 
 
 **PiTFT 2.8**
 

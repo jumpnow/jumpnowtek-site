@@ -22,7 +22,7 @@ I am testing with the following displays
 * Adafruit [3.5 inch][pitft35r] and [2.8 inch][pitft28r] resistive touchscreens
 
 
-This [Raspberry Pi TFT Displays and Qt5][jumpnow-pitft] post has more notes on working with th PiTFT displays. 
+This [Raspberry Pi TFT Displays and Qt5][jumpnow-pitft] post has more notes on working with the PiTFT displays. 
 
 #### System Software
 
