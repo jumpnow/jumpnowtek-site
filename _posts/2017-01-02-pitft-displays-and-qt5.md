@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Raspberry Pi TFT Displays and Qt5
-date: 2017-01-02 10:45:00
+date: 2017-01-02 10:55:00
 categories: rpi
 tags: [rpi, qt5, eglfs, linuxfb, pitft]
 ---
@@ -190,7 +190,7 @@ To facilitate the copy of the framebuffers, setup a custom hdmi display for the 
 
     root@pi3:~# cat /mnt/fat/config.txt
     hdmi_force_hotplug=1
-    hdmi_cvt=320 240 60
+    hdmi_cvt=480 320 60
     hdmi_group=2
     hdmi_mode=87
 
