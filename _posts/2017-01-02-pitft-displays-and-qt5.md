@@ -171,7 +171,7 @@ Several people have already written such *copy* applications for public use. The
 
 ##### config.txt
 
-To facilitate the copy of the framebuffers, setup a custom hdmi display for the GPU to write to. Make it the same dimensions as the TFT display. 
+To facilitate the copy of the framebuffers, setup a custom hdmi display for the GPU with the same dimensions as the TFT. 
 
 **PiTFT 2.8**
 
