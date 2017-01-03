@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Raspberry Pi TFT Displays and Qt5
-date: 2017-01-02 11:01:00
+date: 2017-01-03 09:02:00
 categories: rpi
 tags: [rpi, qt5, eglfs, linuxfb, pitft]
 ---
@@ -110,6 +110,8 @@ Set the rotation parameter to what you want. Values of 90 or 270 orient the disp
     dtparam=spi=on
     dtoverlay=pitft35-resistive,rotate=90,speed=32000000,fps=60
 
+You can have more in your `config.txt`. This is just the minimal required for the PiTFTs.
+
 ##### qt5-env.sh
 
 You can use the same Qt environment for either.
@@ -147,7 +149,7 @@ To use `QML` you must use the `eglfs` platform plugin.
 
 Using the `eglfs` plugin you cannot directly work with the TFT displays from Qt. 
 
-The Qt 5.7 `eglfs` plugin uses the RPi opengl libraries from the [RPi userland][rpi-userland] libraries which are in turned backed up by hardware in the RPi VideoCore GPU. 
+The Qt 5.7 `eglfs` plugin uses the RPi opengl libraries from the [RPi userland][rpi-userland] package which are in turned backed up by hardware in the RPi VideoCore GPU. 
 
     root@pi3:~# ldd /usr/lib/qt5/plugins/platforms/libqeglfs.so | grep -E 'EGL|GLE'
             libEGL.so.1 => /usr/lib/libEGL.so.1 (0x760d2000)
@@ -163,7 +165,7 @@ The Qt 5.7 `eglfs` plugin uses the RPi opengl libraries from the [RPi userland][
             libvchiq_arm.so => /usr/lib/libvchiq_arm.so (0x76e90000)
             libvcos.so => /usr/lib/libvcos.so (0x76e77000)
 
-Unfortunately the RPi GPU does not know how to output to a SPI attached display at `/dev/fb1`. The RPi GPU only knows about the HDMI `/dev/fb0`.
+Unfortunately the RPi GPU does not know how to output to a SPI attached display at `/dev/fb1`. The RPi GPU only knows about the HDMI (`/dev/fb0`).
 
 Because the TFT displays are so small (not many pixels) and because the RPi are fairly powerful SOCs, it's possible to copy the output of `/dev/fb0` to `/dev/fb1` in a user program and still have it work pretty well.
 
@@ -198,6 +200,8 @@ To facilitate the copy of the framebuffers, setup a custom hdmi display for the 
     dtparam=spi=on
     dtoverlay=pitft35-resistive,rotate=270,speed=32000000,fps=60
 
+Again you can have more in your `config.txt` as necessary.
+
 ##### qt5-env.sh
 
 The same Qt environment works for either display
@@ -219,6 +223,12 @@ Enable the `raspi2fb` daemon by creating a startup link
 
      root@rpi3:~# cd /etc/rc5.d
      root@rpi3:/etc/rc5.d# ln -sf ../init.d/raspi2fb S90raspi2fb
+
+Reboot or start the `raspi2fb` daemon manually
+
+     root@rpi3:~# /etc/init.d/raspi2fb start
+
+You can kill it using **stop** as the argument.
 
 ##### ts_calibrate
 
@@ -248,12 +258,11 @@ There are two ways to control the PiTFT backlight.
 * gpio-backlight driver
 * pwm driver (pitft35 only)
 
+The default behavior is to use the Linux gpio-backlight driver.
 
 #### gpio-backlight
 
-The default behavior uses the Linux gpio-backlight driver.
-
-The interface for gpio-backlight driver is through sysfs
+The interface for the gpio-backlight driver is through sysfs
 
     root@rpi3:~# ls /sys/class/backlight
     soc:backlight
@@ -261,7 +270,7 @@ The interface for gpio-backlight driver is through sysfs
     root@rpi3:~# ls /sys/class/backlight/soc\:backlight
     actual_brightness  bl_power  brightness  device  max_brightness  power  subsystem  type  uevent
 
-Because of the setup in the dts overlay, the gpio starts in the ON state
+Because of the setup in the dts overlays, the gpio starts in the ON state
 
     root@rpi3:~# cat /sys/class/backlight/soc\:backlight/brightness
     1
@@ -273,6 +282,8 @@ You can turn off the display backlight like this
 And back on again like this
 
     root@rpi3:~# echo 1 > /sys/class/backlight/soc\:backlight/brightness
+
+Any programming language that can do file I/O can control the backlight this way.
 
 #### pwm control for the PiTFT 3.5
 
@@ -313,7 +324,7 @@ And here is 80% backlight
 
 And this turns it off
 
-    root@pi3:~# echo 800000 > /sys/class/pwm/pwmchip0/pwm0/duty_cycle
+    root@pi3:~# echo 0 > /sys/class/pwm/pwmchip0/pwm0/duty_cycle
 
 As would
 
