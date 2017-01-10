@@ -2,20 +2,20 @@
 layout: post
 title: Building Raspberry Pi Systems with Buildroot
 description: "Building customized systems for the Raspberry Pi using Buildroot"
-date: 2017-01-10 16:17:00
+date: 2017-01-10 16:28:00
 categories: rpi
 tags: [linux, rpi, buildroot, rpi3, qt5, pyqt, pyqt5]
 ---
 
 Some initial experiments with [Buildroot][buildroot] as an alternative to [Yocto][yocto] for building Linux systems for [Raspberry Pi][rpi-site] boards.
 
-In general I am not interested in building *desktop* like systems that support multiple GUI applications. The projects I work on typically have a single UI application usually running on a touchscreen display.
+In general I am not interested in building *desktop* like systems that support multiple GUI applications. The projects I work on typically have a single UI application running on a touchscreen display.
 
-I'm also involved in projects with no user interface at all or maybe just a remote interface like a web service. For these projects I would like the ability to build very small systems.
+Or the projects have no user interface or maybe just a remote interface like a web service. For these projects I would like the ability to build very small systems.
 
-Another important feature is [Qt5][qt] support since so many of the projects I work on use it. And since I require only one UI application at a time, the Qt [EGLFS][qpa-eglfs] platform plugin is what I want to use. 
+Another important feature is [Qt5][qt] support since so many of the projects I work on use it. And since I require only one UI application at a time, the Qt [EGLFS][qpa-eglfs] platform plugin is what I want to use.
 
-And finally, a build system not quite as heavy-weight as Yocto would be really nice, especially when assisting customers on setting up their internal systems.
+And finally, a build system not quite as heavy-weight as Yocto would be really nice, especially when assisting clients setting up their internal build systems.
 
 Some nice to have features are
 
@@ -212,7 +212,7 @@ The one caveat is the system ldcache needs to be told about the RPi OpenGL libra
 
     # LD_PRELOAD=libEGL.so:libGLESv2.so ./zmon_cal_pyqt.py
 
-But otherwise the application works fine. 
+I plan to look into the ldcache issue, but otherwise the application runs fine. 
 
 The availability of [PyQt5][pyqt] alone might be sufficient to choose Buildroot over Yocto for a project.
 
