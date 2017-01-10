@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Buildroot
 description: "Building customized systems for the Raspberry Pi using Buildroot"
-date: 2017-01-10 16:11:00
+date: 2017-01-10 16:17:00
 categories: rpi
 tags: [linux, rpi, buildroot, rpi3, qt5, pyqt, pyqt5]
 ---
@@ -100,7 +100,7 @@ In this particular case I have `/br/rpi5` on a drive partition separate from my 
 
 So what does the resulting system look like?
 
-I've uploaded a version here if you want a quick look.
+I uploaded an [sdcard.img here][download] if you want a quick look.
 
 Here's a short run through.
 
@@ -241,3 +241,4 @@ More to follow...
 [buildroot-docs]: http://nightly.buildroot.org/manual.html
 [rpi-serial]: http://www.jumpnowtek.com/rpi/RPi-Serial-Console.html
 [tspress]: https://github.com/scottellis/tspress
+[download]: http://www.jumpnowtek.com/downloads/rpi/buildroot_rpi3/
