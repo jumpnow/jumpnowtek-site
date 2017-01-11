@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2016-12-22 04:48:00
+date: 2017-01-11 09:50:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
 ---
@@ -25,7 +25,7 @@ Here is another post with more details on [developing with Qt5 on the RPi][rpi-q
 
 I am using the Yocto [meta-raspberrypi][meta-raspberrypi] layer, but have updated recipes for the Linux kernel, [gpu firmware][firmware-repo] and some [userland][userland-repo] components.
 
-I have done some testing with the following boards using the `4.4.39` kernel
+I have done some testing with the following boards using the `4.4.41` kernel
 
 * [RPi3][rpi3-b]
 * [RPi2][rpi2-b] including the `Model B v1.2`
@@ -67,7 +67,7 @@ Instructions for installing onto an SD card are in the [README][readme].
 
 The Yocto version is `2.2.0` the `[morty]` branch.
 
-The `4.4.39` Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
+The `4.4.41` Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
 
 These are **sysvinit** systems using [eudev][eudev].
 
@@ -90,7 +90,7 @@ The Adafruit [PiTFT 3.5"][pitft35r] and [PiTFT 2.8"][pitft28r] resistive touchsc
 As of 2016-12-22, here is the list of device tree overlays installed
 
     root@rpi3:~# uname -a
-    Linux rpi3 4.4.39 #1 SMP Thu Dec 22 04:12:18 EST 2016 armv7l GNU/Linux
+    Linux rpi3 4.4.41 #1 SMP Wed Jan 11 06:39:43 EST 2017 armv7l armv7l armv7l GNU/Linux
 
     root@rpi3:~# ls /mnt/fat/overlays/
     adau1977-adc.dtbo                  pi3-miniuart-bt.dtbo
