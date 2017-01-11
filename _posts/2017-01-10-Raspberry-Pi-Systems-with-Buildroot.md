@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Buildroot
 description: "Building customized systems for the Raspberry Pi using Buildroot"
-date: 2017-01-10 16:28:00
+date: 2017-01-11 09:54:00
 categories: rpi
 tags: [linux, rpi, buildroot, rpi3, qt5, pyqt, pyqt5]
 ---
@@ -208,11 +208,11 @@ I did include the *linuxfb* plugin in the build just for testing.
 
 I don't have a PyQt5 application I can share right now, but I did test a closed source application I recently worked on that uses both PyQt5 and Python Numpy and it works as expected.
 
-The one caveat is the system ldcache needs to be told about the RPi OpenGL libraries, so I had to run it like this
+The one caveat is the system loader needs to be told about the RPi OpenGL libraries, so I had to run the PyQt5 app like this
 
-    # LD_PRELOAD=libEGL.so:libGLESv2.so ./zmon_cal_pyqt.py
+    # LD_PRELOAD=libGLESv2.so ./zmon_cal_pyqt.py
 
-I plan to look into the ldcache issue, but otherwise the application runs fine. 
+I plan to look into the issue, but otherwise the PyQt5 application runs fine. 
 
 The availability of [PyQt5][pyqt] alone might be sufficient to choose Buildroot over Yocto for a project.
 
