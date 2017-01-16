@@ -2,7 +2,7 @@
 layout: post
 title: Working with the Raspberry Pi Compute Board
 description: "Miscellaneous notes regarding the RPi compute"
-date: 2016-05-08 15:12:00
+date: 2017-01-16 14:10:00
 categories: rpi
 tags: [linux, rpi compute, yocto]
 ---
@@ -27,11 +27,11 @@ Install the *libusb-1.0-dev* dependency if you don't already have it
 
 Then fetch and build the `rpiboot` utility
 
-    scott@octo:~/rpi$ git clone git://github.com/raspberrypi/tools.git
+    scott@octo:~/rpi$ git clone git://github.com/raspberrypi/usbboot.git
 
-    scott@octo:~/rpi$ cd tools/usbboot
+    scott@octo:~/rpi$ cd usbboot
 
-    scott@fractal:~/rpi/tools/usbboot$ make && sudo make install
+    scott@fractal:~/rpi/usbboot$ make && sudo make install
 
 
 Here's the disk situation on the workstation before mounting the RPi eMMC.
@@ -54,126 +54,55 @@ Put the RPi Compute `J4` jumper to the *USB Slave Enable* position, and plug the
 
 Now run `rpiboot`. 
 
-    scott@octo:~/rpi$ sudo rpiboot
+    scott@fractal:~/rpi/usbboot$ sudo rpiboot
     Waiting for BCM2835 ...
     Initialised device correctly
     Found serial number 0
-    Found serial = 0: writing file /usr/share/rpiboot/usbbootcode.bin
-    Failed : 0xe7762b40Waiting for BCM2835 ...
+    Found serial = 0: writing file ./usbbootcode.bin
+    Successful read 4 bytes
+    Waiting for BCM2835 ...
     Initialised device correctly
     Found serial number 1
-    Found serial = 1: writing file /usr/share/rpiboot/msd.elf
+    Found serial = 1: writing file ./msd.elf
     Successful read 4 bytes
 
 When `rpiboot` exits, there should be a new drive, `/dev/sdc` on my system.
 
-    scott@octo:~/rpi$ lsblk
-    NAME    MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
-    sda       8:0    0 931.5G  0 disk
-    ├─sda1    8:1    0  93.1G  0 part /
-    ├─sda2    8:2    0  93.1G  0 part /home
-    ├─sda3    8:3    0  29.8G  0 part [SWAP]
-    ├─sda4    8:4    0     1K  0 part
-    ├─sda5    8:5    0   100G  0 part /oe5
-    ├─sda6    8:6    0   100G  0 part /oe6
-    ├─sda7    8:7    0   100G  0 part /oe7
-    ├─sda8    8:8    0   100G  0 part /oe8
-    ├─sda9    8:9    0   100G  0 part /oe9
-    └─sda10   8:10   0 215.5G  0 part /oe10
-    sdc       8:32   1   3.7G  0 disk
-    ├─sdc1    8:33   1    64M  0 part
-    └─sdc2    8:34   1   3.6G  0 part
+    scott@fractal:~/rpi/usbboot$ lsblk
+    NAME   MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
+    sda      8:0    0 931.5G  0 disk
+    ├─sda1   8:1    0  93.1G  0 part /
+    ├─sda2   8:2    0 186.3G  0 part /home
+    ├─sda3   8:3    0  29.8G  0 part [SWAP]
+    ├─sda4   8:4    0   100G  0 part /oe4
+    ├─sda5   8:5    0   100G  0 part /br5
+    ├─sda6   8:6    0   100G  0 part /oe6
+    ├─sda7   8:7    0   100G  0 part /oe7
+    ├─sda8   8:8    0   100G  0 part /oe8
+    └─sda9   8:9    0   100G  0 part /oe9
+    sdc      8:32   1   3.7G  0 disk
+    ├─sdc1   8:33   1    64M  0 part
+    └─sdc2   8:34   1   3.6G  0 part
 
 Initialize the host environment for the *copy* scripts
 
-    scott@octo:~/rpi/build$ grep TMPDIR conf/local.conf
-    TMPDIR = "/oe9/rpi1/tmp-krogoth"
-
-    scott@octo:~/rpi/build$ export OETMP=/oe9/rpi1/tmp-krogoth
-    scott@octo:~/rpi/build$ export MACHINE=raspberrypi
-    scott@octo:~/rpi/build$ cd ../meta-rpi/scripts/
+    scott@fractal:~/rpi/usbboot$ export OETMP=/oe8/rpi1/tmp-morty
+    scott@fractal:~/rpi/usbboot$ export MACHINE=raspberrypi
+    scott@fractal:~/rpi/usbboot$ cd ../meta-rpi/scripts/
 
 Format the eMMC (this only needs to be done once) 
 
 The `mk2parts` script creates the minimum two partitions.
 
-    scott@octo:~/rpi/meta-rpi/scripts$ sudo ./mk2parts.sh sdc
-
-    Working on /dev/sdc
-
-    umount: /dev/sdc1: not mounted
-    umount: /dev/sdc2: not mounted
-    DISK SIZE – 3909091328 bytes
-
-    Okay, here we go ...
-
-    === Zeroing the MBR ===
-
-    1024+0 records in
-    1024+0 records out
-    1048576 bytes (1.0 MB, 1.0 MiB) copied, 0.522676 s, 2.0 MB/s
-
-    === Creating 2 partitions ===
-
-    Checking that no-one is using this disk right now ... OK
-
-    Disk /dev/sdc: 3.7 GiB, 3909091328 bytes, 7634944 sectors
-    Units: sectors of 1 * 512 = 512 bytes
-    Sector size (logical/physical): 512 bytes / 512 bytes
-    I/O size (minimum/optimal): 512 bytes / 512 bytes
-
-    >>> Created a new DOS disklabel with disk identifier 0xfcd562ff.
-    Created a new partition 1 of type 'W95 FAT32 (LBA)' and of size 64 MiB.
-    /dev/sdc2: Created a new partition 2 of type 'Linux' and of size 3.6 GiB.
-    /dev/sdc3:
-    New situation:
-
-    Device     Boot  Start     End Sectors  Size Id Type
-    /dev/sdc1  *      8192  139263  131072   64M  c W95 FAT32 (LBA)
-    /dev/sdc2       139264 7634943 7495680  3.6G 83 Linux
-
-    The partition table has been altered.
-    Calling ioctl() to re-read partition table.
-    Syncing disks.
-
-    === Done! ===
-
+    scott@fractal:~/rpi/meta-rpi/scripts$ sudo ./mk2parts.sh sdc
 
 Use the `copy_boot.sh` script to format the first partition as a *FAT* filesystem and copy the bootfiles. 
 
     scott@octo:~/rpi/meta-rpi/scripts$ ./copy_boot.sh sdc
 
-    OETMP: /oe9/rpi1/tmp-krogoth
-    Formatting FAT partition on /dev/sdc1
-    mkfs.fat 3.0.28 (2015-05-16)
-    Mounting /dev/sdc1
-    Copying bootloader files
-    Creating overlay directory
-    Copying overlay dtbs
-    Renaming overlay dtbs
-    Copying dtbs
-    Copying kernel
-    Unmounting /dev/sdc1
-    Done
+Use the `copy_rootfs.sh` script to format the second partition as *ext4* and copy the rootfs.
 
-
-Use the `copy_roofts.sh` script to format the second partition as *ext4* and copy the rootfs.
-
-    scott@octo:~/rpi/meta-rpi/scripts$ ./copy_rootfs.sh sdc qt5 cm
-
-    OETMP: /oe9/rpi1/tmp-krogoth
-    IMAGE: qt5
-    HOSTNAME: cm
-
-    Formatting /dev/sdc2 as ext4
-    /dev/sdc2 contains a ext4 file system labelled 'ROOT'
-            last mounted on /media/card on Sun May  8 09:46:57 2016
-    Proceed anyway? (y,n) y
-    Mounting /dev/sdc2
-    Extracting qt5-image-raspberrypi.tar.bz2 to /media/card
-    Writing cm to /etc/hostname
-    Unmounting /dev/sdc2
-    Done
+    scott@octo:~/rpi/meta-rpi/scripts$ ./copy_rootfs.sh sdc qt5 cm1
 
 
 Power off, move the `J4` jumper to the *Slave Boot Disable* position and remove the `J15` USB cable.
@@ -186,39 +115,37 @@ Watching the boot with a [serial console][rpi-serial-console]
     [    0.000000] Initializing cgroup subsys cpuset
     [    0.000000] Initializing cgroup subsys cpu
     [    0.000000] Initializing cgroup subsys cpuacct
-    [    0.000000] Linux version 4.4.8 (scott@octo) (gcc version 5.3.0 (GCC) ) #1 Sun May 8 10:48:00 EDT  2016
+    [    0.000000] Linux version 4.4.43 (scott@fractal) (gcc version 6.2.0 (GCC) ) #1 Mon Jan 16 05:38:41 EST 2017
     [    0.000000] CPU: ARMv6-compatible processor [410fb767] revision 7 (ARMv7), cr=00c5387d
     [    0.000000] CPU: PIPT / VIPT nonaliasing data cache, VIPT nonaliasing instruction cache
     [    0.000000] Machine model: Raspberry Pi Compute Module Rev 1.0
-
 
     ...
 
     Starting syslogd/klogd: done
 
-    Poky (Yocto Project Reference Distro) 2.1 cm /dev/ttyAMA0
+    Poky (Yocto Project Reference Distro) 2.2.1 cm1 /dev/ttyAMA0
 
-    cm login: root
+    cm1 login: root
 
-    root@cm:~# uname -a
-    Linux cm 4.4.8 #1 Sun May 8 10:48:00 EDT 2016 armv6l armv6l armv6l GNU/Linux
+    root@cm1:~# uname -a
+    Linux cm1 4.4.43 #1 Mon Jan 16 05:38:41 EST 2017 armv6l armv6l armv6l GNU/Linux
 
-     root@cm:~# free
+    root@cm1:~# free
                   total        used        free      shared  buff/cache   available
-    Mem:         445064       13012      387408         180       44644      404292
+    Mem:         445020       18740      386868         172       39412      403608
     Swap:             0           0           0
 
-    root@cm:~# df -h
+    root@cm1:~# df -h
     Filesystem      Size  Used Avail Use% Mounted on
-    /dev/root       3.5G  512M  2.8G  16% /
+    /dev/root       3.5G  626M  2.7G  19% /
     devtmpfs        214M     0  214M   0% /dev
-    tmpfs           218M  128K  218M   1% /run
-    tmpfs           218M   52K  218M   1% /var/volatile
+    tmpfs           218M  116K  218M   1% /run
+    tmpfs           218M   56K  218M   1% /var/volatile
 
+And if you had an HDMI display attached, this would show Qt5 QML apps work
 
-And if you had an HDMI display attached, this would show Qt apps work
-
-    root@cm:~# qcolorcheck -platform linuxfb
+    root@cm1:~# qqtest
 
 Using an adapter board, some jumper wires and the `dt-blob.bin` as described on the Raspberry Pi [CMIO-CAMERA][rpi-cm-camera] page, the camera module works fine. The [raspicam][raspicam] tools operate just like on the other RPi boards.
 
