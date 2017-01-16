@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2017-01-11 09:50:00
+date: 2017-01-16 05:33:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
 ---
@@ -15,7 +15,7 @@ Yocto is a good tool for building minimal, customized systems like one for a ded
 
 If you are looking for a full-featured desktop experience you will probably be better off sticking with [Raspbian][raspbian] or another of the more popular, user friendly [RPi distributions][rpi-distros].
 
-If you like quick boot times, small image sizes or a read-only rootfs, then you might want to try Yocto.
+If you like quick boot times, small image sizes or a read-only rootfs, then you might want to try Yocto (or [Buildroot][jumpnow-buildroot]).
 
 You can build *systemd* systems with Yocto, but the default images built from [meta-rpi][meta-rpi] use *sysvinit*.
 
@@ -25,7 +25,7 @@ Here is another post with more details on [developing with Qt5 on the RPi][rpi-q
 
 I am using the Yocto [meta-raspberrypi][meta-raspberrypi] layer, but have updated recipes for the Linux kernel, [gpu firmware][firmware-repo] and some [userland][userland-repo] components.
 
-I have done some testing with the following boards using the `4.4.41` kernel
+I have done some testing with the following boards using the `4.4.43` kernel
 
 * [RPi3][rpi3-b]
 * [RPi2][rpi2-b] including the `Model B v1.2`
@@ -67,7 +67,7 @@ Instructions for installing onto an SD card are in the [README][readme].
 
 The Yocto version is `2.2.0` the `[morty]` branch.
 
-The `4.4.41` Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
+The `4.4.43` Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
 
 These are **sysvinit** systems using [eudev][eudev].
 
@@ -87,64 +87,65 @@ The Adafruit [PiTFT 3.5"][pitft35r] and [PiTFT 2.8"][pitft28r] resistive touchsc
 
 [Raspi2fb][raspi2fb] is included for mirroring the GPU framebuffer to the small TFT displays. This allows for running Qt GUI applications on the TFTs.
 
-As of 2016-12-22, here is the list of device tree overlays installed
+As of 2017-01-16, here is the list of device tree overlays installed
 
     root@rpi3:~# uname -a
-    Linux rpi3 4.4.41 #1 SMP Wed Jan 11 06:39:43 EST 2017 armv7l armv7l armv7l GNU/Linux
+    Linux rpi3 4.4.43 #1 SMP Mon Jan 16 04:34:12 EST 2017 armv7l armv7l armv7l GNU/Linux
 
     root@rpi3:~# ls /mnt/fat/overlays/
-    adau1977-adc.dtbo                  pi3-miniuart-bt.dtbo
-    ads1015.dtbo                       piscreen.dtbo
-    ads7846.dtbo                       piscreen2r.dtbo
-    akkordion-iqdacplus.dtbo           pisound.dtbo
-    allo-piano-dac-pcm512x-audio.dtbo  pitft22.dtbo
-    at86rf233.dtbo                     pitft28-capacitive.dtbo
-    audioinjector-wm8731-audio.dtbo    pitft28-resistive.dtbo
-    audremap.dtbo                      pitft35-resistive.dtbo
-    bmp085_i2c-sensor.dtbo             pps-gpio.dtbo
-    dht11.dtbo                         pwm-2chan-with-clk.dtbo
-    dionaudio-loco.dtbo                pwm-2chan.dtbo
-    dpi18.dtbo                         pwm-with-clk.dtbo
-    dpi24.dtbo                         pwm.dtbo
-    dwc-otg.dtbo                       qca7000.dtbo
-    dwc2.dtbo                          raspidac3.dtbo
-    enc28j60-spi2.dtbo                 rpi-backlight.dtbo
-    enc28j60.dtbo                      rpi-dac.dtbo
-    gpio-ir.dtbo                       rpi-display.dtbo
-    gpio-poweroff.dtbo                 rpi-ft5406.dtbo
-    hifiberry-amp.dtbo                 rpi-proto.dtbo
-    hifiberry-dac.dtbo                 rpi-sense.dtbo
-    hifiberry-dacplus.dtbo             rra-digidac1-wm8741-audio.dtbo
-    hifiberry-digi-pro.dtbo            sc16is750-i2c.dtbo
-    hifiberry-digi.dtbo                sc16is752-spi1.dtbo
-    hy28a.dtbo                         sdhost.dtbo
-    hy28b.dtbo                         sdio-1bit.dtbo
-    i2c-gpio.dtbo                      sdio.dtbo
-    i2c-mux.dtbo                       sdtweak.dtbo
-    i2c-pwm-pca9685a.dtbo              smi-dev.dtbo
-    i2c-rtc.dtbo                       smi-nand.dtbo
-    i2c-sensor.dtbo                    smi.dtbo
-    i2c0-bcm2708.dtbo                  spi-gpio35-39.dtbo
-    i2c1-bcm2708.dtbo                  spi-rtc.dtbo
-    i2s-gpio28-31.dtbo                 spi0-hw-cs.dtbo
-    i2s-mmap.dtbo                      spi1-1cs.dtbo
-    iqaudio-dac.dtbo                   spi1-2cs.dtbo
-    iqaudio-dacplus.dtbo               spi1-3cs.dtbo
-    iqaudio-digi-wm8804-audio.dtbo     spi2-1cs.dtbo
-    justboom-dac.dtbo                  spi2-2cs.dtbo
-    justboom-digi.dtbo                 spi2-3cs.dtbo
-    lirc-rpi.dtbo                      tinylcd35.dtbo
-    mcp23017.dtbo                      uart1.dtbo
-    mcp23s17.dtbo                      vc4-fkms-v3d.dtbo
-    mcp2515-can0.dtbo                  vc4-kms-v3d.dtbo
-    mcp2515-can1.dtbo                  vga666.dtbo
-    mmc.dtbo                           w1-gpio-pullup.dtbo
-    mz61581.dtbo                       w1-gpio.dtbo
-    pi3-act-led.dtbo                   wittypi.dtbo
-    pi3-disable-bt.dtbo
+    adau1977-adc.dtbo                  pi3-disable-wifi.dtbo
+    ads1015.dtbo                       pi3-miniuart-bt.dtbo
+    ads7846.dtbo                       piscreen.dtbo
+    akkordion-iqdacplus.dtbo           piscreen2r.dtbo
+    allo-piano-dac-pcm512x-audio.dtbo  pisound.dtbo
+    at86rf233.dtbo                     pitft22.dtbo
+    audioinjector-wm8731-audio.dtbo    pitft28-capacitive.dtbo
+    audremap.dtbo                      pitft28-resistive.dtbo
+    bmp085_i2c-sensor.dtbo             pitft35-resistive.dtbo
+    dht11.dtbo                         pps-gpio.dtbo
+    dionaudio-loco.dtbo                pwm-2chan-with-clk.dtbo
+    dpi18.dtbo                         pwm-2chan.dtbo
+    dpi24.dtbo                         pwm-with-clk.dtbo
+    dwc-otg.dtbo                       pwm.dtbo
+    dwc2.dtbo                          qca7000.dtbo
+    enc28j60-spi2.dtbo                 raspidac3.dtbo
+    enc28j60.dtbo                      rpi-backlight.dtbo
+    gpio-ir.dtbo                       rpi-dac.dtbo
+    gpio-poweroff.dtbo                 rpi-display.dtbo
+    hifiberry-amp.dtbo                 rpi-ft5406.dtbo
+    hifiberry-dac.dtbo                 rpi-proto.dtbo
+    hifiberry-dacplus.dtbo             rpi-sense.dtbo
+    hifiberry-digi-pro.dtbo            rra-digidac1-wm8741-audio.dtbo
+    hifiberry-digi.dtbo                sc16is750-i2c.dtbo
+    hy28a.dtbo                         sc16is752-spi1.dtbo
+    hy28b.dtbo                         sdhost.dtbo
+    i2c-gpio.dtbo                      sdio-1bit.dtbo
+    i2c-mux.dtbo                       sdio.dtbo
+    i2c-pwm-pca9685a.dtbo              sdtweak.dtbo
+    i2c-rtc.dtbo                       smi-dev.dtbo
+    i2c-sensor.dtbo                    smi-nand.dtbo
+    i2c0-bcm2708.dtbo                  smi.dtbo
+    i2c1-bcm2708.dtbo                  spi-gpio35-39.dtbo
+    i2s-gpio28-31.dtbo                 spi-rtc.dtbo
+    i2s-mmap.dtbo                      spi0-hw-cs.dtbo
+    iqaudio-dac.dtbo                   spi1-1cs.dtbo
+    iqaudio-dacplus.dtbo               spi1-2cs.dtbo
+    iqaudio-digi-wm8804-audio.dtbo     spi1-3cs.dtbo
+    justboom-dac.dtbo                  spi2-1cs.dtbo
+    justboom-digi.dtbo                 spi2-2cs.dtbo
+    lirc-rpi.dtbo                      spi2-3cs.dtbo
+    mcp23017.dtbo                      tinylcd35.dtbo
+    mcp23s17.dtbo                      uart1.dtbo
+    mcp2515-can0.dtbo                  vc4-fkms-v3d.dtbo
+    mcp2515-can1.dtbo                  vc4-kms-v3d.dtbo
+    mmc.dtbo                           vga666.dtbo
+    mz61581.dtbo                       w1-gpio-pullup.dtbo
+    pi3-act-led.dtbo                   w1-gpio.dtbo
+    pi3-disable-bt.dtbo                wittypi.dtbo
 
 I've tested a few
 
+* ads1015
 * hifiberry-amp
 * i2s-mmap
 * iqaudio-dacplus
@@ -725,3 +726,4 @@ The `console-image` contains a utility called [pi-blaster][pi-blaster-post] that
 [pitft28r]: https://www.adafruit.com/products/1601
 [raspi2fb]: https://github.com/AndrewFromMelbourne/raspi2fb
 [hardware-pwm]: http://www.jumpnowtek.com/rpi/Using-the-Raspberry-Pi-Hardware-PWM-timers.html
+[jumpnow-buildroot]: http://www.jumpnowtek.com/rpi/Raspberry-Pi-Systems-with-Buildroot.html
