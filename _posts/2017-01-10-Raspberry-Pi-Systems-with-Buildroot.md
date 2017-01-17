@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Buildroot
 description: "Building customized systems for the Raspberry Pi using Buildroot"
-date: 2017-01-17 08:52:00
+date: 2017-01-17 10:44:00
 categories: rpi
 tags: [linux, rpi, buildroot, rpi3, qt5, pyqt, pyqt5]
 ---
@@ -36,15 +36,19 @@ The changes so far are
 
 * Added an **rpi-wifi-firmware** package to include the non-free blobs the RPi3 radio requires. (Uses the [github.com/RPi-Distro/firmware-nonfree][rpi-distro] repo for the files.) 
 
-* Bumped versions for the [Linux kernel][rpi-linux] and [RPi firmware][rpi-firmware] to the latest as of 2017-01-10 from the official RPi repositories.
+* Bumped versions for the [Linux kernel][rpi-linux] and [RPi firmware][rpi-firmware] to the latest as of 2017-01-15 from the official RPi repositories.
 
 * Added two custom applications, one C/Makefile app (**serialecho**) and one QtWidgets app using qmake (**tspress**), and included them in the build system configuration.
  
-* Added a custom defconfig (`configs/jumpnow_rpi3_defconfig`) that incorporates the above and also adds Qt5 (no QML), [PyQt5][pyqt] and Python3 including Numpy.
+* Added a custom defconfig (`configs/jumpnow_rpi3_defconfig`) that incorporates the above and also adds Qt5 (no QML), [PyQt5][pyqt] and Python3 including Numpy. (This generates a fairly bloated image, but it is only for evaluation.)
 
 * Modified the default openssh package **sshd_config** to allow root logins with no password (This is a dev only build setup).
  
+* Added some kernel build patches so that DTS overlays (DTBOs) are built from the kernel source and not just downloaded from the RPi firmware github repo.
 
+* Added some extra DTS overlays for [hardware PWM][hardware-pwm].
+
+ 
 To build the system, run the following (see the **ccache** notes below before running this)
 
     scott@t410:~$ git clone -b rpi https://github.com/jumpnow/buildroot br-rpi
@@ -83,7 +87,7 @@ You can tell buildroot to save downloaded source files to a location outside the
 
 The download location is determined by the **BR2\_DL\_DIR** environment variable which you can set globally in your shell environment or a line like this in your *.config*
 
-    BR2_DL_DIR="/home/scott/br-download"
+    BR2_DL_DIR="$(HOME)/br-download"
 
 This allows you to share common downloads among different builds.
 
@@ -218,11 +222,11 @@ The availability of [PyQt5][pyqt] alone might be sufficient to choose Buildroot 
 
 So far I'm pretty happy with the systems that Buildroot is generating. 
 
-The one feature I might miss is having a toolchain on the target device. But that's really only a development convenience and not one I use that often anyway. 
+The one feature I might miss is having a toolchain on the target device. But that's really only a development convenience and not one I use that often outside of demos. 
 
-The fact that Buildroot builds so quickly compensates for that pretty well.  
+Buildroot is pretty quick, so that compensates.  
 
-I had to make some changes to the build system to get my custom RPi DTBO overlays building. I explain the problem and the approach I took to fixing it here [Compiling RPi Overlays with Buildroot][br-rpi-overlay-doc].
+I did have to make some changes to get my custom RPi overlays building. I explain the problem and the approach I took to fixing it here [Compiling RPi Overlays with Buildroot][br-rpi-overlay-doc].
 
 I'm not sure this is the right approach with Buildroot, but we'll see. 
 
@@ -247,3 +251,4 @@ More to follow...
 [tspress]: https://github.com/scottellis/tspress
 [download]: http://www.jumpnowtek.com/downloads/rpi/buildroot_rpi3/
 [br-rpi-overlay-doc]: http://www.jumpnowtek.com/rpi/Compiling-Raspberry-Pi-Overlays-with-Buildroot.html
+[hardware-pwm]: http://www.jumpnowtek.com/rpi/Using-the-Raspberry-Pi-Hardware-PWM-timers.html
