@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Buildroot
 description: "Building customized systems for the Raspberry Pi using Buildroot"
-date: 2017-01-11 09:54:00
+date: 2017-01-17 08:52:00
 categories: rpi
 tags: [linux, rpi, buildroot, rpi3, qt5, pyqt, pyqt5]
 ---
@@ -110,12 +110,12 @@ The [RPi serial console][rpi-serial] console is configured and I'm running the f
     buildroot login: root
 
     # uname -a
-    Linux buildroot 4.4.41-v7 #1 SMP Tue Jan 10 09:25:31 EST 2017 armv7l GNU/Linux
+    Linux buildroot 4.4.43-v7 #1 SMP Tue Jan 17 07:26:59 EST 2017 armv7l GNU/Linux
 
     # free
                  total       used       free     shared    buffers     cached
-    Mem:        911192      35244     875948        156       3308      10856
-    -/+ buffers/cache:      21080     890112
+    Mem:        911192      35448     875744        156       3332      10948
+    -/+ buffers/cache:      21168     890024
     Swap:            0          0          0
 
 The SD card is not fully utilized because we used the `sdcard.img` and didn't resize. That's easily fixed with some setup scripts I'll get to later.
@@ -212,7 +212,7 @@ The one caveat is the system loader needs to be told about the RPi OpenGL librar
 
     # LD_PRELOAD=libGLESv2.so ./zmon_cal_pyqt.py
 
-I plan to look into the issue, but otherwise the PyQt5 application runs fine. 
+I plan to look into the issue, but otherwise the PyQt5 application runs fine. I'm using **uclibc** currently and I think the first thing I'll check is whether the problem exists with a **glibc** system. 
 
 The availability of [PyQt5][pyqt] alone might be sufficient to choose Buildroot over Yocto for a project.
 
@@ -221,8 +221,12 @@ So far I'm pretty happy with the systems that Buildroot is generating.
 The one feature I might miss is having a toolchain on the target device. But that's really only a development convenience and not one I use that often anyway. 
 
 The fact that Buildroot builds so quickly compensates for that pretty well.  
- 
-Next up is to try adding some custom kernel patches and then some testing of the SDK toolchain that Buildroot generates.
+
+I had to make some changes to the build system to get my custom RPi DTBO overlays building. I explain the problem and the approach I took to fixing it here [Compiling RPi Overlays with Buildroot][br-rpi-overlay-doc].
+
+I'm not sure this is the right approach with Buildroot, but we'll see. 
+
+Next up is some testing of the SDK toolchain that Buildroot generates.
 
 More to follow...
 
@@ -242,3 +246,4 @@ More to follow...
 [rpi-serial]: http://www.jumpnowtek.com/rpi/RPi-Serial-Console.html
 [tspress]: https://github.com/scottellis/tspress
 [download]: http://www.jumpnowtek.com/downloads/rpi/buildroot_rpi3/
+[br-rpi-overlay-doc]: http://www.jumpnowtek.com/rpi/Compiling-Raspberry-Pi-Overlays-with-Buildroot.html

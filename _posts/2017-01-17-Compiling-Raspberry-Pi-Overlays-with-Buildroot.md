@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Compiling Raspberry Pi Overlays with Buildroot
-date: 2017-01-17 08:25:00
+date: 2017-01-17 08:57:00
 categories: rpi
 tags: [linux, rpi, buildroot, rpi3, overlays, kernel]
 ---
@@ -10,9 +10,11 @@ The Buildroot kernel makefile will build the main DTB for the RPi board from the
 
 Instead the DTBO overlays are installed as part of the **rpi-firmware** package as simple copies from the [github.com/raspberrypi/firmware][rpi-firmware-repo] repository.
 
-This is inconvenient from the workflow I've been using with the RPis where I've been combining kernel changes with overlay changes/additions in my kernel patches and letting them build as part of the kernel. This seems like the right approach since they are part of the same source repository. This is the way I develop the patches when working on the kernel externally. 
+This is inconvenient from the workflow I've been using with the RPis where I've been combining kernel changes with overlay changes or additions in the same kernel patches and letting them build as part of the kernel. 
 
-I added some [modifications to the kernel make files][rpi-overlay-patch] to build the RPi overlays and I [modified the rpi-firmware makefile][rpi-firmware-patch] to disable copying the overlays when the kernel is building them.
+This seems like the right approach since they are part of the same source repository and this is the way I initially develop and test the patches when working on the kernel externally. 
+
+So I added some [modifications to the kernel make files][rpi-overlay-patch] to build the RPi overlays and I [modified the rpi-firmware makefile][rpi-firmware-patch] to disable copying the overlays when the kernel is building them.
 
 It seems to work okay.
 
@@ -29,7 +31,7 @@ Here the latest builds from my [buildroot repo][jumpnow-buildroot] show the cust
     /mnt/overlays/pwm-2chan-with-clk.dtbo  /mnt/overlays/pwm.dtbo
 
 
-An advantage with this approach is I can now use the same kernel patches I've been using with Yocto.
+Another advantage with this approach is I can use the same kernel patches I've been using with [Yocto][jumpnow-rpi-yocto].
 
 The changes to **linux.mk** aren't very big, but it's understandable if this won't be acceptable to the Buildroot community. 
 
@@ -43,3 +45,4 @@ I'll see what happens when I try to upstream this.
 [hardware-pwm-overlay-patch]: https://github.com/jumpnow/buildroot/commit/e1245506a204dbaad10277d1463254c7537e58c7
 [ads1015-enable-patch]: https://github.com/jumpnow/buildroot/commit/6b3f826feb205a5454b0ebb655b915b400eba49d
 [jumpnow-buildroot]: https://github.com/jumpnow/buildroot
+[jumpnow-rpi-yocto]: http://www.jumpnowtek.com/rpi/Raspberry-Pi-Systems-with-Yocto.html
