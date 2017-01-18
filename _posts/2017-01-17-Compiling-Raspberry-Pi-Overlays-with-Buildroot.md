@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Compiling Raspberry Pi Overlays with Buildroot
-date: 2017-01-17 08:57:00
+date: 2017-01-18 06:18:00
 categories: rpi
 tags: [linux, rpi, buildroot, rpi3, overlays, kernel]
 ---
@@ -10,17 +10,19 @@ The Buildroot kernel makefile will build the main DTB for the RPi board from the
 
 Instead the DTBO overlays are installed as part of the **rpi-firmware** package as simple copies from the [github.com/raspberrypi/firmware][rpi-firmware-repo] repository.
 
-This is inconvenient from the workflow I've been using with the RPis where I've been combining kernel changes with overlay changes or additions in the same kernel patches and letting them build as part of the kernel. 
+This is inconvenient from the workflow I've been using with the RPis where I've been combining kernel changes with overlay changes in the same kernel patches and letting them build as part of the kernel. 
 
-This seems like the right approach since they are part of the same source repository and this is the way I initially develop and test the patches when working on the kernel externally. 
+This seems like the right approach since changes are to the same source repository. This is the way I  develop and test the patches when working on the kernel outside the Buildroot system.
 
-So I added some [modifications to the kernel make files][rpi-overlay-patch] to build the RPi overlays and I [modified the rpi-firmware makefile][rpi-firmware-patch] to disable copying the overlays when the kernel is building them.
+So I added some [modifications to the kernel make files][rpi-overlay-patch] to build the in-tree RPi overlays.
+
+And I [modified the rpi-firmware makefile][rpi-firmware-patch] to disable copying the overlays when the kernel is building them.
 
 It seems to work okay.
 
 Some small examples are [here][hardware-pwm-overlay-patch] and [here][ads1015-enable-patch], but this will also work for some bigger patches I have for customer projects.  
 
-Here the latest builds from my [buildroot repo][jumpnow-buildroot] show the custom *-with-clk* dtbos installed. 
+Here the latest builds from my [buildroot repo][jumpnow-buildroot] showing some custom [-with-clk pwm][jumpnow-hardware-pwm] dtbos getting installed. 
 
     # uname -a
     Linux buildroot 4.4.43-v7 #1 SMP Tue Jan 17 07:26:59 EST 2017 armv7l GNU/Linux
@@ -31,11 +33,9 @@ Here the latest builds from my [buildroot repo][jumpnow-buildroot] show the cust
     /mnt/overlays/pwm-2chan-with-clk.dtbo  /mnt/overlays/pwm.dtbo
 
 
-Another advantage with this approach is I can use the same kernel patches I've been using with [Yocto][jumpnow-rpi-yocto].
+Another advantage is reuse of the same kernel patches I've been using with [Yocto][jumpnow-rpi-yocto].
 
-The changes to **linux.mk** aren't very big, but it's understandable if this won't be acceptable to the Buildroot community. 
-
-The modifications are to support only one particular series of boards, though they are pretty popular at the moment.
+The changes to **linux.mk** aren't big, but they are specific to the RPi boards.
 
 I'll see what happens when I try to upstream this.
 
@@ -46,3 +46,4 @@ I'll see what happens when I try to upstream this.
 [ads1015-enable-patch]: https://github.com/jumpnow/buildroot/commit/6b3f826feb205a5454b0ebb655b915b400eba49d
 [jumpnow-buildroot]: https://github.com/jumpnow/buildroot
 [jumpnow-rpi-yocto]: http://www.jumpnowtek.com/rpi/Raspberry-Pi-Systems-with-Yocto.html
+[jumpnow-hardware-pwm]: http://www.jumpnowtek.com/rpi/Using-the-Raspberry-Pi-Hardware-PWM-timers.html
