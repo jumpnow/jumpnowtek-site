@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2017-01-16 05:33:00
+date: 2017-01-20 10:10:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
 ---
@@ -226,9 +226,9 @@ The `meta-qt5` repository, use the `[morty]` branch
 
     scott@octo:~/poky-morty$ git clone -b morty https://github.com/meta-qt5/meta-qt5.git
 
-And finally the `meta-raspberrypi` repository. There is no `[morty]` branch, so use `[master]`
+And finally the `meta-raspberrypi` repository. use the `[morty]` branch
 
-    scott@octo:~/poky-morty$ git clone -b master git://git.yoctoproject.org/meta-raspberrypi
+    scott@octo:~/poky-morty$ git clone -b morty git://git.yoctoproject.org/meta-raspberrypi
 
 Those 4 repositories shouldn't need modifications other then updates and can be reused for different projects or different boards.
 
