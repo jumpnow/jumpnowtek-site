@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Buildroot
 description: "Building customized systems for the Raspberry Pi using Buildroot"
-date: 2017-01-17 10:44:00
+date: 2017-01-20 17:50:00
 categories: rpi
 tags: [linux, rpi, buildroot, rpi3, qt5, pyqt, pyqt5]
 ---
@@ -40,7 +40,7 @@ The changes so far are
 
 * Added two custom applications, one C/Makefile app (**serialecho**) and one QtWidgets app using qmake (**tspress**), and included them in the build system configuration.
  
-* Added a custom defconfig (`configs/jumpnow_rpi3_defconfig`) that incorporates the above and also adds Qt5 (no QML), [PyQt5][pyqt] and Python3 including Numpy. (This generates a fairly bloated image, but it is only for evaluation.)
+* Added two custom defconfigs (`configs/jumpnow_rpi3_defconfig` and `configs/jumpnow_rpi0_defconfig`) that incorporate the above and also adds Qt5 (no QML), [PyQt5][pyqt] and Python3 including Numpy. (This generates a fairly bloated image, but it is only for evaluation.)
 
 * Modified the default openssh package **sshd_config** to allow root logins with no password (This is a dev only build setup).
  
@@ -51,10 +51,10 @@ The changes so far are
  
 To build the system, run the following (see the **ccache** notes below before running this)
 
-    scott@t410:~$ git clone -b rpi https://github.com/jumpnow/buildroot br-rpi
-    scott@t410:~$ cd br-rpi
-    scott@t410:~/br-rpi$ make jumpnow_rpi3_defconfig
-    scott@t410:~/br-rpi$ make
+    scott@t410:~$ git clone -b rpi https://github.com/jumpnow/buildroot
+    scott@t410:~$ cd buildroot
+    scott@t410:~/buildroot$ make jumpnow_rpi3_defconfig
+    scott@t410:~/buildroot$ make
 
 **Note:** Don't run make with a **-jN** argument. The main Makefile is not designed to be run as a parallel build. The sub-projects will be run in parallel automatically.
 
@@ -62,7 +62,7 @@ If you are missing tools on your workstation, you will get error messages tellin
 
 When the build is done, insert an SD card and copy the image like this
 
-    scott@t410:~/br-rpi$ sudo dd if=output/images/sdcard.img of=/dev/sdb bs=1M
+    scott@t410:~/buildroot$ sudo dd if=output/images/sdcard.img of=/dev/sdb bs=1M
 
 Replace `/dev/sdb` for where the SD card shows up on your workstation.
 
@@ -70,7 +70,7 @@ That *make jumpnow\_rpi3\_defconfig* command generated a *.config* file that des
  
 An easy Buildroot optimization is use [ccache][ccache] to reduce redundant work by the C/C++ preprocessor. Make sure your workstation has [ccache][ccache] installed, then run the Buildroot configuration tool after you have your initial *.config* generated.
 
-    scott@t410:~/br-rpi$ make menuconfig 
+    scott@t410:~/buildroot$ make menuconfig 
     
 Under **Build options** select **Enable compiler cache** and then save the configuration.
 This will update your *.config*.
@@ -95,12 +95,12 @@ Another build option I've been using is to build externally, outside the buildro
 
 You can specify it like this when you do the first `make defconfig`
 
-    scott@fractal:~/br-rpi$ make O=/br5/rpi jumpnow_rpi3_defconfig
-    scott@fractal:~/br-rpi$ cd /br5/rpi
-    scott@fractal:/br5/rpi$ make menuconfig (optional)
-    scott@fractal:/br5/rpi$ make
+    scott@fractal:~/buildroot$ make O=/br5/rpi3 jumpnow_rpi3_defconfig
+    scott@fractal:~/buildroot$ cd /br5/rpi3
+    scott@fractal:/br5/rpi3$ make menuconfig (optional)
+    scott@fractal:/br5/rpi3$ make
 
-In this particular case I have `/br/rpi5` on a drive partition separate from my workstation rootfs and my home directory.
+In this particular case I have `/br/rpi3` on a drive partition separate from my workstation rootfs and my home directory.
 
 So what does the resulting system look like?
 
