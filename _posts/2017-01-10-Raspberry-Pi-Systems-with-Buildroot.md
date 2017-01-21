@@ -2,29 +2,24 @@
 layout: post
 title: Building Raspberry Pi Systems with Buildroot
 description: "Building customized systems for the Raspberry Pi using Buildroot"
-date: 2017-01-20 17:50:00
+date: 2017-01-21 12:50:00
 categories: rpi
 tags: [linux, rpi, buildroot, rpi3, qt5, pyqt, pyqt5]
 ---
 
-Some initial experiments with [Buildroot][buildroot] as an alternative to [Yocto][yocto] for building Linux systems for [Raspberry Pi][rpi-site] boards.
+I have started using [Buildroot][buildroot] as an alternative to [Yocto][yocto] for building Linux systems for the [Raspberry Pi][rpi-site] boards.
 
-In general I am not interested in building *desktop* like systems that support multiple GUI applications. The projects I work on typically have a single UI application running on a touchscreen display.
+In general I am not interested in building *desktop* like systems that support multiple GUI applications.
 
-Or the projects have no user interface or maybe just a remote interface like a web service. For these projects I would like the ability to build very small systems.
+In the projects I work on there is typically a single UI application running, maybe using a touchscreen. Or the projects have only a remote interface like a web service or no interface at all.
 
-Another important feature is [Qt5][qt] support since so many of the projects I work on use it. And since I require only one UI application at a time, the Qt [EGLFS][qpa-eglfs] platform plugin is what I want to use.
+The preference for these systems is to be a small as possible, no software that isn't needed.
 
-And finally, a build system not quite as heavy-weight as Yocto would be really nice, especially when assisting clients setting up their internal build systems.
+I do usually add [Qt5][qt] support since so many of the projects I work on use it. But since I require only one UI application at a time, the Qt [EGLFS][qpa-eglfs] platform plugin is what I want.
 
-Some nice to have features are
+Buildroot is considerably simpler and light-weight in comparison to Yocto, which should be nice when it comes to assisting clients setting up their internal build systems.
 
-* Easy to add custom (proprietary) applications to the build
-* Easy to choose versions for the kernel, bootloader/firmware, init system, udev provider, etc...
-* Easy to patch the kernel or customize existing packages
-
-
-So here are some notes on my first steps. 
+So here are some notes on my what I'm using so far. 
 
 I created a [Buildroot clone][jumpnow-buildroot] in Github.
 
@@ -32,24 +27,30 @@ The **[master]** branch of the repository is a mirror of the official Buildroot 
 
 The default **[rpi]** branch has a few additions on top of **[master]** for my own customizations.
 
-The changes so far are
+The changes to **[master]** are
 
 * Added an **rpi-wifi-firmware** package to include the non-free blobs the RPi3 radio requires. (Uses the [github.com/RPi-Distro/firmware-nonfree][rpi-distro] repo for the files.) 
 
-* Bumped versions for the [Linux kernel][rpi-linux] and [RPi firmware][rpi-firmware] to the latest as of 2017-01-15 from the official RPi repositories.
+* Bumped versions for the [Linux kernel][rpi-linux] and [RPi firmware][rpi-firmware] to the latest from the official RPi repositories.
 
-* Added two custom applications, one C/Makefile app (**serialecho**) and one QtWidgets app using qmake (**tspress**), and included them in the build system configuration.
+* Added some custom applications, one C/Makefile app (**serialecho**) and one QtWidgets app using qmake (**tspress**), and included them in the build system configuration.
  
-* Added two custom defconfigs (`configs/jumpnow_rpi3_defconfig` and `configs/jumpnow_rpi0_defconfig`) that incorporate the above and also adds Qt5 (no QML), [PyQt5][pyqt] and Python3 including Numpy. (This generates a fairly bloated image, but it is only for evaluation.)
+* Added some custom defconfigs that incorporate the above and also adds Qt5 (no QML), [PyQt5][pyqt] and Python3 including Numpy. (This generates an image approaching 280MB, which is fairly bloated, but it is only for evaluation.)
 
 * Modified the default openssh package **sshd_config** to allow root logins with no password (This is a dev only build setup).
  
-* Added some kernel build patches so that DTS overlays (DTBOs) are built from the kernel source and not just downloaded from the RPi firmware github repo.
+* Added some kernel build patches so that DTS overlays (DTBOs) are built from the kernel source and not just downloaded from the RPi firmware github repo. I have some notes on that [here][br-rpi-overlays].
 
-* Added some extra DTS overlays for [hardware PWM][hardware-pwm].
+* Added some overlays for [hardware PWM][hardware-pwm].
 
+
+The two defconfigs are
+
+* **jumpnow\_rpi3\_defconfig** - For the RPi2, RPi3 and CM3 boards
+* **jumpnow\_rpi0\_defconfig** - For the original RPi, RPi Zero and CM1 boards
  
-To build the system, run the following (see the **ccache** notes below before running this)
+
+To build a system, run the following (see the **ccache** notes below)
 
     scott@t410:~$ git clone -b rpi https://github.com/jumpnow/buildroot
     scott@t410:~$ cd buildroot
@@ -66,9 +67,19 @@ When the build is done, insert an SD card and copy the image like this
 
 Replace `/dev/sdb` for where the SD card shows up on your workstation.
 
-That *make jumpnow\_rpi3\_defconfig* command generated a *.config* file that describes to Buildroot how to generate your system similar to a Linux kernel configuration.
+The command
  
-An easy Buildroot optimization is use [ccache][ccache] to reduce redundant work by the C/C++ preprocessor. Make sure your workstation has [ccache][ccache] installed, then run the Buildroot configuration tool after you have your initial *.config* generated.
+    make jumpnow_rpi3_defconfig 
+
+created a `.config` file that completely describes to Buildroot how to generate the system.
+
+#### Customizing the Build
+
+The [Buildroot Documentation][buildroot-docs] is pretty good and worth a read.
+ 
+One easy optimization is use [ccache][ccache] to reduce redundant work by the C/C++ preprocessor. 
+
+Make sure your workstation has [ccache][ccache] installed, then run the Buildroot configuration tool after you have your initial *.config* generated.
 
     scott@t410:~/buildroot$ make menuconfig 
     
@@ -79,19 +90,15 @@ You will need the *ncurses development* package for your distribution before you
 
 After that run *make* as usual to build your system. 
 
-The [Buildroot Documentation][buildroot-docs] is pretty good and worth a read. It's not very long.
+Another option I've been using is to save the downloaded source files to a location outside the buildroot repository. 
 
-Here are a few more optimizations I've been using with my builds.
-
-You can tell buildroot to save downloaded source files to a location outside the local buildroot repository.
-
-The download location is determined by the **BR2\_DL\_DIR** environment variable which you can set globally in your shell environment or a line like this in your *.config*
+The download location is determined by the **BR2\_DL\_DIR** environment variable which you can set globally in your shell environment or in a line like this in your *.config*
 
     BR2_DL_DIR="$(HOME)/br-download"
 
 This allows you to share common downloads among different builds.
 
-Another build option I've been using is to build externally, outside the buildroot repository.
+Another option is to build externally, outside the buildroot repository.
 
 You can specify it like this when you do the first `make defconfig`
 
@@ -104,7 +111,7 @@ In this particular case I have `/br/rpi3` on a drive partition separate from my 
 
 So what does the resulting system look like?
 
-I uploaded an [sdcard.img here][download] if you want a quick look.
+I uploaded some [sdcard.imgs here][download] if you want a quick look.
 
 Here's a short run through.
 
@@ -236,6 +243,7 @@ More to follow...
 
 
 [buildroot]: https://buildroot.org/
+[raspbian]: https://www.raspbian.org/
 [rpi-site]: https://www.raspberrypi.org/
 [yocto]: https://www.yoctoproject.org/
 [qt]: http://www.qt.io/
@@ -249,6 +257,7 @@ More to follow...
 [buildroot-docs]: http://nightly.buildroot.org/manual.html
 [rpi-serial]: http://www.jumpnowtek.com/rpi/RPi-Serial-Console.html
 [tspress]: https://github.com/scottellis/tspress
-[download]: http://www.jumpnowtek.com/downloads/rpi/buildroot_rpi3/
+[download]: http://www.jumpnowtek.com/downloads/rpi/buildroot/
 [br-rpi-overlay-doc]: http://www.jumpnowtek.com/rpi/Compiling-Raspberry-Pi-Overlays-with-Buildroot.html
 [hardware-pwm]: http://www.jumpnowtek.com/rpi/Using-the-Raspberry-Pi-Hardware-PWM-timers.html
+[br-rpi-overlays]: http://www.jumpnowtek.com/rpi/Compiling-Raspberry-Pi-Overlays-with-Buildroot.html
