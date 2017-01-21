@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Compiling Raspberry Pi Overlays with Buildroot
-date: 2017-01-21 11:27:00
+date: 2017-01-21 11:31:00
 categories: rpi
 tags: [linux, rpi, buildroot, rpi3, overlays, kernel]
 ---
@@ -100,32 +100,6 @@ And I modified the rpi-firmware **Config.in** so that it doesn't copy overlays w
 
 
 With those changes and **BR2\_LINUX\_KERNEL\_DTS\_OVERLAYS\_SUPPORT** enabled in the main config, an overlays directory with the dtbos will get created in `images/overlays`.
-
-    scott@fractal:/br5/rpi3$ ls -l images/
-    total 443148
-    -rw-r--r-- 1 scott scott     15992 Jan 21 06:24 bcm2710-rpi-3-b.dtb
-    -rw-r--r-- 1 scott scott  33554432 Jan 21 06:24 boot.vfat
-    -rw-r--r-- 1 scott scott        81 Jan 21 06:24 cmdline.txt
-    -rwxr-xr-x 1 scott scott     36242 Jan 21 06:24 config.txt
-    -rw-r--r-- 1 scott scott   4212544 Jan 21 06:24 kernel7.img
-    drwxr-xr-x 2 scott scott      4096 Jan 21 06:24 overlays
-    -rw-r--r-- 1 scott scott 216037376 Jan 21 06:24 rootfs.ext2
-    lrwxrwxrwx 1 scott scott        11 Jan 21 06:24 rootfs.ext4 -> rootfs.ext2
-    drwxr-xr-x 2 scott scott      4096 Jan 21 06:22 rpi-firmware
-    -rw-r--r-- 1 scott scott 249592320 Jan 21 06:24 sdcard.img
-    -rw-r--r-- 1 scott scott   4212336 Jan 21 06:24 zImage
-
-
-And the overlays directory is non longer be created by the `rpi-firmware` package
-
-    scott@fractal:/br5/rpi3$ ls -l images/rpi-firmware/
-    total 3896
-    -rw-r--r-- 1 scott scott   50832 Jan 21 06:22 bootcode.bin
-    -rw-r--r-- 1 scott scott      65 Jan 21 06:22 cmdline.txt
-    -rw-r--r-- 1 scott scott     682 Jan 21 06:22 config.txt
-    -rw-r--r-- 1 scott scott    9753 Jan 21 06:22 fixup.dat
-    -rw-r--r-- 1 scott scott 3911876 Jan 21 06:22 start.elf
-
 
 The final piece is to get this `overlay/` directory installed onto the SD card image boot directory. 
 
