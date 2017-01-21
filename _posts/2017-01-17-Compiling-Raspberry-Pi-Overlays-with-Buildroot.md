@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Compiling Raspberry Pi Overlays with Buildroot
-date: 2017-01-21 11:16:00
+date: 2017-01-21 11:27:00
 categories: rpi
 tags: [linux, rpi, buildroot, rpi3, overlays, kernel]
 ---
@@ -10,9 +10,11 @@ The Buildroot kernel makefile doesn't build the RPi DTBO overlays from source.
 
 Instead the DTBO overlays are installed as part of the **rpi-firmware** package as copies from the [github.com/raspberrypi/firmware][rpi-firmware-repo] repository.
 
-This is inconvenient when working on overlays and you want the changes incorporated into Buildroot using patches the way you typically would.
+This is inconvenient when working on overlays and you want to incorporate the changes into Buildroot using patches the way you typically would.
 
 Fortunately Buildroot makes it pretty easy to add support for changing this behavior and building the in-tree overlays.
+
+Here's what I did.
 
 The kernel **Config.in**
 
@@ -35,7 +37,7 @@ The kernel **Config.in**
             bool "Install kernel image to /boot in target"
             depends on !BR2_TARGET_ROOTFS_INITRAMFS
 
-and the makefile **linux.mk**
+and the kernel makefile **linux.mk**
 
     diff --git a/linux/linux.mk b/linux/linux.mk
     index 7f4432e..8195a96 100644
@@ -77,7 +79,7 @@ and the makefile **linux.mk**
      ifeq ($(BR2_STRIP_strip),y)
 
 
-And I modified the rpi-firmware config to disable copying the overlays when the ones built by the kernel.
+And I modified the rpi-firmware **Config.in** so that it doesn't copy overlays when the kernel built ones are being used.
 
     diff --git a/package/rpi-firmware/Config.in b/package/rpi-firmware/Config.in
     index c2983aa..49f25da 100644
@@ -97,7 +99,7 @@ And I modified the rpi-firmware config to disable copying the overlays when the 
               Say 'y' here if you need to load one or more of the DTB overlays,
 
 
-With those changes and **BR2_LINUX_KERNEL_DTS_OVERLAYS_SUPPORT** enabled in the main config, an overlays directory with the dtbos will get created in `images/overlays`.
+With those changes and **BR2\_LINUX\_KERNEL\_DTS\_OVERLAYS\_SUPPORT** enabled in the main config, an overlays directory with the dtbos will get created in `images/overlays`.
 
     scott@fractal:/br5/rpi3$ ls -l images/
     total 443148
