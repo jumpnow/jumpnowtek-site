@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Buildroot
 description: "Building customized systems for the Raspberry Pi using Buildroot"
-date: 2017-01-21 12:50:00
+date: 2017-01-21 12:53:00
 categories: rpi
 tags: [linux, rpi, buildroot, rpi3, qt5, pyqt, pyqt5]
 ---
@@ -39,7 +39,7 @@ The changes to **[master]** are
 
 * Modified the default openssh package **sshd_config** to allow root logins with no password (This is a dev only build setup).
  
-* Added some kernel build patches so that DTS overlays (DTBOs) are built from the kernel source and not just downloaded from the RPi firmware github repo. I have some notes on that [here][br-rpi-overlays].
+* Added some [kernel build patches][br-rpi-overlays] so that DTS overlays (DTBOs) are built from the kernel source and not just downloaded from the RPi firmware github repo.
 
 * Added some overlays for [hardware PWM][hardware-pwm].
 
