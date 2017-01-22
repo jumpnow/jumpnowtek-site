@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Buildroot
 description: "Building customized systems for the Raspberry Pi using Buildroot"
-date: 2017-01-21 12:53:00
+date: 2017-01-22 14:04:00
 categories: rpi
 tags: [linux, rpi, buildroot, rpi3, qt5, pyqt, pyqt5]
 ---
@@ -33,18 +33,22 @@ The changes to **[master]** are
 
 * Bumped versions for the [Linux kernel][rpi-linux] and [RPi firmware][rpi-firmware] to the latest from the official RPi repositories.
 
-* Added some custom applications, one C/Makefile app (**serialecho**) and one QtWidgets app using qmake (**tspress**), and included them in the build system configuration.
- 
-* Added some custom defconfigs that incorporate the above and also adds Qt5 (no QML), [PyQt5][pyqt] and Python3 including Numpy. (This generates an image approaching 280MB, which is fairly bloated, but it is only for evaluation.)
+* Added some custom applications primarily as an experiment in how to add custom packages to Buildroot. The source for all of them are github repos.
 
-* Modified the default openssh package **sshd_config** to allow root logins with no password (This is a dev only build setup).
+  1. **serialecho** - a C, Makefile based app
+  2. **tspress** - a Qt5 Widgets GUI app using qmake
+  3. **pytouch** - a [PyQt5][pyqt] app, the build/install for this is just a copy
  
+* Added some custom Buildroot `configs` to support all the RPi boards. The configs add Qt5 (no QML), [PyQt5][pyqt] and Python3 including Numpy. This generates an image approaching 280MB, which is fairly big, but this is only for evaluation.
+
+* Created some sample overlays for the rootfs to customize some conf files.
+
 * Added some [kernel build patches][br-rpi-overlays] so that DTS overlays (DTBOs) are built from the kernel source and not just downloaded from the RPi firmware github repo.
 
-* Added some overlays for [hardware PWM][hardware-pwm].
+* Added some custom DTS files for [hardware PWM][hardware-pwm].
 
 
-The two defconfigs are
+The two custom `configs` are
 
 * **jumpnow\_rpi3\_defconfig** - For the RPi2, RPi3 and CM3 boards
 * **jumpnow\_rpi0\_defconfig** - For the original RPi, RPi Zero and CM1 boards
@@ -217,29 +221,17 @@ I did include the *linuxfb* plugin in the build just for testing.
     -rwxr-xr-x    1 root     root        106472 Jan 10 09:26 libqoffscreen.so
   
 
-I don't have a PyQt5 application I can share right now, but I did test a closed source application I recently worked on that uses both PyQt5 and Python Numpy and it works as expected.
+There is currently a linker issue with running PyQt5 applications. The work-around I've been using is to invoke the applications with an **LD_PRELOAD** statement like this
 
-The one caveat is the system loader needs to be told about the RPi OpenGL libraries, so I had to run the PyQt5 app like this
+    # LD_PRELOAD=libGLESv2.so pytouch.py
 
-    # LD_PRELOAD=libGLESv2.so ./zmon_cal_pyqt.py
+This is still on the **TODO** to look into.
 
-I plan to look into the issue, but otherwise the PyQt5 application runs fine. I'm using **uclibc** currently and I think the first thing I'll check is whether the problem exists with a **glibc** system. 
+So far I'm pretty happy with the systems that Buildroot is generating.  
 
-The availability of [PyQt5][pyqt] alone might be sufficient to choose Buildroot over Yocto for a project.
-
-So far I'm pretty happy with the systems that Buildroot is generating. 
-
-The one feature I might miss is having a toolchain on the target device. But that's really only a development convenience and not one I use that often outside of demos. 
-
-Buildroot is pretty quick, so that compensates.  
-
-I did have to make some changes to get my custom RPi overlays building. I explain the problem and the approach I took to fixing it here [Compiling RPi Overlays with Buildroot][br-rpi-overlay-doc].
-
-I'm not sure this is the right approach with Buildroot, but we'll see. 
+The one feature that might be missed is having a toolchain on the target device to do native compiles. This is really only a development convenience, production builds usually strip any tools like this.
 
 Next up is some testing of the SDK toolchain that Buildroot generates.
-
-More to follow...
 
 
 [buildroot]: https://buildroot.org/
