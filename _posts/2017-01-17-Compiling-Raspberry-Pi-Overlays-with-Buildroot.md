@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Compiling Raspberry Pi Overlays with Buildroot
-date: 2017-01-23 16:31:00
+date: 2017-01-23 16:33:00
 categories: rpi
 tags: [linux, rpi, buildroot, rpi3, overlays, kernel]
 ---
@@ -78,7 +78,7 @@ and modified the kernel makefile to build the dtbos and copy them to an `overlay
     
      ifeq ($(BR2_STRIP_strip),y)
 
-And I modified the *rpi-firmware* config so that it doesn't copy dtbos when the kernel built ones are being used.
+And I modified the **rpi-firmware** config so that it doesn't copy dtbos when the kernel built ones are being used.
 
     diff --git a/package/rpi-firmware/Config.in b/package/rpi-firmware/Config.in
     index c2983aa..49f25da 100644
