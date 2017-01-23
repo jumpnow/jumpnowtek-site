@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Buildroot
 description: "Building customized systems for the Raspberry Pi using Buildroot"
-date: 2017-01-22 14:04:00
+date: 2017-01-23 14:05:00
 categories: rpi
 tags: [linux, rpi, buildroot, rpi3, qt5, pyqt, pyqt5]
 ---
@@ -39,7 +39,7 @@ The changes to **[master]** are
   2. **tspress** - a Qt5 Widgets GUI app using qmake
   3. **pytouch** - a [PyQt5][pyqt] app, the build/install for this is just a copy
  
-* Added some custom Buildroot `configs` to support all the RPi boards. The configs add Qt5 (no QML), [PyQt5][pyqt] and Python3 including Numpy. This generates an image approaching 280MB, which is fairly big, but this is only for evaluation.
+* Added some custom Buildroot `configs` to support all the RPi boards. The configs add [Qt5][qt] (no QML), [PyQt5][pyqt] and Python3 including Numpy. This generates an image approaching 180MB, which is big, but this is only for evaluation.
 
 * Created some sample overlays for the rootfs to customize some conf files.
 
@@ -65,17 +65,18 @@ To build a system, run the following (see the **ccache** notes below)
 
 If you are missing tools on your workstation, you will get error messages telling you what you are missing. The dependencies are nothing out of the ordinary for a developer workstation and you can search the web for the particular packages you need to install for your Linux distribution. 
 
-When the build is done, insert an SD card and copy the image like this
-
-    scott@t410:~/buildroot$ sudo dd if=output/images/sdcard.img of=/dev/sdb bs=1M
-
-Replace `/dev/sdb` for where the SD card shows up on your workstation.
-
 The command
  
     make jumpnow_rpi3_defconfig 
 
 created a `.config` file that completely describes to Buildroot how to generate the system.
+
+When the build is done, insert an SD card and copy the image like this
+
+    scott@t410:~/buildroot$ sudo dd if=output/images/rpi3-sdcard.img of=/dev/sdb bs=1M
+
+Replace `/dev/sdb` for where the SD card shows up on your workstation.
+
 
 #### Customizing the Build
 
@@ -100,9 +101,9 @@ The download location is determined by the **BR2\_DL\_DIR** environment variable
 
     BR2_DL_DIR="$(HOME)/br-download"
 
-This allows you to share common downloads among different builds.
+This allows you to share common downloads among different builds and if you choose to delete the repo you don't have to lose the downloads.
 
-Another option is to build externally, outside the buildroot repository.
+Another option is to build externally, outside the Buildroot repository.
 
 You can specify it like this when you do the first `make defconfig`
 
@@ -111,7 +112,7 @@ You can specify it like this when you do the first `make defconfig`
     scott@fractal:/br5/rpi3$ make menuconfig (optional)
     scott@fractal:/br5/rpi3$ make
 
-In this particular case I have `/br/rpi3` on a drive partition separate from my workstation rootfs and my home directory.
+In this particular case I have `/br5/rpi3` on a drive partition separate from my workstation rootfs and my home directory.
 
 So what does the resulting system look like?
 
