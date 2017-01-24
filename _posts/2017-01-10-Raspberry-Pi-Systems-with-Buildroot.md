@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Buildroot
 description: "Building customized systems for the Raspberry Pi using Buildroot"
-date: 2017-01-23 14:05:00
+date: 2017-01-24 13:20:00
 categories: rpi
 tags: [linux, rpi, buildroot, rpi3, qt5, pyqt, pyqt5]
 ---
@@ -97,17 +97,24 @@ After that run *make* as usual to build your system.
 
 Another option I've been using is to save the downloaded source files to a location outside the buildroot repository. 
 
-The download location is determined by the **BR2\_DL\_DIR** environment variable which you can set globally in your shell environment or in a line like this in your *.config*
+The download location is determined by the **BR2\_DL\_DIR** variable in the *.config*
 
-    BR2_DL_DIR="$(HOME)/br-download"
+    BR2_DL_DIR="$(HOME)/dl"
+
+Or it can be set as an environment variable in the shell
+
+    export BR2_DL_DIR=${HOME}/dl
 
 This allows you to share common downloads among different builds and if you choose to delete the repo you don't have to lose the downloads.
 
-Another option is to build externally, outside the Buildroot repository.
+Another option is to build externally outside of the Buildroot repository.
 
-You can specify it like this when you do the first `make defconfig`
+You can specify it like this when you do the first `make <some_defconfig>`.
 
     scott@fractal:~/buildroot$ make O=/br5/rpi3 jumpnow_rpi3_defconfig
+
+After that, go to the directory you chose to run Buildroot make commands
+
     scott@fractal:~/buildroot$ cd /br5/rpi3
     scott@fractal:/br5/rpi3$ make menuconfig (optional)
     scott@fractal:/br5/rpi3$ make
@@ -126,25 +133,25 @@ The [RPi serial console][rpi-serial] console is configured and I'm running the f
     buildroot login: root
 
     # uname -a
-    Linux buildroot 4.4.43-v7 #1 SMP Tue Jan 17 07:26:59 EST 2017 armv7l GNU/Linux
+    Linux buildroot 4.4.44-v7 #1 SMP Tue Jan 24 07:59:06 EST 2017 armv7l GNU/Linux
 
     # free
                  total       used       free     shared    buffers     cached
-    Mem:        911192      35448     875744        156       3332      10948
-    -/+ buffers/cache:      21168     890024
+    Mem:        947732      34676     913056        156       3256       9892
+    -/+ buffers/cache:      21528     926204
     Swap:            0          0          0
 
 The SD card is not fully utilized because we used the `sdcard.img` and didn't resize. That's easily fixed with some setup scripts I'll get to later.
 
     # df -h
     Filesystem                Size      Used Available Use% Mounted on
-    /dev/root               203.1M    176.7M     12.2M  94% /
-    devtmpfs                440.7M         0    440.7M   0% /dev
-    tmpfs                   444.9M         0    444.9M   0% /dev/shm
-    tmpfs                   444.9M     40.0K    444.9M   0% /tmp
-    tmpfs                   444.9M    116.0K    444.8M   0% /run
+    /dev/root               204.3M    177.7M     12.3M  94% /
+    devtmpfs                458.5M         0    458.5M   0% /dev
+    tmpfs                   462.8M         0    462.8M   0% /dev/shm
+    tmpfs                   462.8M     40.0K    462.7M   0% /tmp
+    tmpfs                   462.8M    116.0K    462.6M   0% /run
 
-The system is pretty big at **177M** but that's because of all the Qt5 and Python stuff I threw in.
+The system is pretty big at **178M** but that's because of all the Qt5 and Python stuff I threw in.
 
     # ls -l /var/log
     lrwxrwxrwx    1 root     root             6 Jan  9 14:24 /var/log -> ../tmp
@@ -205,6 +212,8 @@ My little Qt Widgets touchscreen test application [tspress][tspress] works fine.
     Down: 976 482
     Up  : 976 486
     #
+
+See the `/etc/profile.d/qt5-env.sh` script for setting Qt5 environment variables like **WIDTH** and **HEIGHT**.
 
 I have a USB Bluetooth mouse and a USB keyboard/mouse trackpad attached as well as an HDMI display.
 They all work.
