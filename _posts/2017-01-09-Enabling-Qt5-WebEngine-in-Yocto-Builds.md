@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Enabling Qt5 WebEngine in a Yocto Builds 
+title: Enabling Qt5 WebEngine in Yocto Builds 
 date: 2017-01-09 05:30:00
 categories: rpi
 tags: [rpi, qt5, webengine, yocto]
