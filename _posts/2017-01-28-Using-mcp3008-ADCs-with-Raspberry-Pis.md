@@ -2,7 +2,7 @@
 layout: post
 title: Using MCP3008 ADCs with Raspberry Pis
 description: "Working with Microchip MCP3008 ADCs on the RPi"
-date: 2017-01-28 06:08:00
+date: 2017-01-28 06:14:00
 categories: rpi
 tags: [linux, rpi, mcp3008, adc]
 ---
@@ -47,8 +47,7 @@ The overlay takes advantage of the RPi DTS extension that allows parameters to b
 
 For this overlay, the two available parameters are for telling the driver the SPI bus and CS line where the MCP3008 is attached (mandatory) and the speed you want the SPI clock to run (optional, defaults to 1MHz).
 
-A quick note on the speed setting. To get a 1 MHz clock speed I needed to pass the kernel SPI driver a
-speed of 1.6Mhz. I verified the clock with a scope. The scaling is linear so to get a 2MHz clock, you can use 3.2MHz. For 1.35MHz in the examples below, I am using 2.16MHz. 
+**NOTE:** To get a 1 MHz clock speed I needed to pass the kernel SPI driver a speed of 1.6 Mhz. I verified the clock with a scope. The scaling is linear so to get a 2 MHz clock, you can use 3.2 MHz. For 1.35MHz in the examples below, I am using 2.16 MHz as the driver setting. 
 
 To use SPI on the RPis you need to enable it which you can do with this line in your `config.txt`
 
@@ -97,6 +96,7 @@ The SPI1 pins configured by the spi1 overlays are
 * CE1 : GPIO\_17
 * CE2 : GPIO\_16
 
+Here are some SPI bus 1 examples
 
 ##### SPI1.0
 
@@ -149,8 +149,6 @@ Additional devices will be `device1`, `device2`, etc...
 
 To get the value of channel 0 of the ADC do a read of `in_voltage0_raw`
 
-    root@rpi3:~# cat /sys/bus/iio/devices/iio\:device0/in_voltage0_raw
-    1021
     root@rpi3:~# cat /sys/bus/iio/devices/iio\:device0/in_voltage0_raw
     514
 
