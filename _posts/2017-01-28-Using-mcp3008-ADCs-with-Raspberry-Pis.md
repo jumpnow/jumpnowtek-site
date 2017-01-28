@@ -2,7 +2,7 @@
 layout: post
 title: Using MCP3008 ADCs with Raspberry Pis
 description: "Working with Microchip MCP3008 ADCs on the RPi"
-date: 2017-01-28 06:14:00
+date: 2017-01-28 07:06:00
 categories: rpi
 tags: [linux, rpi, mcp3008, adc]
 ---
@@ -98,19 +98,19 @@ The SPI1 pins configured by the spi1 overlays are
 
 Here are some SPI bus 1 examples
 
-##### SPI1.0
+**SPI1.0**
 
     dtoverlay=spi-1cs
     dtoverlay=mcp3008:spi1-0-present
 
-##### SPI1.2
+**SPI1.2**
 
     dtoverlay=spi-1cs:cs0_pin=16
     dtoverlay=mcp3008:spi1-0-present    
 
 Note that `spi1-0-present` is used for the mcp3008 overlay argument since this is still the first SPI1 device the kernel finds.
 
-SPI1.0 and SPI1.1
+**SPI1.0 and SPI1.1**
 
     dtoverlay=spi1-2cs
     dtoverlay=mcp3008:spi1-0-present,spi1-1-present
