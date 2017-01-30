@@ -191,7 +191,7 @@ blocks = 100
 blocks = 500
 
     500 transfers = (500 * 20.2) + 280 = 10380 us = 20.76 us per transfer
-    theoretical transfer rate = 1 / 20.76 us = 48.17k samples per second
+    theoretical transfer rate = 1 / 20.76 us = 48.17k
     measured transfer rate = 46.29k
 
 
@@ -199,7 +199,7 @@ From those results I'm pretty confident of my calculations.
 
 The big, obvious optimization is to reduce that `cs_change` delay in the kernel spi driver. As the patch above showed, I removed the delay entirely.
 
-Because nothing happens immediately, the cs line still toggles for about 0.5 us which is far more then the required 1 clock cycle the device requires.
+Because nothing happens immediately, the cs line still toggles for about 0.5 us which is more then the required 1 clock cycle the device requires.
 
 With that change the delay between reads goes from 13 us to ~3.6 us.
 
