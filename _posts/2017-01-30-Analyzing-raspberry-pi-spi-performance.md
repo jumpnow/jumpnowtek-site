@@ -197,7 +197,7 @@ blocks = 500
 
 From those results I'm pretty confident of my calculations.
 
-The big, obvious optimization is to reduce that `cs_change` delay in the kernel spi driver. As the patch above showed, I removed the delay entirely.
+The big, obvious optimization is to reduce that `cs_change` delay in the kernel spi driver so we can take advantage of batched transactions. As the patch above showed, I removed the delay entirely.
 
 Because nothing happens immediately, the cs line still toggles for about 0.5 us which is more then the required 1 clock cycle the device requires.
 
