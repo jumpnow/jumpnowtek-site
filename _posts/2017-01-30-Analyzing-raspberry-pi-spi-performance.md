@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Analyzing SPI driver performance on the Raspberry Pi
-date: 2017-01-30 05:30:00
+date: 2017-01-30 05:46:00
 categories: rpi
 tags: [linux, rpi, spi, mcp3008, adc]
 ---
@@ -14,7 +14,7 @@ The target device for these experiments is an MCP3008 8-channel, 10-bit ADC.
 
 The MCP3008 does not do simultaneous reads, so I am only reading from one channel for the tests.
 
-From the [datasheet][mcp3008-datasheet], the maximum SPI clock rate is 3.6 MHz when running at 5v which is what I'll be running.
+From the [datasheet][mcp3008-datasheet], the maximum SPI clock rate is 3.6 MHz when running at 5v which is what I'll be doing.
 
 The device requires 18 clocks per data sample 8 clocks for addressing and setup and 10 clocks for the data.
 
@@ -109,7 +109,7 @@ And this brings the theoretical maximum sample rate down to
 
 **Context Switching Delay**
 
-SPI transactions are limited in size and we have to get the data back to the user program at some point (i.e. we are now running batch sizes of 49k).
+SPI transactions are limited in size and we have to get the data back to the user program at some point.
 
 So now we have to account for the delay going from userland to the kernel and back. 
 
