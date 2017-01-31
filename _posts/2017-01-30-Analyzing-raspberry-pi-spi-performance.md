@@ -1,14 +1,78 @@
 ---
 layout: post
 title: Analyzing SPI driver performance on the Raspberry Pi
-date: 2017-01-30 05:46:00
+date: 2017-01-30 09:23:00
 categories: rpi
 tags: [linux, rpi, spi, mcp3008, adc]
 ---
 
 These are notes from some performance tests I was doing with the Raspberry PI and a SPI connected ADC.
 
-I was using a Raspberry Pi 3 board running a standard `4.4.45` kernel from the RPi kernel source on github.
+The Raspbian systems are running a 4.4.34 kernel. The systems are up to date with no optimizations selected.
+
+These are the default clock settings from Raspbian
+
+    pi@raspberrypi:~/mcp3008-speedtest $ vcgencmd get_config int
+    arm_freq=1200
+    audio_pwm_mode=1
+    config_hdmi_boost=5
+    core_freq=400
+    desired_osc_freq=0x36ee80
+    disable_commandline_tags=2
+    disable_l2cache=1
+    enable_uart=1
+    force_eeprom_read=1
+    force_pwm_open=1
+    framebuffer_ignore_alpha=1
+    framebuffer_swap=1
+    gpu_freq=300
+    hdmi_force_cec_address=65535
+    init_uart_clock=0x2dc6c00
+    lcd_framerate=60
+    over_voltage_avs=0x1e848
+    overscan_bottom=48
+    overscan_left=48
+    overscan_right=48
+    overscan_top=48
+    pause_burst_frames=1
+    program_serial_random=1
+    sdram_freq=450
+    temp_limit=85
+
+The [Buildroot][buildroot-rpi] systems are running a standard `4.4.45` kernel from the RPi kernel source on github.
+
+These are the clock settings from the [Buildroot][buildroot-rpi] system where I did customize the default config.txt.
+
+Note I had to add the **force_turbo=1**
+
+    # vcgencmd get_config int
+    arm_freq=1200
+    audio_pwm_mode=1
+    config_hdmi_boost=5
+    core_freq=400
+    desired_osc_freq=0x36ee80
+    disable_commandline_tags=2
+    disable_l2cache=1
+    enable_uart=1
+    force_eeprom_read=1
+    force_pwm_open=1
+    force_turbo=1
+    framebuffer_ignore_alpha=1
+    framebuffer_swap=1
+    gpu_freq=300
+    hdmi_force_cec_address=65535
+    init_uart_clock=0x2dc6c00
+    lcd_framerate=60
+    over_voltage_avs=0x1e848
+    over_voltage_avs_boost=0x1e848
+    overscan_bottom=48
+    overscan_left=48
+    overscan_right=48
+    overscan_top=48
+    pause_burst_frames=1
+    program_serial_random=1
+    sdram_freq=450
+    temp_limit=85
 
 The target device for these experiments is an MCP3008 8-channel, 10-bit ADC.
 
@@ -57,21 +121,72 @@ This is the new theoretical maximum sample rate
 
     3.6 MHz / 26 = 138.5K samples per second
 
-And for use later
+For use later
 
     1 transaction = 1 / 138.5k = ~7.2 us
 
+There is also a measurable time between CS selection and the first SPI clock and again a delay between the last SPI clock and CS deselected.
+
+I am measuring 1.6 us for the start and 0.4 us for the end so a total of 2.0 us.
+
+So transactions are really 9.2 us.
 
 There is system processing time between transactions, time when there is nothing happening on the SPI bus.
 
 There are two parts to this which I'm giving names
 
-1) **Transaction Delay** between multiple reads in a single spidev transaction
+1) **Context Switching Delay** between userland ioctl() calls
 
-2) **Context Switching Delay** between userland ioctl() calls
+2) **Transaction Delay** between multiple reads in a single spidev transaction
 
 
-Starting with the **Transaction Delay**.
+**Context Switching Delay**
+
+There is a delay between CS deselected from the last read to CS selection of the next read.
+
+This the cost for making each spidev ioctl() call.
+
+This time is the cost to do the context switching from userland to kernel and back and any copying of memory that has to be done, the activation of the driver thread that actually does the work and any userland processing of the data.
+
+I eliminated the last part by not processing the data returned.
+
+The transaction buffers are prepared once before the loop starts.
+
+Here is the setup code
+
+    ...
+    for (i = 0; i < blocks; i++) {
+        tx[i*4] = 0x60 | (ch << 2);
+        tr[i].tx_buf = (unsigned long) &tx[i * 4];
+        tr[i].rx_buf = (unsigned long) &rx[i * 4];
+        tr[i].len = 3;
+        tr[i].speed_hz = 5760000;
+        tr[i].cs_change = 1;
+    }
+
+    // unset cs_change for last transfer in block or we lose
+    // the first read of the next block
+    tr[blocks-1].cs_change = 0;
+    ...
+
+And the read loop which never looks at the data  
+
+    ...
+    while (!abort_read) {
+        if (ioctl(fd, SPI_IOC_MESSAGE(blocks), tr) < 0) {
+            perror("ioctl");
+            break;
+        }
+
+        count += blocks;
+    }
+    ...
+
+There is not a lot to optimize in the userland piece loop.
+
+With that code running, the **Context Switching Delay** measured with a scope is around 5 us.
+
+**Transaction Delay**.
 
 The MCP3008 device requires a CS line transition to initiate a new conversion.
 
@@ -95,155 +210,93 @@ With the default SPI driver that CS line toggling costs at least 10 us for each 
 
 The removal of that **udelay(10)** is my optimization explained later.
 
-The CS line is toggled high between transactions for ~10us as you would expect, but there is an additional ~3us delay between the last clock of the current transaction and the first clock of the next. This looks like it is setup time in the RPi spi driver and I haven't looked into that yet.
-
-**Transaction Delay** is ~13 us.
+**Transaction Delay** is ~10 us.
 
 So now each transaction is going to take at least 
 
-    7.2 + 13 = 20.2 us
+    9.2 + 10 = 19.2 us
 
-And this brings the theoretical maximum sample rate down to 
+And this brings the theoretical maximum sample rate for batched transactions down to 
 
-    1 / 20.2 us = 49.5k transactions per second
+    1 / 19.2 us = 52.1k transactions per second
 
-**Context Switching Delay**
+Which is less then single transactions.
 
-SPI transactions are limited in size and we have to get the data back to the user program at some point.
-
-So now we have to account for the delay going from userland to the kernel and back. 
-
-This delay probably comes from several sources, but I think these are the main ones
-
-* The tx and rx buffers from the userland code have to be copied to/from kernel buffers.
-
-* There is the general context switching penalty and getting a kernel thread to run the actual transaction.
-
-In the userland code, I'm running a pretty tight loop.
-
-The transaction buffers are prepared once before the loop starts and I'm not even looking at the returned data.
-
-Here is the relevant setup code
-
-    ...
-    for (i = 0; i < blocks; i++) {
-        tx[i*4] = 0x60 | (ch << 2);
-        tr[i].tx_buf = (unsigned long) &tx[i * 4];
-        tr[i].rx_buf = (unsigned long) &rx[i * 4];
-        tr[i].len = 3;
-        tr[i].speed_hz = 5760000;
-        tr[i].cs_change = 1;
-    }
-
-    // unset cs_change for last transfer in block or we lose
-    // the first read of the next block
-    tr[blocks-1].cs_change = 0;
-    ...
-
-And the read loop   
-
-    ...
-    while (!abort_read) {
-        if (ioctl(fd, SPI_IOC_MESSAGE(blocks), tr) < 0) {
-            perror("ioctl");
-            break;
-        }
-
-        count += blocks;
-    }
-    ...
-
-There is not a lot to optimize in that loop.
-
-With that code running, the **Context Switching Delay** measured with a scope varies depending on the block size.
-
-Here's what I see
-
-    blocks=1  delay is ~13 us
-
-    blocks=10 delay is ~25us.
-
-    blocks=100 delay is ~72us
-
-    blocks=500 delay is ~280us
-
-
-So for the different block sizes here is the estimated max transfer speed and the actual measured results when I run my code
+So for the different block sizes here is the estimated max transfer speed and the actual measured results when I run my code on the Raspbian system
 
 blocks = 1
 
-    1 transfer = 7.2 + 13 = 20.2 us
-    theoretical transfer rate = 1 / 20.2 us = 49.5k
-    measured transfer rate = 48.0k
+    1 transfer = 9.2 + 5 = 14.2 us
+    theoretical transfer rate = 1 / 14.2 us = 70.4k
+    measured transfer rate = 69.8k
 
 blocks = 10 
 
-    10 transfers = (10 * 20.2) + 25 = 227 us = 22.7 us per transfer
-    theoretical transfer rate = 1 / 23.2 us = 44.05k
-    measured transfer rate = 45.1k
+    10 transfers = (19.2 * 9) + 9.2 + 5 = 187 us = 18.7 us per transfer
+    theoretical transfer rate = 1 / 18.7 us = 53.5k
+    measured transfer rate = 52.5k
 
 blocks = 100
 
-    100 transfers = (100 * 20.2) + 72 = 2092 us = 20.92 us per transfer
-    theoretical transfer rate = 1 / 20.92 us = 47.80k
-    measured transfer rate = 46.3k
+    100 transfers = (19.2 * 99) + 9.2 + 5 = 1915 us = 19.15 us per transfer
+    theoretical transfer rate = 1 / 19.15 us = 52.22k
+    measured transfer rate = 51.2k
 
 blocks = 500
 
-    500 transfers = (500 * 20.2) + 280 = 10380 us = 20.76 us per transfer
-    theoretical transfer rate = 1 / 20.76 us = 48.17k
-    measured transfer rate = 46.29k
+    500 transfers = (19.2 * 499) + 9.2 + 5 = 9595 us = 19.19 us per transfer
+    theoretical transfer rate = 1 / 19.19 us = 52.11k
+    measured transfer rate = 51.1k
 
 
 From those results I'm pretty confident of my calculations.
 
 The big, obvious optimization is to reduce that `cs_change` delay in the kernel spi driver so we can take advantage of batched transactions. As the patch above showed, I removed the delay entirely.
 
-Because nothing happens immediately, the cs line still toggles for about 0.5 us which is more then the required 1 clock cycle the device requires.
+Because nothing happens immediately, the cs line still toggles for about 0.25 us which is more then the required 1 clock cycle the device requires, but that's much less then the 10 us from before.
 
-With that change the delay between reads goes from 13 us to ~3.6 us.
+Here are the same observations and calculations using the patched spi driver on the [Buildroot system][buildroot-rpi].
 
-Now each transaction is 
+blocks = 1 (expect no change)
 
-    7.2 + 3.6 = 10.8 us
+    1 transfer = 9.2 + 5 = 14.2 us
+    theoretical transfer rate = 1 / 14.2 us = 70.4k
+    measured transfer rate = 69.6k
 
-Here are the same observations and calculations using the patched spi driver.
+blocks = 10 
 
-blocks = 1, no change expected
-
-    1 transfer = 7.2 + 13 = 20.2 us
-    theoretical transfer rate = 1 / 20.2 us = ~49.5k samples per second
-    measured transfer rate = 48.0k
-
-blocks = 10
-
-    10 transfers = (10 * 10.8) + 25 = 133 us = 13.3 us per transfer
-    theoretical transfer rate = 1 / 13.3 us = 75.19k
-    measured transfer rate = 74.0k
+    10 transfers = (9.45 * 9) + 9.2 + 5 = 99.25 us = 9.925 us per transfer
+    theoretical transfer rate = 1 / 9.925 us = 100.8k
+    measured transfer rate = 98.3k
 
 blocks = 100
 
-    100 transfers = (100 * 10.8) + 72 = 1152 us = 11.52 us per transfer
-    theoretical transfer rate = 1 / 11.52 us = 86.81k
-    measured transfer rate = 86.1k
+    100 transfers = (9.45 * 99) + 9.2 + 5 = 949.75 us = 9.5 us per transfer
+    theoretical transfer rate = 1 / 9.5 us = 105.3k
+    measured transfer rate = 105.2k
 
 blocks = 500
 
-    500 transfers = (500 * 10.8) + 280 = 5680 us = 11.36 us per transfer
-    theoretical transfer rate = 1 / 11.36 us = 88.03k
-    measured transfer rate = 87.1k
+    500 transfers = (9.45 * 499) + 9.2 + 5 = 4279,75 us = 9.46 us per transfer
+    theoretical transfer rate = 1 / 9.46 us = 105.7k
+    measured transfer rate = 105.5k
 
-That's a pretty good improvement for one small change.
+That's a pretty good improvement for a one line change.
 
-The sweet spot seems to be around block sizes of 100. Userland still gets data updates pretty quickly.
+The test program I'm using is here [mcp3008-speedtest][mcp3008-speedtest]. It is only for testing system throughput.
 
-If I had a project that actually needed this I would start digging deeper into the ~3 us delay between transactions in the RPi SPI driver and then maybe look into replacing spidev with a custom kernel driver optimized for this use case.
+The sweet spot seems to be around a block size of 100. Userland still gets data updates pretty quickly at roughly every 100 us.
 
-On the only two projects I've worked on that use the MCP3008 ADC, we poll the device at roughly 10 Hz.
+I did uncover a problem with context switching times in my [Yocto built][yocto-rpi] RPi systems. The results are signicantly slower with blocks=1 where context switching times are most prominent, less so with higher block sizes.
 
-Not much optimization is needed and instead of spidev we just use the [built-in kernel driver][using-mcp3008] for the MCP3008, a simpler solution.
+The [Buildroot systems][buildroot-rpi] match the Raspbian system performance on blocks=1 tests. 
 
-But maybe this helps someone else with their project.
+This is all just an exercise at this point.
+
+On the only two projects I've worked on that use the MCP3008 ADC, we poll the device at roughly 10 Hz. Not much optimization is needed and we just use the [built-in kernel driver][using-mcp3008] for the MCP3008. It's a simpler solution.
 
 [mcp3008-datasheet]: https://cdn-shop.adafruit.com/datasheets/MCP3008.pdf
 [using-mcp3008]: http://www.jumpnowtek.com/rpi/Using-mcp3008-ADCs-with-Raspberry-Pis.html
+[buildroot-rpi]: http://www.jumpnowtek.com/
+[yocto-rpi]: http://www.jumpnowtek.com/rpi/Raspberry-Pi-Systems-with-Yocto.html
+[mcp3008-speedtest]: https://github.com/scottellis/mcp3008-speedtest

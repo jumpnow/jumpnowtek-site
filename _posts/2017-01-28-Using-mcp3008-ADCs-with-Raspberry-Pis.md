@@ -2,7 +2,7 @@
 layout: post
 title: Using MCP3008 ADCs with Raspberry Pis
 description: "Working with Microchip MCP3008 ADCs on the RPi"
-date: 2017-01-28 07:06:00
+date: 2017-01-31 08:54:00
 categories: rpi
 tags: [linux, rpi, mcp3008, adc]
 ---
@@ -47,8 +47,6 @@ The overlay takes advantage of the RPi DTS extension that allows parameters to b
 
 For this overlay, the two available parameters are for telling the driver the SPI bus and CS line where the MCP3008 is attached (mandatory) and the speed you want the SPI clock to run (optional, defaults to 1MHz).
 
-**NOTE:** To get a 1 MHz clock speed I needed to pass the kernel SPI driver a speed of 1.6 Mhz. I verified the clock with a scope. The scaling is linear so to get a 2 MHz clock, you can use 3.2 MHz. For 1.35MHz in the examples below, I am using 2.16 MHz as the driver setting. 
-
 To use SPI on the RPis you need to enable it which you can do with this line in your `config.txt`
 
     dtparam=spi=on
@@ -66,13 +64,13 @@ The SPI0 pins are
 
 Here are some SPI0 examples
 
-**SPI0.0, default 1MHz clock**
+**SPI0.0, 1MHz clock**
 
-    dtoverlay=mcp3008:spi0-0-present
+    dtoverlay=mcp3008:spi0-0-present,spi0-0-speed=1000000
 
-**SPI0.0, 1.35Mhz clock**
+**SPI0.0, 3.6Mhz clock**
 
-    dtoverlay=mcp3008:spi0-0-present,spi0-0-speed=2160000
+    dtoverlay=mcp3008:spi0-0-present,spi0-0-speed=3600000
 
 **SPI0.1**
 
@@ -170,34 +168,33 @@ To go fast you'll probably want to code something.
 
 Here's a little C program you can use for testing [mcp3008-poll][mcp3008-poll].
 
-With the bus running at 1.35 MHz I get around 20 KHz sample speed for one channel reads with an RPi3.
+With the bus running at 3.6 MHz (MCP3008 powered at 5V) I get around 40 KHz sample speed for one channel reads with an RPi3.
 
-    root@rpi3:~/mcp3008-poll# ./mcp3008-poll -d0 0
+    # mcp3008-poll -d0 0
 
     (use ctrl-c to stop)
 
     ADC                0
-    Read   788001:  1021  ^C
+    Read   750001:   380  ^C
 
     Summary
-      Elapsed: 38.19 seconds
-        Reads: 788507
-         Rate: 20647.63 Hz
-
+      Elapsed: 19.09 seconds
+        Reads: 750875
+         Rate: 39323.67 Hz
 
 The sampling speed scales as you would expect with multiple channels
 
-    root@rpi3:~/mcp3008-poll# ./mcp3008-poll -d0 0 1
+    # mcp3008-poll -d0 0 1
 
     (use ctrl-c to stop)
 
     ADC                0      1
-    Read   294001:  1021   1023  ^C
+    Read   626001:   380    381  ^C
 
     Summary
-      Elapsed: 28.88 seconds
-        Reads: 294549
-         Rate: 10200.08 Hz
+      Elapsed: 31.82 seconds
+        Reads: 626293
+         Rate: 19680.62 Hz
 
 When using the sysfs interface, remember to either open/close the file handle between reads or reset the file location back to zero before each read.
 
