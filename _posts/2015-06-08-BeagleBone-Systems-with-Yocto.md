@@ -2,7 +2,7 @@
 layout: post
 title: Building BeagleBone Black Systems with Yocto
 description: "Building customized systems for the BeagleBone Black using tools from the Yocto Project"
-date: 2017-01-20 09:05:00
+date: 2017-02-01 06:26:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
@@ -17,13 +17,13 @@ I use this layer as a template when starting new BeagleBone projects.
 
 The Yocto version is `2.2.1` the `[morty]` branch.
 
-The `4.4.44` Linux kernel comes from the [linux-stable][linux-stable] repository. (`4.9.5` and `4.8.17` are also available.)
+The `4.4.45` Linux kernel comes from the [linux-stable][linux-stable] repository. (`4.9.6` and `4.8.17` are also available.)
 
 The [u-boot][uboot] version is `2016.07`.
 
 These are **sysvinit** systems using [eudev][eudev].
 
-The Qt version is `5.7.0`. There is no *X11* and no desktop installed. [Qt][qt] GUI applications can be run using the *linuxfb* platform plugin.
+The Qt version is `5.7.1`. There is no *X11* and no desktop installed. [Qt][qt] GUI applications can be run using the *linuxfb* platform plugin.
 
 A light-weight *X11* desktop can be added with minimal changes to the build configuration. (*X11* is needed to run Java GUI apps.)
 
