@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Analyzing SPI driver performance on the Raspberry Pi
-date: 2017-02-15 15:45:00
+date: 2017-02-15 15:48:00
 categories: rpi
 tags: [linux, rpi, spi, mcp3008, adc]
 ---
@@ -216,11 +216,11 @@ Here is the original commit that added that 10 us delay
 
 Definitely not a careful engineering decision on the choice of 10 us.
 
-So I tried removed the delay entirely.
+So I removed the delay entirely.
 
 Because nothing happens immediately, the cs line still toggles for about 0.25 us which is more then the required 1 clock cycle the device requires, but that's much less then the 10 us from before.
 
-This works fine running the MCP3008 at 3.6 MHz. I haven't tested, but running at 1 MHz a small delay might still be necessary. It just needs to be long enough for the MCP3008 to recognize it and it's easy to tell when it doesn't.
+This works fine running the MCP3008 at 3.6 MHz. I haven't tested this, but running at 1 MHz a small delay might still be necessary. It just needs to be long enough for the MCP3008 to recognize the CS transition and it's easy to tell when it doesn't.
 
 Here are the same observations and calculations using the patched spi driver on the [Buildroot system][buildroot-rpi].
 
