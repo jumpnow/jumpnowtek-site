@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Analyzing SPI driver performance on the Raspberry Pi
-date: 2017-02-15 15:40:00
+date: 2017-02-15 15:45:00
 categories: rpi
 tags: [linux, rpi, spi, mcp3008, adc]
 ---
@@ -82,7 +82,7 @@ This the cost for making each spidev ioctl() call.
 
 Here I am accounting for the context switching from userland to kernel, any copying of memory from user to kernel buffs, activation of the driver thread that does the actual work and any processing of the data by the user.
 
-I eliminated the part that's fully under user control by not looking at the data returned.
+I eliminated the part that is fully under user control by never looking at the data.
 
 For example, the transaction buffers are prepared once before the loop starts with setup code like this
 
@@ -101,7 +101,7 @@ For example, the transaction buffers are prepared once before the loop starts wi
     tr[blocks-1].cs_change = 0;
     ...
 
-And the read loop goes like this, never looking at the data  
+And the read loop goes like this  
 
     ...
     while (!abort_read) {
@@ -114,7 +114,7 @@ And the read loop goes like this, never looking at the data
     }
     ...
 
-(I did verify that the data is correct with another using another switch to this program. I just didn't use that during the timing tests.)
+(I did verify that the data is correct using another switch to this program.)
 
 With that code running, the **Context Switching Delay** measured with a scope is around 5 us.
 
