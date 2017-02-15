@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Analyzing SPI driver performance on the Raspberry Pi
-date: 2017-01-30 09:23:00
+date: 2017-02-15 15:16:00
 categories: rpi
 tags: [linux, rpi, spi, mcp3008, adc]
 ---
@@ -146,13 +146,11 @@ There is a delay between CS deselected from the last read to CS selection of the
 
 This the cost for making each spidev ioctl() call.
 
-This time is the cost to do the context switching from userland to kernel and back and any copying of memory that has to be done, the activation of the driver thread that actually does the work and any userland processing of the data.
+Here I am accounting for the context switching from userland to kernel, any copying of memory from user to kernel buffs, activation of the driver thread that does the actual work and any processing of the data by the user.
 
-I eliminated the last part by not processing the data returned.
+I eliminated the part that's fully under user control by not looking at the data returned.
 
-The transaction buffers are prepared once before the loop starts.
-
-Here is the setup code
+For example, the transaction buffers are prepared once before the loop starts with setup code like this
 
     ...
     for (i = 0; i < blocks; i++) {
@@ -169,7 +167,7 @@ Here is the setup code
     tr[blocks-1].cs_change = 0;
     ...
 
-And the read loop which never looks at the data  
+And the read loop goes like this, never looking at the data  
 
     ...
     while (!abort_read) {
@@ -182,7 +180,7 @@ And the read loop which never looks at the data
     }
     ...
 
-There is not a lot to optimize in the userland piece loop.
+(I did verify that the data is correct with another using another switch to this program. I just didn't use that during the timing tests.)
 
 With that code running, the **Context Switching Delay** measured with a scope is around 5 us.
 
@@ -190,7 +188,7 @@ With that code running, the **Context Switching Delay** measured with a scope is
 
 The MCP3008 device requires a CS line transition to initiate a new conversion.
 
-If you bunch multiple transactions into one batch sent to spidev, then you have to set the `cs_change` property to 1 or the CS line won't transition and the ADC won't run for the subsequent reads. You'll just get zeros.
+If you bunch multiple transactions into one batch sent to spidev, then you have to set the `cs_change` property to 1 or the CS line won't transition and the ADC won't run for the subsequent reads. You'll just get zeros for all but the first read.
 
 With the default SPI driver that CS line toggling costs at least 10 us for each toggle, because of this code in the kernel `spi.c`
 
@@ -251,9 +249,44 @@ blocks = 500
 
 From those results I'm pretty confident of my calculations.
 
-The big, obvious optimization is to reduce that `cs_change` delay in the kernel spi driver so we can take advantage of batched transactions. As the patch above showed, I removed the delay entirely.
+The big, obvious optimization is to reduce that `cs_change` delay in the kernel spi driver so we can take advantage of batched transactions. 
+
+Here is the original commit that added that 10 us delay
+
+    commit 0b73aa63c193006c3d503d4903dd4792a26e1d50
+    Author: Mark Brown <broonie@linaro.org>
+    Date:   Sat Mar 29 23:48:07 2014 +0000
+
+        spi: Fix handling of cs_change in core implementation
+    
+        The core implementation of cs_change didn't follow the documentation
+        which says that cs_change in the middle of the transfer means to briefly
+        deassert chip select, instead it followed buggy drivers which change the
+        polarity of chip select.  Use a delay of 10us between deassert and
+        reassert simply from pulling numbers out of a hat.
+
+        Reported-by: Gerhard Sittig <gsi@denx.de>
+        Signed-off-by: Mark Brown <broonie@linaro.org>
+
+    diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+    --- a/drivers/spi/spi.c
+    +++ b/drivers/spi/spi.c
+    @@ -629,3 +628,4 @@
+                            } else {
+    -                               cur_cs = !cur_cs;
+    -                               spi_set_cs(msg->spi, cur_cs);
+    +                               spi_set_cs(msg->spi, false);
+    +                               udelay(10);
+    +                               spi_set_cs(msg->spi, true);
+
+
+Definitely not a careful engineering decision on the choice of 10 us.
+
+So I tried removed the delay entirely.
 
 Because nothing happens immediately, the cs line still toggles for about 0.25 us which is more then the required 1 clock cycle the device requires, but that's much less then the 10 us from before.
+
+This works fine running the MCP3008 at 3.6 MHz. I haven't tested, but running at 1 MHz a small delay might still be necessary. It just needs to be long enough for the MCP3008 to recognize it and it's easy to tell when it doesn't.
 
 Here are the same observations and calculations using the patched spi driver on the [Buildroot system][buildroot-rpi].
 
