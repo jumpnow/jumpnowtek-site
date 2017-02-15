@@ -1,84 +1,18 @@
 ---
 layout: post
 title: Analyzing SPI driver performance on the Raspberry Pi
-date: 2017-02-15 15:16:00
+date: 2017-02-15 15:40:00
 categories: rpi
 tags: [linux, rpi, spi, mcp3008, adc]
 ---
 
-These are notes from some performance tests I was doing with the Raspberry PI and a SPI connected ADC.
+These are notes from some performance tests I was doing with a Raspberry Pi 3 and a SPI connected MCP3008 ADC.
 
-The Raspbian systems are running a 4.4.34 kernel. The systems are up to date with no optimizations selected.
+The MCP3008 is an 8-channel, 10-bit ADC chip.
 
-These are the default clock settings from Raspbian
+The MCP3008 does not do simultaneous reads, so for these tests I am only reading from one channel. Reading from multiple channels scales linearly as expected.
 
-    pi@raspberrypi:~/mcp3008-speedtest $ vcgencmd get_config int
-    arm_freq=1200
-    audio_pwm_mode=1
-    config_hdmi_boost=5
-    core_freq=400
-    desired_osc_freq=0x36ee80
-    disable_commandline_tags=2
-    disable_l2cache=1
-    enable_uart=1
-    force_eeprom_read=1
-    force_pwm_open=1
-    framebuffer_ignore_alpha=1
-    framebuffer_swap=1
-    gpu_freq=300
-    hdmi_force_cec_address=65535
-    init_uart_clock=0x2dc6c00
-    lcd_framerate=60
-    over_voltage_avs=0x1e848
-    overscan_bottom=48
-    overscan_left=48
-    overscan_right=48
-    overscan_top=48
-    pause_burst_frames=1
-    program_serial_random=1
-    sdram_freq=450
-    temp_limit=85
-
-The [Buildroot][buildroot-rpi] systems are running a standard `4.4.45` kernel from the RPi kernel source on github.
-
-These are the clock settings from the [Buildroot][buildroot-rpi] system where I did customize the default config.txt.
-
-Note I had to add the **force_turbo=1**
-
-    # vcgencmd get_config int
-    arm_freq=1200
-    audio_pwm_mode=1
-    config_hdmi_boost=5
-    core_freq=400
-    desired_osc_freq=0x36ee80
-    disable_commandline_tags=2
-    disable_l2cache=1
-    enable_uart=1
-    force_eeprom_read=1
-    force_pwm_open=1
-    force_turbo=1
-    framebuffer_ignore_alpha=1
-    framebuffer_swap=1
-    gpu_freq=300
-    hdmi_force_cec_address=65535
-    init_uart_clock=0x2dc6c00
-    lcd_framerate=60
-    over_voltage_avs=0x1e848
-    over_voltage_avs_boost=0x1e848
-    overscan_bottom=48
-    overscan_left=48
-    overscan_right=48
-    overscan_top=48
-    pause_burst_frames=1
-    program_serial_random=1
-    sdram_freq=450
-    temp_limit=85
-
-The target device for these experiments is an MCP3008 8-channel, 10-bit ADC.
-
-The MCP3008 does not do simultaneous reads, so I am only reading from one channel for the tests.
-
-From the [datasheet][mcp3008-datasheet], the maximum SPI clock rate is 3.6 MHz when running at 5v which is what I'll be doing.
+From the [datasheet][mcp3008-datasheet], the maximum SPI clock rate is 3.6 MHz when running at 5V which is what I'll be doing. If you power the device at 3.3V, you are limited to a clock rate of 1 MHz.
 
 The device requires 18 clocks per data sample 8 clocks for addressing and setup and 10 clocks for the data.
 
@@ -327,6 +261,77 @@ The [Buildroot systems][buildroot-rpi] match the Raspbian system performance on 
 This is all just an exercise at this point.
 
 On the only two projects I've worked on that use the MCP3008 ADC, we poll the device at roughly 10 Hz. Not much optimization is needed and we just use the [built-in kernel driver][using-mcp3008] for the MCP3008. It's a simpler solution.
+
+For reference, here are the clock speeds for both the Raspbian and Buildroot systems as shown by 
+**vcgencmd**
+
+
+The Raspbian systems are running a 4.4.34 kernel. The systems are up to date with no optimizations selected.
+
+These are the default clock settings from Raspbian
+
+    pi@raspberrypi:~/mcp3008-speedtest $ vcgencmd get_config int
+    arm_freq=1200
+    audio_pwm_mode=1
+    config_hdmi_boost=5
+    core_freq=400
+    desired_osc_freq=0x36ee80
+    disable_commandline_tags=2
+    disable_l2cache=1
+    enable_uart=1
+    force_eeprom_read=1
+    force_pwm_open=1
+    framebuffer_ignore_alpha=1
+    framebuffer_swap=1
+    gpu_freq=300
+    hdmi_force_cec_address=65535
+    init_uart_clock=0x2dc6c00
+    lcd_framerate=60
+    over_voltage_avs=0x1e848
+    overscan_bottom=48
+    overscan_left=48
+    overscan_right=48
+    overscan_top=48
+    pause_burst_frames=1
+    program_serial_random=1
+    sdram_freq=450
+    temp_limit=85
+
+The [Buildroot][buildroot-rpi] systems are running a standard `4.4.45` kernel from the RPi kernel source on github.
+
+These are the clock settings from the [Buildroot][buildroot-rpi] system where I did customize the default config.txt.
+
+Note I had to add the **force_turbo=1**
+
+    # vcgencmd get_config int
+    arm_freq=1200
+    audio_pwm_mode=1
+    config_hdmi_boost=5
+    core_freq=400
+    desired_osc_freq=0x36ee80
+    disable_commandline_tags=2
+    disable_l2cache=1
+    enable_uart=1
+    force_eeprom_read=1
+    force_pwm_open=1
+    force_turbo=1
+    framebuffer_ignore_alpha=1
+    framebuffer_swap=1
+    gpu_freq=300
+    hdmi_force_cec_address=65535
+    init_uart_clock=0x2dc6c00
+    lcd_framerate=60
+    over_voltage_avs=0x1e848
+    over_voltage_avs_boost=0x1e848
+    overscan_bottom=48
+    overscan_left=48
+    overscan_right=48
+    overscan_top=48
+    pause_burst_frames=1
+    program_serial_random=1
+    sdram_freq=450
+    temp_limit=85
+
 
 [mcp3008-datasheet]: https://cdn-shop.adafruit.com/datasheets/MCP3008.pdf
 [using-mcp3008]: http://www.jumpnowtek.com/rpi/Using-mcp3008-ADCs-with-Raspberry-Pis.html
