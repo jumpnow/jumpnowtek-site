@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Running Qt5 Apps Over VNC Works Again 
-date: 2017-02-16 15:16:00
+date: 2017-02-16 15:23:00
 categories: rpi
 tags: [rpi, qt5, vnc, buildroot]
 ---
@@ -21,7 +21,7 @@ To use the VNC plugin either run your app with a `-platform vnc` argument or you
 
 I haven't found any official Qt documentation on usage.
 
-I did find this github repo [github.com/pigshell/qtbase][pigshell] and at least the size arguments you can pass to the plugin described in that [README][pigshell-readme] work. I didn't try any others.
+At least the *size* argument to the plugin seems to work the same as Qt4 so I'm using that.
 
 To test I'm using a small Qt Widgets app [tspress][tspress] that I use for troubleshooting touchscreens.
 
@@ -43,5 +43,3 @@ The response is a bit sluggish, but this should still be useful especially durin
 [qpa]: http://doc.qt.io/qt-5/embedded-linux.html
 [tspress]: https://github.com/scottellis/tspress
 [tightvnc]: http://www.tightvnc.com/
-[pigshell]: https://github.com/pigshell/qtbase
-[pigshell-readme]: https://github.com/pigshell/qtbase/blob/vnc-websocket/README.md
