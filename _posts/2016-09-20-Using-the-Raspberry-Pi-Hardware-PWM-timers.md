@@ -1,14 +1,14 @@
 ---
 layout: post
 title: Using the Raspberry Pi hardware PWM timers
-date: 2016-12-27 15:13:00
+date: 2017-02-16 09:16:00
 categories: rpi
 tags: [linux, rpi, yocto, pwm]
 ---
 
 The Raspberry Pis have two hardware timers capable of generating a PWM signal.
 
-The [README][overlays-readme] in the RPi kernel overlays directory shows pins where the PWM timers are accessible
+The [README][overlays-readme] in the RPi kernel overlays directory shows the pins where the PWM timers are accessible
 
     ...
     Name:   pwm
@@ -48,14 +48,14 @@ There are workarounds, such as playing an audio file before using PWM since audi
 
 This [mailing list thread][enabling-the-pwm-clock-at-boot] describes a device tree solution to enabling the **BCM2835\_CLOCK\_PWM** in a dts.
 
-Since it's easy enough to do, I added two additional PWM overlays in the `meta-rpi` repository that implement the solution described in that thread.
+Since it's easy enough to do, I added two additional PWM overlays
 
 * pwm-with-clk.dtbo
 * pwm-2chan-with-clk.dtbo 
 
 You can find the source for them [here][pwm-dts-src].
 
-If you are using Yocto built images from my [meta-rpi][meta-rpi] layer ([instructions here][meta-rpi-instructions]), then the custom pwm overlays are already installed.
+If you are using O/S images built from one of the Jumpnowtek repos ([Yocto instructions][meta-rpi-instructions]) or ([Buildroot instructions][buildroot-instructions]) then the custom pwm overlays are already installed for you.
 
 If you are using [Raspbian][raspbian], then you can build the overlays yourself right on the RPi since a device tree compiler should be installed by default.
 
@@ -168,3 +168,4 @@ The *duty_cycle* should obviously not exceed the *period*.
 [meta-rpi-instructions]: http://www.jumpnowtek.com/rpi/Raspberry-Pi-Systems-with-Yocto.html
 [raspbian]: https://www.raspberrypi.org/downloads/raspbian/
 [pwmpy]: https://github.com/scottellis/pwmpy
+[buildroot-instructions]: http://www.jumpnowtek.com/rpi/Raspberry-Pi-Systems-with-Buildroot.html

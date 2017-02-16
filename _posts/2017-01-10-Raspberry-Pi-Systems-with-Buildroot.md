@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Buildroot
 description: "Building customized systems for the Raspberry Pi using Buildroot"
-date: 2017-01-24 13:20:00
+date: 2017-02-16 09:11:00
 categories: rpi
 tags: [linux, rpi, buildroot, rpi3, qt5, pyqt, pyqt5]
 ---
@@ -16,6 +16,8 @@ In the projects I work on there is typically a single UI application running, ma
 The preference for these systems is to be a small as possible, no software that isn't needed.
 
 I do usually add [Qt5][qt] support since so many of the projects I work on use it. But since I require only one UI application at a time, the Qt [EGLFS][qpa-eglfs] platform plugin is what I want.
+
+There are two versions of Qt5 available, **5.8** and the LTS version **5.6.2**. I'm using **5.8**. 
 
 Buildroot is considerably simpler and light-weight in comparison to Yocto, which should be nice when it comes to assisting clients setting up their internal build systems.
 
@@ -80,7 +82,7 @@ Replace `/dev/sdb` for where the SD card shows up on your workstation.
 
 #### Customizing the Build
 
-The [Buildroot Documentation][buildroot-docs] is pretty good and worth a read.
+The [Buildroot Documentation][buildroot-docs] is good and you should probably be reading that first.
  
 One easy optimization is use [ccache][ccache] to reduce redundant work by the C/C++ preprocessor. 
 
@@ -130,31 +132,31 @@ Here's a short run through.
 The [RPi serial console][rpi-serial] console is configured and I'm running the following commands using that.
 
     Welcome to Buildroot
-    buildroot login: root
+    rpi3 login: root
 
     # uname -a
-    Linux buildroot 4.4.44-v7 #1 SMP Tue Jan 24 07:59:06 EST 2017 armv7l GNU/Linux
+    Linux rpi3 4.4.48-v7 #1 SMP Tue Feb 14 12:02:12 EST 2017 armv7l GNU/Linux
 
     # free
                  total       used       free     shared    buffers     cached
-    Mem:        947732      34676     913056        156       3256       9892
-    -/+ buffers/cache:      21528     926204
+    Mem:        947732      33736     913996        120       3216       9220
+    -/+ buffers/cache:      21300     926432
     Swap:            0          0          0
 
 The SD card is not fully utilized because we used the `sdcard.img` and didn't resize. That's easily fixed with some setup scripts I'll get to later.
 
     # df -h
     Filesystem                Size      Used Available Use% Mounted on
-    /dev/root               204.3M    177.7M     12.3M  94% /
+    /dev/root               223.0M    194.5M     13.3M  94% /
     devtmpfs                458.5M         0    458.5M   0% /dev
     tmpfs                   462.8M         0    462.8M   0% /dev/shm
-    tmpfs                   462.8M     40.0K    462.7M   0% /tmp
-    tmpfs                   462.8M    116.0K    462.6M   0% /run
+    tmpfs                   462.8M     32.0K    462.7M   0% /tmp
+    tmpfs                   462.8M     88.0K    462.7M   0% /run
 
-The system is pretty big at **178M** but that's because of all the Qt5 and Python stuff I threw in.
+The system is pretty big at **195M** but that's because of all the Qt5 and Python stuff I threw in.
 
     # ls -l /var/log
-    lrwxrwxrwx    1 root     root             6 Jan  9 14:24 /var/log -> ../tmp
+    lrwxrwxrwx    1 root     root             6 Jan 13 17:23 /var/log -> ../tmp
 
 Logs are going to a tmpfs which is what you normally want on an embedded system.
 
@@ -216,6 +218,7 @@ My little Qt Widgets touchscreen test application [tspress][tspress] works fine.
 See the `/etc/profile.d/qt5-env.sh` script for setting Qt5 environment variables like **WIDTH** and **HEIGHT**.
 
 I have a USB Bluetooth mouse and a USB keyboard/mouse trackpad attached as well as an HDMI display.
+
 They all work.
 
 You can see from the Qt messages that the *eglfs* plugin is being used.
