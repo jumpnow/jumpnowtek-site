@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Buildroot
 description: "Building customized systems for the Raspberry Pi using Buildroot"
-date: 2017-02-16 09:11:00
+date: 2017-02-23 15:46:00
 categories: rpi
 tags: [linux, rpi, buildroot, rpi3, qt5, pyqt, pyqt5]
 ---
@@ -17,9 +17,11 @@ The preference for these systems is to be a small as possible, no software that 
 
 I do usually add [Qt5][qt] support since so many of the projects I work on use it. But since I require only one UI application at a time, the Qt [EGLFS][qpa-eglfs] platform plugin is what I want.
 
-There are two versions of Qt5 available, **5.8** and the LTS version **5.6.2**. I'm using **5.8**. 
+Buildroot offers two versions of Qt5, **5.8** and the LTS version **5.6.2**. I'm using **5.8**. 
 
 Buildroot is considerably simpler and light-weight in comparison to Yocto, which should be nice when it comes to assisting clients setting up their internal build systems.
+
+I switched the kernel from **4.4** to **4.9** since it looks like that will be the official RPi kernel very soon.
 
 So here are some notes on my what I'm using so far. 
 
@@ -39,7 +41,7 @@ The changes to **[master]** are
 
   1. **serialecho** - a C, Makefile based app
   2. **tspress** - a Qt5 Widgets GUI app using qmake
-  3. **pytouch** - a [PyQt5][pyqt] app, the build/install for this is just a copy
+  3. **pytouch.py** - a [PyQt5][pyqt] app, the build/install for this is just a copy
  
 * Added some custom Buildroot `configs` to support all the RPi boards. The configs add [Qt5][qt] (no QML), [PyQt5][pyqt] and Python3 including Numpy. This generates an image approaching 180MB, which is big, but this is only for evaluation.
 
@@ -47,7 +49,7 @@ The changes to **[master]** are
 
 * Added some [kernel build patches][br-rpi-overlays] so that DTS overlays (DTBOs) are built from the kernel source and not just downloaded from the RPi firmware github repo.
 
-* Added some custom DTS files for [hardware PWM][hardware-pwm].
+* Added some custom DTS files for [hardware PWM][hardware-pwm] and the TI ads1115 ADCs.
 
 
 The two custom `configs` are
@@ -135,23 +137,26 @@ The [RPi serial console][rpi-serial] console is configured and I'm running the f
     rpi3 login: root
 
     # uname -a
-    Linux rpi3 4.4.48-v7 #1 SMP Tue Feb 14 12:02:12 EST 2017 armv7l GNU/Linux
+    Linux rpi3 4.9.11-v7 #1 SMP Thu Feb 23 15:30:11 EST 2017 armv7l GNU/Linux
 
     # free
                  total       used       free     shared    buffers     cached
-    Mem:        947732      33736     913996        120       3216       9220
-    -/+ buffers/cache:      21300     926432
+    Mem:        945520      36016     909504        168       3664      11048
+    -/+ buffers/cache:      21304     924216
     Swap:            0          0          0
+
 
 The SD card is not fully utilized because we used the `sdcard.img` and didn't resize. That's easily fixed with some setup scripts I'll get to later.
 
     # df -h
     Filesystem                Size      Used Available Use% Mounted on
-    /dev/root               223.0M    194.5M     13.3M  94% /
-    devtmpfs                458.5M         0    458.5M   0% /dev
-    tmpfs                   462.8M         0    462.8M   0% /dev/shm
-    tmpfs                   462.8M     32.0K    462.7M   0% /tmp
-    tmpfs                   462.8M     88.0K    462.7M   0% /run
+    /dev/root               227.2M    198.4M     13.3M  94% /
+    devtmpfs                457.2M         0    457.2M   0% /dev
+    tmpfs                   461.7M         0    461.7M   0% /dev/shm
+    tmpfs                   461.7M     32.0K    461.6M   0% /tmp
+    tmpfs                   461.7M    136.0K    461.5M   0% /run
+    /dev/mmcblk0p1           31.9M      8.5M     23.4M  27% /mnt
+
 
 The system is pretty big at **195M** but that's because of all the Qt5 and Python stuff I threw in.
 
@@ -200,7 +205,8 @@ The ssh server is listening and I can use it.
 I also added an **ntp** package and set the timezone to **EST5EDT** in the defconfig and that is working.
 
     # date
-    Tue Jan 10 15:50:24 EST 2017
+    Thu Feb 23 15:43:01 EST 2017
+
 
 My little Qt Widgets touchscreen test application [tspress][tspress] works fine.
 
@@ -226,25 +232,19 @@ You can see from the Qt messages that the *eglfs* plugin is being used.
 I did include the *linuxfb* plugin in the build just for testing.
 
     # ls -l /usr/lib/qt/plugins/platforms/
-    total 656
-    -rwxr-xr-x    1 root     root          7544 Jan 10 09:26 libqeglfs.so
-    -rwxr-xr-x    1 root     root        283680 Jan 10 09:26 libqlinuxfb.so
-    -rwxr-xr-x    1 root     root        119840 Jan 10 09:26 libqminimal.so
-    -rwxr-xr-x    1 root     root        147044 Jan 10 09:26 libqminimalegl.so
-    -rwxr-xr-x    1 root     root        106472 Jan 10 09:26 libqoffscreen.so
+    total 887
+    -rwxr-xr-x    1 root     root          7332 Feb 23 15:31 libqeglfs.so
+    -rwxr-xr-x    1 root     root        294196 Feb 23 15:31 libqlinuxfb.so
+    -rwxr-xr-x    1 root     root        119980 Feb 23 15:31 libqminimal.so
+    -rwxr-xr-x    1 root     root        150524 Feb 23 15:31 libqminimalegl.so
+    -rwxr-xr-x    1 root     root        135836 Feb 23 15:31 libqoffscreen.so
+    -rwxr-xr-x    1 root     root        191876 Feb 23 15:31 libqvnc.so
   
 
-There is currently a linker issue with running PyQt5 applications. The work-around I've been using is to invoke the applications with an **LD_PRELOAD** statement like this
+PyQt5 applications work fine. There is small example installed called `pytouch.py`.
 
-    # LD_PRELOAD=libGLESv2.so pytouch.py
+    # pytouch.py
 
-This is still on the **TODO** to look into.
-
-So far I'm pretty happy with the systems that Buildroot is generating.  
-
-The one feature that might be missed is having a toolchain on the target device to do native compiles. This is really only a development convenience, production builds usually strip any tools like this.
-
-Next up is some testing of the SDK toolchain that Buildroot generates.
 
 
 [buildroot]: https://buildroot.org/
