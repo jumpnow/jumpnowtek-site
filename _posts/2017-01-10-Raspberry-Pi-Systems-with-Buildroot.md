@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Buildroot
 description: "Building customized systems for the Raspberry Pi using Buildroot"
-date: 2017-02-23 15:46:00
+date: 2017-02-23 17:00:00
 categories: rpi
 tags: [linux, rpi, buildroot, rpi3, qt5, pyqt, pyqt5]
 ---
@@ -243,8 +243,88 @@ I did include the *linuxfb* plugin in the build just for testing.
 
 PyQt5 applications work fine. There is small example installed called `pytouch.py`.
 
+You can run it like this
+
     # pytouch.py
 
+
+#### Using the Buildroot cross-toolchain
+
+Some quick notes on using the cross-toolchain.
+
+The toolchain gets installed under the build output/host directory.
+
+In my example where I used an external build directory
+
+    ~/buildroot$ make O=/br5/rpi3 jumpnow_rpi3_defconfig
+
+My build output ended up here
+
+    /br5/rpi3/host
+
+The cross-compiler and associated tools can be found under
+
+    /br5/rpi3/host/usr/bin
+
+The toolchain is not relocatable, use it in place.
+
+To use it in place, add the path to `<output>/host/usr/bin` to your path and invoke the compiler by name, in this case *arm-linux-gcc*, *arm-linux-g++*, etc...
+
+Some quick examples, first add the PATH to the cross-compiler
+
+    $ export PATH=/br5/rpi3/host/usr/bin:${PATH}
+    $ echo $PATH
+    /br5/rpi3/host/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+A simple C, Makefile example
+
+    scott@fractal:~/projects$ git clone https://github.com/scottellis/serialecho
+    Cloning into 'serialecho'...
+
+    scott@fractal:~/projects$ cd serialecho/
+
+    scott@fractal:~/projects/serialecho$ cat Makefile
+    TARGET = serialecho
+
+    $(TARGET) : serialecho.c
+            $(CC) serialecho.c -o $(TARGET)
+
+    clean:
+            rm -f $(TARGET)
+
+    scott@fractal:~/projects/serialecho$ export CC=arm-linux-gcc
+
+    scott@fractal:~/projects/serialecho$ make
+    arm-linux-gcc serialecho.c -o serialecho
+
+    scott@fractal:~/projects/serialecho$ file serialecho
+    serialecho: ELF 32-bit LSB executable, ARM, EABI5 version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux-armhf.so.3, for GNU/Linux 4.9.0, not stripped
+
+A Qt5 project, first check our Qt version
+
+    scott@fractal:~/projects$ which qmake
+    /br5/rpi3/host/usr/bin/qmake
+
+    scott@fractal:~/projects$ qmake --version
+    QMake version 3.1
+    Using Qt version 5.8.0 in /br5/rpi3/host/usr/arm-buildroot-linux-gnueabihf/sysroot/usr/lib
+
+
+Fetch and build a project
+
+    scott@fractal:~/projects$ git clone https://github.com/scottellis/tspress
+    Cloning into 'tspress'...
+
+    scott@fractal:~/projects$ cd tspress
+
+    scott@fractal:~/projects/tspress$ qmake
+    Info: creating stash file /home/scott/projects/tspress/.qmake.stash
+
+    scott@fractal:~/projects/tspress$ make
+    ... (build stuff) ...
+
+    scott@fractal:~/projects/tspress$ file tspress
+    tspress: ELF 32-bit LSB executable, ARM, EABI5 version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux-armhf.so.3, for GNU/Linux 4.9.0, not stripped
 
 
 [buildroot]: https://buildroot.org/
