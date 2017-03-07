@@ -2,14 +2,14 @@
 layout: post
 title: Building Beaglebone Systems with Buildroot
 description: "Building customized systems for the BeagleBone Black using Buildroot"
-date: 2017-03-07 11:06:00
+date: 2017-03-07 14:35:00
 categories: beaglebone
 tags: [linux, beaglebone, bbb, buildroot, qt5, pyqt, pyqt5, pru]
 ---
 
 A short post covering the use of [Buildroot][buildroot] to build a [BeagleBone Black][bbb] system for working with the [BBB PRUs][bbb-pru].
 
-I'll expand on this post later since the Buildroot systems have some other nice features such as Qt 5.8 and working PyQt. But for now, these notes are just to support building images for the PRU experiments that I'm covering in this post.
+I'll expand on this post later since the Buildroot systems have some other nice features such as Qt 5.8 and working PyQt. But for now, these notes are just to support building images for the PRU experiments that I'm covering in [this post][bbb-pru-uio-doc].
 
 Make sure you have **ccache** installed on your workstation. Your distro should have a package for this. Either that or run `make menuconfig` before running `make` and disable ccache use.
   
@@ -27,6 +27,8 @@ Another suggestion is to build outside the buildroot tree by passing an argument
     scott@fractal:/br5/bbb$ make
 
 The default download directory for Buildroot sources will be `$(HOME)/dl`. You can change this with `make menuconfig`.
+
+And finally, you will probably need your distros 32-bit compatibility libs for the TI PRU compiler package. I did using an Ubuntu 16.04 64-bit server for a build system.
 
 The **jumpnow\_bbb\_pru\_defconfig** uses a ti-linux 4.4.52 kernel with patches and a kernel config that supports using the uio-pruss kernel driver.
 
@@ -90,3 +92,4 @@ This is the basic workflow I used to generate the current kernel patches.
 [bbb]: https://beagleboard.org/
 [bbb-pru]: http://elinux.org/Ti_AM33XX_PRUSSv2
 [pruss-uio]: http://arago-project.org/git/projects/?p=linux-am33x.git;a=commit;h=f1a304e7941cc76353363a139cbb6a4b1ca7c737
+[bbb-pru-uio-doc]: http://www.jumpnowtek.com/beaglebone/Working-with-the-BeagleBone-PRUs.html
