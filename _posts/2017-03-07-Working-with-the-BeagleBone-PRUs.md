@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Working with the Beaglebone Black PRU using UIO
-date: 2017-03-07 14:30:00
+date: 2017-03-07 16:28:00
 categories: beaglebone
 tags: [linux, beaglebone, bbb, pru, pruss-uio, buildroot]
 ---
@@ -136,6 +136,8 @@ I'm using a basic PRU **loader** application (source taken from numerous example
         return 0;
     }
 
+The application requires the **libprussdrv** library which comes from the [github.com/beagleboard/am335x-pru-package][am335x-pru-package]. This package is included in my Buildroot image.
+
 Using the Buildroot cross-compiler
 
     ~/pru-code/loader$ export PATH=/br5/bbb/host/user/bin:${PATH}
@@ -266,6 +268,187 @@ time the run
     user    0m 0.00s
     sys     0m 0.00s
 
+So that's the basic development system.
+
+The other essential piece to any useful PRU application is setting up some pins for the PRUs to use.
+
+Customizations to the device tree can handle this.
+
+I have a [PRU Cape][ti-pru-cape] board which has some convenient components for testing the PRU hardware.
+
+In particular, I'm going to work with the 4 LEDs accessible to PRU0 GPIOs 0-3.
+
+These pins are accessible on the P9 header
+
+* P9.31 : pr1_pru0_pru_r30_0
+* P9.29 : pr1_pru0_pru_r30_1
+* P9.30 : pr1_pru0_pru_r30_2
+* P9.31 : pr1_pr10_pru_r30_3 
+
+I'm going to create a new dts file to use these pins based on the `bbb-pru-minimal.dts`.
+
+The changes are the **&am33xx_pinmux** and **&pruss** sections for the pinmux and to tell the pruss driver about the pins.
+
+    /dts-v1/;
+
+    #include "am33xx.dtsi"
+    #include "am335x-bone-common.dtsi"
+    #include "am33xx-pruss-uio.dtsi"
+
+    / {
+            compatible = "ti,am335x-bone-green", "ti,am335x-bone-black", "ti,am335x-bone", "ti,am33xx";
+    };
+
+    &ldo3_reg {
+            regulator-min-microvolt = <1800000>;
+            regulator-max-microvolt = <1800000>;
+            regulator-always-on;
+    };
+
+    &mmc1 {
+            vmmc-supply = <&vmmcsd_fixed>;
+    };
+
+    &rtc {
+            system-power-controller;
+    };
+
+    &am33xx_pinmux {
+            pruss_leds: pruss_leds {
+                    pinctrl-single,pins = <
+                            0x190 (PIN_OUTPUT_PULLDOWN | MUX_MODE5) /* P9.31 pr1_pru0_pru_r30_0 */
+                            0x194 (PIN_OUTPUT_PULLDOWN | MUX_MODE5) /* P9.29 pr1_pru0_pru_r30_1 */
+                            0x198 (PIN_OUTPUT_PULLDOWN | MUX_MODE5) /* P9.30 pr1_pru0_pru_r30_2 */
+                            0x19c (PIN_OUTPUT_PULLDOWN | MUX_MODE5) /* P9.28 pr1_pru0_pru_r30_3 */
+                    >;
+            };
+    };
+
+    &pruss {
+            pinctrl-names = "default";
+            pinctrl-0 = <&pruss_leds>;
+    };
+
+Copy the dts to the kernel source directory, build it and then copy the dtb to the BBB.
+
+    ~/pru-code/cylon$ cp bbb-pru-cylon.dts ~/ti-linux-kernel/arch/arm/boot/dts
+
+    ~/pru-code/cycon$ cd ~/ti-linux-kernel
+
+    ~/ti-linux-kernel$ make ARCH=arm CROSS_COMPILE=arm-linux- bbb-pru-cylon.dtb
+    DTC     arch/arm/boot/dts/bbb-pru-cylon.dtb
+
+    ~/ti-linux-kernel$ scp arch/arm/boot/dts/bbb-pru-cylon.dtb root@192.168.10.115:/boot
+    bbb-pru-cylon.dtb                
+
+Over on the BBB, modify `uEnv.txt` to use the new dtb.
+
+    # ls /boot
+    am335x-boneblack.dtb  bbb-pru-cylon.dtb     zImage
+    am335x-bonegreen.dtb  bbb-pru-minimal.dtb
+
+    # vi /mnt/uEnv.txt
+    ...
+    fdtfile=bbb-pru-cylon.dtb
+    ...
+
+And reboot.
+
+And here is the PRU code to run the LEDs
+
+    ; Blink some of the PRU cape LEDs in a cylon fashion
+
+    .setcallreg r29.w0
+    .origin 0
+    .entrypoint START
+
+    ; 25 * 10ns (2 instr) = 250 ms
+    #define LED_DELAY 25000000
+
+    #define CYLON_LOOPS 10
+
+    START:
+      MOV r1, CYLON_LOOPS ; total repeats
+
+    CYLON:
+      SET r30.t0  ; set GPIO output 0
+      CALL LED_PAUSE
+      CLR r30.t0
+      SET r30.t1
+      CALL LED_PAUSE
+      CLR r30.t1
+      SET r30.t2
+      CALL LED_PAUSE
+      CLR r30.t2
+      SET r30.t3
+      CALL LED_PAUSE
+      CLR r30.t3
+      SET r30.t2
+      CALL LED_PAUSE
+      CLR r30.t2
+      SET r30.t1
+      CALL LED_PAUSE
+      CLR r30.t1
+
+      SUB r1, r1, 1
+      QBNE CYLON, r1, 0 ; loop until r1 = 0
+
+      MOV r31.b0, 32 + 3 ; notify caller we are done
+
+      HALT
+
+    ; function to pause for LED_DELAY cycles
+    LED_PAUSE:
+      MOV r0, LED_DELAY
+    DELAY:
+      SUB r0, r0, 1
+      QBNE DELAY, r0, 0
+      RET
+
+The `Makefile` to build `cylon.p`, not that it's really necessary.
+
+    TARGET = cylon.bin
+
+    $(TARGET) : cylon.p
+            pasm -b cylon.p
+
+    clean:
+            rm -f cylon.bin
+
+
+Build and copy it to the BBB
+
+    ~/pru-code/cylon$ make
+    pasm -b cylon.p
+
+
+    PRU Assembler Version 0.86
+    Copyright (C) 2005-2013 by Texas Instruments Inc.
+
+
+    Pass 2 : 0 Error(s), 0 Warning(s)
+
+    Writing Code Image of 28 word(s)
+
+    ~/pru-code/cylon$ scp cylon.bin root@192.168.10.115:/root
+    cylon.bin                                             
+
+
+Over on the BBB
+
+    # ls -l
+    total 10
+    -rw-------    1 root     root           112 Dec 31 19:08 cylon.bin
+    -rwx------    1 root     root          7988 Dec 31  1999 loader
+    -rw-------    1 root     root            44 Dec 31  1999 loop.bin
+
+The same `loader` application can be used to run the cylon app.
+
+    # ./loader cylon.bin
+    Executing program and waiting for termination
+    Done
+
+And the D1-D4 LEDs on the PRU Cape board exhibit a little cylon scrolling behavior.
 
 
 [bbb-buildroot]: http://www.jumpnowtek.com/beaglebone/BeagleBone-Systems-with-Buildroot.html
@@ -274,3 +457,5 @@ time the run
 [uio-pruss]: http://arago-project.org/git/projects/?p=linux-am33x.git;a=commit;h=f1a304e7941cc76353363a139cbb6a4b1ca7c737
 [RPMsg]: http://omappedia.org/wiki/Category:RPMsg
 [pru-code-generation-tools]: http://software-dl.ti.com/codegen/non-esd/downloads/download.htm#PRU
+[am335x-pru-package]: https://github.com/beagleboard/am335x_pru_package
+[ti-pru-cape]: http://processors.wiki.ti.com/index.php/PRU_Cape_Getting_Started_Guide
