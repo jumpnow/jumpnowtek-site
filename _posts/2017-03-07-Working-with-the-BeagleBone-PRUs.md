@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Working with the Beaglebone Black PRU using UIO
-date: 2017-03-07 16:28:00
+date: 2017-03-08 15:28:00
 categories: beaglebone
 tags: [linux, beaglebone, bbb, pru, pruss-uio, buildroot]
 ---
@@ -17,7 +17,7 @@ This post will be about using the UIO interface.
 
 The system and in particular the kernel I'm working with come from a Buildroot system I built using [these instructions][bbb-buildroot].
 
-You could do the same with a [Yocto system][bbb-yocto], it's just that Buildroot systems are a bit easier to get started with and to explain.
+You could do the same with a [Yocto system][bbb-yocto], it's just that Buildroot systems are a bit easier to get started with.
 
 The kernel has a patch and config that enables the **uio\_pruss** driver.
 
@@ -191,6 +191,8 @@ Here's a simple PRU application that just loops for 20 times, with a 500 ms dela
     .origin 0
     .entrypoint START
 
+    #define PRU0_ARM_INTERRUPT 19
+
     #define DELAY_COUNT 50000000
     #define LOOP_ITERATIONS 20
 
@@ -202,7 +204,7 @@ Here's a simple PRU application that just loops for 20 times, with a 500 ms dela
       SUB r1, r1, 1
       QBNE MAIN_LOOP, r1, 0
 
-      MOV r31.b0, 32 + 3
+      MOV r31.b0, PRU0_ARM_INTERRUPT + 16 ; notify ARM we are done 
 
       HALT
 
@@ -362,6 +364,8 @@ And here is the PRU code to run the LEDs
     .origin 0
     .entrypoint START
 
+    #define PRU0_ARM_INTERRUPT 19
+
     ; 25 * 10ns (2 instr) = 250 ms
     #define LED_DELAY 25000000
 
@@ -393,7 +397,7 @@ And here is the PRU code to run the LEDs
       SUB r1, r1, 1
       QBNE CYLON, r1, 0 ; loop until r1 = 0
 
-      MOV r31.b0, 32 + 3 ; notify caller we are done
+      MOV r31.b0, PRU0_ARM_INTERRUPT + 16 ; notify ARM we are done
 
       HALT
 
@@ -405,7 +409,7 @@ And here is the PRU code to run the LEDs
       QBNE DELAY, r0, 0
       RET
 
-The `Makefile` to build `cylon.p`, not that it's really necessary.
+The `Makefile` to build `cylon.p`
 
     TARGET = cylon.bin
 
