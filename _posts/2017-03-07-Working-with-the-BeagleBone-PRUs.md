@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Working with the Beaglebone Black PRU using UIO
-date: 2017-03-08 15:28:00
+date: 2017-03-09 09:28:00
 categories: beaglebone
 tags: [linux, beaglebone, bbb, pru, pruss-uio, buildroot]
 ---
@@ -166,24 +166,9 @@ Build and copy the `loader` to the BBB (substitute your BBB's IP)
     ~/pru-code/loader$ scp loader root@192.168.10.115:/root
     loader                                       100% 7988
 
+The **am335x-pru-package** also provides the `pasm` compiler for the PRUs. The `pasm` compiler is meant to be run from the host system, not the BBB.
 
-Buildroot provides a package for the Texas Instruments CGT PRU compiler.
-  
-    config BR2_PACKAGE_HOST_TI_CGT_PRU
-            bool "host ti-cgt-pru"
-            depends on BR2_PACKAGE_HOST_TI_CGT_PRU_ARCH_SUPPORTS
-            help
-              This package provides the Code Generation Tools for the PRU
-              unit found on some TI processors e.g. AM3358.
-
-              Note: this is a binary cross toolchain that runs on x86 hosts
-              targeting PRU cores found alongside some ARM processors.
-
-I have it included in the image.
-
-This provides the `pasm` compiler for the PRUs. The `pasm` compiler is meant to be run from the host system, not the BBB.
-
-Here's a simple PRU application that just loops for 20 times, with a 500 ms delay in each loop.
+Here's a simple PRU application written in assembler that loops for 20 times, with a 500 ms delay in each loop.
 
     ; Run a simple delay loop on the PRU
 
@@ -453,6 +438,23 @@ The same `loader` application can be used to run the cylon app.
     Done
 
 And the D1-D4 LEDs on the PRU Cape board exhibit a little cylon scrolling behavior.
+
+
+Buildroot provides a package for the Texas Instruments CGT PRU compiler.
+  
+    config BR2_PACKAGE_HOST_TI_CGT_PRU
+            bool "host ti-cgt-pru"
+            depends on BR2_PACKAGE_HOST_TI_CGT_PRU_ARCH_SUPPORTS
+            help
+              This package provides the Code Generation Tools for the PRU
+              unit found on some TI processors e.g. AM3358.
+
+              Note: this is a binary cross toolchain that runs on x86 hosts
+              targeting PRU cores found alongside some ARM processors.
+
+This provides the **clpru** C compiler for the PRUs. I have it included in the builds but have not tried it yet. Update your **PATH** to use it.
+
+    export PATH=/br5/bbb/host/usr/share/ti-cgt-pru/bin:${PATH}
 
 
 [bbb-buildroot]: http://www.jumpnowtek.com/beaglebone/BeagleBone-Systems-with-Buildroot.html
