@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Working with the Beaglebone Black PRU using UIO
-date: 2017-03-10 11:03:00
+date: 2017-03-10 11:11:00
 categories: beaglebone
 tags: [linux, beaglebone, bbb, pru, pruss-uio, buildroot]
 ---
@@ -138,7 +138,7 @@ I'm using a basic PRU **loader** application (source taken from numerous example
         return 0;
     }
 
-The application requires the **libprussdrv** library which comes from the [github.com/beagleboard/am335x-pru-package][am335x-pru-package]. This package is included in my Buildroot image.
+The application requires the **libprussdrv** library which comes from the [am335x-pru-package][am335x-pru-package]. This package is included in my Buildroot image.
 
 Using the Buildroot cross-compiler
 
@@ -256,15 +256,11 @@ time the run
 
 So that's the basic development environment I'm using.
 
-
-
-Next up is controlling some gpio pins, both writing and reading.
-
-Customizations to the device tree can handle this.
+The next thing to try is controlling some gpio pins, both writing and reading.
 
 I have a [PRU Cape][ti-pru-cape] board which has some convenient components for testing the PRU hardware.
 
-In particular, 
+In particular for gpio testing it has 
 
 * 4 LEDs accessible as PRU0 output pins GPO 0,1,2,3
 * 3 LEDS accessible as PRU1 output pins GPO 1,3,5
@@ -290,6 +286,8 @@ The switches
 * P9.25 : pr1\_pru0\_pru\_r31\_7
 * P9.27 : pr1\_pru0\_pru\_r31\_5
 
+
+The first step is to modify the device tree to get the pin muxing setup.
 
 I'm going to create a new dts file to use these pins based on the `bbb-pru-minimal.dts` calling it `bbb-pru-cape-gpio.dts`.
 
@@ -465,7 +463,7 @@ The same `loader` application can be used to run the cylon app.
 And the D1-D4 LEDs on the PRU Cape board exhibit a little cylon scrolling behavior.
 
 
-Buildroot provides a package for the Texas Instruments CGT PRU compiler.
+Buildroot also provides a package for the Texas Instruments CGT PRU compiler.
   
     config BR2_PACKAGE_HOST_TI_CGT_PRU
             bool "host ti-cgt-pru"
@@ -477,7 +475,9 @@ Buildroot provides a package for the Texas Instruments CGT PRU compiler.
               Note: this is a binary cross toolchain that runs on x86 hosts
               targeting PRU cores found alongside some ARM processors.
 
-This provides the **clpru** C compiler for the PRUs. I have it included in the builds but have not tried it yet. Update your **PATH** to use it.
+This provides the **clpru** C compiler for the PRUs. 
+
+Update your **PATH** if you want to try it out.
 
     export PATH=/br5/bbb/host/usr/share/ti-cgt-pru/bin:${PATH}
 
