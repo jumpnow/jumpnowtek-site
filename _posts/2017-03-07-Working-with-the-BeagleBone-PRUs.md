@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Working with the Beaglebone Black PRU using UIO
-date: 2017-03-09 09:28:00
+date: 2017-03-10 11:03:00
 categories: beaglebone
 tags: [linux, beaglebone, bbb, pru, pruss-uio, buildroot]
 ---
@@ -13,7 +13,7 @@ There are currently two approaches to working with the PRUs
 * [UIO][uio-pruss]
 * [remoteproc][RPMsg]
 
-This post will be about using the UIO interface.
+This first post will be about using the UIO interface.
 
 The system and in particular the kernel I'm working with come from a Buildroot system I built using [these instructions][bbb-buildroot].
 
@@ -87,6 +87,8 @@ And these new devices
 
 
 The next step is to write a program for the PRU cpu and start it from the ARM cpu running Linux.
+
+The code for the following examples is here [pru-code][pru-code].
 
 When using the PRU UIO interface we need a user program to load and start the PRU application and we need a PRU executable binary.
 
@@ -174,33 +176,30 @@ Here's a simple PRU application written in assembler that loops for 20 times, wi
 
     .setcallreg r29.w0
     .origin 0
-    .entrypoint START
+    .entrypoint start
 
     #define PRU0_ARM_INTERRUPT 19
 
     #define DELAY_COUNT 50000000
     #define LOOP_ITERATIONS 20
 
-    START:
-      MOV r1, LOOP_ITERATIONS
+    start:
+      mov r1, LOOP_ITERATIONS
 
-    MAIN_LOOP:
-      CALL DELAY
-      SUB r1, r1, 1
-      QBNE MAIN_LOOP, r1, 0
+    main:
+      call delay
+      sub r1, r1, 1
+      qbne main, r1, 0
+      mov r31.b0, PRU0_ARM_INTERRUPT + 16 ; notify ARM we are done 
+      halt
 
-      MOV r31.b0, PRU0_ARM_INTERRUPT + 16 ; notify ARM we are done 
+    delay:
+      mov r0, DELAY_COUNT
 
-      HALT
-
-
-    DELAY:
-      MOV r0, DELAY_COUNT
-
-    DELAY_LOOP:
-      SUB r0, r0, 1
-      QBNE DELAY_LOOP, r0, 0
-      RET
+    delay_loop:
+      sub r0, r0, 1
+      qbne DELAY_LOOP, r0, 0
+      ret
 
 Using the same Buildroot environment, the assembly file can be compiled with this `Makefile`
 
@@ -255,24 +254,44 @@ time the run
     user    0m 0.00s
     sys     0m 0.00s
 
-So that's the basic development system.
+So that's the basic development environment I'm using.
 
-The other essential piece to any useful PRU application is setting up some pins for the PRUs to use.
+
+
+Next up is controlling some gpio pins, both writing and reading.
 
 Customizations to the device tree can handle this.
 
 I have a [PRU Cape][ti-pru-cape] board which has some convenient components for testing the PRU hardware.
 
-In particular, I'm going to work with the 4 LEDs accessible to PRU0 GPIOs 0-3.
+In particular, 
 
-These pins are accessible on the P9 header
+* 4 LEDs accessible as PRU0 output pins GPO 0,1,2,3
+* 3 LEDS accessible as PRU1 output pins GPO 1,3,5
+* 2 switches accessible as PRU0 input pins GPI 5 and 7
 
-* P9.31 : pr1_pru0_pru_r30_0
-* P9.29 : pr1_pru0_pru_r30_1
-* P9.30 : pr1_pru0_pru_r30_2
-* P9.31 : pr1_pr10_pru_r30_3 
+The pins are connected to the BBB header as
 
-I'm going to create a new dts file to use these pins based on the `bbb-pru-minimal.dts`.
+The PRU0 LEDs
+
+* P9.28 : pr1\_pru0\_pru\_r30\_3 
+* P9.29 : pr1\_pru0\_pru\_r30\_1
+* P9.30 : pr1\_pru0\_pru\_r30\_2
+* P9.31 : pr1\_pru0\_pru\_r30\_0
+
+The PRU1 LEDs
+
+* P8.42 : pr1\_pru1\_pru\_r30\_5
+* P8.44 : pr1\_pru1\_pru\_r30\_3
+* P8.46 : pr1\_pru1\_pru\_r30\_1
+
+The switches
+
+* P9.25 : pr1\_pru0\_pru\_r31\_7
+* P9.27 : pr1\_pru0\_pru\_r31\_5
+
+
+I'm going to create a new dts file to use these pins based on the `bbb-pru-minimal.dts` calling it `bbb-pru-cape-gpio.dts`.
 
 The changes are the **&am33xx_pinmux** and **&pruss** sections for the pinmux and to tell the pruss driver about the pins.
 
@@ -301,42 +320,47 @@ The changes are the **&am33xx_pinmux** and **&pruss** sections for the pinmux an
     };
 
     &am33xx_pinmux {
-            pruss_leds: pruss_leds {
+            pru_cape_pins: pru_cape_pins {
                     pinctrl-single,pins = <
                             0x190 (PIN_OUTPUT_PULLDOWN | MUX_MODE5) /* P9.31 pr1_pru0_pru_r30_0 */
                             0x194 (PIN_OUTPUT_PULLDOWN | MUX_MODE5) /* P9.29 pr1_pru0_pru_r30_1 */
                             0x198 (PIN_OUTPUT_PULLDOWN | MUX_MODE5) /* P9.30 pr1_pru0_pru_r30_2 */
                             0x19c (PIN_OUTPUT_PULLDOWN | MUX_MODE5) /* P9.28 pr1_pru0_pru_r30_3 */
+                            0x0a4 (PIN_OUTPUT_PULLDOWN | MUX_MODE5) /* P8.46 pr1_pru1_pru_r30_1 */
+                            0x0ac (PIN_OUTPUT_PULLDOWN | MUX_MODE5) /* P8.44 pr1_pru1_pru_r30_3 */
+                            0x0b4 (PIN_OUTPUT_PULLDOWN | MUX_MODE5) /* P8.42 pr1_pru1_pru_r30_5 */
+                            0x1a4 (PIN_INPUT | MUX_MODE6)           /* P9.27 pr1_pru0_pru_r31_5 */
+                            0x1ac (PIN_INPUT | MUX_MODE6)           /* P9.25 pr1_pru0_pru_r31_7 */
                     >;
             };
     };
 
     &pruss {
             pinctrl-names = "default";
-            pinctrl-0 = <&pruss_leds>;
+            pinctrl-0 = <&pru_cape_pins>;
     };
 
 Copy the dts to the kernel source directory, build it and then copy the dtb to the BBB.
 
-    ~/pru-code/cylon$ cp bbb-pru-cylon.dts ~/ti-linux-kernel/arch/arm/boot/dts
+    ~/pru-code/$ cp dts/bbb-pru-cape-gpio.dts ~/ti-linux-kernel/arch/arm/boot/dts
 
-    ~/pru-code/cycon$ cd ~/ti-linux-kernel
+    ~/pru-code/$ cd ~/ti-linux-kernel
 
-    ~/ti-linux-kernel$ make ARCH=arm CROSS_COMPILE=arm-linux- bbb-pru-cylon.dtb
-    DTC     arch/arm/boot/dts/bbb-pru-cylon.dtb
+    ~/ti-linux-kernel$ make ARCH=arm CROSS_COMPILE=arm-linux- bbb-pru-cape-gpio.dtb
+    DTC     arch/arm/boot/dts/bbb-pru-cape-gpio.dtb
 
-    ~/ti-linux-kernel$ scp arch/arm/boot/dts/bbb-pru-cylon.dtb root@192.168.10.115:/boot
-    bbb-pru-cylon.dtb                
+    ~/ti-linux-kernel$ scp arch/arm/boot/dts/bbb-pru-cape-gpio.dtb root@192.168.10.115:/boot
+    bbb-pru-cape-gpio.dtb                
 
 Over on the BBB, modify `uEnv.txt` to use the new dtb.
 
     # ls /boot
-    am335x-boneblack.dtb  bbb-pru-cylon.dtb     zImage
+    am335x-boneblack.dtb  bbb-pru-cape-gpio.dtb     zImage
     am335x-bonegreen.dtb  bbb-pru-minimal.dtb
 
     # vi /mnt/uEnv.txt
     ...
-    fdtfile=bbb-pru-cylon.dtb
+    fdtfile=bbb-pru-cape-gpio.dtb
     ...
 
 And reboot.
@@ -347,7 +371,7 @@ And here is the PRU code to run the LEDs
 
     .setcallreg r29.w0
     .origin 0
-    .entrypoint START
+    .entrypoint start
 
     #define PRU0_ARM_INTERRUPT 19
 
@@ -356,43 +380,44 @@ And here is the PRU code to run the LEDs
 
     #define CYLON_LOOPS 10
 
-    START:
-      MOV r1, CYLON_LOOPS ; total repeats
+    start:
+      mov r1, CYLON_LOOPS ; total repeats
 
-    CYLON:
-      SET r30.t0  ; set GPIO output 0
-      CALL LED_PAUSE
-      CLR r30.t0
-      SET r30.t1
-      CALL LED_PAUSE
-      CLR r30.t1
-      SET r30.t2
-      CALL LED_PAUSE
-      CLR r30.t2
-      SET r30.t3
-      CALL LED_PAUSE
-      CLR r30.t3
-      SET r30.t2
-      CALL LED_PAUSE
-      CLR r30.t2
-      SET r30.t1
-      CALL LED_PAUSE
-      CLR r30.t1
+    main:
+      set r30.t0  ; set GPIO output 0
+      call led_pause
+      clr r30.t0
+      set r30.t1
+      call led_pause
+      clr r30.t1
+      set r30.t2
+      call led_pause
+      clr r30.t2
+      set r30.t3
+      call led_pause
+      clr r30.t3
+      set r30.t2
+      call led_pause
+      clr r30.t2
+      set r30.t1
+      call led_pause
+      clr r30.t1
 
-      SUB r1, r1, 1
-      QBNE CYLON, r1, 0 ; loop until r1 = 0
+      sub r1, r1, 1
+      qbne main, r1, 0 ; loop until r1 = 0
 
-      MOV r31.b0, PRU0_ARM_INTERRUPT + 16 ; notify ARM we are done
-
-      HALT
+      mov r31.b0, PRU0_ARM_INTERRUPT + 16 ; notify caller we are done
+      halt
 
     ; function to pause for LED_DELAY cycles
-    LED_PAUSE:
-      MOV r0, LED_DELAY
-    DELAY:
-      SUB r0, r0, 1
-      QBNE DELAY, r0, 0
-      RET
+    led_pause:
+      mov r0, LED_DELAY
+
+    delay:
+      sub r0, r0, 1
+      qbne delay, r0, 0
+      ret
+
 
 The `Makefile` to build `cylon.p`
 
@@ -465,3 +490,4 @@ This provides the **clpru** C compiler for the PRUs. I have it included in the b
 [pru-code-generation-tools]: http://software-dl.ti.com/codegen/non-esd/downloads/download.htm#PRU
 [am335x-pru-package]: https://github.com/beagleboard/am335x_pru_package
 [ti-pru-cape]: http://processors.wiki.ti.com/index.php/PRU_Cape_Getting_Started_Guide
+[pru-code]: https://github.com/scottellis/pru-code
