@@ -2,7 +2,7 @@
 layout: post
 title: Building Duovero Systems with Yocto
 description: "Building customized systems for Gumstix Duovero using tools from the Yocto Project"
-date: 2016-11-07 15:11:00
+date: 2017-03-12 09:40:00
 categories: gumstix-linux 
 tags: [linux, gumstix, duovero, yocto]
 ---
@@ -15,30 +15,32 @@ I use this as a template when starting new *Duovero* projects.
 
 ### System Info
 
-The Yocto version is `2.1.1` the `[krogoth]` branch.
+The Yocto version is `2.2.1` the `[morty]` branch.
 
-The `4.4.29` Linux kernel comes from the [linux-stable][linux-stable] repository. (4.8.6 also available)
+The `4.4.52` Linux kernel comes from the [linux-stable][linux-stable] repository. (4.8.6 also available)
 
 The [u-boot][uboot] version is `2016.07`.
 
 These are **sysvinit** systems using [eudev][eudev].
 
-The Qt version is `5.6`. By default there is no *X11* and no desktop installed. [Qt][qt] gui applications can be run using the `-platform linuxfb` switch.
+The Qt version is `5.7.1`. By default there is no *X11* and no desktop installed. [Qt][qt] gui applications can be run using the `-platform linuxfb` switch.
 
 A light-weight *X11* desktop can be added with minimal changes to the build configuration.
 
-Perl `5.22` and Python `2.7.11` each with a number of modules is included.
+Perl `5.22` and Python `2.7.12` each with a number of modules is included.
 
 The Duovero [Zephyr][duovero-zephyr] COM has a built-in Wifi/Bluetooth radio. The kernel and software to support both are included. Access point mode is supported. Some [instructions here][jumpnow-duovero-ap].
 
 NOTE: I haven't tested Bluetooth with the 4.x kernels.
 
-*Device tree* binaries are generated and installed that support
+RTC battery backup trickle charging is enabled by default in the 4.4 kernel. Edit the kernel recipe and remove the patch if you don't want this.
+
+Some extra device tree binaries are generated and installed that support
 
 1. HDMI (`jumpnow-duovero-parlor.dtb`)
 2. No display (`jumpnow-duovero-parlor-nodisplay.dtb`)
  
-Both add *SPI* support to the kernel.
+Both add spidev support to the kernel.
 
 You can switch between the *dtbs* using a u-boot script file `/boot/uEnv.txt`. If you don't use a *uEnv.txt* script, then the default `omap4-duovero-parlor.dtb` will be loaded. 
 
@@ -46,13 +48,7 @@ An example *uEnv.txt* is in `meta-duovero/scripts`.
 
 *spidev* on SPI bus 1 (CS 0,1,2) and SPI bus 4 (CS 0) are configured for use from the *Parlor header*.
 
-The following kernel patches under `meta-duovero/recipes-kernel/linux/linux-stable-4.2/` add this functionality
-
-* 0001-spidev-Add-generic-compatible-dt-id.patch
-* 0002-duovero-Add-spi1-spidev-dtsi.patch
-* 0003-duovero-Add-spi4-spidev-dtsi.patch
-
-See the respective patches for the particular pins to use for the different SPI busses and CS pins.
+See the dts include files under `linux-stable-4.4/dts` for the particular pins to use for the different SPI configurations.
 
 *UART2* is available as `/dev/ttyO1` from the header pins *15* TX and *17* RX.
 
@@ -81,7 +77,7 @@ You will need at least the following packages installed
     texi2html
     texinfo
 
-For *16.04* you also need to install the *python 2.7* package that the *Yocto 2.1* branch requires
+For *16.04* you also need to install the *python 2.7* package that the *Yocto 2.2* branch requires
 
     python2.7
 
@@ -118,16 +114,16 @@ Fedora already uses `bash` as the shell.
 
 First the main Yocto project `poky` repository
 
-    scott@octo:~ git clone -b krogoth git://git.yoctoproject.org/poky.git poky-krogoth
+    scott@octo:~ git clone -b morty git://git.yoctoproject.org/poky.git poky-morty
 
 Then the `meta-openembedded` repository
 
-    scott@octo:~$ cd poky-krogoth
-    scott@octo:~/poky-krogoth$ git clone -b krogoth git://git.openembedded.org/meta-openembedded
+    scott@octo:~$ cd poky-morty
+    scott@octo:~/poky-morty$ git clone -b morty git://git.openembedded.org/meta-openembedded
 
 And the `meta-qt5` repository
 
-    scott@octo:~/poky-krogoth$ git clone -b krogoth https://github.com/meta-qt5/meta-qt5.git
+    scott@octo:~/poky-morty$ git clone -b morty https://github.com/meta-qt5/meta-qt5.git
 
 
 I usually keep these repositories separated since they can be shared between projects and different boards.
@@ -138,7 +134,7 @@ Create a sub-directory for the `meta-duovero` repository before cloning
 
     scott@octo:~$ mkdir ~/duovero
     scott@octo:~$ cd ~/duovero
-    scott@octo:~/duovero$ git clone -b krogoth git://github.com/jumpnow/meta-duovero
+    scott@octo:~/duovero$ git clone -b morty git://github.com/jumpnow/meta-duovero
 
 The `meta-duovero/README.md` file has the last commits from the dependency repositories that I tested. You can always checkout those commits explicitly if you run into problems.
 
@@ -178,7 +174,7 @@ In `bblayers.conf` file replace `${HOME}` with the appropriate path to the meta-
 For example, if your directory structure does not look exactly like this, you will need to modify `bblayers.conf`
 
 
-    ~/poky-krogoth/
+    ~/poky-morty/
          meta-openembedded/
          meta-qt5/
          ...
@@ -223,7 +219,7 @@ The default location is in the `build` directory, `~/duovero/build/sstate-cache`
 
 You need to source the environment every time you want to run a build. The `oe-init-build-env` when run a second time will not overwrite your customized conf files.
 
-    scott@octo:~$ source poky-krogoth/oe-init-build-env ~/duovero/build
+    scott@octo:~$ source poky-morty/oe-init-build-env ~/duovero/build
 
     ### Shell environment set up for builds. ###
 
@@ -265,7 +261,7 @@ The *console-image* has a line
 
     inherit core-image
 
-which is `poky-krogoth/meta/classes/core-image.bbclass` and pulls in some required base packages. This is useful to know if you create your own image recipe.
+which is `poky-morty/meta/classes/core-image.bbclass` and pulls in some required base packages. This is useful to know if you create your own image recipe.
 
 #### qt5-image
 
@@ -356,11 +352,11 @@ This script needs to know the `TMPDIR` to find the binaries. It looks for an env
 
 For instance, if I had this in the `local.conf`
 
-    TMPDIR = "/oe9/duo/tmp-krogoth"
+    TMPDIR = "/oe9/duo/tmp-morty"
 
 Then I would export this environment variable before running `copy_boot.sh`
 
-    scott@octo:~/duovero/meta-duovero/scripts$ export OETMP=/oe9/duo/tmp-krogoth
+    scott@octo:~/duovero/meta-duovero/scripts$ export OETMP=/oe9/duo/tmp-morty
 
 Then run the `copy_boot.sh` script passing the location of SD card
 
@@ -392,7 +388,7 @@ Here's a realistic example session where I want to copy already built images to 
 
     scott@octo:~$ sudo umount /dev/sdb1
     scott@octo:~$ sudo umount /dev/sdb2
-    scott@octo:~$ export OETMP=/oe9/duo/tmp-krogoth
+    scott@octo:~$ export OETMP=/oe9/duo/tmp-morty
     scott@octo:~$ cd duovero/meta-duovero/scripts
     scott@octo:~/duovero/meta-duovero/scripts$ ./copy_boot.sh sdb
     scott@octo:~/duovero/meta-duovero/scripts$ ./copy_rootfs.sh sdb console duo2

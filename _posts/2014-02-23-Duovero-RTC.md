@@ -2,7 +2,7 @@
 layout: post
 title: Duovero Real-time Clock
 description: "Working with the Duovero battery backed RTC"
-date: 2015-08-16 12:45:00
+date: 2017-03-12 09:50:00
 categories: gumstix-linux
 tags: [linux, gumstix, duovero, rtc]
 ---
@@ -20,8 +20,8 @@ First off, you should make sure you have **/sbin/hwclock** installed. It comes f
 
 You can check whether or not the hwclock communication is working this way
 
-    root@duovero:~# hwclock -r
-    Sun Feb 23 15:33:36 2014  0.000000 seconds
+    root@duo:~# hwclock -r
+    Sun Mar 12 13:49:26 2017  0.000000 seconds
 
 This is from a fixed system with the patches referenced below. A broken system will return zeros for the date and time.
  
@@ -60,17 +60,16 @@ I'm using [Panasonic ML-621S/ZTN][panasonic-battery] batteries in the Duoveros, 
 - BB\_SEL_1 = 1
 - BB\_SEL_0 = 0
 
-Given that, this kernel [patch][trickle-charge-patch] enables trickle charging the Duovero RTC backup battery.
-
+Given that, this [patch][trickle-charge-patch] to the **linux-stable-4.4** kernel enables trickle charging the Duovero RTC backup battery.
 
     diff --git a/drivers/rtc/rtc-twl.c b/drivers/rtc/rtc-twl.c
-    index 9277d94..2a9d467 100644
+    index 2dc787d..7f522b3 100644
     --- a/drivers/rtc/rtc-twl.c
     +++ b/drivers/rtc/rtc-twl.c
-    @@ -163,6 +163,41 @@ static int twl_rtc_write_u8(u8 data, u8 reg)
-            return ret;
-     }
-    
+    @@ -470,6 +470,41 @@ static struct rtc_class_ops twl_rtc_ops = {
+     	.alarm_irq_enable = twl_rtc_alarm_irq_enable,
+     };
+ 
     +#define REG_BBSPOR_CFG 0xE6
     +#define VRTC_EN_SLP_STS        (1 << 6)
     +#define VRTC_EN_OFF_STS        (1 << 5)
@@ -81,49 +80,48 @@ Given that, this kernel [patch][trickle-charge-patch] enables trickle charging t
     +
     +static int enable_rtc_battery_charging(void)
     +{
-    +       int ret;
-    +       u8 data;
+    +	int ret;
+    +	u8 data;
     +
-    +       ret = twl_i2c_read_u8(TWL6030_MODULE_ID0, &data, REG_BBSPOR_CFG);
-    +       if (ret < 0) {
-    +               pr_err("twl_rtc: read bbspor_cfg failed: %d\n", ret);
-    +               return ret;
-    +       }
+    +	ret = twl_i2c_read_u8(TWL6030_MODULE_ID0, &data, REG_BBSPOR_CFG);
+    +	if (ret < 0) {
+    +		pr_err("twl_rtc: read bbspor_cfg failed: %d\n", ret);
+    +		return ret;
+    +	}
     +
-    +       /*
-    +        * Charge battery to 3.15v
-    +        * TWL6030 Register Map, Table 224, BBSPOR_CFG Register
-    +        */
-    +       data &= ~BB_SEL_0;
-    +       data |= (BB_SEL_1 | BB_CHG_EN);
+    +	/*
+    +	 * Charge battery to 3.15v
+    +	 * TWL6030 Register Map, Table 224, BBSPOR_CFG Register
+    +	 */
+    +	data &= ~BB_SEL_0;
+    +	data |= (BB_SEL_1 | BB_CHG_EN);
     +
-    +       ret = twl_i2c_write_u8(TWL6030_MODULE_ID0, data, REG_BBSPOR_CFG);
-    +       if (ret < 0)
-    +               pr_err("twl_rtc: write bbspor_cfg failed: %d\n", ret);
-    +       else
-    +               pr_info("twl_rtc: enabled rtc battery charging\n");
+    +	ret = twl_i2c_write_u8(TWL6030_MODULE_ID0, data, REG_BBSPOR_CFG);
+    +	if (ret < 0)
+    +		pr_err("twl_rtc: write bbspor_cfg failed: %d\n", ret);
+    +	else
+    +		pr_info("twl_rtc: enabled rtc battery charging\n");
     +
-    +       return ret;
+    +	return ret;
     +}
     +
-     /*
-      * Cache the value for timer/alarm interrupts register; this is
-      * only changed by callers holding rtc ops lock (or resume).
-    @@ -505,6 +540,10 @@ static int __devinit twl_rtc_probe(struct platform_device *pdev)
-            if (ret < 0)
-                    goto out1;
-    
-    +       ret = enable_rtc_battery_charging();
-    +       if (ret < 0)
-    +               dev_err(&pdev->dev, "Failed to enable rtc battery charging)\n");
-    +
-            rtc = rtc_device_register(pdev->name,
-                                      &pdev->dev, &twl_rtc_ops, THIS_MODULE);
-            if (IS_ERR(rtc)) {
-    --
-    1.8.1.2
+     /*----------------------------------------------------------------------*/
  
-
+     static int twl_rtc_probe(struct platform_device *pdev)
+    @@ -525,6 +560,10 @@ static int twl_rtc_probe(struct platform_device *pdev)
+     	if (ret < 0)
+     		return ret;
+ 
+    +	ret = enable_rtc_battery_charging();
+    +	if (ret < 0)
+    +		dev_err(&pdev->dev, "Failed to enable rtc battery charging\n");
+    +
+     	device_init_wakeup(&pdev->dev, 1);
+ 
+     	rtc = devm_rtc_device_register(&pdev->dev, pdev->name,
+    -- 
+    2.7.4
+ 
 It's loosely based on a similar [patch][overo-trickle-charge-patch] to the TWL4030 for the Overo kernels.
 
 So where does that *TWL6030\_MODULE\_ID0* constant come from and why is it needed?
@@ -188,5 +186,5 @@ The script is called **/etc/init.d/hwclock.sh**.
 [twl6030-register-manual]: http://www.cjemicros.f2s.com/public/datasheets/TWL6030_Register_Map.pdf
 [panasonic-battery]: http://www.digikey.com/product-detail/en/ML-621S%2FZTN/P007-ND/965124
 [battery-charging]: http://industrial.panasonic.com/www-data/pdf/AAA4000/AAA4000PE17.pdf
-[trickle-charge-patch]: https://github.com/jumpnow/meta-duovero/blob/daisy/recipes-kernel/linux/linux-stable-3.6/0014-Enable-RTC-backup-battery-charging.patch
+[trickle-charge-patch]: https://github.com/jumpnow/meta-duovero/blob/morty/recipes-kernel/linux/linux-stable-4.4/0004-rtc-twl-Enable-battery-charging.patch
 [overo-trickle-charge-patch]: https://github.com/gumstix/meta-gumstix/blob/dora/recipes-kernel/linux/linux-gumstix-3.5/0007-rtc-twl-add-support-for-backup-battery-recharge.patch
