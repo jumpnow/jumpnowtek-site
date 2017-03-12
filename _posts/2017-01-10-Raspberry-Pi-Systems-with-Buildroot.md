@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Buildroot
 description: "Building customized systems for the Raspberry Pi using Buildroot"
-date: 2017-02-23 17:00:00
+date: 2017-03-12 10:17:00
 categories: rpi
 tags: [linux, rpi, buildroot, rpi3, qt5, pyqt, pyqt5]
 ---
@@ -29,7 +29,9 @@ I created a [Buildroot clone][jumpnow-buildroot] in Github.
 
 The **[master]** branch of the repository is a mirror of the official Buildroot repository. 
 
-The default **[rpi]** branch has a few additions on top of **[master]** for my own customizations.
+The default **[jumpnow]** branch has a few additions on top of **[master]** for my own customizations.
+
+**NOTE:** I switched to the **[jumpnow]** branch from **[rpi]** since I started adding some more boards to my Buildroot repo.
 
 The changes to **[master]** are
 
@@ -60,7 +62,7 @@ The two custom `configs` are
 
 To build a system, run the following (see the **ccache** notes below)
 
-    scott@t410:~$ git clone -b rpi https://github.com/jumpnow/buildroot
+    scott@t410:~$ git clone -b jumpnow https://github.com/jumpnow/buildroot
     scott@t410:~$ cd buildroot
     scott@t410:~/buildroot$ make jumpnow_rpi3_defconfig
     scott@t410:~/buildroot$ make
