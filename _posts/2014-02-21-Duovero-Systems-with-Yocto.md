@@ -17,7 +17,7 @@ I use this as a template when starting new *Duovero* projects.
 
 The Yocto version is `2.2.1` the `[morty]` branch.
 
-The `4.4.52` Linux kernel comes from the [linux-stable][linux-stable] repository. (4.8.6 also available)
+The `4.4.52` Linux kernel comes from the [linux-stable][linux-stable] repository.
 
 The [u-boot][uboot] version is `2016.07`.
 
