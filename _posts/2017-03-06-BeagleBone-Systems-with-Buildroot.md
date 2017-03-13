@@ -2,7 +2,7 @@
 layout: post
 title: Building Beaglebone Systems with Buildroot
 description: "Building customized systems for the BeagleBone Black using Buildroot"
-date: 2017-03-13 05:53:00
+date: 2017-03-13 05:59:00
 categories: beaglebone
 tags: [linux, beaglebone, bbb, buildroot, qt5, pyqt, pyqt5, pru]
 ---
@@ -11,17 +11,19 @@ A short post covering the use of [Buildroot][buildroot] to build a [BeagleBone B
 
 I'll expand on this post later since the Buildroot systems have some other nice features such as Qt 5.8 and working PyQt. But for now, these notes are just to support building images for the PRU experiments that I'm covering in [this post][bbb-pru-uio-doc].
 
+Make sure you have **ccache** installed on your workstation. Your distro should have a package for this. Either that or run `make menuconfig` before running `make` and disable ccache use.
+
 Fetch the repo, use the **[jumpnow]** branch
 
     scott@fractal:~$ git clone -b jumpnow https://github.com/jumpnow/buildroot
     scott@fractal:~$ cd buildroot
 
-Make sure you have **ccache** installed on your workstation. Your distro should have a package for this. Either that or run `make menuconfig` before running `make` and disable ccache use.
+This will build under the `~/buildroot` directory
   
     scott@fractal:~/buildroot$ make jumpnow_bbb_pru_defconfig
     scott@fractal:~/buildroot$ make
 
-Another suggestion is to build outside the buildroot tree by passing an argument like this `O=<some-other-dir>` to the make defconfig step.
+I sugges building outside the buildroot tree by passing an argument like this `O=<some-other-dir>` to the make defconfig step.
 
     scott@fractal:~/buildroot$ make O=/br5/bbb jumpnow_bbb_pru_defconfig
     scott@fractal:~/buildroot$ cd /br5/bbb
