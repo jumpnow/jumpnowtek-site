@@ -23,7 +23,7 @@ This will build under the `~/buildroot` directory
     scott@fractal:~/buildroot$ make jumpnow_bbb_pru_defconfig
     scott@fractal:~/buildroot$ make
 
-I sugges building outside the buildroot tree by passing an argument like this `O=<some-other-dir>` to the make defconfig step.
+I suggest building outside the buildroot tree by passing an argument like this `O=<some-other-dir>` to the make defconfig step.
 
     scott@fractal:~/buildroot$ make O=/br5/bbb jumpnow_bbb_pru_defconfig
     scott@fractal:~/buildroot$ cd /br5/bbb
