@@ -11,7 +11,9 @@ A short post covering the use of [Buildroot][buildroot] to build a [BeagleBone B
 
 I'll expand on this post later since the Buildroot systems have some other nice features such as Qt 5.8 and working PyQt. But for now, these notes are just to support building images for the PRU experiments that I'm covering in [this post][bbb-pru-uio-doc].
 
-Make sure you have **ccache** installed on your workstation. Your distro should have a package for this. Either that or run `make menuconfig` before running `make` and disable ccache use.
+Make sure you have **ccache** installed on your workstation. Your distro should have a package for this. 
+
+If you don't want to use ccache, run `make menuconfig` between `make <defconfig>` and the build `make` and disable ccache use.
 
 Fetch the repo, use the **[jumpnow]** branch
 
