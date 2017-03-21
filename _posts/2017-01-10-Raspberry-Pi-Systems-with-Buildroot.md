@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Buildroot
 description: "Building customized systems for the Raspberry Pi using Buildroot"
-date: 2017-03-12 10:17:00
+date: 2017-03-21 09:00:00
 categories: rpi
 tags: [linux, rpi, buildroot, rpi3, qt5, pyqt, pyqt5]
 ---
@@ -57,7 +57,7 @@ The changes to **[master]** are
 The two custom `configs` are
 
 * **jumpnow\_rpi3\_defconfig** - For the RPi2, RPi3 and CM3 boards
-* **jumpnow\_rpi0\_defconfig** - For the original RPi, RPi Zero and CM1 boards
+* **jumpnow\_rpi0\_defconfig** - For the original RPi, RPi Zero, RPi Zero-W and CM1 boards
  
 
 To build a system, run the following (see the **ccache** notes below)
