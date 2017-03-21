@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Analyzing SPI driver performance on the Raspberry Pi
-date: 2017-02-15 15:48:00
+date: 2017-03-21 10:30:00
 categories: rpi
 tags: [linux, rpi, spi, mcp3008, adc]
 ---
@@ -69,10 +69,11 @@ There is system processing time between transactions, time when there is nothing
 
 There are two parts to this which I'm giving names
 
-1) **Context Switching Delay** between userland ioctl() calls
+1. **Context Switching Delay** between userland ioctl() calls
 
-2) **Transaction Delay** between multiple reads in a single spidev transaction
+2. **Transaction Delay** between multiple reads in a single spidev transaction
 
+A little analysis of both.
 
 **Context Switching Delay**
 
@@ -80,41 +81,16 @@ There is a delay between CS deselected from the last read to CS selection of the
 
 This the cost for making each spidev ioctl() call.
 
-Here I am accounting for the context switching from userland to kernel, any copying of memory from user to kernel buffs, activation of the driver thread that does the actual work and any processing of the data by the user.
+Here I am accounting for
 
-I eliminated the part that is fully under user control by never looking at the data.
+1. the context switching from userland to kernel
+2. any copying of memory from user to kernel buffs
+3. activation of the driver thread that does the actual work
+4. any processing of the data by the user
 
-For example, the transaction buffers are prepared once before the loop starts with setup code like this
+I eliminated the part that is fully under user control (4) by never looking at the data.
 
-    ...
-    for (i = 0; i < blocks; i++) {
-        tx[i*4] = 0x60 | (ch << 2);
-        tr[i].tx_buf = (unsigned long) &tx[i * 4];
-        tr[i].rx_buf = (unsigned long) &rx[i * 4];
-        tr[i].len = 3;
-        tr[i].speed_hz = 5760000;
-        tr[i].cs_change = 1;
-    }
-
-    // unset cs_change for last transfer in block or we lose
-    // the first read of the next block
-    tr[blocks-1].cs_change = 0;
-    ...
-
-And the read loop goes like this  
-
-    ...
-    while (!abort_read) {
-        if (ioctl(fd, SPI_IOC_MESSAGE(blocks), tr) < 0) {
-            perror("ioctl");
-            break;
-        }
-
-        count += blocks;
-    }
-    ...
-
-(I did verify that the data is correct using another switch to this program.)
+The test program I'm using is here [mcp3008-speedtest][mcp3008-speedtest]. It is only for testing system throughput.
 
 With that code running, the **Context Switching Delay** measured with a scope is around 5 us.
 
@@ -250,8 +226,6 @@ blocks = 500
 
 That's a pretty good improvement for a one line change.
 
-The test program I'm using is here [mcp3008-speedtest][mcp3008-speedtest]. It is only for testing system throughput.
-
 The sweet spot seems to be around a block size of 100. Userland still gets data updates pretty quickly at roughly every 100 us.
 
 I did uncover a problem with context switching times in my [Yocto built][yocto-rpi] RPi systems. The results are signicantly slower with blocks=1 where context switching times are most prominent, less so with higher block sizes.
@@ -261,76 +235,6 @@ The [Buildroot systems][buildroot-rpi] match the Raspbian system performance on 
 This is all just an exercise at this point.
 
 On the only two projects I've worked on that use the MCP3008 ADC, we poll the device at roughly 10 Hz. Not much optimization is needed and we just use the [built-in kernel driver][using-mcp3008] for the MCP3008. It's a simpler solution.
-
-For reference, here are the clock speeds for both the Raspbian and Buildroot systems as shown by 
-**vcgencmd**
-
-
-The Raspbian systems are running a 4.4.34 kernel. The systems are up to date with no optimizations selected.
-
-These are the default clock settings from Raspbian
-
-    pi@raspberrypi:~/mcp3008-speedtest $ vcgencmd get_config int
-    arm_freq=1200
-    audio_pwm_mode=1
-    config_hdmi_boost=5
-    core_freq=400
-    desired_osc_freq=0x36ee80
-    disable_commandline_tags=2
-    disable_l2cache=1
-    enable_uart=1
-    force_eeprom_read=1
-    force_pwm_open=1
-    framebuffer_ignore_alpha=1
-    framebuffer_swap=1
-    gpu_freq=300
-    hdmi_force_cec_address=65535
-    init_uart_clock=0x2dc6c00
-    lcd_framerate=60
-    over_voltage_avs=0x1e848
-    overscan_bottom=48
-    overscan_left=48
-    overscan_right=48
-    overscan_top=48
-    pause_burst_frames=1
-    program_serial_random=1
-    sdram_freq=450
-    temp_limit=85
-
-The [Buildroot][buildroot-rpi] systems are running a standard `4.4.45` kernel from the RPi kernel source on github.
-
-These are the clock settings from the [Buildroot][buildroot-rpi] system where I did customize the default config.txt.
-
-Note I had to add the **force_turbo=1**
-
-    # vcgencmd get_config int
-    arm_freq=1200
-    audio_pwm_mode=1
-    config_hdmi_boost=5
-    core_freq=400
-    desired_osc_freq=0x36ee80
-    disable_commandline_tags=2
-    disable_l2cache=1
-    enable_uart=1
-    force_eeprom_read=1
-    force_pwm_open=1
-    force_turbo=1
-    framebuffer_ignore_alpha=1
-    framebuffer_swap=1
-    gpu_freq=300
-    hdmi_force_cec_address=65535
-    init_uart_clock=0x2dc6c00
-    lcd_framerate=60
-    over_voltage_avs=0x1e848
-    over_voltage_avs_boost=0x1e848
-    overscan_bottom=48
-    overscan_left=48
-    overscan_right=48
-    overscan_top=48
-    pause_burst_frames=1
-    program_serial_random=1
-    sdram_freq=450
-    temp_limit=85
 
 
 [mcp3008-datasheet]: https://cdn-shop.adafruit.com/datasheets/MCP3008.pdf
