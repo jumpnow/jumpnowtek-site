@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2017-03-31 09:30:00
+date: 2017-03-31 09:43:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
 ---
@@ -379,6 +379,7 @@ There are three example images available in the *meta-rpi* layer. The recipes fo
 * qt5-basic-image.bb
 * qt5-image.bb
 * audio-image.bb
+* iot-image.bb
 
 You should add your own custom images to this same directory.
 
@@ -428,6 +429,10 @@ I am not normally a `QML` or Qt OpenGL developer, but I did test a number of the
 #### audio-image
 
 See this [post][rpi-pandora] for details on using this image.
+
+#### iot-image
+
+Adds [mosquitto][mosquitto], the [paho python client][python-paho] and the [python-flask][python-flask] packages to the `console-image`.
 
 ### Build
 
@@ -742,3 +747,6 @@ The `console-image` contains a utility called [pi-blaster][pi-blaster-post] that
 [raspi2fb]: https://github.com/AndrewFromMelbourne/raspi2fb
 [hardware-pwm]: http://www.jumpnowtek.com/rpi/Using-the-Raspberry-Pi-Hardware-PWM-timers.html
 [jumpnow-buildroot]: http://www.jumpnowtek.com/rpi/Raspberry-Pi-Systems-with-Buildroot.html
+[python-paho]: https://eclipse.org/paho/clients/python/
+[mosquitto]: http://mosquitto.org/
+[python-flask]: http://flask.pocoo.org/
