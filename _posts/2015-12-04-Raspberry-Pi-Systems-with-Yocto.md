@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2017-03-31 09:43:00
+date: 2017-04-04 05:08:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
 ---
@@ -73,7 +73,7 @@ Instructions for installing onto an SD card are in the [README][readme].
 
 The Yocto version is `2.2.1` the `[morty]` branch.
 
-The `4.9.19` Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
+The `4.9.20` Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
 
 These are **sysvinit** systems using [eudev][eudev].
 
@@ -93,82 +93,79 @@ The Adafruit [PiTFT 3.5"][pitft35r] and [PiTFT 2.8"][pitft28r] resistive touchsc
 
 [Raspi2fb][raspi2fb] is included for mirroring the GPU framebuffer to the small TFT displays. This allows for running Qt GUI applications on the TFTs.
 
-As of 2017-03-31, here is the list of device tree overlays installed
+As of 2017-04-03, here is the list of device tree overlays installed
 
     root@rpi3:~# uname -a
-    Linux rpi3 4.9.19 #1 SMP Fri Mar 31 09:05:55 EDT 2017 armv7l armv7l armv7l GNU/Linux
+    Linux rpi3 4.9.20 #1 SMP Mon Apr 3 15:28:42 EDT 2017 armv7l armv7l armv7l GNU/Linux
 
     root@rpi3:~# ls /mnt/fat/overlays/
-    adau1977-adc.dtbo                       mmc.dtbo
-    adau7002-simple.dtbo                    mz61581.dtbo
-    ads1015.dtbo                            pi3-act-led.dtbo
-    ads1115.dtbo                            pi3-disable-bt.dtbo
-    ads7846.dtbo                            pi3-disable-wifi.dtbo
-    akkordion-iqdacplus.dtbo                pi3-miniuart-bt.dtbo
-    allo-boss-dac-pcm512x-audio.dtbo        piscreen.dtbo
-    allo-piano-dac-pcm512x-audio.dtbo       piscreen2r.dtbo
-    allo-piano-dac-plus-pcm512x-audio.dtbo  pisound.dtbo
-    at86rf233.dtbo                          pitft22.dtbo
-    audioinjector-addons.dtbo               pitft28-capacitive.dtbo
-    audioinjector-wm8731-audio.dtbo         pitft28-resistive.dtbo
-    audremap.dtbo                           pitft35-resistive.dtbo
-    bmp085_i2c-sensor.dtbo                  pps-gpio.dtbo
-    dht11.dtbo                              pwm-2chan-with-clk.dtbo
+    adau1977-adc.dtbo                       midi-uart0.dtbo
+    adau7002-simple.dtbo                    mmc.dtbo
+    ads1015.dtbo                            mz61581.dtbo
+    ads1115.dtbo                            pi3-act-led.dtbo
+    ads7846.dtbo                            pi3-disable-bt.dtbo
+    akkordion-iqdacplus.dtbo                pi3-disable-wifi.dtbo
+    allo-boss-dac-pcm512x-audio.dtbo        pi3-miniuart-bt.dtbo
+    allo-piano-dac-pcm512x-audio.dtbo       piscreen.dtbo
+    allo-piano-dac-plus-pcm512x-audio.dtbo  piscreen2r.dtbo
+    at86rf233.dtbo                          pisound.dtbo
+    audioinjector-addons.dtbo               pitft22.dtbo
+    audioinjector-wm8731-audio.dtbo         pitft28-capacitive.dtbo
+    audremap.dtbo                           pitft28-resistive.dtbo
+    bmp085_i2c-sensor.dtbo                  pitft35-resistive.dtbo
+    dht11.dtbo                              pps-gpio.dtbo
     dionaudio-loco-v2.dtbo                  pwm-2chan.dtbo
-    dionaudio-loco.dtbo                     pwm-with-clk.dtbo
-    dpi18.dtbo                              pwm.dtbo
-    dpi24.dtbo                              qca7000.dtbo
-    dwc-otg.dtbo                            raspidac3.dtbo
-    dwc2.dtbo                               rpi-backlight.dtbo
-    enc28j60-spi2.dtbo                      rpi-cirrus-wm5102.dtbo
-    enc28j60.dtbo                           rpi-dac.dtbo
-    fe-pi-audio.dtbo                        rpi-display.dtbo
-    googlevoicehat-soundcard.dtbo           rpi-ft5406.dtbo
-    gpio-ir.dtbo                            rpi-proto.dtbo
-    gpio-poweroff.dtbo                      rpi-sense.dtbo
-    hifiberry-amp.dtbo                      rra-digidac1-wm8741-audio.dtbo
-    hifiberry-dac.dtbo                      sc16is750-i2c.dtbo
-    hifiberry-dacplus.dtbo                  sc16is752-spi1.dtbo
-    hifiberry-digi-pro.dtbo                 sdhost.dtbo
-    hifiberry-digi.dtbo                     sdio-1bit.dtbo
-    hy28a.dtbo                              sdio.dtbo
-    hy28b.dtbo                              sdtweak.dtbo
-    i2c-bcm2708.dtbo                        smi-dev.dtbo
-    i2c-gpio.dtbo                           smi-nand.dtbo
-    i2c-mux.dtbo                            smi.dtbo
-    i2c-pwm-pca9685a.dtbo                   spi-gpio35-39.dtbo
-    i2c-rtc.dtbo                            spi-rtc.dtbo
-    i2c-sensor.dtbo                         spi0-cs.dtbo
-    i2c0-bcm2708.dtbo                       spi0-hw-cs.dtbo
-    i2c1-bcm2708.dtbo                       spi1-1cs.dtbo
-    i2s-gpio28-31.dtbo                      spi1-2cs.dtbo
-    iqaudio-dac.dtbo                        spi1-3cs.dtbo
-    iqaudio-dacplus.dtbo                    spi2-1cs.dtbo
-    iqaudio-digi-wm8804-audio.dtbo          spi2-2cs.dtbo
-    justboom-dac.dtbo                       spi2-3cs.dtbo
-    justboom-digi.dtbo                      tinylcd35.dtbo
-    lirc-rpi.dtbo                           uart1.dtbo
-    mcp23017.dtbo                           vc4-fkms-v3d.dtbo
-    mcp23s17.dtbo                           vc4-kms-v3d.dtbo
-    mcp2515-can0.dtbo                       vga666.dtbo
-    mcp2515-can1.dtbo                       w1-gpio-pullup.dtbo
-    mcp3008.dtbo                            w1-gpio.dtbo
-    midi-uart0.dtbo                         wittypi.dtbo
+    dionaudio-loco.dtbo                     pwm.dtbo
+    dpi18.dtbo                              qca7000.dtbo
+    dpi24.dtbo                              raspidac3.dtbo
+    dwc-otg.dtbo                            rpi-backlight.dtbo
+    dwc2.dtbo                               rpi-cirrus-wm5102.dtbo
+    enc28j60-spi2.dtbo                      rpi-dac.dtbo
+    enc28j60.dtbo                           rpi-display.dtbo
+    fe-pi-audio.dtbo                        rpi-ft5406.dtbo
+    googlevoicehat-soundcard.dtbo           rpi-proto.dtbo
+    gpio-ir.dtbo                            rpi-sense.dtbo
+    gpio-poweroff.dtbo                      rra-digidac1-wm8741-audio.dtbo
+    hifiberry-amp.dtbo                      sc16is750-i2c.dtbo
+    hifiberry-dac.dtbo                      sc16is752-spi1.dtbo
+    hifiberry-dacplus.dtbo                  sdhost.dtbo
+    hifiberry-digi-pro.dtbo                 sdio-1bit.dtbo
+    hifiberry-digi.dtbo                     sdio.dtbo
+    hy28a.dtbo                              sdtweak.dtbo
+    hy28b.dtbo                              smi-dev.dtbo
+    i2c-bcm2708.dtbo                        smi-nand.dtbo
+    i2c-gpio.dtbo                           smi.dtbo
+    i2c-mux.dtbo                            spi-gpio35-39.dtbo
+    i2c-pwm-pca9685a.dtbo                   spi-rtc.dtbo
+    i2c-rtc.dtbo                            spi0-cs.dtbo
+    i2c-sensor.dtbo                         spi0-hw-cs.dtbo
+    i2c0-bcm2708.dtbo                       spi1-1cs.dtbo
+    i2c1-bcm2708.dtbo                       spi1-2cs.dtbo
+    i2s-gpio28-31.dtbo                      spi1-3cs.dtbo
+    iqaudio-dac.dtbo                        spi2-1cs.dtbo
+    iqaudio-dacplus.dtbo                    spi2-2cs.dtbo
+    iqaudio-digi-wm8804-audio.dtbo          spi2-3cs.dtbo
+    justboom-dac.dtbo                       tinylcd35.dtbo
+    justboom-digi.dtbo                      uart1.dtbo
+    lirc-rpi.dtbo                           vc4-fkms-v3d.dtbo
+    mcp23017.dtbo                           vc4-kms-v3d.dtbo
+    mcp23s17.dtbo                           vga666.dtbo
+    mcp2515-can0.dtbo                       w1-gpio-pullup.dtbo
+    mcp2515-can1.dtbo                       w1-gpio.dtbo
+    mcp3008.dtbo                            wittypi.dtbo
+
 
 I've tested a few
 
 * ads1015
 * hifiberry-amp
+* i2c-rtc
 * iqaudio-dacplus
 * mcp2515-can0
 * mcp3008
 * pi3-disable-bt
 * pitft28-resistive
 * pitft35-resistive
-* pwm-2chan-with-clk
-* pwm-2chan
-* pwm-with-clk
-* pwm
 * sdhost (the default, but you can overclock now)
 * spi1-1cs
 * spi1-2cs
