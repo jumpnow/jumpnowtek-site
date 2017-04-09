@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Using the Raspberry Pi hardware PWM timers
-date: 2017-02-16 09:16:00
+date: 2017-04-09 06:06:00
 categories: rpi
 tags: [linux, rpi, yocto, pwm]
 ---
@@ -36,13 +36,16 @@ At the end of *Section 9.5* is this note
 **CPRMAN** is the *Clock Power Reset MANager*.
 
 
-There are two PWM overlays in the default 4.4 RPi kernels
+There are two PWM overlays in the default RPi kernels
 
 * pwm.dtbo
 * pwm-2chan.dtbo
 
+In the 4.9 kernels, the PWM source clock is always running so you can skip down to the **Usage** section of this post.
 
-The PWM source clock is not normally enabled in **CPRMAN** and as a result those overlays are not immediately useful. PWM devices will show up, but you won't be able to get an output.
+## Additional overlays for 4.4 kernels
+
+In the 4.4 kernels, the PWM source clock is not normally enabled in **CPRMAN** and as a result those overlays are not immediately useful. PWM devices will show up, but you won't be able to get an output.
 
 There are workarounds, such as playing an audio file before using PWM since audio also uses the PWM clocks and will enable the source clock. But that's not very convenient.
 
@@ -72,13 +75,25 @@ Then copy the dtbo to the overlays directory
 
 ## Usage
 
-Use them the same way you would the standard pwm overlays.
+Use the standard overlays or the *-with-clk* overlays the same way.
 
 For example to get a hardware timer on GPIO_18 (pin 12) on any RPi, add this to `config.txt`
+
+4.9 kernel
+
+    dtoverlay=pwm
+
+4.4 kernel
 
     dtoverlay=pwm-with-clk
 
 On RPi boards with 40 pin headers, you can get two channels with this overlay
+
+4.9 kernel
+
+    dtoverlay=pwm-2chan
+
+4.4 kernel
 
     dtoverlay=pwm-2chan-with-clk
 
@@ -86,7 +101,7 @@ Without arguments, GPIO\_18 is the default pin for PWM0 and GPIO\_19 is the defa
 
 Suppose you wanted to use GPIO\_12 for PWM0 and GPIO\_13 for PWM1, then you could provide arguments to the overlay like this
 
-    dtoverlay=pwm-2chan-with-clk,pin=12,func=4,pin2=13,func2=4
+    dtoverlay=pwm-2chan,pin=12,func=4,pin2=13,func2=4
 
 When you boot with the pwm overlay loaded, you should see the kernel *pwm\_bcm2835* driver loaded
 
