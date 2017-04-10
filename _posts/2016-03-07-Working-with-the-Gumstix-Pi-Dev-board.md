@@ -6,7 +6,7 @@ categories: rpi
 tags: [linux, gumstix, rpi compute, yocto]
 ---
 
-[Gumstix][gumstix] makes a [RPi Compute Module][rpi-compute] development board that can be used as an alternative to the [Compute Module IO Board V3][rpi-compute-module-dev-kit] from the Raspberry Pi foundation.
+[Gumstix][gumstix] makes a [RPi Compute Module][rpi-compute3] development board that can be used as an alternative to the [Compute Module IO Board V3][rpi-compute-module-dev-kit] from the Raspberry Pi foundation.
 
 The Gumstix [Pi Compute Development Board][gumstix-pi-dev-board] is just one example of a custom board that can be designed using [Gepetto][gumstix-gepetto] their online board design/layout tool.
 
