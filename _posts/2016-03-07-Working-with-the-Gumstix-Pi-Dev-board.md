@@ -1,12 +1,12 @@
 ---
 layout: post
 title: Working with the Gumstix Pi Compute Dev Board
-date: 2016-07-27 07:32:00
+date: 2017-04-10 05:40:00
 categories: rpi
 tags: [linux, gumstix, rpi compute, yocto]
 ---
 
-[Gumstix][gumstix] makes a [RPi Compute Module][rpi-compute] development board that can be used as an alternative to the [Compute Module Development Kit][rpi-compute-module-dev-kit] from the Raspberry Pi foundation.
+[Gumstix][gumstix] makes a [RPi Compute Module][rpi-compute] development board that can be used as an alternative to the [Compute Module IO Board V3][rpi-compute-module-dev-kit] from the Raspberry Pi foundation.
 
 The Gumstix [Pi Compute Development Board][gumstix-pi-dev-board] is just one example of a custom board that can be designed using [Gepetto][gumstix-gepetto] their online board design/layout tool.
 
@@ -26,43 +26,39 @@ Assuming then that you have built your custom Yocto image using the instructions
 
 And also assuming you have already built the RaspberryPi tool `rpiboot` from the [RPi Compute][jumpnow-rpi-compute] instructions.
 
-Then steps to flash the *RPi CM* are as follows
+Then steps to flash the *RPi CM3* are as follows
 
-Install the *RPi CM* on the Gumstix *Pi Fast Flash Board*
+Install the *RPi CM3* on the Gumstix *Pi Fast Flash Board*
 
 Connect a USB cable from the *Pi Fast Flash Board* to the Host computer. (I did not require separate power, the USB was enough).
 
 Run the `rpiboot` utility, to bring up the *CM* as a mass storage device.
 
-    scott@fractal:~/rpi$ sudo rpiboot
-    Waiting for BCM2835 ...
-    Initialised device correctly
-    Found serial number 0
-    Found serial = 0: writing file /usr/share/rpiboot/usbbootcode.bin
+    scott@fractal:~/rpi$ sudo ./rpiboot
+    Waiting for BCM2835/6/7
+    Sending bootcode.bin
     Successful read 4 bytes
-    Waiting for BCM2835 ...
-    Initialised device correctly
-    Found serial number 1
-    Found serial = 1: writing file /usr/share/rpiboot/msd.elf
-    Successful read 4 bytes
+    Waiting for BCM2835/6/7
+    Second stage boot server
+    File read: start.elf
+    Second stage boot server done
+
 
 When `rpiboot` exits, there should be a new device, `/dev/sdc` on my system.
 
-    scott@fractal:~/rpi1/build$ lsblk
+    scott@fractal:~/rpi/usbboot$ lsblk
     NAME   MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
     sda      8:0    0 931.5G  0 disk
     ├─sda1   8:1    0  93.1G  0 part /
     ├─sda2   8:2    0 186.3G  0 part /home
     ├─sda3   8:3    0  29.8G  0 part [SWAP]
     ├─sda4   8:4    0   100G  0 part /oe4
-    ├─sda5   8:5    0   100G  0 part /oe5
+    ├─sda5   8:5    0   100G  0 part /br5
     ├─sda6   8:6    0   100G  0 part /oe6
     ├─sda7   8:7    0   100G  0 part /oe7
     ├─sda8   8:8    0   100G  0 part /oe8
     └─sda9   8:9    0   100G  0 part /oe9
     sdc      8:32   1   3.7G  0 disk
-    ├─sdc1   8:33   1    64M  0 part
-    └─sdc2   8:34   1   3.6G  0 part
 
 
 If this is the first time flashing your *RPi CM* the device probably won't have any partitions.
@@ -71,7 +67,7 @@ This particular *CM* has already been partitioned, but there is no harm in re-pa
 
 To partition the RPi *eMMC*, there is a simple 2 partition script in `meta-rpi/scripts`.
 
-    scott@octo:~/rpi/meta-rpi/scripts$ sudo ./mk2parts.sh sdc
+    scott@fractal:~/rpi/meta-rpi/scripts$ sudo ./mk2parts.sh sdc
 
 
 Then after making sure the environment variables are set correctly you can use the *copy_* scripts from   the *meta-rpi* repository to copy the bootloader and O/S.
@@ -82,14 +78,14 @@ The *copy_* scripts use a temporary mount point `/media/card` on the workstation
 
 Then export some environment variables for the scripts. (See the [instructions][jumpnow-yocto-rpi] for an explanation.) 
 
-    scott@fractal:~/rpi/meta-rpi/scripts$ export OETMP=/oe5/rpi/tmp-krogoth
-    scott@fractal:~/rpi/meta-rpi/scripts$ export MACHINE=raspberrypi
+    scott@fractal:~/rpi/meta-rpi/scripts$ export OETMP=/oe4/rpi/tmp-morty
+    scott@fractal:~/rpi/meta-rpi/scripts$ export MACHINE=raspberrypi2
 
 The boot partition
 
     scott@fractal:~/rpi/meta-rpi/scripts$ ./copy_boot.sh sdc
 
-    OETMP: /oe5/rpi/tmp-krogoth
+    OETMP: /oe4/rpi/tmp-morty
     Formatting FAT partition on /dev/sdc1
     mkfs.fat 3.0.28 (2015-05-16)
     Mounting /dev/sdc1
@@ -102,63 +98,59 @@ The boot partition
     Unmounting /dev/sdc1
     Done
 
+If you want to use the camera (see below), now is a good time to copy the `dt-blob.bin`
+
+    scott@fractal:~/rpi/meta-rpi/scripts$ sudo mount /dev/sdc1 /media/card
+    scott@fractal:~/rpi/meta-rpi/scripts$ sudo cp ~/rpi/dt-blob.bin /media/card
+    scott@fractal:~/rpi/meta-rpi/scripts$ sudo umount /dev/sdc1
+
 The root file system
 
     scott@fractal:~/rpi/meta-rpi/scripts$ ./copy_rootfs.sh sdc console cm
 
-    OETMP: /oe5/rpi/tmp-krogoth
-    IMAGE: console
-    HOSTNAME: cm
+    OETMP: /oe4/rpi/tmp-morty
+    IMAGE: qt5
+    HOSTNAME: cm3
 
     Formatting /dev/sdc2 as ext4
-    /dev/sdc2 contains a ext4 file system labelled 'ROOT'
-            last mounted on / on Wed Dec 31 19:00:07 1969
-    Proceed anyway? (y,n) y
     Mounting /dev/sdc2
-    Extracting console-image-raspberrypi.tar.xz to /media/card
-    Writing cm to /etc/hostname
+    Extracting qt5-image-raspberrypi2.tar.xz to /media/card
+    Writing cm3 to /etc/hostname
     Unmounting /dev/sdc2
     Done
 
-If you want to use the camera (see below), now is a good time to copy the `dt-blob.bin`
 
-    scott@octo:~/rpi/meta-rpi/scripts$ sudo mount /dev/sdc1 /media/card
-    scott@octo:~/rpi/meta-rpi/scripts$ sudo cp ~/rpi/dt-blob.bin /media/card
-    scott@octo:~/rpi/meta-rpi/scripts$ sudo umount /dev/sdc1
-
-
-You can now move the *RPi CM* to the *Pi Dev Board* and boot it.
+You can now move the *RPi CM3* to the *Pi Dev Board* and boot it.
 
 One of the nice features of the *Pi Dev Board* is the built-in USB serial console.
 
     ...
-    Poky (Yocto Project Reference Distro) 2.1.1 cm /dev/ttyAMA0
+    Poky (Yocto Project Reference Distro) 2.2.1 cm3 /dev/ttyAMA0
 
-    cm login: root
+    cm3 login: root
     
-    root@cm:~# uname -a
-    Linux cm 4.4.15 #1 Wed Jul 27 04:19:42 EDT 2016 armv6l armv6l armv6l GNU/Linux
+    root@cm3:~# uname -a
+    Linux cm3 4.9.20 #1 SMP Sun Apr 9 06:31:32 EDT 2017 armv7l armv7l armv7l GNU/Linux
 
-    root@cm:~# lsblk
-    NAME         MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
-    mmcblk0rpmb  179:96   0  512K  0 disk
-    mmcblk0boot0 179:32   0    4M  1 disk
-    mmcblk0boot1 179:64   0    4M  1 disk
-    mmcblk0      179:0    0  3.7G  0 disk
-    |-mmcblk0p1  179:1    0   64M  0 part
-    `-mmcblk0p2  179:2    0  3.6G  0 part /
-
-    root@cm:~# free
+    root@cm3:~# free
                   total        used        free      shared  buff/cache   available
-    Mem:         445052       13196      389092         140       42764      404232
+    Mem:         945524       15492      912304         148       17728      908800
     Swap:             0           0           0
+
+    root@cm3:~# df -h
+    Filesystem      Size  Used Avail Use% Mounted on
+    /dev/root       3.5G  626M  2.7G  19% /
+    devtmpfs        458M     0  458M   0% /dev
+    tmpfs           462M  100K  462M   1% /run
+    tmpfs           462M   48K  462M   1% /var/volatile
 
 
 The *qt5-image* has some demo apps you can use to test that Qt5 apps will run.
 
-For example, plug in an HDMI display and run this
+For example here is a QML test, plug in an HDMI display and run this
 
-    root@cm:~# qcolorcheck -platform linuxfb
+    root@cm3:~# qqtest
+
 
 The Gumstix *Pi Dev Board* has a camera connector that is more convenient to use with the official RPi camera modules because it does not require an extra adapter board or jumpers to connect power and I2C the way you need to do using the RPi compute board.
 
@@ -166,23 +158,21 @@ You do still need a `dt-blob.bin` to reconfigure some GPU pins for the camera. Y
 
 Modify `config.txt` so the GPU can use the camera.
 
-    root@cm:~# mkdir /mnt/fat
-    root@cm:~# mount /dev/mmcblk0p1 /mnt/fat
-    root@cm:~# echo 'start_x=1' >> /mnt/fat/config.txt
-    root@cm:~# echo 'gpu_mem=128' >> /mnt/fat/config.txt
-    root@cm:~# reboot
+    root@cm3:~# mkdir /mnt/fat
+    root@cm3:~# mount /dev/mmcblk0p1 /mnt/fat
+    root@cm3:~# echo 'start_x=1' >> /mnt/fat/config.txt
+    root@cm3:~# echo 'gpu_mem=128' >> /mnt/fat/config.txt
+    root@cm3:~# reboot
 
   
 After that you can use the [raspicam][raspicam] tools installed on either the of test images in `meta-rpi`.
 
-    root@cm:~# raspistill -t 300000 -hf -vf
+    root@cm3:~# raspistill -t 0 -hf -vf
 
-
-I'm waiting now for the hopefully pin-compatible [RPi CM3][cm3-soon] that's rumored to [exist][cm3-post].
 
 [gumstix]: http://www.gumstix.com
-[rpi-compute]: https://www.raspberrypi.org/products/compute-module/
-[rpi-compute-module-dev-kit]: https://www.raspberrypi.org/products/compute-module-development-kit/
+[rpi-compute3]: https://www.raspberrypi.org/products/compute-module-3/
+[rpi-compute-module-dev-kit]: https://www.raspberrypi.org/products/compute-module-io-board-v3/
 [gumstix-pi-dev-board]: https://store.gumstix.com/expansion/gumstix-pi-compute-dev-board.html
 [gumstix-gepetto]: https://www.gumstix.com/geppetto/
 [yocto]: https://www.yoctoproject.org
@@ -192,5 +182,3 @@ I'm waiting now for the hopefully pin-compatible [RPi CM3][cm3-soon] that's rumo
 [bbb-upgrades]: http://www.jumpnowtek.com/beaglebone/Upgrade-strategy-for-BBB.html
 [rpi-cm-camera]: https://www.raspberrypi.org/documentation/hardware/computemodule/cmio-camera.md
 [raspicam]: https://www.raspberrypi.org/documentation/raspbian/applications/camera.md
-[cm3-post]: https://www.raspberrypi.org/forums/viewtopic.php?f=98&t=141248
-[cm3-soon]: http://www.techrepublic.com/article/raspberry-pi-3-the-inside-story-from-the-new-35-computers-creator/
