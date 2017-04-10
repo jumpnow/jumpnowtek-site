@@ -10,15 +10,15 @@ tags: [linux, gumstix, rpi compute, yocto]
 
 The Gumstix [Pi Compute Development Board][gumstix-pi-dev-board] is just one example of a custom board that can be designed using [Gepetto][gumstix-gepetto] their online board design/layout tool.
 
-I am using [Yocto Project][yocto] tools build the software stack for the *CM*, similar to the way I build systems for the other RPi boards.
+I am using [Yocto Project][yocto] tools build the software stack for the *CM3*, similar to the way I build systems for the other RPi boards.
 
 Some instructions for that can be found [here][jumpnow-yocto-rpi].
 
 When it comes time to flash the image onto the RPi, you can use the RPi Foundation's *Compute Module Development Kit* if you have one of those boards. Instructions for flashing using that board can be found [here][jumpnow-rpi-compute].
 
-You cannot use the Gumstix *Pi Dev Board* the same way since it does not have the circuitry to put the *CM* into a mode where a host computer can directly access the flash as a block device.
+You cannot use the Gumstix *Pi Dev Board* the same way since it does not have the circuitry to put the CM into a mode where a host computer can directly access the flash as a block device.
 
-Instead, Gumstix sells a [Pi Fast Flash Board][gumstix-pi-fast-flash-board] just for flashing the *RPi CM*. The *Fast Flash Board* does the equivalent of the **J4 Jumper** in the *USB Slave* position on the *RPi Compute Module Dev* board
+Instead, Gumstix sells a [Pi Fast Flash Board][gumstix-pi-fast-flash-board] just for flashing the CM boards. The *Fast Flash Board* does the equivalent of the **J4 Jumper** in the *USB Slave* position on the *RPi Compute Module Dev* board
 
 The Gumstix *Fast Flash Board* is much more convenient when you are flashing multiple boards in succession.
 
