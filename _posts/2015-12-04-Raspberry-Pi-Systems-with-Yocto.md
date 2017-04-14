@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2017-04-04 05:08:00
+date: 2017-04-14 06:56:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
 ---
@@ -49,18 +49,6 @@ The serial console works off the header pins on all the boards.
 
 I have one RPi2 running as my office [music system][rpi-pandora].
 
-I have another system with a [Pi Foundation's 7" Touchscreen Display][pi-display] and an [RPi Camera V2][rpi-cam-v2] that displays video on the touchscreen while simultaneously streaming it using *netcat* to another Linux machine running *mplayer*. 
-
-On the RPi
-
-    root@rpi3:~# raspivid -t 0 -w 1920 -h 1080 -hf -rot 90 -ih -fps 30 -o - | nc -l -p 2222
-
-On the workstation
-
-    $ mplayer -fps 200 -demuxer h264es ffmpeg://tcp://192.168.10.101:2222
-
-Where `192.168.10.101` is the RPi address. The latency is really good even at this resolution.
-
 I also frequently use RPis as my Linux test platform for Qt applications. I do most Qt development on a workstation, usually Windows, but eventually most applications have to run on Linux and MacOS as well. The RPi3s work great both for compiling and running Qt5 applications.
 
 ### Downloads
@@ -73,7 +61,7 @@ Instructions for installing onto an SD card are in the [README][readme].
 
 The Yocto version is `2.2.1` the `[morty]` branch.
 
-The `4.9.20` Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
+The `4.9.21` Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
 
 These are **sysvinit** systems using [eudev][eudev].
 
