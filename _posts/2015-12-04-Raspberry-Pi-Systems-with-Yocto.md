@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2017-04-14 06:56:00
+date: 2017-04-15 10:30:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
 ---
@@ -61,7 +61,7 @@ Instructions for installing onto an SD card are in the [README][readme].
 
 The Yocto version is `2.2.1` the `[morty]` branch.
 
-The `4.9.21` Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
+The `4.9.22` Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
 
 These are **sysvinit** systems using [eudev][eudev].
 
@@ -81,38 +81,38 @@ The Adafruit [PiTFT 3.5"][pitft35r] and [PiTFT 2.8"][pitft28r] resistive touchsc
 
 [Raspi2fb][raspi2fb] is included for mirroring the GPU framebuffer to the small TFT displays. This allows for running Qt GUI applications on the TFTs.
 
-As of 2017-04-03, here is the list of device tree overlays installed
+As of 2017-04-15, here is the list of device tree overlays installed
 
     root@rpi3:~# uname -a
-    Linux rpi3 4.9.20 #1 SMP Mon Apr 3 15:28:42 EDT 2017 armv7l armv7l armv7l GNU/Linux
+    Linux rpi3 4.9.22 #1 SMP Sat Apr 15 08:37:58 EDT 2017 armv7l armv7l armv7l GNU/Linux
 
     root@rpi3:~# ls /mnt/fat/overlays/
-    adau1977-adc.dtbo                       midi-uart0.dtbo
-    adau7002-simple.dtbo                    mmc.dtbo
-    ads1015.dtbo                            mz61581.dtbo
-    ads1115.dtbo                            pi3-act-led.dtbo
-    ads7846.dtbo                            pi3-disable-bt.dtbo
-    akkordion-iqdacplus.dtbo                pi3-disable-wifi.dtbo
-    allo-boss-dac-pcm512x-audio.dtbo        pi3-miniuart-bt.dtbo
-    allo-piano-dac-pcm512x-audio.dtbo       piscreen.dtbo
-    allo-piano-dac-plus-pcm512x-audio.dtbo  piscreen2r.dtbo
-    at86rf233.dtbo                          pisound.dtbo
-    audioinjector-addons.dtbo               pitft22.dtbo
-    audioinjector-wm8731-audio.dtbo         pitft28-capacitive.dtbo
-    audremap.dtbo                           pitft28-resistive.dtbo
-    bmp085_i2c-sensor.dtbo                  pitft35-resistive.dtbo
-    dht11.dtbo                              pps-gpio.dtbo
-    dionaudio-loco-v2.dtbo                  pwm-2chan.dtbo
-    dionaudio-loco.dtbo                     pwm.dtbo
-    dpi18.dtbo                              qca7000.dtbo
-    dpi24.dtbo                              raspidac3.dtbo
-    dwc-otg.dtbo                            rpi-backlight.dtbo
-    dwc2.dtbo                               rpi-cirrus-wm5102.dtbo
-    enc28j60-spi2.dtbo                      rpi-dac.dtbo
-    enc28j60.dtbo                           rpi-display.dtbo
-    fe-pi-audio.dtbo                        rpi-ft5406.dtbo
-    googlevoicehat-soundcard.dtbo           rpi-proto.dtbo
-    gpio-ir.dtbo                            rpi-sense.dtbo
+    adau1977-adc.dtbo                       mmc.dtbo
+    adau7002-simple.dtbo                    mz61581.dtbo
+    ads1015.dtbo                            pi3-act-led.dtbo
+    ads1115.dtbo                            pi3-disable-bt.dtbo
+    ads7846.dtbo                            pi3-disable-wifi.dtbo
+    akkordion-iqdacplus.dtbo                pi3-miniuart-bt.dtbo
+    allo-boss-dac-pcm512x-audio.dtbo        piscreen.dtbo
+    allo-piano-dac-pcm512x-audio.dtbo       piscreen2r.dtbo
+    allo-piano-dac-plus-pcm512x-audio.dtbo  pisound.dtbo
+    at86rf233.dtbo                          pitft22.dtbo
+    audioinjector-addons.dtbo               pitft28-capacitive.dtbo
+    audioinjector-wm8731-audio.dtbo         pitft28-resistive.dtbo
+    audremap.dtbo                           pitft35-resistive.dtbo
+    bmp085_i2c-sensor.dtbo                  pps-gpio.dtbo
+    dht11.dtbo                              pwm-2chan.dtbo
+    dionaudio-loco-v2.dtbo                  pwm.dtbo
+    dionaudio-loco.dtbo                     qca7000.dtbo
+    dpi18.dtbo                              raspidac3.dtbo
+    dpi24.dtbo                              rpi-backlight.dtbo
+    dwc-otg.dtbo                            rpi-cirrus-wm5102.dtbo
+    dwc2.dtbo                               rpi-dac.dtbo
+    enc28j60-spi2.dtbo                      rpi-display.dtbo
+    enc28j60.dtbo                           rpi-ft5406.dtbo
+    fe-pi-audio.dtbo                        rpi-proto.dtbo
+    googlevoicehat-soundcard.dtbo           rpi-sense.dtbo
+    gpio-ir.dtbo                            rpi-tv.dtbo
     gpio-poweroff.dtbo                      rra-digidac1-wm8741-audio.dtbo
     hifiberry-amp.dtbo                      sc16is750-i2c.dtbo
     hifiberry-dac.dtbo                      sc16is752-spi1.dtbo
@@ -141,7 +141,7 @@ As of 2017-04-03, here is the list of device tree overlays installed
     mcp2515-can0.dtbo                       w1-gpio-pullup.dtbo
     mcp2515-can1.dtbo                       w1-gpio.dtbo
     mcp3008.dtbo                            wittypi.dtbo
-
+    midi-uart0.dtbo
 
 I've tested a few
 
@@ -191,9 +191,9 @@ For all versions of Ubuntu, you should change the default Ubuntu shell from `das
 
 Choose **No** to dash when prompted.
 
-### Fedora Setup (not tested with [morty])
+### Fedora Setup
 
-I have used a Fedora *23* 64-bit workstation.
+I have used a Fedora *25* 64-bit workstation.
 
 The extra packages I needed to install for Yocto were
 
@@ -277,8 +277,9 @@ Do not use the '**~**' character when defining directory paths in the configurat
 
 In `bblayers.conf` file replace `${HOME}` with the appropriate path to the meta-layer repositories on your system if you modified any of the paths in the previous instructions.
 
-For example, if your directory structure does not look exactly like this, you will need to modify `bblayers.conf`
+**NOTE:** Do not include **meta-yocto-bsp** in your `bblayers.conf`. The BSP requirements for the BBB are included in `meta-bbb`.
 
+For example, if your directory structure does not look exactly like this, you will need to modify `bblayers.conf`
 
     ~/poky-morty/
          meta-openembedded/
@@ -308,7 +309,9 @@ The defaults for all of these work fine. Adjustments are optional.
 
 The choices are **raspberrypi2** the default or **raspberrypi**.
 
-Use **raspberrypi2** for the RPi3.
+Use **raspberrypi2** for the **RPi2**, **RPi3** or **CM3**.
+
+Use **raspberry** for the **RPi0** or original **CM**.
 
 There is a new **raspberrypi3** MACHINE option with `[morty]`, but I recommend you stick with using **raspberrypi2** for MACHINE. Nothing is lost.
 
