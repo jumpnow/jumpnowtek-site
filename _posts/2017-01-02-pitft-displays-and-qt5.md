@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Raspberry Pi TFT Displays and Qt5
-date: 2017-01-03 09:02:00
+date: 2017-04-16 08:02:00
 categories: rpi
 tags: [rpi, qt5, eglfs, linuxfb, pitft]
 ---
@@ -290,6 +290,12 @@ Any programming language that can do file I/O can control the backlight this way
 You'll need to enable a pwm driver on GPIO_18. 
 
 This post on [Using the RPi hardware PWM timers][rpi-pwm] has more details, but the short version is add this line to `config.txt`
+
+For **4.9** kernels
+
+    dtoverlay=pwm
+
+For **4.4** kernels
 
     dtoverlay=pwm-with-clk
 
