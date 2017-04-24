@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Using DS18B20 1-wire Temp Sensors with the Raspberry Pi
-date: 2017-04-24 16:48:00
+date: 2017-04-24 16:53:00
 categories: rpi
 tags: [rpi, ds18b20, temp, one-wire, w1]
 ---
@@ -60,11 +60,11 @@ There are a couple of ways to wire the DS18B20 to the RPi. You need to provide s
     dtoverlay=w1-gpio
 
 
-The `w1-gpio-overlay` defaults to using GPIO_4, pin 7 on the header, for the data pin.
+The `w1-gpio-overlay` defaults to using **GPIO\_4** for the data pin. That's pin 7 on the header.
 
-Specify a different GPIO pin with a *gpiopin=<pin>* argument to the overlay.
+To specify a different GPIO pin, add a `gpiopin=<pin>` argument to the dtoverlay line.
 
-For example, to use GPIO_22, pin 15 for a parasitic setup, you would use the following
+For example, to use **GPIO\_22** (pin 15) on a parasitic setup, you would use the following
 
     dtoverlay=w1-gpio,pullup=1,gpiopin=22
 
