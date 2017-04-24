@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Using DS18B20 1-wire Temp Sensors with the Raspberry Pi
-date: 2017-04-24 16:37:00
+date: 2017-04-24 16:48:00
 categories: rpi
 tags: [rpi, ds18b20, temp, one-wire, w1]
 ---
@@ -16,11 +16,15 @@ There is also a `w1-therm.ko` slave driver to handle the specifics of **DS18*20*
 
 Both drivers are enabled as modules in the standard RPi kernels.
 
-The drivers can be loaded by a device tree overlay provided with the RPi kernels
+The drivers can be loaded by a device tree overlay already provided with the official RPi kernels
 
     w1-gpio-overlay.dtb  
 
-I'm using a [Buildroot][buildroot-rpi] built system for the following example. My [Yocto][yocto-rpi] built systems behave the same way. Raspbian systems probably do as well though I didn't try.
+The overlay is the only requirement to use the DS18B20. There is no need for third-party libraries.
+
+I'm testing with [Buildroot][buildroot-rpi] and [Yocto][yocto-rpi] built systems.
+
+Raspbian systems include the `w1-gpio-overlay` and should work the same.
 
 
 There are a couple of ways to wire the DS18B20 to the RPi. You need to provide slightly different parameters to the w1-gpio overlay depending on the method used.
