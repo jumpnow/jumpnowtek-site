@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Using DS18B20 1-wire Temp Sensors with the Raspberry Pi
-date: 2017-04-24 16:10:00
+date: 2017-04-24 16:37:00
 categories: rpi
 tags: [rpi, ds18b20, temp, one-wire, w1]
 ---
@@ -25,14 +25,15 @@ I'm using a [Buildroot][buildroot-rpi] built system for the following example. [
 
 There are a couple of ways to wire the DS18B20 to the RPi. You need to provide slightly different parameters to the w1-gpio overlay depending on the method used.
 
-## Parasitic powering
+## Parasitic Powering
 
 ##### Wiring
 
     DS18B20          RPi
-    VDD              GND
-    GND              GND
-    DQ               GPIO  -- 4.7k -- 3.3v
+    -------          ---
+    VDD (red)        GND
+    GND (black)      GND
+    DQ (yellow)      GPIO  -- 4.7k -- 3.3v
 
 
 ##### config.txt
@@ -40,12 +41,12 @@ There are a couple of ways to wire the DS18B20 to the RPi. You need to provide s
     dtoverlay=w1-gpio,pullup=1
 
 
-## Non-parasitic powering
+## Non-Parasitic Powering
  
 ##### Wiring
 
     DS18B20          RPi
-
+    -------          ---
     VDD (red)        3.3v
     GND (black)      GND
     DQ (yellow)      GPIO -- 4.7k -- 3.3v
@@ -110,7 +111,7 @@ The second line *t=23187* is the temp in Celsius multiplied by 1000.
 
 Here's a simple python script that will read the temp and convert to Fahrenheit.
 
-    #!/usr/bin/env python
+    #!/usr/bin/env python3
 
     import glob
 
@@ -152,7 +153,7 @@ Here's a simple python script that will read the temp and convert to Fahrenheit.
             if valid:
                 c = raw / 1000.0
                 f = celsius_to_fahrenheit(c)
-                print (f, 'F')
+                print ('%0.2f F' % (f))
 
 
 [ds18b20]: https://www.maximintegrated.com/en/products/analog/sensors-and-sensor-interface/DS18B20.html#tab1
