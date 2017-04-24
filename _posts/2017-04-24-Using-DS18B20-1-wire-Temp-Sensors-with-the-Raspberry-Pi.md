@@ -20,7 +20,7 @@ The drivers can be loaded by a device tree overlay provided with the RPi kernels
 
     w1-gpio-overlay.dtb  
 
-I'm using a [Buildroot][buildroot-rpi] built system for the following example. [Yocto][yocto-rpi] built systems behave the same way.
+I'm using a [Buildroot][buildroot-rpi] built system for the following example. My [Yocto][yocto-rpi] built systems behave the same way. Raspbian systems probably do as well though I didn't try.
 
 
 There are a couple of ways to wire the DS18B20 to the RPi. You need to provide slightly different parameters to the w1-gpio overlay depending on the method used.
