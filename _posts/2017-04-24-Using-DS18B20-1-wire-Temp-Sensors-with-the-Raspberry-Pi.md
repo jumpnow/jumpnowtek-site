@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Using DS18B20 1-wire Temp Sensors with the Raspberry Pi
-date: 2017-04-24 16:53:00
+date: 2017-04-24 20:04:00
 categories: rpi
 tags: [rpi, ds18b20, temp, one-wire, w1]
 ---
@@ -119,6 +119,10 @@ Here's a simple python script that will read the temp and convert to Fahrenheit.
 
     import glob
 
+    def celsius_to_fahrenheit(c):
+        return (c * 1.8) + 32.0
+
+
     def find_devices():
         return glob.glob('/sys/bus/w1/devices/28-*')
 
@@ -143,10 +147,6 @@ Here's a simple python script that will read the temp and convert to Fahrenheit.
         return True, int(d[1])
 
 
-    def celsius_to_fahrenheit(c):
-        return (c * 1.8) + 32.0
-
-
     if __name__ == '__main__':
 
         devices = find_devices()
@@ -157,7 +157,7 @@ Here's a simple python script that will read the temp and convert to Fahrenheit.
             if valid:
                 c = raw / 1000.0
                 f = celsius_to_fahrenheit(c)
-                print ('%0.2f F' % (f))
+                print('%0.2f F' % (f))
 
 
 [ds18b20]: https://www.maximintegrated.com/en/products/analog/sensors-and-sensor-interface/DS18B20.html#tab1
