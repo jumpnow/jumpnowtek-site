@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Buildroot
 description: "Building customized systems for the Raspberry Pi using Buildroot"
-date: 2017-03-21 09:00:00
+date: 2017-04-29 11:21:00
 categories: rpi
 tags: [linux, rpi, buildroot, rpi3, qt5, pyqt, pyqt5]
 ---
@@ -11,7 +11,7 @@ I have started using [Buildroot][buildroot] as an alternative to [Yocto][yocto] 
 
 In general I am not interested in building *desktop* like systems that support multiple GUI applications.
 
-In the projects I work on there is typically a single UI application running, maybe using a touchscreen. Or the projects have only a remote interface like a web service or no interface at all.
+In the projects I work on there is typically a single UI application running, maybe using a touchscreen. Or the projects have only a remote interface like a web service or no UI at all for things like an IOT endpoint.
 
 The preference for these systems is to be a small as possible, no software that isn't needed.
 
@@ -135,32 +135,32 @@ Here's a short run through.
 
 The [RPi serial console][rpi-serial] console is configured and I'm running the following commands using that.
 
+    ...
     Welcome to Buildroot
     rpi3 login: root
 
     # uname -a
-    Linux rpi3 4.9.11-v7 #1 SMP Thu Feb 23 15:30:11 EST 2017 armv7l GNU/Linux
+    Linux rpi3 4.9.25-v7 #1 SMP Sat Apr 29 09:18:53 EDT 2017 armv7l GNU/Linux
 
     # free
                  total       used       free     shared    buffers     cached
-    Mem:        945520      36016     909504        168       3664      11048
-    -/+ buffers/cache:      21304     924216
+    Mem:        945524      31292     914232        128       3108       9932
+    -/+ buffers/cache:      18252     927272
     Swap:            0          0          0
 
 
-The SD card is not fully utilized because we used the `sdcard.img` and didn't resize. That's easily fixed with some setup scripts I'll get to later.
+The SD card is not fully utilized because I used the `sdcard.img` and in the config set the rootfs size to 2G.
 
     # df -h
     Filesystem                Size      Used Available Use% Mounted on
-    /dev/root               227.2M    198.4M     13.3M  94% /
+    /dev/root                 1.9G    199.5M      1.6G  11% /
     devtmpfs                457.2M         0    457.2M   0% /dev
     tmpfs                   461.7M         0    461.7M   0% /dev/shm
-    tmpfs                   461.7M     32.0K    461.6M   0% /tmp
-    tmpfs                   461.7M    136.0K    461.5M   0% /run
-    /dev/mmcblk0p1           31.9M      8.5M     23.4M  27% /mnt
+    tmpfs                   461.7M     28.0K    461.7M   0% /tmp
+    tmpfs                   461.7M    100.0K    461.6M   0% /run
 
 
-The system is pretty big at **195M** but that's because of all the Qt5 and Python stuff I threw in.
+The system is pretty big at **200M** but that's because of all the Qt5 and Python stuff I threw in.
 
     # ls -l /var/log
     lrwxrwxrwx    1 root     root             6 Jan 13 17:23 /var/log -> ../tmp
