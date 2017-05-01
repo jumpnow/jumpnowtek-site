@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Buildroot
 description: "Building customized systems for the Raspberry Pi using Buildroot"
-date: 2017-04-29 11:21:00
+date: 2017-05-01 14:16:00
 categories: rpi
 tags: [linux, rpi, buildroot, rpi3, qt5, pyqt, pyqt5]
 ---
@@ -50,8 +50,6 @@ The changes to **[master]** are
 * Created some sample overlays for the rootfs to customize some conf files.
 
 * Added some [kernel build patches][br-rpi-overlays] so that DTS overlays (DTBOs) are built from the kernel source and not just downloaded from the RPi firmware github repo.
-
-* Added some custom DTS files for [hardware PWM][hardware-pwm] and the TI ads1115 ADCs.
 
 
 The two custom `configs` are
