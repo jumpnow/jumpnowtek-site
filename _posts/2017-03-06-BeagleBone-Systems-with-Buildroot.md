@@ -2,7 +2,7 @@
 layout: post
 title: Building Beaglebone Systems with Buildroot
 description: "Building customized systems for the BeagleBone Black using Buildroot"
-date: 2017-03-13 05:59:00
+date: 2017-05-15 16:56:00
 categories: beaglebone
 tags: [linux, beaglebone, bbb, buildroot, qt5, pyqt, pyqt5, pru]
 ---
@@ -25,6 +25,11 @@ This will build under the `~/buildroot` directory
     scott@fractal:~/buildroot$ make jumpnow_bbb_pru_defconfig
     scott@fractal:~/buildroot$ make
 
+If you don't care about the PRU then you can use this defconfig instead
+
+    scott@fractal:~/buildroot$ make jumpnow_bbb_defconfig
+    scott@fractal:/br5/bbb$ make
+
 I suggest building outside the buildroot tree by passing an argument like this `O=<some-other-dir>` to the make defconfig step.
 
     scott@fractal:~/buildroot$ make O=/br5/bbb jumpnow_bbb_pru_defconfig
@@ -36,6 +41,8 @@ The default download directory for Buildroot sources will be `$(HOME)/dl`. You c
 And finally, you will probably need your distros 32-bit compatibility libs for the TI PRU compiler package. I did using an Ubuntu 16.04 64-bit server for a build system.
 
 The **jumpnow\_bbb\_pru\_defconfig** uses a ti-linux 4.4.52 kernel with patches and a kernel config that supports using the uio-pruss kernel driver.
+
+The **jumpnow\_bbb\_defconfig** uses a linux-stable 4.9.28 kernel with patches and dtbs to support the 4DCape 4.3 and 7 inch displays and the new NewHaven 7 inch capacitive touch display.
 
 The system is minimal and should build fast (~15 minutes), especially on subsequent builds where source has been downloaded and the ccache is populated.
 
