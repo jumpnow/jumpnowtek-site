@@ -2,7 +2,7 @@
 layout: post
 title: Building BeagleBone Black Systems with Yocto
 description: "Building customized systems for the BeagleBone Black using tools from the Yocto Project"
-date: 2017-04-03 05:56:00
+date: 2017-05-15 16:50:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
@@ -17,9 +17,9 @@ I use this layer as a template when starting new BeagleBone projects.
 
 The Yocto version is `2.2.1` the `[morty]` branch.
 
-The `4.9.20` Linux kernel comes from the [linux-stable][linux-stable] repository. (`4.4.59`  also available.)
+The `4.9.28` Linux kernel comes from the [linux-stable][linux-stable] repository. (`4.4.68`  also available.)
 
-The [u-boot][uboot] version is `2016.07`.
+The [u-boot][uboot] version is `2017.05`.
 
 These are **sysvinit** systems using [eudev][eudev].
 
@@ -38,6 +38,7 @@ Perl `5.22` and Python `2.7.12` each with a number of modules is included.
 3. [4DCape 4.3-inch resistive touchscreen cape][4dcape43t] (`bbb-4dcape43t.dtb`)
 4. [4DCape 7-inch resistive touchscreen cape][4dcape70t] (`bbb-4dcape70t.dtb`)
 5. [Newhaven 5-inch capacitive touchscreen cape][nh5cape] (`bbb-nh5cape.dtb`)
+6. [Newhaven 7-inch capacitive touchscreen cape][nhd7cape] (`bbb-nhd7cape.dtb`)
 
 My custom DTBs all enable the *eMMC*.
 
@@ -622,6 +623,7 @@ An implementation of this idea is described here [An Upgrade strategy for the BB
 [4dcape70t]: http://www.4dsystems.com.au/product/4DCAPE_70T/
 [4dcape43t]: http://www.4dsystems.com.au/product/4DCAPE_43/
 [nh5cape]: http://elinux.org/Nh5cape
+[nhd7cape]: http://www.mouser.com/new/newhavendisplay/newhaven-beaglebone-cape/
 [bitbake]: http://www.yoctoproject.org/docs/2.1/bitbake-user-manual/bitbake-user-manual.html
 [source-script]: http://stackoverflow.com/questions/4779756/what-is-the-difference-between-source-script-sh-and-script-sh
 [zeromq]: http://zeromq.org/
