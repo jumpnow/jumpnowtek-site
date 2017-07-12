@@ -1,8 +1,8 @@
 ---
 layout: post
-title: Using private Github repos with Google Repo
+title: Using private git repositories with Google Repo
 date: 2017-07-12 13:37:00
-categories: misc
+categories: miscellaneous
 tags: [repo, github, gitlab, private repository]
 ---
 
