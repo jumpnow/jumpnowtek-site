@@ -1,16 +1,16 @@
 ---
 layout: post
 title: Using private git repositories with Google Repo
-date: 2017-07-12 13:37:00
+date: 2017-07-12 14:37:00
 categories: miscellaneous
 tags: [repo, github, gitlab, private repository]
 ---
 
-Make sure you have SSH keys for Github (or Gitlab) setup so that you can do this from a command line on the build machine
+Make sure you have SSH keys for Github (or Gitlab) setup so that you can do this from a command line
 
     git clone git@github.com:scottellis/private-repo.git
 
-Then your [Google Repo][repo] manifest xml can have a *<remote>* for the private repository that looks like this.
+Then your [Google Repo][repo] manifest xml can have a **remote** entry for the private repository that looks like this.
 
     <?xml version="1.0" encoding="UTF-8"?>
     <manifest>
