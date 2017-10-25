@@ -2,28 +2,24 @@
 layout: post
 title: Building Raspberry Pi Systems with Buildroot
 description: "Building customized systems for the Raspberry Pi using Buildroot"
-date: 2017-05-01 14:16:00
+date: 2017-08-17 06:30:00
 categories: rpi
 tags: [linux, rpi, buildroot, rpi3, qt5, pyqt, pyqt5]
 ---
 
-I have started using [Buildroot][buildroot] as an alternative to [Yocto][yocto] for building Linux systems for the [Raspberry Pi][rpi-site] boards.
+[Buildroot][buildroot] can be used to build Linux systems for the [Raspberry Pi][rpi-site] boards.
 
 In general I am not interested in building *desktop* like systems that support multiple GUI applications.
 
-In the projects I work on there is typically a single UI application running, maybe using a touchscreen. Or the projects have only a remote interface like a web service or no UI at all for things like an IOT endpoint.
+In the projects I work on there is typically at most a single UI application running possibly using a touchscreen. More often it's just a remote interface like a web service or no UI at all, say an endpoint collecting data and running MQTT or something similar.
 
 The preference for these systems is to be a small as possible, no software that isn't needed.
 
-I do usually add [Qt5][qt] support since so many of the projects I work on use it. But since I require only one UI application at a time, the Qt [EGLFS][qpa-eglfs] platform plugin is what I want.
+I've added [Qt5][qt] support to the demo images I'm building here, since many of the projects I work on use it. But since I require only one UI application at a time, the Qt [EGLFS][qpa-eglfs] platform plugin is what I am building.
 
-Buildroot offers two versions of Qt5, **5.8** and the LTS version **5.6.2**. I'm using **5.8**. 
+Buildroot offers two versions of Qt5, **5.9.1** and the LTS version **5.6.2**. I'm using **5.9.1**. 
 
-Buildroot is considerably simpler and light-weight in comparison to Yocto, which should be nice when it comes to assisting clients setting up their internal build systems.
-
-I switched the kernel from **4.4** to **4.9** since it looks like that will be the official RPi kernel very soon.
-
-So here are some notes on my what I'm using so far. 
+Buildroot is considerably simpler to use in comparison to [Yocto][yocto] and much less resource intensive on the build machine.
 
 I created a [Buildroot clone][jumpnow-buildroot] in Github.
 
@@ -31,7 +27,6 @@ The **[master]** branch of the repository is a mirror of the official Buildroot 
 
 The default **[jumpnow]** branch has a few additions on top of **[master]** for my own customizations.
 
-**NOTE:** I switched to the **[jumpnow]** branch from **[rpi]** since I started adding some more boards to my Buildroot repo.
 
 The changes to **[master]** are
 

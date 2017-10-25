@@ -2,9 +2,9 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2017-04-15 10:30:00
+date: 2017-08-17 05:30:00
 categories: rpi
-tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi compute]
+tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi zero wireless, rpi compute]
 ---
 
 Building systems for [Raspberry Pi][rpi] boards using tools from the [Yocto Project][Yocto].
@@ -59,15 +59,15 @@ Instructions for installing onto an SD card are in the [README][readme].
 
 ### System Info
 
-The Yocto version is `2.2.1` the `[morty]` branch.
+The Yocto version is **2.3.1** the `[pyro]` branch.
 
-The `4.9.22` Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
+The **4.9.43** Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
 
 These are **sysvinit** systems using [eudev][eudev].
 
-The Qt version is `5.7.1` There is no *X11* and no desktop installed. [Qt][qt] GUI applications can be run fullscreen using one of the [Qt embedded linux plugins][embedded-linux-qpa] like *eglfs* or *linuxfb* which are both provided.
+The Qt version is **5.9.2** There is no *X11* and no desktop installed. [Qt][qt] GUI applications can be run fullscreen using one of the [Qt embedded linux plugins][embedded-linux-qpa] like *eglfs* or *linuxfb*, both provided. The default is *eglfs*.
 
-Perl `5.22.1`, Python `2.7.12` and Python3 `3.5.2` each with a number of modules is included.
+Perl **5.24.1**, Python **2.7.12** and **3.5.2** each with a number of modules is included.
 
 [omxplayer][omxplayer] for playing video and audio files from the command line, hardware accelerated.
 
@@ -170,21 +170,17 @@ You will need at least the following packages installed
     build-essential
     chrpath
     diffstat
-    gawk
-    git
     libncurses5-dev
-    pkg-config
-    subversion
-    texi2html
     texinfo
 
-For *16.04* you also need to install the *python 2.7* package that the *Yocto 2.2* branch requires
+For *16.04* you also need to install the *python 2.7* package that the *Yocto 2.3* branch requires
 
     python2.7
 
 And then create a link for it in `/usr/bin`
 
     sudo ln -sf /usr/bin/python2.7 /usr/bin/python
+
 For all versions of Ubuntu, you should change the default Ubuntu shell from `dash` to `bash` by running this command from a shell
  
     sudo dpkg-reconfigure dash
@@ -212,22 +208,22 @@ Fedora already uses `bash` as the shell.
 
 ### Clone the dependency repositories
 
-First the main Yocto project `poky` repository, use the `[morty]` branch
+First the main Yocto project `poky` repository, use the `[pyro]` branch
 
-    scott@octo:~ git clone -b morty git://git.yoctoproject.org/poky.git poky-morty
+    scott@octo:~ git clone -b pyro git://git.yoctoproject.org/poky.git poky-pyro
 
-The `meta-openembedded` repository, use the `[morty]` branch
+The `meta-openembedded` repository, use the `[pyro]` branch
 
-    scott@octo:~$ cd poky-morty
-    scott@octo:~/poky-morty$ git clone -b morty git://git.openembedded.org/meta-openembedded
+    scott@octo:~$ cd poky-pyro
+    scott@octo:~/poky-pyro$ git clone -b pyro git://git.openembedded.org/meta-openembedded
 
-The `meta-qt5` repository, use the `[morty]` branch 
+I am using the `meta-qt5` repository from [code.qt.io][code-qt-io], the `[5.9]` branch 
 
-    scott@octo:~/poky-morty$ git clone -b morty https://github.com/meta-qt5/meta-qt5.git
+    scott@octo:~/poky-pyro$ git clone -b 5.9 git://code.qt.io/yocto/meta-qt5.git
 
-And finally the `meta-raspberrypi` repository. use the `[morty]` branch
+And finally the `meta-raspberrypi` repository. use the `[pyro]` branch
 
-    scott@octo:~/poky-morty$ git clone -b morty git://git.yoctoproject.org/meta-raspberrypi
+    scott@octo:~/poky-pyro$ git clone -b pyro git://git.yoctoproject.org/meta-raspberrypi
 
 Those 4 repositories shouldn't need modifications other then updates and can be reused for different projects or different boards.
 
@@ -237,7 +233,7 @@ Create a separate sub-directory for the `meta-rpi` repository before cloning. Th
 
     scott@octo:~$ mkdir ~/rpi
     scott@octo:~$ cd ~/rpi
-    scott@octo:~/rpi$ git clone -b morty git://github.com/jumpnow/meta-rpi
+    scott@octo:~/rpi$ git clone -b pyro git://github.com/jumpnow/meta-rpi
 
 The `meta-rpi/README.md` file has the last commits from the dependency repositories that I tested. You can always checkout those commits explicitly if you run into problems.
 
@@ -254,7 +250,7 @@ You could manually create the directory structure like this
 
 Or you could use the *Yocto* environment script `oe-init-build-env` like this passing in the path to the build directory
 
-    scott@octo:~$ source poky-morty/oe-init-build-env ~/rpi/build
+    scott@octo:~$ source poky-pyro/oe-init-build-env ~/rpi/build
 
 The *Yocto* environment script will create the build directory if it does not already exist.
  
@@ -281,7 +277,7 @@ In `bblayers.conf` file replace `${HOME}` with the appropriate path to the meta-
 
 For example, if your directory structure does not look exactly like this, you will need to modify `bblayers.conf`
 
-    ~/poky-morty/
+    ~/poky-pyro/
          meta-openembedded/
          meta-qt5/
          meta-raspberrypi
@@ -311,9 +307,11 @@ The choices are **raspberrypi2** the default or **raspberrypi**.
 
 Use **raspberrypi2** for the **RPi2**, **RPi3** or **CM3**.
 
-Use **raspberry** for the **RPi0** or original **CM**.
+Use **raspberry** for the **RPi0**, **RPi0-W** or the original **CM**.
 
-There is a new **raspberrypi3** MACHINE option with `[morty]`, but I recommend you stick with using **raspberrypi2** for MACHINE. Nothing is lost.
+There is a new **raspberrypi3** MACHINE option with `[pyro]`, but I recommend you stick with using **raspberrypi2** for MACHINE. Nothing is lost.
+
+Similarly, use **raspberrypi** for the **RPI0-W**.
 
 You can only build for one type of MACHINE at a time because of the different instruction sets.
 
@@ -341,7 +339,7 @@ The default location is in the `build` directory, `~/rpi/build/sstate-cache`.
 
 You need to [source][source-script] the Yocto environment into your shell before you can use [bitbake][bitbake]. The `oe-init-build-env` will not overwrite your customized conf files.
 
-    scott@octo:~$ source poky-morty/oe-init-build-env ~/rpi/build
+    scott@octo:~$ source poky-pyro/oe-init-build-env ~/rpi/build
 
     ### Shell environment set up for builds. ###
 
@@ -387,7 +385,7 @@ The *console-image* has a line
 
     inherit core-image
 
-which is `poky-morty/meta/classes/core-image.bbclass` and pulls in some required base packages.  This is useful to know if you create your own image recipe.
+which is `poky-pyro/meta/classes/core-image.bbclass` and pulls in some required base packages.  This is useful to know if you create your own image recipe.
 
 #### qt5-basic-image
 
@@ -510,11 +508,11 @@ This *copy_boot.sh* script needs to know the `TMPDIR` to find the binaries. It l
 
 For instance, if I had this in the `local.conf`
 
-    TMPDIR = "/oe8/rpi/tmp-morty"
+    TMPDIR = "/oe8/rpi/tmp-pyro"
 
 Then I would export this environment variable before running `copy_boot.sh`
 
-    scott@octo:~/rpi/meta-rpi/scripts$ export OETMP=/oe8/rpi/tmp-morty
+    scott@octo:~/rpi/meta-rpi/scripts$ export OETMP=/oe8/rpi/tmp-pyro
 
 If you didn't override the default `TMPDIR` in `local.conf`, then set it to the default `TMPDIR`
 
@@ -561,7 +559,7 @@ Here's a realistic example session where I want to copy already built images to 
 
     scott@octo:~$ sudo umount /dev/sdb1
     scott@octo:~$ sudo umount /dev/sdb2
-    scott@octo:~$ export OETMP=/oe8/rpi/tmp-morty
+    scott@octo:~$ export OETMP=/oe8/rpi/tmp-pyro
     scott@octo:~$ export MACHINE=raspberrypi2
     scott@octo:~$ cd rpi/meta-rpi/scripts
     scott@octo:~/rpi/meta-rpi/scripts$ ./copy_boot.sh sdb
@@ -593,7 +591,7 @@ Check the *README* in the [tspress][tspress] repository for usage.
 
 To display the list of available packages from the `meta-` repositories included in *bblayers.conf*
 
-    scott@octo:~$ source poky-morty/oe-init-build-env ~/rpi/build
+    scott@octo:~$ source poky-pyro/oe-init-build-env ~/rpi/build
 
     scott@octo:~/rpi/build$ bitbake -s
 
@@ -738,3 +736,4 @@ The `console-image` contains a utility called [pi-blaster][pi-blaster-post] that
 [python-paho]: https://eclipse.org/paho/clients/python/
 [mosquitto]: http://mosquitto.org/
 [python-flask]: http://flask.pocoo.org/
+[code-qt-io]: http://code.qt.io/cgit/
