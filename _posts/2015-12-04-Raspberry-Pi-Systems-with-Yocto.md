@@ -2,27 +2,33 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2017-08-17 05:30:00
+date: 2017-10-26 05:30:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi zero wireless, rpi compute]
 ---
 
-Building systems for [Raspberry Pi][rpi] boards using tools from the [Yocto Project][Yocto].
+This post is about building Linux systems for [Raspberry Pi][rpi] boards using tools from the [Yocto Project][Yocto].
 
-The example images in [meta-rpi][meta-rpi] build systems that support C, C++, [Qt5][qt], Perl and Python development, the languages and tools that I commonly use. Other languages are supported, but you will have to add the packages to your image recipe.
+Yocto is a set of tools for building a customized Linux distribution. The systems are usually meant for a particular target application with known requirements, likely a commercial product.
 
-Yocto is a good tool for building minimal, customized systems like one for a dedicated hacking project or more commonly for industrial or commercial embedded products.
+If you are looking for a general purpose system with the availability of pre-built packages you can install anytime you are probably better off with a distribution like [Raspbian][raspbian].
 
-If you are looking for a full-featured desktop experience you will probably be better off sticking with [Raspbian][raspbian] or another of the more popular, user friendly [RPi distributions][rpi-distros].
-
-If the following are important to you then a build system like this (Yocto) or [Buildroot][jumpnow-buildroot] might be what you are looking for.
+What custom build systems like Yocto or [Buildroot][jumpnow-buildroot] provide are
 
 * Small image sizes
 * Quick boot times
 * Read-only rootfs
 * Tight control of all software installed
 
-You can build *systemd* systems with Yocto, but the default images I'm building from [meta-rpi][meta-rpi] use *sysvinit*.
+The systems built from the [meta-rpi][meta-rpi] layer described here use the same BCM firmware, linux kernel and include the same dtb overlays as the official Raspbian systems. It is only the **userland** software that differs.
+
+There are a few example **images** in [meta-rpi][meta-rpi] that support C, C++, [Qt5][qt], Perl and Python development, languages and tools I commonly use.
+
+There are also a few security related tools, again just things that I like to use.
+
+These are only demos and you should modify or create your own image **recipes** for your own project.   
+
+My systems use **sysvinit**, but Yocto supports **systemd** if you would rather use that.
 
 If you are [Qt5][qt] developer then you will appreciate that the RPi comes with working OpenGL drivers for the GPU. This means [Qt OpenGL][qt-opengl] and [Qt QuickControls2][qt-quickcontrols2] applications will work when using the [eglfs][qt-eglfs] platform plugin. 
 
@@ -30,38 +36,25 @@ Here is another post with more details on [developing with Qt5 on the RPi][rpi-q
 
 I am using the Yocto [meta-raspberrypi][meta-raspberrypi] layer, but have updated recipes for the Linux kernel, [gpu firmware][firmware-repo] and some [userland][userland-repo] components.
 
-I've done some testing with the following boards
+I have tested with all of the RPi boards at one time or another including the [RPi CM][rpi-compute] with several carriers boards.
 
-* [RPi3][rpi3-b]
-* [RPi2][rpi2-b] including the `Model B v1.2`
-* [RPi Zero][rpi-zero]
-* [RPi Zero W][rpi-zero-w]
-* [RPi 1 Model B][rpi1-model-b]
-* [RPi compute module][rpi-compute] with the [Raspberry Pi Compute Module Dev Kit][rpi-compute-dev-kit]
-* [RPi compute module][rpi-compute] with the [Gumstix Pi Compute Dev Board][gumstix-pi-compute]
-* [RPi compute module][rpi-compute] with the [Western Digital Media Stick][wd-media-stick]
-
-All boot fine. Ethernet works where applicable. HDMI and USB work. RPi3 wifi works, I have not tried the RPi3 bluetooth. I have it disabled so I can use the serial console.
-
-The serial console works off the header pins on all the boards.  
-
-*SPI*, *I2C* and generic *GPIO* are all standard embedded Linux stuff. *DTS* overlays are available for common configurations.
-
-I have one RPi2 running as my office [music system][rpi-pandora].
-
-I also frequently use RPis as my Linux test platform for Qt applications. I do most Qt development on a workstation, usually Windows, but eventually most applications have to run on Linux and MacOS as well. The RPi3s work great both for compiling and running Qt5 applications.
+Routinely I only test with RPi3 and RPi0-W boards.
 
 ### Downloads
 
-If you want a quick look at the resulting systems, you can download an example for the RPi 2/3 image [here][downloads]. 
+If you want a quick look at the resulting systems, you can download some pre-built images [here][downloads]. 
 
 Instructions for installing onto an SD card are in the [README][readme].
 
+To login the user is **root** with password **jumpnowtek**. 
+
+You should change the password ASAP.
+
 ### System Info
 
-The Yocto version is **2.3.1** the `[pyro]` branch.
+The Yocto version is **2.4** the `[rocko]` branch.
 
-The **4.9.43** Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
+The **4.9.58** Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
 
 These are **sysvinit** systems using [eudev][eudev].
 

@@ -2,35 +2,38 @@
 layout: post
 title: Building Raspberry Pi Systems with Buildroot
 description: "Building customized systems for the Raspberry Pi using Buildroot"
-date: 2017-08-17 06:30:00
+date: 2017-10-25 14:19:00
 categories: rpi
 tags: [linux, rpi, buildroot, rpi3, qt5, pyqt, pyqt5]
 ---
 
-[Buildroot][buildroot] can be used to build Linux systems for the [Raspberry Pi][rpi-site] boards.
+This post is about building custom Linux systems for [Raspberry Pi][rpi] boards using [Buildroot][buildroot].
 
-In general I am not interested in building *desktop* like systems that support multiple GUI applications.
+Buildroot is a simpler alternative to the [Yocto Project][yocto]. With only a few exceptions you can build the systems with the same functionality with either tool. 
 
-In the projects I work on there is typically at most a single UI application running possibly using a touchscreen. More often it's just a remote interface like a web service or no UI at all, say an endpoint collecting data and running MQTT or something similar.
+The two major exceptions, features you can get with Yocto and not Buildroot are a gcc toolchain on the target (the RPi) and a package management system.
 
-The preference for these systems is to be a small as possible, no software that isn't needed.
+This is deliberate. The focus for Buildroot is end-user products which do not typically require dev tools.
 
-I've added [Qt5][qt] support to the demo images I'm building here, since many of the projects I work on use it. But since I require only one UI application at a time, the Qt [EGLFS][qpa-eglfs] platform plugin is what I am building.
+As for package management, full-system A/B rootfs upgrades are typically a better solution for embedded systems anyway. They lower the risk of bricking during an interrupted upgrade and also offer the ability to easily and fully rollback the upgrade if required. 
 
-Buildroot offers two versions of Qt5, **5.9.1** and the LTS version **5.6.2**. I'm using **5.9.1**. 
 
-Buildroot is considerably simpler to use in comparison to [Yocto][yocto] and much less resource intensive on the build machine.
 
-I created a [Buildroot clone][jumpnow-buildroot] in Github.
+In the projects I work on there is typically a single UI application possibly using a touchscreen. More often it's just a remote interface like a web service or maybe no UI at all, just an endpoint collecting data and running MQTT or something similar.
+
+The goal is for these systems is to be a small as possible, no software that isn't needed. Software that's not installed is software that doesn't need upgrades/security updates.
+
+I've added [Qt5][qt] support to the demo images I'm building here, since many of the projects I work on use it. I am building only the Qt [EGLFS][qpa-eglfs] and linuxfb platform plugins.
+
+Buildroot offers two versions of Qt5, **5.9.3** and the LTS version **5.6.3**. I'm using **5.9.3**. 
+
+If you are not using Qt, definitely disable it in your config. This will speed your build considerably.
+
+I am using a [Buildroot clone][jumpnow-buildroot] I created in Github.
 
 The **[master]** branch of the repository is a mirror of the official Buildroot repository. 
 
 The default **[jumpnow]** branch has a few additions on top of **[master]** for my own customizations.
-
-
-The changes to **[master]** are
-
-* Added an **rpi-wifi-firmware** package to include the non-free blobs the RPi3 radio requires. (Uses the [github.com/RPi-Distro/firmware-nonfree][rpi-distro] repo for the files.) 
 
 * Bumped versions for the [Linux kernel][rpi-linux] and [RPi firmware][rpi-firmware] to the latest from the official RPi repositories.
 
@@ -108,11 +111,11 @@ This allows you to share common downloads among different builds and if you choo
 
 Another option is to build externally outside of the Buildroot repository.
 
-You can specify it like this when you do the first `make <some_defconfig>`.
+You can specify it this way when you do the first `make <some_defconfig>`.
 
     scott@fractal:~/buildroot$ make O=/br5/rpi3 jumpnow_rpi3_defconfig
 
-After that, go to the directory you chose to run Buildroot make commands
+After that, go to the directory you chose to run the Buildroot make commands
 
     scott@fractal:~/buildroot$ cd /br5/rpi3
     scott@fractal:/br5/rpi3$ make menuconfig (optional)
@@ -324,7 +327,7 @@ Fetch and build a project
 
 [buildroot]: https://buildroot.org/
 [raspbian]: https://www.raspbian.org/
-[rpi-site]: https://www.raspberrypi.org/
+[rpi]: https://www.raspberrypi.org/
 [yocto]: https://www.yoctoproject.org/
 [qt]: http://www.qt.io/
 [qpa-eglfs]: http://doc.qt.io/qt-5/embedded-linux.html
