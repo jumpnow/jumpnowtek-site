@@ -22,13 +22,17 @@ So here is the quick summary I give customers when asked.
 * Can build cross-toolchains for development
 * Convenient support for read-only root filesystems
 * Support offline builds
-* Build configuration files integrate well with SCM tools
+* The build configuration files integrate well with SCM tools
+
+<br />
 
 #### Buildroot Advantages
 
 * Simple Makefile approach, easier to understand how the build system works
 * Reduced resource requirements on the build machine
 * Very easy to customize the final root filesystem (overlays) 
+
+<br />
 
 #### Yocto Advantages
 
@@ -42,6 +46,8 @@ Those last two are deliberate decisions by **Buildroot** and not usually issues 
 1. End-user products don't typically require dev tools
 
 2. [Full-system A/B upgrades][AB-upgrades] are usually a better solution for embedded systems then incremental package upgrades
+
+<br />
 
 #### Summary
 
