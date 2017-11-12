@@ -25,7 +25,6 @@ So here is the quick summary I give customers when asked.
 * The build configuration files integrate well with SCM tools
 
 <br />
-
 #### Buildroot Advantages
 
 * Simple Makefile approach, easier to understand how the build system works
@@ -33,7 +32,6 @@ So here is the quick summary I give customers when asked.
 * Very easy to customize the final root filesystem (overlays) 
 
 <br />
-
 #### Yocto Advantages
 
 * Convenient sharing of build configuration among similar projects (meta-layers)
@@ -48,7 +46,6 @@ Those last two are deliberate decisions by **Buildroot** and not usually issues 
 2. [Full-system A/B upgrades][AB-upgrades] are usually a better solution for embedded systems then incremental package upgrades
 
 <br />
-
 #### Summary
 
 If you have decided on a package manager approach to upgrades or have a family of products with slightly different package requirements, I would recommend **Yocto**.
