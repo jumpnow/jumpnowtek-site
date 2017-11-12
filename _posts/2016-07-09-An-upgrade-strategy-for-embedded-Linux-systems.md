@@ -3,7 +3,7 @@ layout: post
 title: An upgrade strategy for embedded Linux systems
 description: "Implementing a simple upgrade strategy for deployed embedded Linux systems"
 date: 2016-09-21 13:44:00
-categories: yocto 
+categories: linux 
 tags: [linux, embedded, upgrades, beaglebone, gumstix, overo, duovero]
 ---
 

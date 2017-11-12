@@ -2,70 +2,64 @@
 layout: post
 title: Building Raspberry Pi Systems with Buildroot
 description: "Building customized systems for the Raspberry Pi using Buildroot"
-date: 2017-10-25 14:19:00
+date: 2017-11-12 11:12:00
 categories: rpi
 tags: [linux, rpi, buildroot, rpi3, qt5, pyqt, pyqt5]
 ---
 
-This post is about building custom Linux systems for [Raspberry Pi][rpi] boards using [Buildroot][buildroot].
+This post is about building Linux systems for [Raspberry Pi][rpi] boards using [Buildroot][buildroot].
 
-Buildroot is a simpler alternative to the [Yocto Project][yocto]. With only a few exceptions you can build the systems with the same functionality with either tool. 
+Buildroot is a popular alternative to [Yocto][yocto] for building custom embedded Linux systems. 
 
-The two major exceptions, features you can get with Yocto and not Buildroot are a gcc toolchain on the target (the RPi) and a package management system.
-
-This is deliberate. The focus for Buildroot is end-user products which do not typically require dev tools.
-
-As for package management, full-system A/B rootfs upgrades are typically a better solution for embedded systems anyway. They lower the risk of bricking during an interrupted upgrade and also offer the ability to easily and fully rollback the upgrade if required. 
-
-
-
-In the projects I work on there is typically a single UI application possibly using a touchscreen. More often it's just a remote interface like a web service or maybe no UI at all, just an endpoint collecting data and running MQTT or something similar.
-
-The goal is for these systems is to be a small as possible, no software that isn't needed. Software that's not installed is software that doesn't need upgrades/security updates.
-
-I've added [Qt5][qt] support to the demo images I'm building here, since many of the projects I work on use it. I am building only the Qt [EGLFS][qpa-eglfs] and linuxfb platform plugins.
-
-Buildroot offers two versions of Qt5, **5.9.3** and the LTS version **5.6.3**. I'm using **5.9.3**. 
-
-If you are not using Qt, definitely disable it in your config. This will speed your build considerably.
+With a few exceptions you can build a similar Linux system with either tool. 
 
 I am using a [Buildroot clone][jumpnow-buildroot] I created in Github.
 
-The **[master]** branch of the repository is a mirror of the official Buildroot repository. 
+The `[master]` branch of the repository is a mirror of the official Buildroot repository. 
 
-The default **[jumpnow]** branch has a few additions on top of **[master]** for my own customizations.
+The default `[jumpnow]` branch has a few additions on top of `[master]` for my own customizations and is what I am using for these examples.
 
-* Bumped versions for the [Linux kernel][rpi-linux] and [RPi firmware][rpi-firmware] to the latest from the official RPi repositories.
+The demo images I am building include [Qt5][qt] support, since many of the projects I work on use it. Qt is big and if you don't need it you should remove it from the config.
 
-* Added some custom applications primarily as an experiment in how to add custom packages to Buildroot. The source for all of them are github repos.
+Buildroot offers two versions of Qt5, **5.9.2** and **5.6.3**. I'm using **5.9.2** for the demos. I am building both the Qt [EGLFS][qpa-eglfs] and linuxfb platform plugins.
+
+I have also included PyQt5.
+
+Here are some of the changes to Buildroot `[master]` in my `[jumpnow]` branch.
+
+* Newer versions of the [Linux kernel][rpi-linux] and [RPi firmware][rpi-firmware]
+
+* Some custom applications primarily as an experiment in how to add custom packages to Buildroot. The source for all of them are public github repos.
 
   1. **serialecho** - a C, Makefile based app
   2. **tspress** - a Qt5 Widgets GUI app using qmake
-  3. **pytouch.py** - a [PyQt5][pyqt] app, the build/install for this is just a copy
+  3. **pytouch.py** - a [PyQt5][pyqt] app
  
-* Added some custom Buildroot `configs` to support all the RPi boards. The configs add [Qt5][qt] (no QML), [PyQt5][pyqt] and Python3 including Numpy. This generates an image approaching 180MB, which is big, but this is only for evaluation.
+* Custom Buildroot **defconfigs** to support my images for the RPi boards.
 
-* Created some sample overlays for the rootfs to customize some conf files.
+* Sample rootfs overlays to customize conf files.
 
-* Added some [kernel build patches][br-rpi-overlays] so that DTS overlays (DTBOs) are built from the kernel source and not just downloaded from the RPi firmware github repo.
+* Some [patches to the kernel build][br-rpi-overlays] so that the RPi DTS overlays (DTBOs) are built from the kernel source and not just downloaded from the RPi firmware github repo. This make its a little easier (at least for my workflow) to include custom dts overlays when you need them by just including them as kernel patches.
 
-
-The two custom `configs` are
-
-* **jumpnow\_rpi3\_defconfig** - For the RPi2, RPi3 and CM3 boards
-* **jumpnow\_rpi0\_defconfig** - For the original RPi, RPi Zero, RPi Zero-W and CM1 boards
+The **defconfig** is where non-default build information is stored. You will want to create a custom **defconfig** for your project.
  
+The two custom **defconfigs** I am using in the demos are
+
+* jumpnow\_rpi3\_defconfig - for the RPi2, RPi3 and CM3 boards
+* jumpnow\_rpi0\_defconfig - for the original RPi, RPi0, RPi0-W and CM1 boards
+
+These configs add [Qt5][qt] (no QML), [PyQt5][pyqt] and Python3 including Numpy.
 
 To build a system, run the following (see the **ccache** notes below)
 
-    scott@t410:~$ git clone -b jumpnow https://github.com/jumpnow/buildroot
-    scott@t410:~$ cd buildroot
-    scott@t410:~/buildroot$ make jumpnow_rpi3_defconfig
-    scott@t410:~/buildroot$ make
+    ~$ git clone -b jumpnow https://github.com/jumpnow/buildroot
+    ~$ cd buildroot
+    ~/buildroot$ make jumpnow_rpi3_defconfig
+    ~/buildroot$ make
 
 **Note:** Don't run make with a **-jN** argument. The main Makefile is not designed to be run as a parallel build. The sub-projects will be run in parallel automatically.
 
-If you are missing tools on your workstation, you will get error messages telling you what you are missing. The dependencies are nothing out of the ordinary for a developer workstation and you can search the web for the particular packages you need to install for your Linux distribution. 
+If you are missing tools on your workstation, you will get error messages telling you what you are missing. The dependencies are nothing out of the ordinary for a developer workstation and you can search the web for the particular packages you need to install for your distro. 
 
 The command
  
@@ -75,9 +69,9 @@ created a `.config` file that completely describes to Buildroot how to generate 
 
 When the build is done, insert an SD card and copy the image like this
 
-    scott@t410:~/buildroot$ sudo dd if=output/images/rpi3-sdcard.img of=/dev/sdb bs=1M
+    ~/buildroot$ sudo dd if=output/images/rpi3-sdcard.img of=/dev/sdb bs=1M
 
-Replace `/dev/sdb` for where the SD card shows up on your workstation.
+Replace `/dev/sdb` with the location the SD card shows up on your workstation.
 
 
 #### Customizing the Build
@@ -88,7 +82,7 @@ One easy optimization is use [ccache][ccache] to reduce redundant work by the C/
 
 Make sure your workstation has [ccache][ccache] installed, then run the Buildroot configuration tool after you have your initial *.config* generated.
 
-    scott@t410:~/buildroot$ make menuconfig 
+    ~/buildroot$ make menuconfig 
     
 Under **Build options** select **Enable compiler cache** and then save the configuration.
 This will update your *.config*.
@@ -99,7 +93,7 @@ After that run *make* as usual to build your system.
 
 Another option I've been using is to save the downloaded source files to a location outside the buildroot repository. 
 
-The download location is determined by the **BR2\_DL\_DIR** variable in the *.config*
+The download location is determined by the **BR2\_DL\_DIR** variable in the **config**
 
     BR2_DL_DIR="$(HOME)/dl"
 
@@ -107,19 +101,19 @@ Or it can be set as an environment variable in the shell
 
     export BR2_DL_DIR=${HOME}/dl
 
-This allows you to share common downloads among different builds and if you choose to delete the repo you don't have to lose the downloads.
+This allows you to share common downloads among different builds and if you ever delete the Buildroot repository you won't lose the downloads.
 
 Another option is to build externally outside of the Buildroot repository.
 
 You can specify it this way when you do the first `make <some_defconfig>`.
 
-    scott@fractal:~/buildroot$ make O=/br5/rpi3 jumpnow_rpi3_defconfig
+    ~/buildroot$ make O=/br5/rpi3 jumpnow_rpi3_defconfig
 
 After that, go to the directory you chose to run the Buildroot make commands
 
-    scott@fractal:~/buildroot$ cd /br5/rpi3
-    scott@fractal:/br5/rpi3$ make menuconfig (optional)
-    scott@fractal:/br5/rpi3$ make
+    ~/buildroot$ cd /br5/rpi3
+    /br5/rpi3$ make menuconfig (optional)
+    /br5/rpi3$ make
 
 In this particular case I have `/br5/rpi3` on a drive partition separate from my workstation rootfs and my home directory.
 
@@ -134,32 +128,32 @@ The [RPi serial console][rpi-serial] console is configured and I'm running the f
     ...
     Welcome to Buildroot
     rpi3 login: root
+    Password:
+
+The password is **jumpnowtek**. You should change it.
 
     # uname -a
-    Linux rpi3 4.9.25-v7 #1 SMP Sat Apr 29 09:18:53 EDT 2017 armv7l GNU/Linux
+    Linux rpi3 4.9.61-v7 #1 SMP Sun Nov 12 12:02:37 EST 2017 armv7l GNU/Linux
 
     # free
-                 total       used       free     shared    buffers     cached
-    Mem:        945524      31292     914232        128       3108       9932
-    -/+ buffers/cache:      18252     927272
-    Swap:            0          0          0
-
+                  total        used        free      shared  buff/cache   available
+    Mem:         949580       17412      913168         164       19000      919216
+    Swap:             0           0           0
 
 The SD card is not fully utilized because I used the `sdcard.img` and in the config set the rootfs size to 2G.
 
     # df -h
     Filesystem                Size      Used Available Use% Mounted on
-    /dev/root                 1.9G    199.5M      1.6G  11% /
-    devtmpfs                457.2M         0    457.2M   0% /dev
-    tmpfs                   461.7M         0    461.7M   0% /dev/shm
-    tmpfs                   461.7M     28.0K    461.7M   0% /tmp
-    tmpfs                   461.7M    100.0K    461.6M   0% /run
+    /dev/root                 1.8G    219.8M      1.5G  13% /
+    devtmpfs                459.2M         0    459.2M   0% /dev
+    tmpfs                   463.7M         0    463.7M   0% /dev/shm
+    tmpfs                   463.7M     32.0K    463.6M   0% /tmp
+    tmpfs                   463.7M    132.0K    463.5M   0% /run
 
-
-The system is pretty big at **200M** but that's because of all the Qt5 and Python stuff I threw in.
+The system is pretty big at **220M** but that's because of all the Qt5 and Python stuff I threw in.
 
     # ls -l /var/log
-    lrwxrwxrwx    1 root     root             6 Jan 13 17:23 /var/log -> ../tmp
+    lrwxrwxrwx    1 root     root             6 Aug 23 07:46 /var/log -> ../tmp
 
 Logs are going to a tmpfs which is what you normally want on an embedded system.
 
@@ -168,14 +162,14 @@ The expected interfaces are present. The default `/etc/network/interfaces` bring
 I have verified the wifi interface works. 
 
     # ifconfig -a
-    eth0      Link encap:Ethernet  HWaddr B8:27:EB:56:9B:DC
-              inet addr:192.168.10.116  Bcast:192.168.10.255  Mask:255.255.255.0
-              inet6 addr: fe80::ba27:ebff:fe56:9bdc/64 Scope:Link
+    eth0      Link encap:Ethernet  HWaddr B8:27:EB:7B:E8:32
+              inet addr:192.168.10.111  Bcast:192.168.10.255  Mask:255.255.255.0
+              inet6 addr: fe80::ba27:ebff:fe7b:e832/64 Scope:Link
               UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
-              RX packets:50 errors:0 dropped:0 overruns:0 frame:0
-              TX packets:45 errors:0 dropped:0 overruns:0 carrier:0
+              RX packets:198 errors:0 dropped:0 overruns:0 frame:0
+              TX packets:161 errors:0 dropped:0 overruns:0 carrier:0
               collisions:0 txqueuelen:1000
-             RX bytes:4493 (4.3 KiB)  TX bytes:4946 (4.8 KiB)
+              RX bytes:17701 (17.2 KiB)  TX bytes:21539 (21.0 KiB)
 
     lo        Link encap:Local Loopback
               inet addr:127.0.0.1  Mask:255.0.0.0
@@ -186,27 +180,26 @@ I have verified the wifi interface works.
               collisions:0 txqueuelen:1
               RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
 
-    wlan0     Link encap:Ethernet  HWaddr B8:27:EB:03:CE:89
+    wlan0     Link encap:Ethernet  HWaddr B8:27:EB:2E:BD:67
               BROADCAST MULTICAST  MTU:1500  Metric:1
               RX packets:0 errors:0 dropped:0 overruns:0 frame:0
               TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
               collisions:0 txqueuelen:1000
               RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
 
-
-The ssh server is listening and I can use it.
+The ssh server is listening. I have one connection going.
 
     # netstat -an | grep tcp
     tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN
+    tcp        0     64 192.168.10.111:22       192.168.10.4:50602      ESTABLISHED
     tcp        0      0 :::22                   :::*                    LISTEN
 
 I also added an **ntp** package and set the timezone to **EST5EDT** in the defconfig and that is working.
 
     # date
-    Thu Feb 23 15:43:01 EST 2017
+    Sun Nov 12 13:23:32 EST 2017
 
-
-My little Qt Widgets touchscreen test application [tspress][tspress] works fine.
+My Qt Widgets touchscreen test application [tspress][tspress] works fine.
 
     # tspress
     Unable to query physical screen size, defaulting to 100 dpi.
@@ -221,22 +214,22 @@ My little Qt Widgets touchscreen test application [tspress][tspress] works fine.
 
 See the `/etc/profile.d/qt5-env.sh` script for setting Qt5 environment variables like **WIDTH** and **HEIGHT**.
 
-I have a USB Bluetooth mouse and a USB keyboard/mouse trackpad attached as well as an HDMI display.
+I have a USB Bluetooth mouse and a USB keyboard/mouse with trackpad attached as well as a 1080p HDMI touch display.
 
-They all work.
+All input devices work.
 
 You can see from the Qt messages that the *eglfs* plugin is being used.
 
 I did include the *linuxfb* plugin in the build just for testing.
 
     # ls -l /usr/lib/qt/plugins/platforms/
-    total 887
-    -rwxr-xr-x    1 root     root          7332 Feb 23 15:31 libqeglfs.so
-    -rwxr-xr-x    1 root     root        294196 Feb 23 15:31 libqlinuxfb.so
-    -rwxr-xr-x    1 root     root        119980 Feb 23 15:31 libqminimal.so
-    -rwxr-xr-x    1 root     root        150524 Feb 23 15:31 libqminimalegl.so
-    -rwxr-xr-x    1 root     root        135836 Feb 23 15:31 libqoffscreen.so
-    -rwxr-xr-x    1 root     root        191876 Feb 23 15:31 libqvnc.so
+    total 964
+    -rwxr-xr-x    1 root     root          9576 Nov 12 12:07 libqeglfs.so
+    -rwxr-xr-x    1 root     root        319104 Nov 12 12:07 libqlinuxfb.so
+    -rwxr-xr-x    1 root     root        133536 Nov 12 12:07 libqminimal.so
+    -rwxr-xr-x    1 root     root        162612 Nov 12 12:07 libqminimalegl.so
+    -rwxr-xr-x    1 root     root        145996 Nov 12 12:07 libqoffscreen.so
+    -rwxr-xr-x    1 root     root        207956 Nov 12 12:07 libqvnc.so
   
 
 PyQt5 applications work fine. There is small example installed called `pytouch.py`.
@@ -245,18 +238,17 @@ You can run it like this
 
     # pytouch.py
 
-
 #### Using the Buildroot cross-toolchain
 
 Some quick notes on using the cross-toolchain.
 
 The toolchain gets installed under the build output/host directory.
 
-In my example where I used an external build directory
+In my example where I used an external build directory of `/br5/rpi3`
 
     ~/buildroot$ make O=/br5/rpi3 jumpnow_rpi3_defconfig
 
-My build output ended up here
+my build output ended up here
 
     /br5/rpi3/host
 
@@ -264,9 +256,9 @@ The cross-compiler and associated tools can be found under
 
     /br5/rpi3/host/usr/bin
 
-The toolchain is not relocatable, use it in place.
+The toolchain is not **relocatable**. You must use it in place.
 
-To use it in place, add the path to `<output>/host/usr/bin` to your path and invoke the compiler by name, in this case *arm-linux-gcc*, *arm-linux-g++*, etc...
+To use add the path `/br5/rpi3/host/usr/bin` to your **PATH** environment variable and invoke the compiler by name, in this case *arm-linux-gcc*, *arm-linux-g++*, etc...
 
 Some quick examples, first add the PATH to the cross-compiler
 
@@ -276,12 +268,12 @@ Some quick examples, first add the PATH to the cross-compiler
 
 A simple C, Makefile example
 
-    scott@fractal:~/projects$ git clone https://github.com/scottellis/serialecho
+    ~/projects$ git clone https://github.com/scottellis/serialecho
     Cloning into 'serialecho'...
 
-    scott@fractal:~/projects$ cd serialecho/
+    ~/projects$ cd serialecho/
 
-    scott@fractal:~/projects/serialecho$ cat Makefile
+    ~/projects/serialecho$ cat Makefile
     TARGET = serialecho
 
     $(TARGET) : serialecho.c
@@ -290,38 +282,37 @@ A simple C, Makefile example
     clean:
             rm -f $(TARGET)
 
-    scott@fractal:~/projects/serialecho$ export CC=arm-linux-gcc
+    ~/projects/serialecho$ export CC=arm-linux-gcc
 
-    scott@fractal:~/projects/serialecho$ make
+    ~/projects/serialecho$ make
     arm-linux-gcc serialecho.c -o serialecho
 
-    scott@fractal:~/projects/serialecho$ file serialecho
+    ~/projects/serialecho$ file serialecho
     serialecho: ELF 32-bit LSB executable, ARM, EABI5 version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux-armhf.so.3, for GNU/Linux 4.9.0, not stripped
 
 A Qt5 project, first check our Qt version
 
-    scott@fractal:~/projects$ which qmake
+    ~/projects$ which qmake
     /br5/rpi3/host/usr/bin/qmake
 
-    scott@fractal:~/projects$ qmake --version
+    ~/projects$ qmake --version
     QMake version 3.1
-    Using Qt version 5.8.0 in /br5/rpi3/host/usr/arm-buildroot-linux-gnueabihf/sysroot/usr/lib
-
+    Using Qt version 5.9.2 in /br5/rpi3/host/arm-buildroot-linux-gnueabihf/sysroot/usr/lib
 
 Fetch and build a project
 
-    scott@fractal:~/projects$ git clone https://github.com/scottellis/tspress
+    ~/projects$ git clone https://github.com/scottellis/tspress
     Cloning into 'tspress'...
 
-    scott@fractal:~/projects$ cd tspress
+    ~/projects$ cd tspress
 
-    scott@fractal:~/projects/tspress$ qmake
+    ~/projects/tspress$ qmake
     Info: creating stash file /home/scott/projects/tspress/.qmake.stash
 
-    scott@fractal:~/projects/tspress$ make
+    ~/projects/tspress$ make
     ... (build stuff) ...
 
-    scott@fractal:~/projects/tspress$ file tspress
+    ~/projects/tspress$ file tspress
     tspress: ELF 32-bit LSB executable, ARM, EABI5 version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux-armhf.so.3, for GNU/Linux 4.9.0, not stripped
 
 
@@ -344,3 +335,4 @@ Fetch and build a project
 [br-rpi-overlay-doc]: http://www.jumpnowtek.com/rpi/Compiling-Raspberry-Pi-Overlays-with-Buildroot.html
 [hardware-pwm]: http://www.jumpnowtek.com/rpi/Using-the-Raspberry-Pi-Hardware-PWM-timers.html
 [br-rpi-overlays]: http://www.jumpnowtek.com/rpi/Compiling-Raspberry-Pi-Overlays-with-Buildroot.html
+[AB-upgrades]: http://www.jumpnowtek.com/yocto/An-upgrade-strategy-for-embedded-Linux-systems.html

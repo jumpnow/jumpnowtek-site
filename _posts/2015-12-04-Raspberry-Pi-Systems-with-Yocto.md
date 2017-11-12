@@ -2,43 +2,40 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2017-10-26 05:30:00
+date: 2017-11-12 16:05:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi zero wireless, rpi compute]
 ---
 
 This post is about building Linux systems for [Raspberry Pi][rpi] boards using tools from the [Yocto Project][Yocto].
 
-Yocto is a set of tools for building a customized Linux distribution. The systems are usually meant for a particular target application with known requirements, likely a commercial product.
+Yocto is a set of tools for building a custom embedded Linux distribution. The systems are usually targeted for a particular application like a commercial product.
 
-If you are looking for a general purpose system with the availability of pre-built packages you can install anytime you are probably better off with a distribution like [Raspbian][raspbian].
+If you are looking for a general purpose development system with access to pre-built packages, I suggest you stick with a more user-friendly distribution like [Raspbian][raspbian].
 
-What custom build systems like Yocto or [Buildroot][jumpnow-buildroot] provide are
+Yocto uses what it calls **meta-layers** to define the configuration for a system build. Within each meta-layer are recipes, classes and conf files that support the primary build tool, a python framework called **bitbake**. 
 
-* Small image sizes
-* Quick boot times
-* Read-only rootfs
-* Tight control of all software installed
+The Yocto system, while very powerful, does have a substantial learning curve and you may want to look at another popular tool for building embedded systems [Buildroot][buildroot].
 
-The systems built from the [meta-rpi][meta-rpi] layer described here use the same BCM firmware, linux kernel and include the same dtb overlays as the official Raspbian systems. It is only the **userland** software that differs.
+I have created a custom layer for the RPi boards called [meta-rpi][meta-rpi].
 
-There are a few example **images** in [meta-rpi][meta-rpi] that support C, C++, [Qt5][qt], Perl and Python development, languages and tools I commonly use.
+The systems build from this layer use the same GPU firmware, linux kernel and include the same dtb overlays as the official Raspbian systems. No hardware functionality (compared to Raspbian) is lost using Yocto. It is only the **userland** software that differs and that is configurable by you.
 
-There are also a few security related tools, again just things that I like to use.
+There are a some example **images** in [meta-rpi][meta-rpi] that support the programming languages and tools that I use in my own projects.
 
-These are only demos and you should modify or create your own image **recipes** for your own project.   
+I often use meta-rpi as the starting point for customer projects, but moved to another repository.
 
-My systems use **sysvinit**, but Yocto supports **systemd** if you would rather use that.
+I use meta-rpi for my experiments.
 
-If you are [Qt5][qt] developer then you will appreciate that the RPi comes with working OpenGL drivers for the GPU. This means [Qt OpenGL][qt-opengl] and [Qt QuickControls2][qt-quickcontrols2] applications will work when using the [eglfs][qt-eglfs] platform plugin. 
+My systems use **sysvinit**, but Yocto supports **systemd** if you would rather use that. A lot of my customers do.
 
-Here is another post with more details on [developing with Qt5 on the RPi][rpi-qt5-qml-dev].
+If you are [Qt5][qt] developer then you will appreciate that the RPi comes with working **OpenGL** drivers for the RPi GPU. This means [Qt OpenGL][qt-opengl] and [QML][qml] applications will work when using the [eglfs][qt-eglfs] platform plugin. 
 
-I am using the Yocto [meta-raspberrypi][meta-raspberrypi] layer, but have updated recipes for the Linux kernel, [gpu firmware][firmware-repo] and some [userland][userland-repo] components.
+I am using the official Yocto [meta-raspberrypi][meta-raspberrypi] layer, but have updated recipes for the Linux kernel and [gpu firmware][firmware-repo] to keep them more current. I also have occasional 'fixes' to other components, sometimes for bugs, but often just because I don't like the upstream defaults.
 
-I have tested with all of the RPi boards at one time or another including the [RPi CM][rpi-compute] with several carriers boards.
+I have access to all of the RPi boards and at one time or another have tested these builds with all of them including the [RPi CM/CM3][rpi-compute] modules.
 
-Routinely I only test with RPi3 and RPi0-W boards.
+Most of the time I only test meta-rpi with the RPi3 and RPi0-W boards.
 
 ### Downloads
 
@@ -46,117 +43,39 @@ If you want a quick look at the resulting systems, you can download some pre-bui
 
 Instructions for installing onto an SD card are in the [README][readme].
 
-To login the user is **root** with password **jumpnowtek**. 
+The login user is **root** with password **jumpnowtek**. 
 
-You should change the password ASAP.
+You should change that password.
+
+All systems are setup to use a serial console. For the RPi's that have it, a dhcp client will run on the ethernet interface and there is an ssh server running.
+
+**Note:** There is a custom firewall rule that will lock your IP out for 1 minute if you fail to login with ssh after 3 attempts.
 
 ### System Info
 
-The Yocto version is **2.4** the `[rocko]` branch.
+The Yocto version is **2.4**, the `[rocko]` branch.
 
-The **4.9.58** Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
+The **4.9.61** Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
 
 These are **sysvinit** systems using [eudev][eudev].
 
-The Qt version is **5.9.2** There is no *X11* and no desktop installed. [Qt][qt] GUI applications can be run fullscreen using one of the [Qt embedded linux plugins][embedded-linux-qpa] like *eglfs* or *linuxfb*, both provided. The default is *eglfs*.
+The Qt version is **5.9.2** There is no **X11** and no desktop installed. [Qt][qt] GUI applications can be run fullscreen using one of the [Qt embedded linux plugins][embedded-linux-qpa] like **eglfs** or **linuxfb**, both are provided. The default is **eglfs**.
 
-Perl **5.24.1**, Python **2.7.12** and **3.5.2** each with a number of modules is included.
+Python **2.7.13** and **3.5.3** are both installed, each with a number of modules included.
 
-[omxplayer][omxplayer] for playing video and audio files from the command line, hardware accelerated.
+[omxplayer][omxplayer] is installed for playing video and audio from the command line, hardware accelerated.
 
-[Raspicam][raspicam] command line tools for using the Raspberry Pi camera module.
+[Raspicam][raspicam] the command line tool for using the Raspberry Pi camera module is installed.
 
-An example Raspberry Pi [music system][rpi-pandora] using an [IQaudIO Pi-DigiAMP+][digiamp-plus] add-on board and [pianobar][pianobar], a console-based client for [Pandora][pandora] internet radio.
-
-That system also works with the [HiFiBerry Amp+][hifiberry-amp] board.
+There is an example image that I use for a couple of Raspberry Pi [music systems][rpi-pandora]. They use either an [IQaudIO Pi-DigiAMP+][digiamp-plus] or [HiFiBerry Amp+][hifiberry-amp] add-on board and [pianobar][pianobar], a console-based client for [Pandora][pandora] internet radio.
 
 The Adafruit [PiTFT 3.5"][pitft35r] and [PiTFT 2.8"][pitft28r] resistive touchscreens work. Support for some other TFT displays is included, but I haven't tested them.
 
 [Raspi2fb][raspi2fb] is included for mirroring the GPU framebuffer to the small TFT displays. This allows for running Qt GUI applications on the TFTs.
 
-As of 2017-04-15, here is the list of device tree overlays installed
-
-    root@rpi3:~# uname -a
-    Linux rpi3 4.9.22 #1 SMP Sat Apr 15 08:37:58 EDT 2017 armv7l armv7l armv7l GNU/Linux
-
-    root@rpi3:~# ls /mnt/fat/overlays/
-    adau1977-adc.dtbo                       mmc.dtbo
-    adau7002-simple.dtbo                    mz61581.dtbo
-    ads1015.dtbo                            pi3-act-led.dtbo
-    ads1115.dtbo                            pi3-disable-bt.dtbo
-    ads7846.dtbo                            pi3-disable-wifi.dtbo
-    akkordion-iqdacplus.dtbo                pi3-miniuart-bt.dtbo
-    allo-boss-dac-pcm512x-audio.dtbo        piscreen.dtbo
-    allo-piano-dac-pcm512x-audio.dtbo       piscreen2r.dtbo
-    allo-piano-dac-plus-pcm512x-audio.dtbo  pisound.dtbo
-    at86rf233.dtbo                          pitft22.dtbo
-    audioinjector-addons.dtbo               pitft28-capacitive.dtbo
-    audioinjector-wm8731-audio.dtbo         pitft28-resistive.dtbo
-    audremap.dtbo                           pitft35-resistive.dtbo
-    bmp085_i2c-sensor.dtbo                  pps-gpio.dtbo
-    dht11.dtbo                              pwm-2chan.dtbo
-    dionaudio-loco-v2.dtbo                  pwm.dtbo
-    dionaudio-loco.dtbo                     qca7000.dtbo
-    dpi18.dtbo                              raspidac3.dtbo
-    dpi24.dtbo                              rpi-backlight.dtbo
-    dwc-otg.dtbo                            rpi-cirrus-wm5102.dtbo
-    dwc2.dtbo                               rpi-dac.dtbo
-    enc28j60-spi2.dtbo                      rpi-display.dtbo
-    enc28j60.dtbo                           rpi-ft5406.dtbo
-    fe-pi-audio.dtbo                        rpi-proto.dtbo
-    googlevoicehat-soundcard.dtbo           rpi-sense.dtbo
-    gpio-ir.dtbo                            rpi-tv.dtbo
-    gpio-poweroff.dtbo                      rra-digidac1-wm8741-audio.dtbo
-    hifiberry-amp.dtbo                      sc16is750-i2c.dtbo
-    hifiberry-dac.dtbo                      sc16is752-spi1.dtbo
-    hifiberry-dacplus.dtbo                  sdhost.dtbo
-    hifiberry-digi-pro.dtbo                 sdio-1bit.dtbo
-    hifiberry-digi.dtbo                     sdio.dtbo
-    hy28a.dtbo                              sdtweak.dtbo
-    hy28b.dtbo                              smi-dev.dtbo
-    i2c-bcm2708.dtbo                        smi-nand.dtbo
-    i2c-gpio.dtbo                           smi.dtbo
-    i2c-mux.dtbo                            spi-gpio35-39.dtbo
-    i2c-pwm-pca9685a.dtbo                   spi-rtc.dtbo
-    i2c-rtc.dtbo                            spi0-cs.dtbo
-    i2c-sensor.dtbo                         spi0-hw-cs.dtbo
-    i2c0-bcm2708.dtbo                       spi1-1cs.dtbo
-    i2c1-bcm2708.dtbo                       spi1-2cs.dtbo
-    i2s-gpio28-31.dtbo                      spi1-3cs.dtbo
-    iqaudio-dac.dtbo                        spi2-1cs.dtbo
-    iqaudio-dacplus.dtbo                    spi2-2cs.dtbo
-    iqaudio-digi-wm8804-audio.dtbo          spi2-3cs.dtbo
-    justboom-dac.dtbo                       tinylcd35.dtbo
-    justboom-digi.dtbo                      uart1.dtbo
-    lirc-rpi.dtbo                           vc4-fkms-v3d.dtbo
-    mcp23017.dtbo                           vc4-kms-v3d.dtbo
-    mcp23s17.dtbo                           vga666.dtbo
-    mcp2515-can0.dtbo                       w1-gpio-pullup.dtbo
-    mcp2515-can1.dtbo                       w1-gpio.dtbo
-    mcp3008.dtbo                            wittypi.dtbo
-    midi-uart0.dtbo
-
-I've tested a few
-
-* ads1015
-* hifiberry-amp
-* i2c-rtc
-* iqaudio-dacplus
-* mcp2515-can0
-* mcp3008
-* pi3-disable-bt
-* pitft28-resistive
-* pitft35-resistive
-* sdhost (the default, but you can overclock now)
-* spi1-1cs
-* spi1-2cs
-
-They all come from the official Raspberry Pi kernel tree so I have confidence they all work fine. I need more hardware to test many of them.
-
-
 ### Ubuntu Setup
 
-I am primarily using *16.04* 64-bit servers for builds. Older versions should work.
+I primarily use **16.04** 64-bit servers for builds. Other versions should work.
 
 You will need at least the following packages installed
 
@@ -166,7 +85,7 @@ You will need at least the following packages installed
     libncurses5-dev
     texinfo
 
-For *16.04* you also need to install the *python 2.7* package that the *Yocto 2.3* branch requires
+For **16.04** you also need to install the **python 2.7** package
 
     python2.7
 
@@ -174,7 +93,7 @@ And then create a link for it in `/usr/bin`
 
     sudo ln -sf /usr/bin/python2.7 /usr/bin/python
 
-For all versions of Ubuntu, you should change the default Ubuntu shell from `dash` to `bash` by running this command from a shell
+For all versions of Ubuntu, you should change the default Ubuntu shell from **dash** to **bash** by running this command from a shell
  
     sudo dpkg-reconfigure dash
 
@@ -182,7 +101,7 @@ Choose **No** to dash when prompted.
 
 ### Fedora Setup
 
-I have used a Fedora *25* 64-bit workstation.
+I have used a **Fedora 25** 64-bit workstation.
 
 The extra packages I needed to install for Yocto were
 
@@ -195,85 +114,85 @@ and the package group
 
     Development Tools
 
-There might be more packages required since I had already installed *qt-creator* and the *Development Tools* group before I did the first build with Yocto.
+There might be more packages required since I had already installed **qt-creator** and the **Development Tools** group before I did the first build with Yocto.
 
-Fedora already uses `bash` as the shell. 
+Fedora already uses **bash** as the shell. 
 
 ### Clone the dependency repositories
 
-First the main Yocto project `poky` repository, use the `[pyro]` branch
+For all upstream repositories, use the `[rocko]` branch.
 
-    scott@octo:~ git clone -b pyro git://git.yoctoproject.org/poky.git poky-pyro
+The directory layout I am describing here is my preference. All of the paths to the meta-layers are configurable. If you choose something different, adjust the following instructions accordingly.
 
-The `meta-openembedded` repository, use the `[pyro]` branch
+First the main Yocto project **poky** layer
 
-    scott@octo:~$ cd poky-pyro
-    scott@octo:~/poky-pyro$ git clone -b pyro git://git.openembedded.org/meta-openembedded
+    ~# git clone -b rocko git://git.yoctoproject.org/poky.git poky-rocko
 
-I am using the `meta-qt5` repository from [code.qt.io][code-qt-io], the `[5.9]` branch 
+Then the dependency layers under that
 
-    scott@octo:~/poky-pyro$ git clone -b 5.9 git://code.qt.io/yocto/meta-qt5.git
+    ~$ cd poky-rocko
+    ~/poky-rocko$ git clone -b rocko git://git.openembedded.org/meta-openembedded
+    ~/poky-rocko$ git clone -b rocko https://github.com/meta-qt5/meta-qt5
+    ~/poky-rocko$ git clone -b rocko git://git.yoctoproject.org/meta-security
+    ~/poky-rocko$ git clone -b pyro git://git.yoctoproject.org/meta-raspberrypi
 
-And finally the `meta-raspberrypi` repository. use the `[pyro]` branch
-
-    scott@octo:~/poky-pyro$ git clone -b pyro git://git.yoctoproject.org/meta-raspberrypi
-
-Those 4 repositories shouldn't need modifications other then updates and can be reused for different projects or different boards.
+These repositories shouldn't need modifications other then periodic updates and can be reused for different projects or different boards.
 
 ### Clone the meta-rpi repository
 
-Create a separate sub-directory for the `meta-rpi` repository before cloning. This is where you will be doing your customization.
+Create a separate sub-directory for the **meta-rpi** repository before cloning. This is where you will be doing your customization.
 
-    scott@octo:~$ mkdir ~/rpi
-    scott@octo:~$ cd ~/rpi
-    scott@octo:~/rpi$ git clone -b pyro git://github.com/jumpnow/meta-rpi
+    ~$ mkdir ~/rpi
+    ~$ cd ~/rpi
+    ~/rpi$ git clone -b rocko git://github.com/jumpnow/meta-rpi
 
 The `meta-rpi/README.md` file has the last commits from the dependency repositories that I tested. You can always checkout those commits explicitly if you run into problems.
 
 ### Initialize the build directory
 
-Much of the following are only the conventions that I use. All of the paths to the meta-layers are configurable.
+Again much of the following are only my conventions.
  
 Choose a build directory. I tend to do this on a per board and/or per project basis so I can quickly switch between projects. For this example I'll put the build directory under `~/rpi/` with the `meta-rpi` layer.
 
 You could manually create the directory structure like this
 
-    scott@octo:~$ mkdir -p ~/rpi/build/conf
+    $ mkdir -p ~/rpi/build/conf
 
 
-Or you could use the *Yocto* environment script `oe-init-build-env` like this passing in the path to the build directory
+Or you could use the Yocto environment script **oe-init-build-env** like this passing in the path to the build directory
 
-    scott@octo:~$ source poky-pyro/oe-init-build-env ~/rpi/build
+    ~$ source poky-rocko/oe-init-build-env ~/rpi/build
 
-The *Yocto* environment script will create the build directory if it does not already exist.
+The Yocto environment script will create the build directory if it does not already exist.
  
 ### Customize the configuration files
 
-There are some sample configuration files in the `meta-rpi/conf` directory.
+There are some sample configuration files in the **meta-rpi/conf** directory.
 
-Copy them to the `build/conf` directory (removing the '-sample')
+Copy them to the **build/conf** directory (removing the '-sample')
 
-    scott@octo:~/rpi$ cp meta-rpi/conf/local.conf.sample build/conf/local.conf
-    scott@octo:~/rpi$ cp meta-rpi/conf/bblayers.conf.sample build/conf/bblayers.conf
+    ~/rpi$ cp meta-rpi/conf/local.conf.sample build/conf/local.conf
+    ~/rpi$ cp meta-rpi/conf/bblayers.conf.sample build/conf/bblayers.conf
 
-If you used the `oe-init-build-env` script to create the build directory, it generated some generic configuration files in the `build/conf` directory. It is okay to copy over them.
+If you used the **oe-init-build-env** script to create the build directory, it generated some generic configuration files in the **build/conf** directory. If you want to look at them, save them with a different name before overwriting.
 
 It is not necessary, but you may want to customize the configuration files before your first build.
 
-Do not use the '**~**' character when defining directory paths in the configuration files. 
+**Warning:** Do not use the '**~**' character when defining directory paths in the Yocto configuration files. 
 
 ### Edit bblayers.conf
 
-In `bblayers.conf` file replace `${HOME}` with the appropriate path to the meta-layer repositories on your system if you modified any of the paths in the previous instructions.
+In **bblayers.conf** file replace **${HOME}** with the appropriate path to the meta-layer repositories on your system if you modified any of the paths in the previous instructions.
 
-**NOTE:** Do not include **meta-yocto-bsp** in your `bblayers.conf`. The BSP requirements for the BBB are included in `meta-bbb`.
+**WARNING:** Do not include **meta-yocto-bsp** in your **bblayers.conf**. The Yocto BSP requirements for the Raspberry Pi are in **meta-raspberrypi**.
 
 For example, if your directory structure does not look exactly like this, you will need to modify `bblayers.conf`
 
-    ~/poky-pyro/
+    ~/poky-rocko/
          meta-openembedded/
          meta-qt5/
          meta-raspberrypi
+         meta-security
          ...
 
     ~/rpi/
@@ -302,17 +221,13 @@ Use **raspberrypi2** for the **RPi2**, **RPi3** or **CM3**.
 
 Use **raspberry** for the **RPi0**, **RPi0-W** or the original **CM**.
 
-There is a new **raspberrypi3** MACHINE option with `[pyro]`, but I recommend you stick with using **raspberrypi2** for MACHINE. Nothing is lost.
-
-Similarly, use **raspberrypi** for the **RPI0-W**.
-
-You can only build for one type of MACHINE at a time because of the different instruction sets.
+You can only build for one type of **MACHINE** at a time because of the different CPUs.
 
 ##### TMPDIR
 
-This is where temporary build files and the final build binaries will end up. Expect to use at least 50GB. You probably want at least 80GB available.
+This is where temporary build files and the final build binaries will end up. Expect to use at least **50GB**.
 
-The default location is in the `build` directory, in this example `~/rpi/build/tmp`.
+The default location is under the **build** directory, in this example **~/rpi/build/tmp**.
 
 If you specify an alternate location as I do in the example conf file make sure the directory is writable by the user running the build.
 
@@ -320,19 +235,19 @@ If you specify an alternate location as I do in the example conf file make sure 
 
 This is where the downloaded source files will be stored. You can share this among configurations and builds so I always create a general location for this outside the project directory. Make sure the build user has write permission to the directory you decide on.
 
-The default location is in the `build` directory, `~/rpi/build/sources`.
+The default location is in the **build** directory, **~/rpi/build/sources**.
 
 ##### SSTATE_DIR
 
-This is another Yocto build directory that can get pretty big, greater then 8GB. I often put this somewhere else other then my home directory as well.
+This is another Yocto build directory that can get pretty big, greater then **8GB**. I often put this somewhere else other then my home directory as well.
 
-The default location is in the `build` directory, `~/rpi/build/sstate-cache`.
+The default location is in the **build** directory, **~/rpi/build/sstate-cache**.
 
 ### Run the build
 
-You need to [source][source-script] the Yocto environment into your shell before you can use [bitbake][bitbake]. The `oe-init-build-env` will not overwrite your customized conf files.
+You need to [source][source-script] the Yocto environment into your shell before you can use [bitbake][bitbake]. The **oe-init-build-env** will not overwrite your customized conf files.
 
-    scott@octo:~$ source poky-pyro/oe-init-build-env ~/rpi/build
+    ~$ source poky-rocko/oe-init-build-env ~/rpi/build
 
     ### Shell environment set up for builds. ###
 
@@ -347,103 +262,44 @@ You need to [source][source-script] the Yocto environment into your shell before
         meta-ide-support
 
     You can also run generated qemu images with a command like 'runqemu qemux86'
-    scott@octo:~/rpi/build$
+    ~/rpi/build$
 
 
-I don't use those *Common targets*, but instead use my own custom image recipes.
+I don't use any of those *Common targets*, but instead always write my own custom image recipes.
 
-There are three example images available in the *meta-rpi* layer. The recipes for the images can be found in `meta-rpi/images/`
-
-* console-image.bb
-* qt5-basic-image.bb
-* qt5-image.bb
-* audio-image.bb
-* iot-image.bb
-
-You should add your own custom images to this same directory.
-
-#### console-image
-
-A basic console developer image. See the recipe `meta-rpi/images/console-image.bb` for specifics, but some of the installed programs are
-
-    gcc/g++ and associated build tools
-    git
-    ssh/scp server and client
-    perl and python with a number of modules
-    pi-blaster
-    omxplayer
-    raspicam utilities
-
-The *console-image* has a line
-
-    inherit core-image
-
-which is `poky-pyro/meta/classes/core-image.bbclass` and pulls in some required base packages.  This is useful to know if you create your own image recipe.
-
-#### qt5-basic-image
-
-This image includes the `console-image` and adds `Qt5` with the associated development headers and `qmake`. This packages included in this image are sufficient to develop basic `QWidgets` apps and typically what I use.
-
-#### qt5-image
-
-Adds to the `qt5-basic-image` the following Qt packages with libs, header files and mkspecs
-
-* qt3d
-* qtcharts
-* qtconnectivity
-* qtdeclarative
-* qtgraphicaleffects
-* qtlocation
-* qtmultimedia
-* qtquickcontrols2
-* qtsensors
-* qtserialbus
-* qtsvg
-* qtwebsockets
-* qtvirtualkeyboard
-* qtxmlpatterns
-
-I am not normally a `QML` or Qt OpenGL developer, but I did test a number of the [Qt Examples][qt-examples] and all that I tried compiled and worked.
- 
-#### audio-image
-
-See this [post][rpi-pandora] for details on using this image.
-
-#### iot-image
-
-Adds [mosquitto][mosquitto], the [paho python client][python-paho] and the [python-flask][python-flask] packages to the `console-image`.
+The **meta-rpi** layer has some examples under **meta-rpi/images/**. 
 
 ### Build
 
-To build the `console-image` run the following command
+To build the **console-image** run the following command
 
-    scott@octo:~/rpi/build$ bitbake console-image
+    ~/rpi/build$ bitbake console-image
 
 You may occasionally run into build errors related to packages that either failed to download or sometimes out of order builds. The easy solution is to clean the failed package and rerun the build again.
 
-For instance if the build for `zip` failed for some reason, I would run this
+For instance if the build for **zip** failed for some reason, I would run this
 
-    scott@octo:~/rpi/build$ bitbake -c cleansstate zip
-    scott@octo:~/rpi/build$ bitbake zip
+    ~/rpi/build$ bitbake -c cleansstate zip
+    ~/rpi/build$ bitbake zip
 
 And then continue with the full build.
 
-    scott@octo:~/rpi/build$ bitbake console-image
+    ~/rpi/build$ bitbake console-image
 
 To build the `qt5-image` it would be
 
-    scott@octo:~/rpi/build$ bitbake qt5-image
+    ~/rpi/build$ bitbake qt5-image
 
-The `cleansstate` command (with two s's) works for image recipes as well.
+The **cleansstate** command (with two s's) works for image recipes as well.
 
-The image files won't get deleted from the *TMPDIR* until the next time you build.
+The image files won't get deleted from the **TMPDIR** until the next time you build.
 
  
 ### Copying the binaries to an SD card (or eMMC)
 
-After the build completes, the bootloader, kernel and rootfs image files can be found in `<TMPDIR>/deploy/images/raspberrypi2/` or `<TMPDIR>/deploy/images/raspberrypi` depending on `MACHINE`.
+After the build completes, the bootloader, kernel and rootfs image files can be found in **<TMPDIR>/deploy/images/$MACHINE** with **MACHINE** coming from your **local.conf**.
 
-The `meta-rpi/scripts` directory has some helper scripts to format and copy the files to a microSD card.
+The **meta-rpi/scripts** directory has some helper scripts to format and copy the files to a microSD card.
 
 See [this post][rpi-compute-post] for an additional first step required for the [RPi Compute][rpi-compute] eMMC.
 
@@ -457,7 +313,7 @@ Insert the microSD into your workstation and note where it shows up.
 
 For example
 
-    scott@octo:~/rpi/meta-rpi$ lsblk
+    ~/rpi/meta-rpi$ lsblk
     NAME    MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
     sda       8:0    0 931.5G  0 disk
     |-sda1    8:1    0  93.1G  0 part /
@@ -474,127 +330,164 @@ For example
     |-sdb1    8:17   1    64M  0 part
     `-sdb2    8:18   1   7.3G  0 part
 
-I would use `sdb` for the format and copy script parameters on this machine.
+So I will use **sdb** for the card on this machine.
 
-It doesn't matter if some partitions from the SD card are mounted. The `mk2parts.sh` script will unmount them.
+It doesn't matter if some partitions from the SD card are mounted. The **mk2parts.sh** script will unmount them.
 
-**BE CAREFUL** with this script. It will format any disk on your workstation.
+**WARNING**: This script will format any disk on your workstation so make sure you choose the SD card.
 
-    scott@octo:~$ cd ~/rpi/meta-rpi/scripts
-    scott@octo:~/rpi/meta-rpi/scripts$ sudo ./mk2parts.sh sdb
+    ~$ cd ~/rpi/meta-rpi/scripts
+    ~/rpi/meta-rpi/scripts$ sudo ./mk2parts.sh sdb
 
 You only have to format the SD card once.
 
-#### /media/card
+#### Temporary mount point
 
 You will need to create a mount point on your workstation for the copy scripts to use.
 
-    scott@octo:~$ sudo mkdir /media/card
+This is the default
+
+    ~$ sudo mkdir /media/card
 
 You only have to create this directory once.
 
+If you don't want that location, you will have to edit the following scripts to use the mount point you choose.
+
 #### copy_boot.sh
 
-This script copies the BCM2835 bootloader files, the Linux kernel, dtbs for both RPi 2 and RPi boards and a number of DTB overlays (that I have not tried) to the boot partition of the SD card.
+This script copies the GPU firmware, the Linux kernel, dtbs and overlays, config.txt and cmdline.txt to the boot partition of the SD card.
 
-This *copy_boot.sh* script needs to know the `TMPDIR` to find the binaries. It looks for an environment variable called `OETMP`.
+This **copy_boot.sh** script needs to know the **TMPDIR** to find the binaries. It looks for an environment variable called **OETMP**.
 
-For instance, if I had this in the `local.conf`
+For instance, if I had this in `build/conf/local.conf`
 
-    TMPDIR = "/oe8/rpi/tmp-pyro"
+    TMPDIR = "/oe8/rpi/tmp-rocko"
 
 Then I would export this environment variable before running `copy_boot.sh`
 
-    scott@octo:~/rpi/meta-rpi/scripts$ export OETMP=/oe8/rpi/tmp-pyro
+    ~/rpi/meta-rpi/scripts$ export OETMP=/oe8/rpi/tmp-rocko
 
-If you didn't override the default `TMPDIR` in `local.conf`, then set it to the default `TMPDIR`
+If you didn't override the default **TMPDIR** in `local.conf`, then set it to the default **TMPDIR**
 
-    scott@octo:~/rpi/meta-rpi/scripts$ export OETMP=~/rpi/build/tmp
+    ~/rpi/meta-rpi/scripts$ export OETMP=~/rpi/build/tmp
 
-The `copy_boot.sh` script also needs a `MACHINE` environment variable specifying the type of RPi board.
+The `copy_boot.sh` script also needs a **MACHINE** environment variable specifying the type of RPi board.
 
-	scott@octo:~/rpi/meta-rpi/scripts$ export MACHINE=raspberrypi2
+	~/rpi/meta-rpi/scripts$ export MACHINE=raspberrypi2
 
 or
 
-	scott@octo:~/rpi/meta-rpi/scripts$ export MACHINE=raspberrypi
+	~/rpi/meta-rpi/scripts$ export MACHINE=raspberrypi
 
 
-Then run the `copy_boot.sh` script passing the location of SD card
+Then run the **copy_boot.sh** script passing the location of SD card
 
-    scott@octo:~/rpi/meta-rpi/scripts$ ./copy_boot.sh sdb
+    ~/rpi/meta-rpi/scripts$ ./copy_boot.sh sdb
 
 This script should run very fast.
+
+If you want to customize the **config.txt** or **cmdline.txt** files for the system, you can place either of those files in the **meta-rpi/scripts** directory and the **copy_boot.sh** script will copy them as well.
+
+Take a look at the script if this is unclear.
 
 #### copy_rootfs.sh
 
 This script copies the root file system to the second partition of the SD card.
  
-The `copy_rootfs.sh` script needs the same `OETMP` and `MACHINE` environment variables.
+The **copy_rootfs.sh** script needs the same **OETMP** and **MACHINE** environment variables.
 
-The script accepts an optional command line argument for the image type, for example `console` or `qt5-x11`. The default is `console` if no argument is provided.
+The script accepts an optional command line argument for the image type, for example **console** or **qt5**. The default is **console** if no argument is provided.
 
-The script also accepts a `hostname` argument if you want the host name to be something other then the default `raspberrypi2`.
+The script also accepts a **hostname** argument if you want the host name to be something other then the default **MACHINE**.
 
-Here's an example of how you'd run `copy_rootfs.sh`
+Here's an example of how you would run **copy_rootfs.sh**
 
-    scott@octo:~/rpi/meta-rpi/scripts$ ./copy_rootfs.sh sdb console
+    ~/rpi/meta-rpi/scripts$ ./copy_rootfs.sh sdb console
 
 or
 
-    scott@octo:~/rpi/meta-rpi/scripts$ ./copy_rootfs.sh sdb qt5-x11 rpi2
+    ~/rpi/meta-rpi/scripts$ ./copy_rootfs.sh sdb qt5 rpi3
 
-The *copy\_rootfs.sh* script will take longer to run and depends a lot on the quality of your SD card. With a good *Class 10* card it should take less then 30 seconds.
+The **copy_rootfs.sh** script will take longer to run and depends a lot on the quality of your SD card. With a good **Class 10** card it should take less then 30 seconds.
 
 The copy scripts will **NOT** unmount partitions automatically. If an SD card partition is already mounted, the script will complain and abort. This is for safety, mine mostly, since I run these scripts many times a day on different machines and the SD cards show up in different places.
 
 Here's a realistic example session where I want to copy already built images to a second SD card that I just inserted.
 
-    scott@octo:~$ sudo umount /dev/sdb1
-    scott@octo:~$ sudo umount /dev/sdb2
-    scott@octo:~$ export OETMP=/oe8/rpi/tmp-pyro
-    scott@octo:~$ export MACHINE=raspberrypi2
-    scott@octo:~$ cd rpi/meta-rpi/scripts
-    scott@octo:~/rpi/meta-rpi/scripts$ ./copy_boot.sh sdb
-    scott@octo:~/rpi/meta-rpi/scripts$ ./copy_rootfs.sh sdb console rpi
+    ~$ sudo umount /dev/sdb1
+    ~$ sudo umount /dev/sdb2
+    ~$ export OETMP=/oe8/rpi/tmp-pyro
+    ~$ export MACHINE=raspberrypi2
+    ~$ cd rpi/meta-rpi/scripts
+    ~/rpi/meta-rpi/scripts$ ./copy_boot.sh sdb
+    ~/rpi/meta-rpi/scripts$ ./copy_rootfs.sh sdb console rpi3
 
+Once past the development stage I usually wrap all of the above in another script for convenience.
 
-Both *copy\_boot.sh* and *copy\_rootfs.sh* are simple scripts easily modified for custom use. Once I get past the development stage I usually wrap them both with another script for convenience.
+Both **copy_boot.sh** and **copy_rootfs.sh** are simple scripts, easily customized. 
 
 #### Some custom package examples
 
-[spiloop][spiloop] is a *spidev* test application installed in `/usr/bin`.
+[spiloop][spiloop] is a **spidev** test application.
 
-The *bitbake recipe* that builds and packages *spiloop* is here
+The **bitbake recipe** that builds and packages **spiloop** is here
 
-    meta-rpi/recipes-misc/spiloop/spiloop_1.0.bb
+    meta-rpi/recipes-misc/spiloop/spiloop_git.bb
 
-Use it to test the *spidev* driver before and after placing a jumper between pins *19* and *21*.
+Use it to test the **spidev** driver before and after placing a jumper between pins **19** and **21**.
 
-[tspress][tspress] is a Qt5 GUI application installed in `/usr/bin` with the *qt5-image*. I use it for testing touchscreens.
+[tspress][tspress] is a Qt5 GUI application installed with the `qt5-image`. I use it for testing touchscreens.
 
-The *bitbake recipe* is here and can be used a guide for your own applications.
+The recipe is here and can be used a guide for your own applications.
 
-    meta-rpi/recipes-qt/tspress/tspress.bb
+    meta-rpi/recipes-qt/tspress/tspress_git.bb
 
-Check the *README* in the [tspress][tspress] repository for usage.
+Check the **README** in the [tspress][tspress] repository for usage.
 
 
 #### Adding additional packages
 
-To display the list of available packages from the `meta-` repositories included in *bblayers.conf*
+To display the list of available recipes from the **meta-layers** included in **bblayers.conf**
 
-    scott@octo:~$ source poky-pyro/oe-init-build-env ~/rpi/build
+    ~$ source poky-rocko/oe-init-build-env ~/rpi/build
 
-    scott@octo:~/rpi/build$ bitbake -s
+    ~/rpi/build$ bitbake -s
 
-Once you have the package name, you can choose to either
+Once you have the recipe name, you need to find what packages the recipe produces. Use the **oe-pkgdata-util** utility for this.
 
-1. Add the new package to the `console-image` or `qt5-image`, whichever you are using.
+For instance, to see the packages produced by the **openssh** recipe
 
-2. Create a new image file and either include the `console-image` the way the `qt5-image` does or create a complete new image recipe. The `console-image` can be used as a template.
+    ~/rpi/build$ oe-pkgdata-util list-pkgs -p openssh
+    openssh-keygen
+    openssh-scp
+    openssh-ssh
+    openssh-sshd
+    openssh-sftp
+    openssh-misc
+    openssh-sftp-server
+    openssh-dbg
+    openssh-dev
+    openssh-doc
+    openssh
 
-The new package needs to get included directly in the *IMAGE_INSTALL* variable or indirectly through another variable in the image file.
+These are the individual packages you could add to your image recipe.
+
+You can also use **oe-pkgdata-util** to check the individual files a package will install.
+
+For instance, to see the files for the **openssh-sshd** package
+
+    ~/rpi/build$ oe-pkgdata-util list-pkg-files openssh-sshd
+    openssh-sshd:
+            /etc/default/volatiles/99_sshd
+            /etc/init.d/sshd
+            /etc/ssh/moduli
+            /etc/ssh/sshd_config
+            /etc/ssh/sshd_config_readonly
+            /usr/libexec/openssh/sshd_check_keys
+            /usr/sbin/sshd
+   
+
+For a package to be installed in your image it has to get into the **IMAGE_INSTALL** variable some way or another. See the example image recipes for some common conventions.
 
 #### Playing videos
 
@@ -604,7 +497,7 @@ Here's a reasonably sized example from the [Blender][blender] project to test
 
     root@rpi3:~# wget https://download.blender.org/demo/movies/Cycles_Demoreel_2015.mov
 
-You can play it like this (*-o hdmi* for hdmi audio)
+You can play it like this (**-o hdmi** for hdmi audio)
     
     root@rpi3:~# omxplayer -o hdmi Cycles_Demoreel_2015.mov
     Video codec omx-h264 width 1920 height 1080 profile 77 fps 25.000000
@@ -630,23 +523,23 @@ So for example, with the RPi DSI touchscreen and an HDMI display attached at the
     Subtitle count: 0, state: off, index: 1, delay: 0
     V:PortSettingsChanged: 1920x1080@25.00 interlace:0 deinterlace:0 anaglyph:0 par:1.25 display:5 layer:0 alpha:255 aspectMode:0
 
-I was not able to run a `eglfs` Qt app on the RPi DSI display while playing a movie with omxplayer on the HDMI display. Perhaps a `linuxfb` Qt app that doesn't use the GPU could run simultaneously. Some more testing is needed.
+I was not able to run a **eglfs** Qt app on the RPi DSI display while simultaneously playing a movie with omxplayer on the HDMI display. Perhaps a **linuxfb** Qt app that doesn't use the GPU could run simultaneously. Some more testing is needed.
 
 #### Using the Raspberry Pi Camera
 
-The [raspicam][rpi_camera_module] command line tools are installed with the `console-image`.
+The [raspicam][rpi_camera_module] command line tools are installed with the **console-image** or any image that includes the **console-image**
 
 * raspistill
 * raspivid
 * raspiyuv
 
-To enable the RPi camera, add or edit the following in the RPi configuration file `config.txt`
+To enable the RPi camera, add or edit the following in the RPi configuration file **config.txt**
 
     start_x=1
     gpu_mem=128
     disable_camera_led=1   # optional for disabling the red LED on the camera
 
-To get access to `config.txt`, mount the boot partition first
+To get access to **config.txt**, mount the boot partition first
 
     root@rpi# mkdir /mnt/fat
     root@rpi# mount /dev/mmcblk0p1 /mnt/fat
@@ -664,16 +557,12 @@ A quick test of the camera, flipping the image because of the way I have my came
 
     root@rpi2# raspistill -t 0 -hf -vf
 
-#### PWM
-
-There are [two hardware timers][hardware-pwm] with kernel support available on the RPi's with 40 pin headers. Only one of the timers is available on the original RPi 1 with it's 26 pin header.
-
-The `console-image` contains a utility called [pi-blaster][pi-blaster-post] that can be used to efficiently drive PWM outputs from gpio pins.
 
 [rpi]: https://www.raspberrypi.org/
 [raspbian]: https://www.raspbian.org/
 [rpi-distros]: https://www.raspberrypi.org/downloads/
 [qt]: http://www.qt.io/
+[qml]: http://doc.qt.io/qt-5/qtqml-index.html
 [yocto]: https://www.yoctoproject.org/
 [meta-rpi]: https://github.com/jumpnow/meta-rpi
 [omxplayer]: http://elinux.org/Omxplayer
@@ -724,9 +613,5 @@ The `console-image` contains a utility called [pi-blaster][pi-blaster-post] that
 [pitft35r]: https://www.adafruit.com/products/2441
 [pitft28r]: https://www.adafruit.com/products/1601
 [raspi2fb]: https://github.com/AndrewFromMelbourne/raspi2fb
-[hardware-pwm]: http://www.jumpnowtek.com/rpi/Using-the-Raspberry-Pi-Hardware-PWM-timers.html
 [jumpnow-buildroot]: http://www.jumpnowtek.com/rpi/Raspberry-Pi-Systems-with-Buildroot.html
-[python-paho]: https://eclipse.org/paho/clients/python/
-[mosquitto]: http://mosquitto.org/
-[python-flask]: http://flask.pocoo.org/
 [code-qt-io]: http://code.qt.io/cgit/
