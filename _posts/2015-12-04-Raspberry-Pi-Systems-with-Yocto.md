@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2017-11-12 16:05:00
+date: 2017-11-28 15:17:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi zero wireless, rpi compute]
 ---
@@ -134,7 +134,7 @@ Then the dependency layers under that
     ~/poky-rocko$ git clone -b rocko git://git.openembedded.org/meta-openembedded
     ~/poky-rocko$ git clone -b rocko https://github.com/meta-qt5/meta-qt5
     ~/poky-rocko$ git clone -b rocko git://git.yoctoproject.org/meta-security
-    ~/poky-rocko$ git clone -b pyro git://git.yoctoproject.org/meta-raspberrypi
+    ~/poky-rocko$ git clone -b rocko git://git.yoctoproject.org/meta-raspberrypi
 
 These repositories shouldn't need modifications other then periodic updates and can be reused for different projects or different boards.
 
@@ -416,7 +416,7 @@ Here's a realistic example session where I want to copy already built images to 
 
     ~$ sudo umount /dev/sdb1
     ~$ sudo umount /dev/sdb2
-    ~$ export OETMP=/oe8/rpi/tmp-pyro
+    ~$ export OETMP=/oe8/rpi/tmp-rocko
     ~$ export MACHINE=raspberrypi2
     ~$ cd rpi/meta-rpi/scripts
     ~/rpi/meta-rpi/scripts$ ./copy_boot.sh sdb
