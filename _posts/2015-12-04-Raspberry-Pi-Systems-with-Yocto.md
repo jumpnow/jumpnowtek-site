@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2017-11-28 15:17:00
+date: 2017-11-29 15:03:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi zero wireless, rpi compute]
 ---
@@ -55,7 +55,7 @@ All systems are setup to use a serial console. For the RPi's that have it, a dhc
 
 The Yocto version is **2.4**, the `[rocko]` branch.
 
-The **4.9.61** Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
+The **4.9.65** Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
 
 These are **sysvinit** systems using [eudev][eudev].
 
@@ -211,17 +211,36 @@ The variables you may want to customize are the following:
 - SSTATE\_DIR
 
 
-The defaults for all of these work fine. Adjustments are optional.
+The defaults for all of these work fine with the exception of **MACHINE**.
 
 ##### MACHINE
 
-The choices are **raspberrypi2** the default or **raspberrypi**.
+The **MACHINE** variable is used to determine the target architecture and various compiler tuning flags.
 
-Use **raspberrypi2** for the **RPi2**, **RPi3** or **CM3**.
+See the conf files under `meta-raspberrypi/conf/machine` for details.
 
-Use **raspberry** for the **RPi0**, **RPi0-W** or the original **CM**.
+The choices for **MACHINE** are
 
-You can only build for one type of **MACHINE** at a time because of the different CPUs.
+* raspberrypi (BCM2835)
+* raspberrypi0 (BCM2835)
+* raspberrypi0-wifi (BCM2835)
+* raspberrypi2 (BCM2836 or BCM2837 v1.2+)
+* raspberrypi3 (BCM2837)
+* raspberrypi-cm (BCM2835)
+* raspberrypi-cm3 (BCM2837)
+
+You can only build for one type of **MACHINE** at a time.
+
+There are really just two *tuning* families using the default Yocto configuration files
+
+* arm1176jzfshf - for the the BCM2835 boards
+* cortexa7thf-neon-vfpv4 - for the BCM2836 and BCM2837 boards
+
+Boards in the same family can generally run the same software.
+
+One exception is **u-boot**, which is NOT the default for the systems being built here.
+
+And one reason you would want to use **u-boot** with the RPis is to work with [Mender][mender-io].
 
 ##### TMPDIR
 
@@ -615,3 +634,4 @@ A quick test of the camera, flipping the image because of the way I have my came
 [raspi2fb]: https://github.com/AndrewFromMelbourne/raspi2fb
 [jumpnow-buildroot]: http://www.jumpnowtek.com/rpi/Raspberry-Pi-Systems-with-Buildroot.html
 [code-qt-io]: http://code.qt.io/cgit/
+[mender-io]: https://mender.io/
