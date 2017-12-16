@@ -13,9 +13,9 @@ Yocto is a set of tools for building a custom embedded Linux distribution. The s
 
 If you are looking for a general purpose development system with access to pre-built packages, I suggest you stick with a more user-friendly distribution like [Raspbian][raspbian].
 
-Yocto uses what it calls **meta-layers** to define the configuration for a system build. Within each meta-layer are recipes, classes and conf files that support the primary build tool, a python framework called **bitbake**. 
+Yocto uses what it calls **meta-layers** to define the configuration for a system build. Within each meta-layer are recipes, classes and configuration files that support the primary build tool, a python framework called **bitbake**. 
 
-The Yocto system, while very powerful, does have a substantial learning curve and you may want to look at another popular tool for building embedded systems [Buildroot][buildroot].
+The Yocto system, while very powerful, does have a substantial learning curve and you may want to look at another popular but simpler tool for building embedded systems [Buildroot][buildroot].
 
 I have created a custom layer for the RPi boards called [meta-rpi][meta-rpi].
 
