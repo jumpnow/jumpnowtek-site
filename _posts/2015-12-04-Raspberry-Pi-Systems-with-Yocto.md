@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2017-11-29 15:03:00
+date: 2017-12-16 15:03:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi zero wireless, rpi compute]
 ---
@@ -55,7 +55,7 @@ All systems are setup to use a serial console. For the RPi's that have it, a dhc
 
 The Yocto version is **2.4**, the `[rocko]` branch.
 
-The **4.9.65** Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
+The **4.9.68** Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
 
 These are **sysvinit** systems using [eudev][eudev].
 
@@ -101,7 +101,7 @@ Choose **No** to dash when prompted.
 
 ### Fedora Setup
 
-I have used a **Fedora 25** 64-bit workstation.
+I have used a **Fedora 27** 64-bit workstation.
 
 The extra packages I needed to install for Yocto were
 
@@ -113,8 +113,6 @@ The extra packages I needed to install for Yocto were
 and the package group
 
     Development Tools
-
-There might be more packages required since I had already installed **qt-creator** and the **Development Tools** group before I did the first build with Yocto.
 
 Fedora already uses **bash** as the shell. 
 
@@ -240,7 +238,7 @@ Boards in the same family can generally run the same software.
 
 One exception is **u-boot**, which is NOT the default for the systems being built here.
 
-And one reason you would want to use **u-boot** with the RPis is to work with [Mender][mender-io].
+One of the reasons you would want to use **u-boot** with the RPis is to work with the [Mender][mender-io] upgrade system.
 
 ##### TMPDIR
 
