@@ -171,10 +171,11 @@ For example, if your directory structure does not look exactly like this, you wi
 
 The variables you may want to customize are the following:
 
-- TMPDIR
-- DL\_DIR
-- SSTATE\_DIR
+* TMPDIR
+* DL\_DIR
+* SSTATE\_DIR
 
+All of the following modifications are optional.
 
 ##### TMPDIR
 
