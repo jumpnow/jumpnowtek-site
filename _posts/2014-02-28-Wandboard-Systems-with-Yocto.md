@@ -40,7 +40,11 @@ The following device tree binaries (dtbs) are built and installed
 
 U-boot should detect the correct **dtb** to load when it boots the kernel.
 
-In order to run an unmodified mainline u-boot a **boot.scr** is required. You can find a simple example in `meta-wandboard/recipes-bsp/u-boot-scr/`. This gets built and installed by default in the **console-image** described below.
+In order to run an unmodified mainline u-boot a **boot.scr** is required. You can find a simple example in 
+
+    meta-wandboard/recipes-bsp/u-boot-scr/files/boot.cmd
+
+This gets compiled and installed by default in the **console-image** described below.
 
 ### Ubuntu Setup
 
