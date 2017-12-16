@@ -633,3 +633,4 @@ A quick test of the camera, flipping the image because of the way I have my came
 [jumpnow-buildroot]: http://www.jumpnowtek.com/rpi/Raspberry-Pi-Systems-with-Buildroot.html
 [code-qt-io]: http://code.qt.io/cgit/
 [mender-io]: https://mender.io/
+[buildroot]: https://buildroot.org/

@@ -321,4 +321,4 @@ Both **copy\_boot.sh** and **copy\_rootfs.sh** are simple scripts easily customi
 [lsblk]: http://linux.die.net/man/8/lsblk
 [bitbake]: https://www.yoctoproject.org/docs/1.8/bitbake-user-manual/bitbake-user-manual.html
 [source-script]: http://stackoverflow.com/questions/4779756/what-is-the-difference-between-source-script-sh-and-script-
-
+[buildroot]: https://buildroot.org/
