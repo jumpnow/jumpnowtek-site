@@ -40,7 +40,7 @@ The following device tree binaries (dtbs) are built and installed
 
 U-boot should detect the correct **dtb** to load when it boots the kernel.
 
-In order to run an unmodified mainline u-boot a **boot.scr** is required. You can find a simple example in `meta-wandboard/recipes-bsp/u-boot-scr/`. 
+In order to run an unmodified mainline u-boot a **boot.scr** is required. You can find a simple example in `meta-wandboard/recipes-bsp/u-boot-scr/`. This gets built and installed by default in the **console-image** described below.
 
 ### Ubuntu Setup
 
@@ -322,3 +322,4 @@ Both **copy\_boot.sh** and **copy\_rootfs.sh** are simple scripts easily customi
 [bitbake]: https://www.yoctoproject.org/docs/1.8/bitbake-user-manual/bitbake-user-manual.html
 [source-script]: http://stackoverflow.com/questions/4779756/what-is-the-difference-between-source-script-sh-and-script-
 [buildroot]: https://buildroot.org/
+[eudev]: https://wiki.gentoo.org/wiki/Project:Eudev
