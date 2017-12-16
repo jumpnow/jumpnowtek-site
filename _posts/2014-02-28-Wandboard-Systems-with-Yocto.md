@@ -277,6 +277,10 @@ For instance, if I had this in the `local.conf`
 
     TMPDIR = "/oe9/wand/tmp-rocko"
 
+If you didn't override the default **TMPDIR** in `local.conf`, then set it to the default **TMPDIR**
+
+    ~/wandboard/meta-wandboard/scripts$ export OETMP=~/wandboard/build/tmp
+
 Then I would export this environment variable before running `copy_boot.sh`
 
     ~/wandboard/meta-wandboard/scripts$ export OETMP=/oe9/wand/tmp-rocko
