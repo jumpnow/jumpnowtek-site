@@ -250,7 +250,7 @@ For example
 
 I would use `sdb` for the format and copy script parameters on this machine.
 
-It doesn't matter if some partitions from the SD card are mounted. The `mk2parts.sh` script will unmount them.
+It doesn't matter if some partitions from the SD card are mounted. The `mk1part.sh` script will unmount them.
 
 **BE CAREFUL** with this script. It will format any disk on your workstation.
 
