@@ -2,7 +2,7 @@
 layout: post
 title: Building Wandboard Systems with Yocto
 description: "Building customized systems for Wandboards using tools from the Yocto Project"
-date: 2017-12-16 13:00:00
+date: 2017-12-17 06:13:00
 categories: wandboard 
 tags: [linux, wandboard, yocto]
 ---
@@ -13,7 +13,7 @@ Yocto is a set of tools for building a custom embedded Linux distribution. The s
 
 Yocto uses what it calls **meta-layers** to define the configuration for a system build. Within each meta-layer are recipes, classes and configuration files that support the primary build tool, a python framework called **bitbake**. 
 
-The Yocto system, while very powerful, does have a substantial learning curve and you may want to look at another popular but simpler tool for building embedded systems [Buildroot][buildroot].
+The Yocto system, while very powerful, does have a substantial learning curve and you may want to look at another popular but simpler tool for building embedded systems [Buildroot][buildroot-wand].
 
 I have a custom Yocto layer for the wandboards called [meta-wandboard][meta-wandboard].
 
@@ -331,4 +331,5 @@ Both **copy\_boot.sh** and **copy\_rootfs.sh** are simple scripts easily customi
 [bitbake]: https://www.yoctoproject.org/docs/1.8/bitbake-user-manual/bitbake-user-manual.html
 [source-script]: http://stackoverflow.com/questions/4779756/what-is-the-difference-between-source-script-sh-and-script-
 [buildroot]: https://buildroot.org/
+[buildroot-wand]: http://www.jumpnowtek.com/wandboard/Wandboard-Systems-with-Buildroot.html
 [eudev]: https://wiki.gentoo.org/wiki/Project:Eudev
