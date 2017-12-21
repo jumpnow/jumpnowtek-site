@@ -2,12 +2,19 @@
 layout: post
 title: Building BeagleBone Black Systems with Yocto
 description: "Building customized systems for the BeagleBone Black using tools from the Yocto Project"
-date: 2017-05-15 16:50:00
+date: 2017-12-21 07:20:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
 
 Building systems for [BeagleBone Black][bbb] and [BeagleBone Green][bbg] boards using tools from the [Yocto Project][Yocto].
+
+Yocto is a set of tools for building a custom embedded Linux distribution. The systems are usually targeted at particular applications like commercial products.
+
+Yocto uses what it calls **meta-layers** to define the configuration for a system build. Within each meta-layer are recipes, classes and configuration files that support the primary build tool, a python framework called **bitbake**. 
+
+The Yocto system, while very powerful, does have a substantial learning curve. You may want to look at another popular tool for building embedded systems [Buildroot][buildroot-bbb].
+
 
 The [meta-bbb][meta-bbb] layer generates some basic systems with packages that support C, C++, [Qt5][qt], Perl and Python development, the languages and tools I commonly use. Other languages are supported of course. 
 
@@ -15,23 +22,23 @@ I use this layer as a template when starting new BeagleBone projects.
 
 ### System Info
 
-The Yocto version is `2.2.1` the `[morty]` branch.
+The Yocto version is **2.4** the `[rocko]` branch.
 
-The `4.9.28` Linux kernel comes from the [linux-stable][linux-stable] repository. (`4.4.68`  also available.)
+The default **4.14** Linux kernel comes from the [linux-stable][linux-stable] repository. Recipes for **4.9** and **4.4** LTS kernels are also available.)
 
-The [u-boot][uboot] version is `2017.05`.
+The [u-boot][uboot] version is `2017.09`.
 
 These are **sysvinit** systems using [eudev][eudev].
 
-The Qt version is `5.7.1`. There is no *X11* and no desktop installed. [Qt][qt] GUI applications can be run using the *linuxfb* platform plugin.
+The Qt version is **5.9.2**. There is no *X11* and no desktop installed. [Qt][qt] GUI applications can be run using the *linuxfb* platform plugin.
 
-A light-weight *X11* desktop can be added with minimal changes to the build configuration. (*X11* is needed to run Java GUI apps.)
+A light-weight **X11** desktop can be added with minimal changes to the build configuration. For instance **X11** is needed to run Java GUI apps or browser kiosk applications.
 
-[ZeroMQ][zeromq] version `4.1.5` with development headers and libs is included.
+Python `3.5.3` is installed.
 
-Perl `5.22` and Python `2.7.12` each with a number of modules is included.
+I have not added any display dtbs to the **4.14** kernels yet. No requests.
 
-*Device tree* binaries are generated and installed that support
+For the **4.9** and **4.4** kernels, device tree binaries are built that support
 
 1. HDMI (`bbb-hdmi.dtb`) not for the [BBG][bbg]
 2. No HDMI (`bbb-nohdmi.dtb`)
@@ -39,8 +46,6 @@ Perl `5.22` and Python `2.7.12` each with a number of modules is included.
 4. [4DCape 7-inch resistive touchscreen cape][4dcape70t] (`bbb-4dcape70t.dtb`)
 5. [Newhaven 5-inch capacitive touchscreen cape][nh5cape] (`bbb-nh5cape.dtb`)
 6. [Newhaven 7-inch capacitive touchscreen cape][nhd7cape] (`bbb-nhd7cape.dtb`)
-
-My custom DTBs all enable the *eMMC*.
 
 The DTBs are easy enough to switch between using a [u-boot][uboot] script file `uEnv.txt`
 
@@ -54,7 +59,7 @@ There are some simple loopback test programs included in the console image.
   
 ### Ubuntu Setup
 
-I am primarily using *16.04* 64-bit servers for builds. Older versions should work.
+I am primarily using **16.04** 64-bit servers for builds. Older versions should work.
 
 You will need at least the following packages installed
 
@@ -69,7 +74,7 @@ You will need at least the following packages installed
     texi2html
     texinfo
 
-For *16.04* you also need to install the *python 2.7* package that the *Yocto 2.2* branch requires
+For **16.04** you also need to install the **python 2.7** package.
 
     python2.7
 
@@ -85,9 +90,9 @@ Choose **No** to dash when prompted.
 
 ### Fedora Setup
 
-I have used Fedora *23* 64-bit workstation.
+I have also used a **Fedora 27** 64-bit workstation.
 
-The extra packages I needed to install for Yocto were
+The extra packages I needed were
 
     chrpath
     perl-bignum
@@ -98,25 +103,15 @@ and the package group
 
     Development Tools
 
-There might be more packages required since I had already installed *qt-creator* and the *Development Tools* group before I did the first build with Yocto.
+Fedora already uses **bash** as the shell. 
 
-Fedora already uses `bash` as the shell. 
+### Clone the repositories
 
-### Clone the dependency repositories
+    ~$ git clone -b rocko git://git.yoctoproject.org/poky.git poky-rocko
 
-First the main Yocto project `poky` repository
-
-    scott@octo:~$ git clone -b morty git://git.yoctoproject.org/poky.git poky-morty
-
-Then the `meta-openembedded` repository
-
-    scott@octo:~$ cd poky-morty
-    scott@octo:~/poky-morty$ git clone -b morty git://git.openembedded.org/meta-openembedded
-
-And the `meta-qt5` repository
-
-    scott@octo:~/poky-morty$ git clone -b morty https://github.com/meta-qt5/meta-qt5.git
-
+    ~$ cd poky-rocko
+    ~/poky-rocko$ git clone -b rocko git://git.openembedded.org/meta-openembedded
+    ~/poky-rocko$ git clone -b rocko https://github.com/meta-qt5/meta-qt5.git
 
 I usually keep these repositories separated since they can be shared between projects and different boards.
 
@@ -124,9 +119,9 @@ I usually keep these repositories separated since they can be shared between pro
 
 Create a sub-directory for the `meta-bbb` repository before cloning
 
-    scott@octo:~$ mkdir ~/bbb
-    scott@octo:~$ cd ~/bbb
-    scott@octo:~/bbb$ git clone -b morty git://github.com/jumpnow/meta-bbb
+    ~$ mkdir ~/bbb
+    ~$ cd ~/bbb
+    ~/bbb$ git clone -b rocko git://github.com/jumpnow/meta-bbb
 
 The `meta-bbb/README.md` file has the last commits from the dependency repositories that I tested. You can always checkout those commits explicitly if you run into problems.
 
@@ -138,12 +133,12 @@ First setup a build directory. I tend to do this on a per board and/or per proje
 
 You could manually create the directory structure like this
 
-    scott@octo:~$ mkdir -p ~/bbb/build/conf
+    ~$ mkdir -p ~/bbb/build/conf
 
 
 Or you could use the *Yocto* environment script `oe-init-build-env` like this passing in the path to the build directory
 
-    scott@octo:~$ source poky-morty/oe-init-build-env ~/bbb/build
+    ~$ source poky-rocko/oe-init-build-env ~/bbb/build
 
 The *Yocto* environment script will create the build directory if it does not already exist.
  
@@ -153,8 +148,8 @@ There are some sample configuration files in the `meta-bbb/conf` directory.
 
 Copy them to the `build/conf` directory (removing the '-sample')
 
-    scott@octo:~/bbb$ cp meta-bbb/conf/local.conf.sample build/conf/local.conf
-    scott@octo:~/bbb$ cp meta-bbb/conf/bblayers.conf.sample build/conf/bblayers.conf
+    ~/bbb$ cp meta-bbb/conf/local.conf.sample build/conf/local.conf
+    ~/bbb$ cp meta-bbb/conf/bblayers.conf.sample build/conf/bblayers.conf
 
 If you used the `oe-init-build-env` script to create the build directory, it generated some generic configuration files in the `build/conf` directory. It is okay to copy over them.
 
@@ -162,12 +157,12 @@ You may want to customize the configuration files before your first build.
 
 ### Edit bblayers.conf
 
-In `bblayers.conf` file replace `${HOME}` with the appropriate path to the meta-layer repositories on your system if you modified any of the paths in the previous instructions.
+In `bblayers.conf` file replace **${HOME}** with the appropriate path to the meta-layer repositories on your system if you modified any of the paths in the previous instructions.
 
 For example, if your directory structure does not look exactly like this, you will need to modify `bblayers.conf`
 
 
-    ~/poky-morty/
+    ~/poky-rocko/
          meta-openembedded/
          meta-qt5/
          ...
@@ -212,7 +207,7 @@ The default location is in the `build` directory, `~/bbb/build/sstate-cache`.
 
 You need to [source][source-script] the Yocto environment into your shell before you can use [bitbake][bitbake]. The `oe-init-build-env` will not overwrite your customized conf files.
 
-    scott@octo:~$ source poky-morty/oe-init-build-env ~/bbb/build
+    ~$ source poky-rocko/oe-init-build-env ~/bbb/build
 
     ### Shell environment set up for builds. ###
 
@@ -247,17 +242,17 @@ A basic console developer image. See the recipe `meta-bbb/images/console-image.b
     gcc/g++ and associated build tools
     git
     ssh/scp server and client
-    perl and python with a number of modules
+    python3 with a number of modules
 
 The *console-image* has a line
 
     inherit core-image
 
-which is `poky-morty/meta/classes/core-image.bbclass` and pulls in some required base packages.  This is useful to know if you create your own image recipe.
+which is `poky-rocko/meta/classes/core-image.bbclass` and pulls in some required base packages.  This is useful to know if you create your own image recipe.
 
 #### qt5-image
 
-This image includes the `console-image` and adds `Qt5` with the associated development headers and `qmake`.
+This image includes the `console-image` and adds `Qt5` runtime libraries.
 
 #### installer-image
 
@@ -267,26 +262,26 @@ This is a minimal image meant only to run from an SD card and whose only purpose
 
 To build the `console-image` run the following command
 
-    scott@octo:~/bbb/build$ bitbake console-image
+    ~/bbb/build$ bitbake console-image
 
 You may occasionally run into build errors related to packages that either failed to download or sometimes out of order builds. The easy solution is to clean the failed package and rerun the build again.
 
 For instance if the build for `zip` failed for some reason, I would run this
 
-    scott@octo:~/bbb/build$ bitbake -c cleansstate zip
-    scott@octo:~/bbb/build$ bitbake zip
+    ~/bbb/build$ bitbake -c cleansstate zip
+    ~/bbb/build$ bitbake zip
 
 And then continue with the full build.
 
-    scott@octo:~/bbb/build$ bitbake console-image
+    ~/bbb/build$ bitbake console-image
 
 To build the `qt5-image` it would be
 
-    scott@octo:~/bbb/build$ bitbake qt5-image
+    ~/bbb/build$ bitbake qt5-image
 
 Or the `installer-image`
 
-    scott@octo:~/bbb/build$ bitbake installer-image
+    ~/bbb/build$ bitbake installer-image
 
 The `cleansstate` command (with two s's) works for image recipes as well.
 
@@ -332,8 +327,8 @@ It doesn't matter if some partitions from the SD card are mounted. The `mk2parts
 
 **BE CAREFUL** with this script. It will format any disk on your workstation.
 
-    scott@octo:~$ cd ~/bbb/meta-bbb/scripts
-    scott@octo:~/bbb/meta-bbb/scripts$ sudo ./mk2parts.sh sdb
+    ~$ cd ~/bbb/meta-bbb/scripts
+    ~/bbb/meta-bbb/scripts$ sudo ./mk2parts.sh sdb
 
 You only have to format the SD card once.
 
@@ -341,7 +336,7 @@ You only have to format the SD card once.
 
 You will need to create a mount point on your workstation for the copy scripts to use.
 
-    scott@octo:~$ sudo mkdir /media/card
+    ~$ sudo mkdir /media/card
 
 You only have to create this directory once.
 
@@ -357,59 +352,59 @@ or in the local directory where the script is run from.
 
 If you are just starting out, you might just want to do this
 
-    scott@octo:~/bbb/meta-bbb/scripts$ cp uEnv.txt-example uEnv.txt
+    ~/bbb/meta-bbb/scripts$ cp uEnv.txt-example uEnv.txt
 
 This *copy_boot.sh* script needs to know the `TMPDIR` to find the binaries. It looks for an environment variable called `OETMP`.
 
 For instance, if I had this in the `local.conf`
 
-    TMPDIR = "/oe7/bbb/tmp-morty"
+    TMPDIR = "/oe7/bbb/tmp-rocko"
 
 Then I would export this environment variable before running `copy_boot.sh`
 
-    scott@octo:~/bbb/meta-bbb/scripts$ export OETMP=/oe7/bbb/tmp-morty
+    ~/bbb/meta-bbb/scripts$ export OETMP=/oe7/bbb/tmp-rocko
 
 Then run the `copy_boot.sh` script passing the location of SD card
 
-    scott@octo:~/bbb/meta-bbb/scripts$ ./copy_boot.sh sdb
+    ~/bbb/meta-bbb/scripts$ ./copy_boot.sh sdb
 
 This script should run very fast.
 
 #### copy_rootfs.sh
 
-This script copies the *zImage* kernel, the device tree binaries and the rest of the operating system to the root file system partition of the SD card.
+This script copies the zImage Linux kernel, the device tree binaries and the rest of the operating system to the root file system partition of the SD card.
  
-The script accepts an optional command line argument for the image type, for example `console` or `qt5`. The default is `console` if no argument is provided.
+The script accepts an optional command line argument for the image type, for example **console** or **qt5**. The default is **console** if no argument is provided.
 
-The script also accepts a `hostname` argument if you want the host name to be something other then the default `beaglebone`.
+The script also accepts a **hostname** argument if you want the host name to be something other then the default **beaglebone**.
 
-Here's an example of how you'd run `copy_rootfs.sh`
+Here's an example of how you'd run **copy_rootfs.sh**
 
-    scott@octo:~/bbb/meta-bbb/scripts$ ./copy_rootfs.sh sdb console
+    ~/bbb/meta-bbb/scripts$ ./copy_rootfs.sh sdb console
 
 or
 
-    scott@octo:~/bbb/meta-bbb/scripts$ ./copy_rootfs.sh sdb qt5 bbb
+    ~/bbb/meta-bbb/scripts$ ./copy_rootfs.sh sdb qt5 bbb
 
-The *copy_rootfs.sh* script will take longer to run and depends a lot on the quality of your SD card. With a good *Class 10* card it should take less then 30 seconds.
+The **copy_rootfs.sh** script will take longer to run and depends a lot on the quality of your SD card. With a good *Class 10* card it should take less then 30 seconds.
 
 The copy scripts will **NOT** unmount partitions automatically. If an SD card partition is already mounted, the script will complain and abort. This is for safety, mine mostly, since I run these scripts many times a day on different machines and the SD cards show up in different places.
 
 Here's a realistic example session where I want to copy already built images to a second SD card that I just inserted.
 
-    scott@octo:~$ sudo umount /dev/sdb1
-    scott@octo:~$ sudo umount /dev/sdb2
-    scott@octo:~$ export OETMP=/oe7/bbb/tmp-morty
-    scott@octo:~$ cd bbb/meta-bbb/scripts
-    scott@octo:~/bbb/meta-bbb/scripts$ ./copy_boot.sh sdb
-    scott@octo:~/bbb/meta-bbb/scripts$ ./copy_rootfs.sh sdb console bbb2
+    ~$ sudo umount /dev/sdb1
+    ~$ sudo umount /dev/sdb2
+    ~$ export OETMP=/oe7/bbb/tmp-rocko
+    ~$ cd bbb/meta-bbb/scripts
+    ~/bbb/meta-bbb/scripts$ ./copy_boot.sh sdb
+    ~/bbb/meta-bbb/scripts$ ./copy_rootfs.sh sdb console bbb2
 
 
-Both *copy_boot.sh* and *copy_rootfs.sh* are simple scripts easily modified for custom use.
+Both **copy_boot.sh** and **copy_rootfs.sh** are simple scripts meant to be modified for custom use.
 
 ### Booting from the SD card
 
-The default behavior of the *BBB* is to boot from the *eMMC* first if it finds a bootloader there.
+The default behavior of the beaglebone is to boot from the ***eMMC*** first if it finds a bootloader there.
 
 Holding the **S2** switch down when the bootloader starts will cause the BBB to try booting from the SD card first. The **S2** switch is above the SD card holder.
 
@@ -423,61 +418,15 @@ On a system that booted from an SD card, `/dev/mmcblk0` is the SD card and `/dev
 
 ### Installing to the eMMC
 
-Normally you will want to use the *eMMC* over the SD card since the *eMMC* is a little faster.
+Normally you will want to use the **eMMC** over the SD card since the **eMMC** is a little faster.
 
-You need a running system to install to the *eMMC*, since it is not accessible otherwise.
+You need a running system to install to the **eMMC**, since it is not accessible otherwise.
 
-The Linux userland tools see the *eMMC* similar to an SD card, so the same scripts slightly modified and this time run from the *BBB* can be used install a system onto the *eMMC*.
+Suppose you wanted to install the **console-image** onto the **eMMC**.
 
-There is a recipe under `meta-bbb/recipes-support/emmc-installer` that adds some scripts to an image for performing an *eMMC* installation.
+First make sure you build both the **console-image** and the **installer-image** using bitbake.
 
-The *emmc-installer* package is included in the *console* and *installer* images.
-
-The *emmc-installer* scripts need some data files for the actual installation. The files needed are
-
-* MLO
-* u-boot.img
-* uEnv.txt
-* A compressed image file like `console-image-beaglebone.tar.xz`
-
-Under `meta-bbb/scripts` is a script called *copy\_emmc\_install.sh* that will copy these files to the SD card.
-
-The arguments to *copy\_emmc\_install* are the SD card device and the image you want to later install on the *eMMC*. It should be run after the *copy\_rootfs.sh* script.
-
-    scott@octo:~$ cd bbb/meta-bbb/scripts
-    scott@octo:~/bbb/meta-bbb/scripts$ ./copy_boot.sh sdb
-    scott@octo:~/bbb/meta-bbb/scripts$ ./copy_rootfs.sh sdb console
-    scott@octo:~/bbb/meta-bbb/scripts$ ./copy_emmc_install.sh sdb console
-
-Once you boot this SD card, you will find the following under `/home/root/emmc` 
-
-    root@bbb:~/emmc# ls -l
-    total 54616
-    -rwxr-xr-x 1 root root    63828 Jan 15  2016 MLO-beaglebone
-    -rw-r--r-- 1 root root 55440552 Jan 15  2016 console-image-beaglebone.tar.xz
-    -rw-r--r-- 1 root root     1084 Jan 15  2016 emmc-uEnv.txt
-    -rwxr-xr-x 1 root root   410108 Jan 15  2016 u-boot-beaglebone.img
-
-
-To install the *console-image* onto the *eMMC*, run the `/etc/init.d/emmc_install` script with no arguments
-
-    root@beaglebone:~# /etc/init.d/emmc_install
-
-It should take less then a minute to run.
-
-When it completes, power off, pull the SD card and reboot and you will be running the *console-image* from the *eMMC*.
-
-The `/etc/init.d/emmc_install` script uses some environment variables in `/etc/default/emmc_install` for the *eMMC* partitioning and location of the image files. The defaults will work, but you can override the defaults by exporting different environment variables.
-
-The reason for putting the *eMMC* installation script in `/etc/init.d` is to facilitate use with the *installer-image* explained next. The *installer-image* is typically the only user of `/etc/init.d/emmc_install`.
- 
-#### Using the installer-image
-
-If you always want to run from the *eMMC*, there is a quicker way to get started using the *installer-image*.
-
-Again suppose you wanted to install the *console-image* onto the *eMMC*.
-
-First make sure you build both the *console-image* and the *installer-image* using bitbake.
+First edit the **meta-bbb/scripts/emmc-uEnv.txt** file to be the **uEnv.txt** you want when using the **eMMC**. Normally you will only need to modify the **fdtfile** variable for the dtb you want.
 
 Then when copying to the SD card, use these steps
 
@@ -487,9 +436,9 @@ Then when copying to the SD card, use these steps
     scott@octo:~/bbb/meta-bbb/scripts$ ./copy_rootfs.sh sdb installer [<hostname>]
     scott@octo:~/bbb/meta-bbb/scripts$ ./copy_emmc_install.sh sdb console
 
-When you boot from the SD card this time, it will automatically launch the *eMMC* installation of the *console-image*.
+When you boot from the SD card this time, it will automatically launch the eMMC installation of the console-image.
 
-When the BBB LEDs stop flashing in *cylon-mode*, the *eMMC* installation is complete.
+When the BBB LEDs stop flashing in **cylon-mode**, the eMMC installation is complete.
 
 It should take a little over a minute from the time you apply power.
 
@@ -497,30 +446,31 @@ Power off, pull the SD card and reboot.
 
 #### Modifying uEnv.txt
 
-The *uEnv.txt* bootloader configuration script is where the kernel *dtb* is specified. 
+The **uEnv.txt** bootloader configuration script is where the kernel dtb is specified. 
 
-The *uEnv.txt* file is located on the *boot* partition. 
+The **uEnv.txt** file is located on the first partition of the SD card or eMMC. 
 
-You can modify the *uEnv.txt* file before installation by adding a *uEnv.txt* file to the `meta-bbb/scripts` directory.
+You can modify the **uEnv.txt** file at installation by adding a **uEnv.txt** file to the **meta-bbb/scripts** directory.
 
-    scott@octo:~/bbb/meta-bbb/scripts$ cp uEnv.txt-example uEnv.txt
+    ~/bbb/meta-bbb/scripts$ cp uEnv.txt-example uEnv.txt
 
-And then edit the file. The `copy_boot.sh` script will pick it up and use it.
+And then edit the file. The **copy_boot.sh** script will pick it up and use it.
 
-For the *uEnv.txt* file that installs onto the *eMMC*, edit this file directly
+For the **uEnv.txt** file that installs onto the eMMC, edit this file directly
 
     scott@octo:~/bbb/meta-bbb/scripts/emmc-uEnv.txt
 
-Be careful not to lose this line in the *eMMC* version of *uEnv.txt*
+Be careful not to lose this line in the eMMC version of **uEnv.txt**
 
     bootpart=1:2
 
-It differs from SD card *uEnv.txt* files which use
+It differs from SD card **uEnv.txt** files which uses
 
     bootpart=0:2
 
+You can also edit **uEnv.txt** on a running BBB system.
 
-On a running system, before you can edit the file, you need to mount the *boot* partition
+You first need to mount the bootloader partition
 
     root@bbb:~# mount /dev/mmcblk0p1 /mnt
 
@@ -530,17 +480,7 @@ On a running system, before you can edit the file, you need to mount the *boot* 
     -rwxr-xr-x 1 root root 410860 Aug 10  2015 u-boot.img
     -rwxr-xr-x 1 root root    931 Aug 10  2015 uEnv.txt
 
-You can add an entry to `/etc/fstab` if you want the *boot* partition mounted all the time.
-
-First create a better mount point
-
-    root@bbb:~# mkdir /mnt/boot
-
-Then an entry like this
-
-    /dev/mmcblk0p1       /mnt/boot          auto       defaults  0  0
-
-added to `/etc/fstab` would work.
+You can edit `/etc/fstab` if you want the bootloader partition mounted all the time.
 
 #### Some custom package examples
 
@@ -560,29 +500,27 @@ The *bitbake recipe* that builds and packages *serialecho* is here
 
 Use it to test *UART4* after placing a jumper between pins *P9.11* and *P9.13*.
 
-[tspress][tspress] is a Qt5 GUI application installed in `/usr/bin` with the *qt5-image*.
+[tspress][tspress] is a Qt5 GUI application installed with the **qt5-image**.
 
-The *bitbake recipe* is here
+The bitbake recipe is here
 
     meta-bbb/recipes-qt/tspress/tspress.bb
 
-Check the *README* in the [tspress][tspress] repository for usage.
 
 #### Adding additional packages
 
-To display the list of available packages from the `meta-` repositories included in *bblayers.conf*
+To display the list of available packages from the **meta-** repositories included in **bblayers.conf**
 
-    scott@octo:~$ source poky-morty/oe-init-build-env ~/bbb/build
-
-    scott@octo:~/bbb/build$ bitbake -s
+    ~$ source poky-rocko/oe-init-build-env ~/bbb/build
+    ~/bbb/build$ bitbake -s
 
 Once you have the package name, you can choose to either
 
-1. Add the new package to the `console-image` or `qt5-image`, whichever you are using.
+1. Add the new package to the **console-image** or **qt5-image**. 
 
-2. Create a new image file and either include the `console-image` the way the `qt5-image` does or create a   complete new image recipe. The `console-image` can be used as a template.
+2. Create a new image file and either include the **console-image** the way the **qt5-image** does or create a complete new image recipe.
 
-The new package needs to get included directly in the *IMAGE_INSTALL* variable or indirectly through another variable in the image file.
+The new package needs to get included directly in the **IMAGE_INSTALL** variable or indirectly through another variable in the image file.
 
 #### Customizing the Kernel
 
@@ -602,12 +540,15 @@ To add or upgrade packages to the system, you might be interested in using the b
 
 #### Full System Upgrades
 
-For deployed production systems, you might prefer full system upgrades using an alternate *rootfs* method. This keeps upgrades *atomic* instead of spread out over multiple packages. It also allows for easy rollback when required.
+For deployed production systems, you might prefer full system upgrades using an A/B rootfs strategy. This keeps upgrades *atomic* instead of spread out over multiple packages. It also allows for easy rollback when required.
 
-An implementation of this idea is described here [An Upgrade strategy for the BBB][bbb-upgrades] including a link to some sample code on github.
+An implementation of this idea is described here [An upgrade strategy for embedded Linux systems][ab-upgrades].
+
+There is a **emmc-upgrader** package in the **meta-bbb** layer that will add this capability to your systems.
 
 [bbb]: http://www.beagleboard.org/black
 [bbg]: http://www.beagleboard.org/green
+[buildroot-bbb]: http://www.jumpnowtek.com/beaglebone/BeagleBone-Systems-with-Buildroot.html
 [linux-stable]: https://www.kernel.org/
 [uboot]: http://www.denx.de/wiki/U-Boot/WebHome
 [qt]: http://www.qt.io/
@@ -626,6 +567,5 @@ An implementation of this idea is described here [An Upgrade strategy for the BB
 [nhd7cape]: http://www.mouser.com/new/newhavendisplay/newhaven-beaglebone-cape/
 [bitbake]: http://www.yoctoproject.org/docs/2.1/bitbake-user-manual/bitbake-user-manual.html
 [source-script]: http://stackoverflow.com/questions/4779756/what-is-the-difference-between-source-script-sh-and-script-sh
-[zeromq]: http://zeromq.org/
-[bbb-upgrades]: http://www.jumpnowtek.com/beaglebone/Upgrade-strategy-for-BBB.html
+[ab-upgrades]: http://www.jumpnowtek.com/linux/An-upgrade-strategy-for-embedded-Linux-systems.html
 [eudev]: https://wiki.gentoo.org/wiki/Project:Eudev
