@@ -2,106 +2,256 @@
 layout: post
 title: Building Beaglebone Systems with Buildroot
 description: "Building customized systems for the BeagleBone Black using Buildroot"
-date: 2017-05-15 16:56:00
+date: 2017-12-22 09:17:00
 categories: beaglebone
 tags: [linux, beaglebone, bbb, buildroot, qt5, pyqt, pyqt5, pru]
 ---
 
-A short post covering the use of [Buildroot][buildroot] to build a [BeagleBone Black][bbb] system for working with the [BBB PRUs][bbb-pru].
+This post is about building Linux systems for [beaglebone][bbb] boards using [Buildroot][buildroot].
 
-I'll expand on this post later since the Buildroot systems have some other nice features such as Qt 5.8 and working PyQt. But for now, these notes are just to support building images for the PRU experiments that I'm covering in [this post][bbb-pru-uio-doc].
+Buildroot is a popular alternative to [Yocto][yocto] for building custom embedded Linux systems. 
 
-Make sure you have **ccache** installed on your workstation. Your distro should have a package for this. 
+With a few exceptions you can build a similar Linux system with either tool. 
 
-If you don't want to use ccache, run `make menuconfig` between `make <defconfig>` and the build `make` and disable ccache use.
+I am using a [Buildroot clone][jumpnow-buildroot] I created in Github to track my Buildroot customizations.
 
-Fetch the repo, use the **[jumpnow]** branch
+The `[master]` branch of the repository is a mirror of the official Buildroot repository. 
 
-    scott@fractal:~$ git clone -b jumpnow https://github.com/jumpnow/buildroot
-    scott@fractal:~$ cd buildroot
+The default `[jumpnow]` branch has a few additions on top of `[master]` for my own customizations and is what I am using for these examples.
 
-This will build under the `~/buildroot` directory
-  
-    scott@fractal:~/buildroot$ make jumpnow_bbb_pru_defconfig
-    scott@fractal:~/buildroot$ make
+The **defconfig** is where non-default build information is stored.
 
-If you don't care about the PRU then you can use this defconfig instead
+You will want to create a custom **defconfig** for your project. The one I am using is called **jumpnow\_bbb\_defconfig**.
 
-    scott@fractal:~/buildroot$ make jumpnow_bbb_defconfig
-    scott@fractal:/br5/bbb$ make
+To build a system, run the following (see the **ccache** notes below)
 
-I suggest building outside the buildroot tree by passing an argument like this `O=<some-other-dir>` to the make defconfig step.
+    ~$ git clone -b jumpnow https://github.com/jumpnow/buildroot
+    ~$ cd buildroot
+    ~/buildroot$ make jumpnow_bbb_defconfig
+    ~/buildroot$ make
 
-    scott@fractal:~/buildroot$ make O=/br5/bbb jumpnow_bbb_pru_defconfig
-    scott@fractal:~/buildroot$ cd /br5/bbb
-    scott@fractal:/br5/bbb$ make
+**Note:** Don't run make with a **-jN** argument. The main Makefile is not designed to be run as a parallel build. The sub-projects will be run in parallel automatically.
 
-The default download directory for Buildroot sources will be `$(HOME)/dl`. You can change this with `make menuconfig`.
+If you are missing tools on your workstation, you will get error messages telling you what you are missing. The dependencies are nothing out of the ordinary for a developer workstation and you can search the web for the particular packages you need to install for your distro. 
 
-And finally, you will probably need your distros 32-bit compatibility libs for the TI PRU compiler package. I did using an Ubuntu 16.04 64-bit server for a build system.
+The command
+ 
+    make jumpnow_bbb_defconfig 
 
-The **jumpnow\_bbb\_pru\_defconfig** uses a ti-linux 4.4.52 kernel with patches and a kernel config that supports using the uio-pruss kernel driver.
+created a `.config` file that completely describes to Buildroot how to generate the system.
 
-The **jumpnow\_bbb\_defconfig** uses a linux-stable 4.9.28 kernel with patches and dtbs to support the 4DCape 4.3 and 7 inch displays and the new NewHaven 7 inch capacitive touch display.
+When the build is done, insert an SD card and copy the image like this
 
-The system is minimal and should build fast (~15 minutes), especially on subsequent builds where source has been downloaded and the ccache is populated.
+    ~/buildroot$ sudo dd if=output/images/bbb-sdcard.img of=/dev/sdb bs=1M
 
-After the image is built you can load the image to an SD card like this
-
-    scott@fractal:/br5/bbb$ sudo dd if=images/bbb-sdcard.img of=/dev/sdb bs=1M
-
-Boot the image holding the **USER** button on the board until the bootloader starts.
-
-I recommend having a USB serial for console access.
-
-The system will look for a dhcp address on the ethernet, but USB networking is not enabled (or at least not tested and definitely not configured).
-
-An ssh server is running.
-
-The default dtb is the **am335x-bonegreen.dtb** which will work with a regular BB Black, but it does not enable a display. I am primarily using this image for the PRU and a lot of the display pins conflict with the PRU pins.
-
-It's easy enough to change the dtb that is used by editing the **uEnv.txt** file on the FAT partition of the SD card. `/dev/mmcblk0p1`, the FAT partition is mounted here
-
-    # ls /mnt
-    MLO         u-boot.img  uEnv.txt
+Replace `/dev/sdb` with the location the SD card shows up on your workstation.
 
 
-### Using the Buildroot Cross-Compiler
+#### Customizing the Build
 
-You can use the Buildroot generated cross-compiler to build sources outside of the Buildroot system.
+The [Buildroot Documentation][buildroot-docs] is good and you should probably be reading that first.
+ 
+One easy optimization is use [ccache][ccache] to reduce redundant work by the C/C++ preprocessor. 
 
-For example, here is a simple kernel workflow done external to Buildroot.
+Make sure your workstation has [ccache][ccache] installed, then run the Buildroot configuration tool after you have your initial *.config* generated.
 
-Fetch the kernel and checkout a working branch. This is the same kernel the Buildroot build used.
+    ~/buildroot$ make menuconfig 
+    
+Under **Build options** select **Enable compiler cache** and then save the configuration.
+This will update your *.config*.
 
-    ~$ git clone -b ti-linux-4.4.y git://git.ti.com/ti-linux-kernel/ti-linux-kernel.git
-    ~$ cd ~/ti-linux-kernel
-    ~/ti-linux-kernel$ git checkout -b bbb-4.4
+You will need the *ncurses development* package for your distribution before you can run `menuconfig`.
 
-Add the same patches and config the Buildroot built kernel is using
+After that run *make* as usual to build your system. 
 
-    ~/ti-linux-kernel$ git am ~/buildroot/board/jumpnow/bbb/ti-linux/4.4/*.patch
-    ~/ti-linux-kernel$ cp ~/buildroot/board/jumpnow/bbb/ti-linux/4.4/defconfig .config
+Another option I've been using is to save the downloaded source files to a location outside the buildroot repository. 
 
-Add the path to the Buildroot cross-compiler
-	
-    ~/ti-linux-kernel$ export PATH=/br5/bbb/host/usr/bin:${PATH}
+The download location is determined by the **BR2\_DL\_DIR** variable in the **config**
 
-Build the kernel and modules (adjust the parallel -jX flag for your machine)
+    BR2_DL_DIR="$(HOME)/dl"
 
-    ~/ti-linux-kernel$ make ARCH=arm CROSS_COMPILE=arm-linux- LOCALVERSION= -j8
+Or it can be set as an environment variable in the shell
 
-Build a specific dtb
+    export BR2_DL_DIR=${HOME}/dl
 
-    ~/ti-linux-kernel$ make ARCH=arm CROSS_COMPILE=arm-linux- am335x-bonegreen.dtb
-      DTC     arch/arm/boot/dts/am335x-bonegreen.dtb
+This allows you to share common downloads among different builds and if you ever delete the Buildroot repository you won't lose the downloads.
 
-You can generate patches from this kernel source tree and add them to the same patch directory as the other kernel patches and they will be included in your next Buildroot build of the system.
+Another option is to build externally outside of the Buildroot repository.
 
-This is the basic workflow I used to generate the current kernel patches.
+You can specify it this way when you do the first `make <some_defconfig>`.
+
+    ~/buildroot$ make O=/br5/bbb jumpnow_bbb_defconfig
+
+After that, go to the directory you chose to run the Buildroot make commands
+
+    ~/buildroot$ cd /br5/bbb
+    /br5/rpi3$ make menuconfig (optional)
+    /br5/rpi3$ make
+
+In this particular case I have `/br5/bbb` on a drive partition separate from my workstation rootfs and my home directory.
+
+#### System Overview
+
+The whole point of using build systems like Buildroot or Yocto is to customize the system to your own needs.
+
+Here is a quick look at the system built by the **jumpnow_bbb_defconfig**.
+
+Assuming a serial console, you will get this on boot. 
+
+    ...
+    Welcome to Buildroot
+    bbb login:
+
+Login with user **root** and password **jumpnowtek**. That password is something you can set in the defconfig.
+
+    # uname -a
+    Linux bbb 4.9.71-jumpnow #1 Fri Dec 22 08:39:07 EST 2017 armv7l GNU/Linux
+
+    # free
+                  total        used        free      shared  buff/cache   available
+    Mem:         501920        8388      478356         160       15176      483240
+    Swap:             0           0           0
+
+    # df -h
+    Filesystem                Size      Used Available Use% Mounted on
+    /dev/root                 1.8G    137.6M      1.6G   8% /
+    devtmpfs                236.6M         0    236.6M   0% /dev
+    tmpfs                   245.1M         0    245.1M   0% /dev/shm
+    tmpfs                   245.1M     60.0K    245.0M   0% /tmp
+    tmpfs                   245.1M    100.0K    245.0M   0% /run
+    /dev/mmcblk0p1           31.9M    362.0K     31.6M   1% /mnt
+
+The SD card is bigger then this, but only 2GB was configured in the partitioning in the **defconfig**. You can obviously customize this to whatever you want or not even use the **bbb-sdcard.img** to install the system. I usually don't.
+
+    # ifconfig -a
+    eth0      Link encap:Ethernet  HWaddr 84:EB:18:E2:31:2F
+              inet addr:192.168.10.115  Bcast:192.168.10.255  Mask:255.255.255.0
+              UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+              RX packets:135 errors:0 dropped:0 overruns:0 frame:0
+              TX packets:2 errors:0 dropped:0 overruns:0 carrier:0
+              collisions:0 txqueuelen:1000
+              RX bytes:8851 (8.6 KiB)  TX bytes:684 (684.0 B)
+              Interrupt:173
+
+    lo        Link encap:Local Loopback
+              inet addr:127.0.0.1  Mask:255.0.0.0
+              UP LOOPBACK RUNNING  MTU:65536  Metric:1
+              RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+              TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+              collisions:0 txqueuelen:1
+              RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
+
+I booted a Beaglebone Green board for this example. There are dtbs installed for a number of different use cases. Some are standard, some are custom.
+
+    # ls /boot
+    am335x-boneblack.dtb           bbb-hdmi.dtb
+    am335x-bonegreen-wireless.dtb  bbb-nh5cape.dtb
+    am335x-bonegreen.dtb           bbb-nhd7cape.dtb
+    bbb-4dcape43t.dtb              bbb-nohdmi.dtb
+    bbb-4dcape50t.dtb              zImage
+    bbb-4dcape70t.dtb
+
+If you want to change the dtb that is used, edit **uEnv.txt** on the first partition. The partition is mounted automatically at **/mnt**.
+
+    # mount
+    /dev/root on / type ext4 (rw,relatime,data=ordered)
+    devtmpfs on /dev type devtmpfs (rw,relatime,size=242256k,nr_inodes=60564,mode=755)
+    proc on /proc type proc (rw,relatime)
+    devpts on /dev/pts type devpts (rw,relatime,gid=5,mode=620,ptmxmode=000)
+    tmpfs on /dev/shm type tmpfs (rw,relatime,mode=777)
+    tmpfs on /tmp type tmpfs (rw,relatime)
+    tmpfs on /run type tmpfs (rw,nosuid,nodev,relatime,mode=755)
+    sysfs on /sys type sysfs (rw,relatime)
+    /dev/mmcblk0p1 on /mnt type vfat (rw,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=iso8859-1,shortname=mixed,errors=remount-ro)
+
+    # ls -l /mnt
+    total 362
+    -rwxr-xr-x    1 root     root         62632 Dec 22  2017 MLO
+    -rwxr-xr-x    1 root     root        303392 Dec 22  2017 u-boot.img
+    -rwxr-xr-x    1 root     root           566 Dec 22  2017 uEnv.txt
+
+If you run a dtb and board that has a display you can try a couple of custom Qt apps that are installed.
+
+This is a Qt widgets app
+
+    # ls /usr/bin/tspress
+    /usr/bin/tspress
+
+This is a PyQt5 app
+
+    # ls /usr/bin/pytouch.py
+    /usr/bin/pytouch.py
+
+Both use the **linuxfb** Qt backend setup in the environment.
+
+    # env
+    USER=root
+    SHLVL=1
+    HOME=/root
+    PAGER=/bin/more
+    PS1=#
+    LOGNAME=root
+    TERM=vt100
+    PATH=/bin:/sbin:/usr/bin:/usr/sbin
+    SHELL=/bin/sh
+    QT_QPA_PLATFORM=linuxfb
+    PWD=/root
+    EDITOR=/bin/vi
+
+
+#### Using the Buildroot cross-toolchain
+
+Some quick notes on using the cross-toolchain.
+
+The toolchain gets installed under the build output/host directory.
+
+In my example where I used an external build directory of `/br5/bbb`
+
+    ~/buildroot$ make O=/br5/bbb jumpnow_bbb_defconfig
+
+my build output ended up here
+
+    /br5/bbb/host
+
+The cross-compiler and associated tools can be found under
+
+    /br5/bbb/host/usr/bin
+
+The toolchain is not **relocatable**. You must use it in place.
+
+To use add the path `/br5/bbb/host/usr/bin` to your **PATH** environment variable and invoke the compiler by name, in this case *arm-linux-gcc*, *arm-linux-g++*, etc...
+
+Some quick examples, first add the PATH to the cross-compiler
+
+    $ export PATH=/br5/bbb/host/usr/bin:${PATH}
+    $ echo $PATH
+    /br5/bbb/host/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+A simple C, Makefile example
+
+    ~/projects$ git clone https://github.com/scottellis/serialecho
+    Cloning into 'serialecho'...
+
+    ~/projects$ cd serialecho/
+
+    ~/projects/serialecho$ cat Makefile
+    TARGET = serialecho
+
+    $(TARGET) : serialecho.c
+            $(CC) serialecho.c -o $(TARGET)
+
+    clean:
+            rm -f $(TARGET)
+
+    ~/projects/serialecho$ export CC=arm-linux-gcc
+
+    ~/projects/serialecho$ make
+    arm-linux-gcc serialecho.c -o serialecho
+
+    ~/projects/serialecho$ file serialecho
+    serialecho: ELF 32-bit LSB executable, ARM, EABI5 version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux-armhf.so.3, for GNU/Linux 4.9.0, not stripped
+
 
 [buildroot]: https://buildroot.org/
 [bbb]: https://beagleboard.org/
-[bbb-pru]: http://elinux.org/Ti_AM33XX_PRUSSv2
-[pruss-uio]: http://arago-project.org/git/projects/?p=linux-am33x.git;a=commit;h=f1a304e7941cc76353363a139cbb6a4b1ca7c737
-[bbb-pru-uio-doc]: http://www.jumpnowtek.com/beaglebone/Working-with-the-BeagleBone-PRUs.html
+[yocto]: https://www.yoctoproject.org/
