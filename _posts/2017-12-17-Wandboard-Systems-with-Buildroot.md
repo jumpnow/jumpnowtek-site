@@ -2,7 +2,7 @@
 layout: post
 title: Building Wandboard Systems with Buildroot
 description: "Building customized Linux systems for Wandboards using Buildroot"
-date: 2017-12-17 11:12:00
+date: 2017-12-27 07:35:00
 categories: wandboard
 tags: [linux, wandboard, buildroot]
 ---
@@ -85,8 +85,8 @@ You can specify it this way when you do the first `make <some_defconfig>`.
 After that, go to the directory you chose to run the Buildroot make commands
 
     ~/buildroot$ cd /br5/wand
-    /br5/rpi3$ make menuconfig (optional)
-    /br5/rpi3$ make
+    /br5/wand$ make menuconfig (optional)
+    /br5/wand$ make
 
 In this particular case I have `/br5/wand` on a drive partition separate from my workstation rootfs and my home directory.
 
