@@ -1,19 +1,23 @@
 ## Overview
 
-Some notes on getting the [Mender][mender-io] software upgrade system working with Beaglebone images. I am using a custom Yocto meta layer for my BBB builds and needed a few changes to get things working.
+Some notes on getting the [Mender][mender-io] upgrade software working with [Beaglebone][beagleboard-org] systems. 
+
+I am using Yocto and a custom meta layer to build the Beaglebone systems.
 
 ### U-Boot
 
-a) I am using the default u-boot version **2017.09** that comes with Yocto 2.4 [rocko]. I did neede a **u-boot\_%.bbappend** for the BBB for the following customizations
+**a)** I am using the default u-boot version **2017.09** that comes with Yocto 2.4 [rocko] branch.
+
+I did need a **u-boot\_%.bbappend** for the beaglebones for the following customizations
   
     UBOOT_SUFFIX = "img"
     SPL_BINARY = "MLO"
 
-b) Need to include **u-boot-fw-utils** package in the image. 
+**b)** Mender requires utilities from the **u-boot-fw-utils** package. 
 
-The **meta-mender-core** layer overrides the default **u-boot-fw-utils** recipe with a custom one that fixes up **fw_env.config** for mender use. This primarily has to do with where the u-boot environment will reside.
+The **meta-mender-core** layer overrides the default **u-boot-fw-utils** recipe with a custom one that fixes up **fw_env.config** for mender use. This primarily has to do with the size and location of the  u-boot environment.
 
-The u-boot environment storage is in the first 8 MB of unpartitioned space at the start of the device. (TODO: explain where this 8 MB number comes from).
+The u-boot environment default is in the first 8 MB of unpartitioned space at the start of the device. (TODO: explain where this 8 MB number comes from).
 
 Mender exposes some variables that allow you to specify where the u-boot environment will reside within this unpartitioned space, both a primary and a redundant value.
 
@@ -24,32 +28,34 @@ This is what I am using.
 
 That sets the offsets at 4MB and 6MB into the device.
 
-c) The u-boot environment size needs to be declared in a Yocto environment variable. I chose machine conf but could have used local.conf for this as well.
+**c)** The u-boot environment size needs to be declared in a Yocto environment variable. I chose machine conf but could have used local.conf for this.
 
     BOOTENV_SIZE = "0x20000"
 
-d) The mender u-boot environment needs to know about the **KERNEL\_IMAGETYPE**. I chose machine conf again, but could have used local.conf. 
+**d)** The mender u-boot environment needs to know about the **KERNEL\_IMAGETYPE**. I chose machine conf again, but could have used local.conf. 
 
-Note: I was previously specifying this variable in the kernel recipe but moved it to machine conf since the mender recipe also needs to know this
+Note: I was previously specifying this variable in the kernel recipe but had to move it to machine conf so the mender recipe could see it
 
     KERNEL_IMAGETYPE = "zImage"
 
 
-e) Mender also wants to know the dtb to load. To do this mender parses the Yocto **KERNEL\_DEVICETREE** variable and attempts to determine the dtb from this. 
+**e)** Mender also wants to know the dtb to load. To do this a mender build script parses the Yocto **KERNEL\_DEVICETREE** variable and attempts to determine the dtb from this. 
 
-If you currently build more then one dtb with your kernel by specifying more then one dtb in **KERNEL\_DEVICETREE**, then mender will choose the last one. Maybe this is what you want, maybe not. I suggest only declaring one dtb. 
+If you currently build more then one dtb by specifying multiple dtbs in **KERNEL\_DEVICETREE**, then mender will choose the last one in this list to load and pass to the kernel. Maybe this is the dtb you want. Probably it is not. I suggest only declaring one dtb in **KERNEL\_DEVICETREE** and doing separate builds for boards requiring a different dtb.. 
 
-Whatever you decide, this definition needs to be in a place where both the kernel recipe and the mender recipe can see it, so either machine conf or local.conf. I chose local.conf for this one.
+The **KERNEL\_DEVICETREE** definition needs to be in a place where both the kernel recipe and the mender recipe can see it. So either machine conf or local.conf will work. I chose local.conf for this.
+
+I am testing with a BeagleBone Green.
 
     KERNEL_DEVICETREE = "am335x-bonegreen.dtb"
 
-f) Mender needs to know the boot storage device. For the BBB either the SD card or the eMMC.
-
-For the SD card, put the following in local.conf
+**f)** Mender needs to know both the u-boot storage device and the rootfs/data storage device. For the Beaglebone SD card, these can be specified with a single definition in local.conf.
 
     MENDER_STORAGE_DEVICE = "/dev/mmcblk0"
 
-g) Mender needs some additional storage partitioning details also in local.conf 
+This is required and would be different for systems booting from the **eMMC**.
+
+**g)** Mender needs some additional storage partitioning details also in local.conf 
 
     IMAGE_ROOTFS_SIZE = "1048576"
     MENDER_STORAGE_TOTAL_SIZE_MB = "3616"
@@ -77,7 +83,7 @@ It is only the **IMAGE\_ROOTFS\_SIZE** that matters for upgrades.
 
 ### Mender software
 
-a) Include the **meta-mender-core** layer in **bblayers.conf**. I am using the **[rocko]** branch of meta-mender
+**a)** Include the **meta-mender-core** layer in **bblayers.conf**. I am using the **[rocko]** branch of meta-mender
 
     ...
     BBLAYERS ?= " \
@@ -90,11 +96,13 @@ a) Include the **meta-mender-core** layer in **bblayers.conf**. I am using the *
       ${HOME}/bbb-mender/meta-bbb \
     "
 
-b) Inherit some mender classes in local.conf
+**b)** Inherit some mender classes in local.conf
   
     INHERIT += "mender-image mender-install mender-uboot"
 
-c) Add mender bbappend to customize for my systems. This is my **mender_%.bbappend**
+**c)** Add mender bbappend to customize for my systems. 
+
+This is my **mender_%.bbappend**
   
     FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
@@ -110,28 +118,30 @@ c) Add mender bbappend to customize for my systems. This is my **mender_%.bbappe
 
 The aggressive poll times are for development.
   
-d) The **artifact-verify-key.pem** is the public key used to verify upgrade artifacts. See the instructions in `meta-bbb/docs/README-mender-keys` for generating and using mender signing keys.
+The **artifact-verify-key.pem** is the public key used to verify upgrade artifacts. See the instructions in `meta-bbb/docs/README-mender-keys` for generating and using mender signing keys.
 	 
-e) I am running a mender server locally and **server.crt** is the self-signed cert for my server. See the instructions for [setting up a production server][mender-prod-server-doc] in the mender docs.
+I am running a mender server locally and **server.crt** is the self-signed cert for my server. See the instructions for [setting up a production server][mender-prod-server-doc] in the mender docs.
   
-f) Add the url to my mender server so it gets added in the device **mender.conf**. I did this in **local.conf** though could also be done in the mender bbappend.
+**d)** Add the url to my mender server so it gets added in the device **mender.conf**. I did this in **local.conf** though could also be done in the mender bbappend.
 	 
     MENDER_SERVER_URL = "https://octo.jumpnow"
 
 
-g) Add a mender artifact name variable in **local.conf** so artifacts get a name. This ends up in **/etc/mender/artifact_info** on the device.
+**e)** Add a mender artifact name variable in **local.conf** so artifacts get a name. This ends up in **/etc/mender/artifact_info** on the device.
 	 
     MENDER_ARTIFACT_NAME = "bbb-test-1"
 
 
-f) I am running sysvinit not systemd, so add an init script to start the mender service on the units. See the example in **meta-bbb/recipes-mender/mender-sysvinit**.
+**f)** I am running sysvinit not systemd, so add an init script to start the mender service on the units. See the example in **meta-bbb/recipes-mender/mender-sysvinit**.
 	 
 	 
 ### Image creation
 
-a) I couldn't get the default mender sdimg files to build. I've never had great success with Yocto's **wic** tool and this was no exception. Mender's idea is the you enable sdimg creation by inheriting **mender-image-sd** in **local.conf**.
+**a)** I couldn't get the default mender sdimg files to build. My fault no doube, but I've never had great success with Yocto's **wic** tool and I don't bother fighting it anymore. It's easy enough to do the same thing with a shell script. 
+
+For completeness, the mender idea is that you inherit **mender-image-sd** in **local.conf** and that will generate an sdimg automatically during builds. Of course this also slows subsequent builds when you are only building upgrade **artifacts** ...
  
-Note that you only need this sdimg for initial provisioning. After that upgrades happen via 'artifacts' and do not use the sdimg files.
+The sdimg is only used for initial provisioning. This is the initial system you copy to the SD card. After that all upgrades happen via 'artifacts' and do not use sdimg files.
 
 To build installer image files I am using a custom shell script. It's a small variation of an existing image script I already use and so was pretty easy to write. 
 
@@ -149,4 +159,5 @@ c) See the script **meta-bbb/scripts/sign-mender-image.sh** for a utility that c
 	 
 	 
 [mender-io]: https://mender.io/	 
-[mender-prod-server-doc]: https://docs.mender.io/1.3/administration/production-installation	
+[mender-prod-server-doc]: https://docs.mender.io/1.3/administration/production-installation
+[beagleboard-org]: http://beagleboard.org/
