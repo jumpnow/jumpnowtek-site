@@ -11,7 +11,7 @@ tags: [mender, wandboard, yocto, linux]
 
 For now integrating Mender is easiest if you are using [Yocto][yocto] to build your systems.
 
-I have a simple [meta-layer][meta-wandboard] for [Wandboards][wandboard] that can be adapted without too much effort add Mender support.
+I have a simple [meta-layer][meta-wandboard] for [Wandboards][wandboard] that can be adapted without too much effort to add Mender support.
 
 The steps to setup and build are similar to the ones outlined in this post [Building Wandboard Systems with Yocto][wandboard-yocto] with the following differences   
 
@@ -90,7 +90,7 @@ You can lookup all these definitions in the mender documentation.
 
 You need to tell clients where the mender server is.
 
-If you follow the [Producton installation][mender-server-production-install] steps and run your own mender server, you will set the **MENDER\_SERVER\_URL** variable to that server like the example I used here
+If you follow the [Production installation][mender-server-production-install] steps and run your own mender server, you will set the **MENDER\_SERVER\_URL** variable to that server like the example I used here
 
     MENDER_SERVER_URL = "https://octo.jumpnow"
 
