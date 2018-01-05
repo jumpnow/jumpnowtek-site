@@ -11,7 +11,7 @@ tags: [mender, wandboard, yocto, linux]
 
 For now integrating Mender is easiest if you are using [Yocto][yocto] to build your systems.
 
-I have a simple [meta-layer][meta-wandboard] for [Wandboards][wandboard] that can be adapted without too much effort to build Mender enabled systems.
+I have a simple [meta-layer][meta-wandboard] for [Wandboards][wandboard] that can be adapted without too much effort add Mender support.
 
 The steps to setup and build are similar to the ones outlined in this post [Building Wandboard Systems with Yocto][wandboard-yocto] with the following differences   
 
@@ -21,6 +21,8 @@ The steps to setup and build are similar to the ones outlined in this post [Buil
 4. Generate artifact signing keys and copy to the proper location
 5. Build the **mender-test-image** instead of the **console-image**
 6. Create an SD image file
+
+Detailed explanations of each step follow.
 
 ### Add the meta-mender layer
 
