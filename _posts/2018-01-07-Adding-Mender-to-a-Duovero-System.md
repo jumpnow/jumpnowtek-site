@@ -11,7 +11,7 @@ tags: [mender, duovero, yocto, linux]
 
 For now integrating Mender is easiest if you are using [Yocto][yocto] to build your systems.
 
-I have a simple [meta-layer][meta-wandboard] for [Wandboards][wandboard] that can be adapted without too much effort to add Mender support.
+I have a simple [meta-duovero][meta-duovero] layer for [Gumstix Duovero][duovero] boards that can be adapted without too much effort to add Mender support.
 
 The steps to setup and build are similar to the ones outlined in this post [Building Duovero Systems with Yocto][duovero-yocto] with the following differences   
 
