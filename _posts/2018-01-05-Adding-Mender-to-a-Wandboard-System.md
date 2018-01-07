@@ -2,7 +2,7 @@
 layout: post
 title: Adding Mender to a Wandboard System
 description: "Incorporating Mender into a Yocto built Wandboard system"
-date: 2018-01-05 14:30:00
+date: 2018-01-07 16:30:00
 categories: wandboard 
 tags: [mender, wandboard, yocto, linux]
 ---
@@ -19,7 +19,7 @@ The steps to setup and build are similar to the ones outlined in this post [Buil
 2. Add some mender classes and storage configuration to your **local.conf**
 3. Configure the systems for the mender server you plan to use
 4. Generate artifact signing keys and copy to the proper location
-5. Build the **mender-test-image** instead of the **console-image**
+5. Add **u-boot-fw-utils** and a **mender daemon** startup script recipe to your image
 6. Create an SD image file
 
 Detailed explanations of each step follow.
@@ -126,7 +126,13 @@ If you follow those instructions you can immediately use a provided utility scri
 
     meta-wandboard/scripts/sign-mender-image.sh
  
-### Build the mender-test-image
+### Add u-boot-fw-utils and mender init startup
+
+Mender requires the **u-boot-fw-utils** for maintaining the u-boot environment about the active root partition.
+
+Mender also requires that the **mender** daemon be running to communicate with the **mender-server**.
+
+Mender provides a **systemd** service file, but since I am using **sysvinit** I wrote a simple **mender-sysvinit** package recipe to provide the same.
 
 There is a simple Yocto image recipe you can use for testing
 
