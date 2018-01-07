@@ -2,82 +2,53 @@
 layout: post
 title: Building Duovero Systems with Yocto
 description: "Building customized systems for Gumstix Duovero using tools from the Yocto Project"
-date: 2017-03-13 13:52:00
+date: 2018-01-07 14:40:00
 categories: gumstix-linux 
 tags: [linux, gumstix, duovero, yocto]
 ---
 
-Some notes on building systems for [Gumstix Duovero][duovero] boards using tools from the [Yocto Project][yocto].
+This post is about building Linux systems for [Gumstix Duovero][duovero] boards using tools from the [Yocto Project][yocto].
 
-The [meta-duovero][meta-duovero] *layer* generates some basic systems with packages to support, C, C++, Qt5, Perl and Python development.
+Yocto is a set of tools for building a custom embedded Linux distribution. The systems are usually targeted for a particular application like a commercial product.
 
-I use this as a template when starting new *Duovero* projects.
+Yocto uses what it calls **meta-layers** to define the configuration for a system build. Within each meta-layer are recipes, classes and configuration files that support the primary build tool, a python framework called **bitbake**.
+
+I have a custom Yocto layer for the Duoveros called [meta-duovero][meta-duovero]. I am not using the Gumstix Yocto meta-layer.
+
 
 ### System Info
 
-The Yocto version is `2.2.1` the `[morty]` branch.
+The Yocto version is **2.4**, the `[rocko]` branch.
 
-The `4.4.53` Linux kernel comes from the [linux-stable][linux-stable] repository.
+The default kernel is **4.14**. A recipe for a **4.9** kernel is also available.
 
-The [u-boot][uboot] version is `2016.07`.
+The u-boot version is **2017.09**.
 
 These are **sysvinit** systems using [eudev][eudev].
 
-The Qt version is `5.7.1`. By default there is no *X11* and no desktop installed. [Qt][qt] gui applications can be run using the `-platform linuxfb` switch.
+Python **3.5.3** is installed.
 
-A light-weight *X11* desktop can be added with minimal changes to the build configuration.
+My systems use **sysvinit**, but Yocto supports **systemd** if you would rather use that.
 
-Perl `5.22` and Python `2.7.12` each with a number of modules is included.
+Only one device tree is built with the **4.14** and **4.9** recipes, the in-tree
 
-The Duovero [Zephyr][duovero-zephyr] COM has a built-in Wifi/Bluetooth radio. The kernel and software to support both are included. Access point mode is supported. Some [instructions here][jumpnow-duovero-ap].
+* omap4-duovero-parlor.dtb
 
-NOTE: I haven't tested Bluetooth with the 4.x kernels.
-
-RTC battery backup trickle charging is enabled by default in the 4.4 kernel. Edit the kernel recipe and remove the patch if you don't want this.
-
-Some extra device tree binaries are generated and installed that support
-
-1. HDMI (`jumpnow-duovero-parlor.dtb`)
-2. No display (`jumpnow-duovero-parlor-nodisplay.dtb`)
- 
-Both add spidev support to the kernel.
-
-You can switch between the *dtbs* using a u-boot script file `/boot/uEnv.txt`. If you don't use a *uEnv.txt* script, then the default `omap4-duovero-parlor.dtb` will be loaded. 
-
-An example *uEnv.txt* is in `meta-duovero/scripts`.
-
-*spidev* on SPI bus 1 (CS 0,1,2) and SPI bus 4 (CS 0) are configured for use from the *Parlor header*.
-
-See the dts include files under `linux-stable-4.4/dts` for the particular pins to use for the different SPI configurations.
-
-*UART2* is available as `/dev/ttyO1` from the header pins *15* TX and *17* RX.
-
-There are some simple loopback test programs included in the console image.
- 
-[spiloop][spiloop] is a utility for testing the *spidev* driver.
-
-[serialecho][serialecho] is a utility for testing the *uart*.
-
-There is a Qt5 test program [tspress][tspress] in the *qt5-image*.
+Custom dtbs can be easily written.
 
 ### Ubuntu Setup
 
-I am primarily using *16.04* 64-bit servers for builds. Older versions should work.
+I primarily use **16.04** 64-bit servers for builds. Other versions should work.
 
 You will need at least the following packages installed
 
     build-essential
     chrpath
     diffstat
-    gawk
-    git
     libncurses5-dev
-    pkg-config
-    subversion
-    texi2html
     texinfo
 
-For *16.04* you also need to install the *python 2.7* package that the *Yocto 2.2* branch requires
+For **16.04** you also need to install the **python 2.7** package
 
     python2.7
 
@@ -85,7 +56,7 @@ And then create a link for it in `/usr/bin`
 
     sudo ln -sf /usr/bin/python2.7 /usr/bin/python
 
-For all versions of Ubuntu, you should change the default Ubuntu shell from `dash` to `bash` by running this command from a shell
+For all versions of Ubuntu, you should change the default Ubuntu shell from **dash** to **bash** by running this command from a shell
  
     sudo dpkg-reconfigure dash
 
@@ -93,7 +64,7 @@ Choose **No** to dash when prompted.
 
 ### Fedora Setup
 
-I have also used a Fedora *23* 64-bit workstation.
+I have used a **Fedora 27** 64-bit workstation.
 
 The extra packages I needed to install for Yocto were
 
@@ -106,77 +77,77 @@ and the package group
 
     Development Tools
 
-There might be more packages required since I had already installed *qt-creator* and the *Development Tools* group before I did the first build with Yocto.
-
-Fedora already uses `bash` as the shell. 
+Fedora already uses **bash** as the shell. 
 
 ### Clone the dependency repositories
 
-First the main Yocto project `poky` repository
+For all upstream repositories, use the `[rocko]` branch.
 
-    scott@octo:~ git clone -b morty git://git.yoctoproject.org/poky.git poky-morty
+The directory layout I am describing here is my preference. All of the paths to the meta-layers are configurable. If you choose something different, adjust the following instructions accordingly.
 
-Then the `meta-openembedded` repository
+First the main Yocto project **poky** layer
 
-    scott@octo:~$ cd poky-morty
-    scott@octo:~/poky-morty$ git clone -b morty git://git.openembedded.org/meta-openembedded
+    ~# git clone -b rocko git://git.yoctoproject.org/poky.git poky-rocko
 
-And the `meta-qt5` repository
+Then the dependency layers under that
 
-    scott@octo:~/poky-morty$ git clone -b morty https://github.com/meta-qt5/meta-qt5.git
+    ~$ cd poky-rocko
+    ~/poky-rocko$ git clone -b rocko git://git.openembedded.org/meta-openembedded
 
-
-I usually keep these repositories separated since they can be shared between projects and different boards.
+These repositories shouldn't need modifications other then periodic updates and can be reused for different projects or different boards.
 
 ### Clone the meta-duovero repository
 
 Create a sub-directory for the `meta-duovero` repository before cloning
 
-    scott@octo:~$ mkdir ~/duovero
-    scott@octo:~$ cd ~/duovero
-    scott@octo:~/duovero$ git clone -b morty git://github.com/jumpnow/meta-duovero
+    ~$ mkdir ~/duovero
+    ~$ cd ~/duovero
+    ~/duovero$ git clone -b rocko git://github.com/jumpnow/meta-duovero
 
 The `meta-duovero/README.md` file has the last commits from the dependency repositories that I tested. You can always checkout those commits explicitly if you run into problems.
 
 ### Initialize the build directory
 
-Much of the following are only the conventions that I use. All of the paths to the meta-layers are configurable.
+Again much of the following are only my conventions.
  
-First setup a build directory. I tend to do this on a per board and/or per project basis so I can quickly switch between projects. For this example I'll put the build directory under `~/duovero/` with the `meta-duovero` layer.
+Choose a build directory. I tend to do this on a per board and/or per project basis so I can quickly switch between projects. For this example I'll put the build directory under `~/duovero/` with the `meta-duovero` layer.
 
 You could manually create the directory structure like this
 
-    scott@octo:~$ mkdir -p ~/duovero/build/conf
+    $ mkdir -p ~/duovero/build/conf
 
-Or you could use the *Yocto* environment script `oe-init-build-env` like this passing in the path to the build directory
 
-    scott@octo:~$ source poky-krogoth/oe-init-build-env ~/duovero/build
+Or you could use the Yocto environment script **oe-init-build-env** like this passing in the path to the build directory
 
-The *Yocto* environment script will create the build directory if it does not already exist.
+    ~$ source poky-rocko/oe-init-build-env ~/duovero/build
+
+The Yocto environment script will create the build directory if it does not already exist.
  
 ### Customize the configuration files
 
-There are some sample configuration files in the `meta-duovero/conf` directory.
+There are some sample configuration files in the **meta-duovero/conf** directory.
 
-Copy them to the `build/conf` directory (removing the '-sample')
+Copy them to the **build/conf** directory (removing the '-sample')
 
-    scott@octo:~/duovero$ cp meta-duovero/conf/local.conf-sample build/conf/local.conf
-    scott@octo:~/duovero$ cp meta-duovero/conf/bblayers.conf-sample build/conf/bblayers.conf
+    ~/duovero$ cp meta-duovero/conf/local.conf.sample build/conf/local.conf
+    ~/duovero$ cp meta-duovero/conf/bblayers.conf.sample build/conf/bblayers.conf
 
-If you used the `oe-init-build-env` script to create the build directory, it generated some generic configuration files in the `build/conf` directory. It is okay to copy over them.
+If you used the **oe-init-build-env** script to create the build directory, it generated some generic configuration files in the **build/conf** directory. If you want to look at them, save them with a different name before overwriting.
 
-You may want to customize the configuration files before your first build.
+It is not necessary, but you may want to customize the configuration files before your first build.
+
+**Warning:** Do not use the '**~**' character when defining directory paths in the Yocto configuration files. 
 
 ### Edit bblayers.conf
 
-In `bblayers.conf` file replace `${HOME}` with the appropriate path to the meta-layer repositories on your system if you modified any of the above instructions when cloning. 
+In **bblayers.conf** file replace **${HOME}** with the appropriate path to the meta-layer repositories on your system if you modified any of the paths in the previous instructions.
+
+**WARNING:** Do not include **meta-yocto-bsp** in your **bblayers.conf**. The Yocto BSP requirements for the duovoers are in **meta-duovero**.
 
 For example, if your directory structure does not look exactly like this, you will need to modify `bblayers.conf`
 
-
-    ~/poky-morty/
+    ~/poky-rocko/
          meta-openembedded/
-         meta-qt5/
          ...
 
     ~/duovero/
@@ -184,114 +155,62 @@ For example, if your directory structure does not look exactly like this, you wi
         build/
             conf/
 
+
 ### Edit local.conf
 
 The variables you may want to customize are the following:
 
-- TMPDIR
-- DL\_DIR
-- SSTATE\_DIR
+* TMPDIR
+* DL\_DIR
+* SSTATE\_DIR
 
-The defaults work fine. Adjustments are optional.
+All of the following modifications are optional.
 
 ##### TMPDIR
 
-This is where temporary build files and the final build binaries will end up. Expect to use at least 35GB. You probably want at least 50GB available.
+This is where temporary build files and the final build binaries will end up. Expect to use at least **50GB**.
 
-The default location is in the `build` directory, in this example `~/duovero/build/tmp`.
+The default location is under the **build** directory, in this example **~/duovero/build/tmp**.
 
 If you specify an alternate location as I do in the example conf file make sure the directory is writable by the user running the build.
 
 ##### DL_DIR
 
-This is where the downloaded source files will be stored. You can share this among configurations and build files so I created a general location for this outside the project directory. Make sure the build user has write permission to the directory you decide on.
+This is where the downloaded source files will be stored. You can share this among configurations and builds so I always create a general location for this outside the project directory. Make sure the build user has write permission to the directory you decide on.
 
-The default location is in the `build` directory, `~/duovero/build/sources`.
+The default location is in the **build** directory, **~/duovero/build/sources**.
 
 ##### SSTATE_DIR
 
-This is another Yocto build directory that can get pretty big, greater then 5GB. I often put this somewhere else other then my home directory as well.
+This is another Yocto build directory that can get pretty big, greater then **8GB**. I often put this somewhere else other then my home directory as well.
 
-The default location is in the `build` directory, `~/duovero/build/sstate-cache`.
+The default location is in the **build** directory, **~/duovero/build/sstate-cache**.
 
  
-### Run the build
-
-You need to source the environment every time you want to run a build. The `oe-init-build-env` when run a second time will not overwrite your customized conf files.
-
-    scott@octo:~$ source poky-morty/oe-init-build-env ~/duovero/build
-
-    ### Shell environment set up for builds. ###
-
-    You can now run 'bitbake '
-
-    Common targets are:
-        core-image-minimal
-        core-image-sato
-        meta-toolchain
-        meta-toolchain-sdk
-        adt-installer
-        meta-ide-support
-
-    You can also run generated qemu images with a command like 'runqemu qemux86'
-    scott@octo:~/duovero/build$
-
-
-Those 'Common targets' may or may not build successfully. I have never tried them.
-
-There are a few custom images available in the [meta-duovero][meta-duovero] layer. The recipes for these image can be found in `meta-duovero/images/`
-
-    console-image.bb
-    qt5-image.bb
-
-Place your own image recipes in this same directory.
-
-#### console-image
-
-A basic console developer image. See the recipe `meta-duovero/images/console-image.bb` for specifics, but some of the installed programs are
-
-    gcc/g++ and associated build tools
-    git
-    perl and python
-    ssh/scp server and client
-    wireless support
-    kernel modules
-
-The *console-image* has a line
-
-    inherit core-image
-
-which is `poky-morty/meta/classes/core-image.bbclass` and pulls in some required base packages. This is useful to know if you create your own image recipe.
-
-#### qt5-image
-
-This image includes the `console-image` and adds `Qt5` with the associated development headers and `qmake`.
-
 ### Build
 
 To build the `console-image` run the following command
 
-    scott@octo:~/duovero/build$ bitbake console-image
+    ~/duovero/build$ bitbake console-image
 
 You may occasionally run into build errors related to packages that either failed to download or sometimes out of order builds. The easy solution is to clean the failed package and rerun the build again.
 
-For instance if the build for `zip` failed for some reason, I would run this.
+For instance if the build for `zip` failed for some reason, I would run this
 
-    scott@octo:~/duovero/build$ bitbake -c cleansstate zip
-    scott@octo:~/duovero/build$ bitbake zip
+    ~/duovero/build$ bitbake -c cleansstate zip
+    ~/duovero/build$ bitbake zip
 
 And then continue with the full build.
 
-    scott@octo:~/duovero/build$ bitbake console-image
+    ~/duovero/build$ bitbake console-image
 
-To build the `qt5-image` it would be
 
-    scott@octo:~/duovero/build$ bitbake qt5-image
+### Copying the binaries to an SD card
 
-The `cleansstate` command (with two s's) works for image recipes as well.
+After the build completes, the bootloader, kernel and rootfs image files can be found in `<TMPDIR>/deploy/images/duovero/`.
 
-The image files won't get deleted from the *TMPDIR* until the next time you build.
- 
+The `meta-duovero/scripts` directory has some helper scripts to format and copy the files to a microSD card.
+
 ### Copying the binaries to an SD card
 
 After the build completes, the bootloader, kernel and rootfs image files can be found in `<TMPDIR>/deploy/images/duovero/`.
@@ -308,7 +227,7 @@ Insert the microSD into your workstation and note where it shows up.
 
 For example
 
-    scott@octo:~/duovero/meta-duovero$ lsblk
+    ~/duovero/meta-duovero$ lsblk
     NAME    MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
     sda       8:0    0 931.5G  0 disk
     |-sda1    8:1    0  93.1G  0 part /
@@ -331,8 +250,8 @@ It doesn't matter if some partitions from the SD card are mounted. The `mk2parts
 
 **BE CAREFUL** with this script. It will format any disk on your workstation.
 
-    scott@octo:~$ cd ~/duovero/meta-duovero/scripts
-    scott@octo:~/duovero/meta-duovero/scripts$ sudo ./mk2parts.sh sdb
+    ~$ cd ~/duovero/meta-duovero/scripts
+    ~/duovero/meta-duovero/scripts$ sudo ./mk2parts.sh sdb
 
 You only have to format the SD card once.
 
@@ -340,7 +259,7 @@ You only have to format the SD card once.
 
 You will need to create a mount point on your workstation for the copy scripts to use.
 
-    scott@octo:~$ sudo mkdir /media/card
+    ~$ sudo mkdir /media/card
 
 You only have to create this directory once.
 
@@ -352,110 +271,52 @@ This script needs to know the `TMPDIR` to find the binaries. It looks for an env
 
 For instance, if I had this in the `local.conf`
 
-    TMPDIR = "/oe9/duo/tmp-morty"
+    TMPDIR = "/oe9/duo/tmp-rocko"
 
 Then I would export this environment variable before running `copy_boot.sh`
 
-    scott@octo:~/duovero/meta-duovero/scripts$ export OETMP=/oe9/duo/tmp-morty
+    ~/duovero/meta-duovero/scripts$ export OETMP=/oe9/duo/tmp-rocko
 
 Then run the `copy_boot.sh` script passing the location of SD card
 
-    scott@octo:~/duovero/meta-duovero/scripts$ ./copy_boot.sh sdb
+    ~/duovero/meta-duovero/scripts$ ./copy_boot.sh sdb
 
 This script should run very fast.
 
 #### copy_rootfs.sh
 
-This script copies the *zImage* kernel, the device tree binaries and the rest of the operating system to the root file system partition of the SD card.
+This script copies the **zImage** kernel, the device tree binaries and the rest of the operating system to the root file system partition of the SD card.
 
-The script accepts an optional command line argument for the image type, for example `console` or `qt5`. The default is `console`.
+The script accepts an optional command line argument for the image name, for example **console**.
+The default is **console** for the **console-image**.
 
 The script also accepts a `hostname` argument if you want the host name to be something other then the default `duovero`.
 
 Here's an example of how you'd run `copy_rootfs.sh`
 
-    scott@octo:~/duovero/meta-duovero/scripts$ ./copy_rootfs.sh sdb console
+    ~/duovero/meta-duovero/scripts$ ./copy_rootfs.sh sdb console
 
-or
-
-    scott@octo:~/duovero/meta-duovero/scripts$ ./copy_rootfs.sh sdb qt5 duo1
-
-The *copy_rootfs.sh* script will take longer to run and depends a lot on the size and quality of your SD card.
+The **copy_rootfs.sh** script will take longer to run and depends a lot on the size and quality of your SD card.
 
 The copy scripts will **NOT** unmount partitions automatically. If the partition that is supposed to be the on the SD card is already mounted, the script will complain and abort. This is for safety, mine mostly, since I run these scripts many times a day on different machines and the SD cards show up in different places.
 
 Here's a realistic example session where I want to copy already built images to a second SD card that I just inserted.
 
-    scott@octo:~$ sudo umount /dev/sdb1
-    scott@octo:~$ sudo umount /dev/sdb2
-    scott@octo:~$ export OETMP=/oe9/duo/tmp-morty
-    scott@octo:~$ cd duovero/meta-duovero/scripts
-    scott@octo:~/duovero/meta-duovero/scripts$ ./copy_boot.sh sdb
-    scott@octo:~/duovero/meta-duovero/scripts$ ./copy_rootfs.sh sdb console duo2
+    ~$ sudo umount /dev/sdb1
+    ~$ sudo umount /dev/sdb2
+    ~$ export OETMP=/oe9/duo/tmp-rocko
+    ~$ cd duovero/meta-duovero/scripts
+    ~/duovero/meta-duovero/scripts$ ./copy_boot.sh sdb
+    ~/duovero/meta-duovero/scripts$ ./copy_rootfs.sh sdb console duo2
 
-Both *copy_boot.sh* and *copy_rootfs.sh* are simple scripts easily modified for custom use.
-
-#### Some custom package examples
-
-[spiloop][spiloop] is a spidev test application installed in `/usr/bin`.
-
-The *bitbake recipe* that builds and packages *spiloop* is here
-
-    meta-duovero/recipes-misc/spiloop/spiloop_1.0.bb
-
-Use it to test the *spidev* driver before and after placing a jumper between pins *J9.3* and *J9.5* for SPI bus 1 or pins *J9.25* and *J9.27* for SPI bus 4. That's if you are using one of the jumpnow dtbs that includes the spidev.dtsi files.
-
-
-[tspress][tspress] is a Qt5 GUI application installed in `/usr/bin` with the *qt5-image*.
-
-The *bitbake recipe* is here
-
-    meta-duovero/recipes-qt/tspress/tspress.bb
-
-Check the *README* in the [tspress][tspress] repository for usage.
-
-#### Adding additional packages
-
-To display the list of available packages from the `meta-` repositories included in *bblayers.conf*
-
-    scott@octo:~$ source poky-krogoth/oe-init-build-env ~/duovero/build
-
-    scott@octo:~/duovero/build$ bitbake -s
-
-Once you have the package name, you can choose to either
-
-1. Add the new package to the `console-image` or `qt5-image`, whichever you are using.
-
-2. Create a new image file and either include the `console-image` the way the `qt5-image` does or create a complete new image recipe. The `console-image` can be used as a template.
-
-The new package needs to get included directly in the *IMAGE_INSTALL* variable or indirectly through another variable in the image file.
-
-#### Customizing the Kernel
-
-See this [post][bbb-kernel] for some ways to go about customizing and rebuilding the *Duovero* kernel or generating a new device tree. Replace **bbb** with **duovero** when reading.
-
-#### Package management
-
-The package manager for these systems is *opkg*. The other choices are *rpm* or *apt*. You can change the package manager with the *PACKAGE_CLASSES* variable in `local.conf`.
-
-*opkg* is the most lightweight of the Yocto package managers and the one that builds packages the quickest.
-
-To add or upgrade packages to the system, you might be interested in using the build workstation as a [remote package repository][opkg-repo].
+Both **copy_boot.sh** and **copy_rootfs.sh** are simple scripts easily modified for custom use.
 
 
 [duovero]: https://store.gumstix.com/index.php/category/43/
 [duovero-zephyr]: https://store.gumstix.com/index.php/products/355/
 [linux-stable]: https://www.kernel.org/
 [uboot]: http://www.denx.de/wiki/U-Boot/WebHome
-[qt]: http://www.qt.io/
 [yocto]: https://www.yoctoproject.org/
 [meta-duovero]: https://github.com/jumpnow/meta-duovero
 [lsblk]: http://linux.die.net/man/8/lsblk
-[tspress]: https://github.com/scottellis/tspress
-[spiloop]: https://github.com/scottellis/spiloop
-[serialecho]: https://github.com/scottellis/serialecho
-[opkg-repo]: http://www.jumpnowtek.com/yocto/Using-your-build-workstation-as-a-remote-package-repository.html
-[bbb-kernel]: http://www.jumpnowtek.com/beaglebone/Working-on-the-BeagleBone-kernel.html
-[bottle-python]: http://bottlepy.org/docs/dev/index.html
-[jumpnow-duovero-ap]: http://www.jumpnowtek.com/gumstix-linux/Duovero-Access-Point.html
 [eudev]: https://wiki.gentoo.org/wiki/Project:Eudev
