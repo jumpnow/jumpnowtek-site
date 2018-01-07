@@ -19,7 +19,7 @@ The steps to setup and build are similar to the ones outlined in this post [Buil
 2. Add some mender classes and storage configuration to your **local.conf**
 3. Configure the systems for the mender server you plan to use
 4. Generate artifact signing keys and copy to the proper location
-5. Add **u-boot-fw-utils** and a **mender daemon** startup script recipe to your image
+5. Add **u-boot-fw-utils** and a **mender daemon** startup script to your image
 6. Create an SD image file
 
 Detailed explanations of each step follow.
