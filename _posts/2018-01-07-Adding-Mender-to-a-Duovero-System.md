@@ -3,7 +3,7 @@ layout: post
 title: Adding Mender to a Duovero System
 description: "Incorporating Mender into a Yocto built Duovero system"
 date: 2018-01-07 16:21:00
-categories: duovero 
+categories: gumstix-linux 
 tags: [mender, duovero, yocto, linux]
 ---
 
