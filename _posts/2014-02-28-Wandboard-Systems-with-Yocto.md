@@ -181,7 +181,7 @@ All of the following modifications are optional.
 
 This is where temporary build files and the final build binaries will end up. Expect to use at least **50GB**.
 
-The default location is under the **build** directory, in this example **~/wanboard/build/tmp**.
+The default location is under the **build** directory, in this example **~/wandboard/build/tmp**.
 
 If you specify an alternate location as I do in the example conf file make sure the directory is writable by the user running the build.
 
