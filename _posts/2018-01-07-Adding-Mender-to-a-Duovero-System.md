@@ -82,8 +82,6 @@ The systems generated from these definitions assume an SD card that is at least 
     /dev/mmcblk2p3      2129920 4227071 2097152    1G 83 Linux
     /dev/mmcblk2p4      4227072 7372799 3145728  1.5G 83 Linux
 
-The systems are set to boot from the SD card on the SOM board not the carrier board.
-
 You can lookup all these definitions in the mender documentation.
 
 ### Choose your mender server
