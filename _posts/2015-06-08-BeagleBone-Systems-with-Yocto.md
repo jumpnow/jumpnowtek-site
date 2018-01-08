@@ -1,8 +1,8 @@
 ---
 layout: post
-title: Building BeagleBone Black Systems with Yocto
-description: "Building customized systems for the BeagleBone Black using tools from the Yocto Project"
-date: 2017-12-21 07:20:00
+title: Building BeagleBone Systems with Yocto
+description: "Building customized systems for the BeagleBones using tools from the Yocto Project"
+date: 2018-01-08 17:20:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
