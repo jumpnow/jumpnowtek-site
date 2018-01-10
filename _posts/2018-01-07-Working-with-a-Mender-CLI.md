@@ -2,7 +2,7 @@
 layout: post
 title: Working with a Mender CLI
 description: "Using a python command line interface to Mender"
-date: 2018-01-10 12:10:00
+date: 2018-01-10 16:40:00
 categories: linux
 tags: [mender, linux, beaglebone, duovero, wandboard, yocto]
 ---
@@ -131,7 +131,10 @@ I built a new artifact and then signed it using the **sign-mender-image.sh** scr
 
 So now I can use **mender-backend** to upload the artifact
 
-    ~/mender/mender-backend-cli$ ./mender-backend artifact add -n bbg-test-2 -e 'cli test' ~/bbb-mender/upload/bbg-test-2-signed.mender
+    ~/mender/mender-backend-cli$ ./mender-backend artifact add \
+        -n bbg-test-2 \
+        -e 'cli test' \
+        ~/bbb-mender/upload/bbg-test-2-signed.mender
     INFO:root:loading user token from usertoken90 - 00:00:00
     INFO:requests.packages.urllib3.connectionpool:Starting new HTTPS connection (1): fractal.jumpnow
     created with URL: ./management/v1/deployments/artifacts/5364e050-390b-41f8-8b8c-9edf9f197e4d
@@ -139,11 +142,24 @@ So now I can use **mender-backend** to upload the artifact
 
 And now to start a deployment to the BeagleBone Green device
 
-    $ ./mender-backend deployment add -a 'bbg-test-2' -e 5a54f15cd502db00014b77c3 -n 'test'
+    $ ./mender-backend deployment add \
+        -a 'bbg-test-2' \
+        -n test \
+        -e 5a54f15cd502db00014b77c3 
     INFO:root:loading user token from usertoken
     INFO:requests.packages.urllib3.connectionpool:Starting new HTTPS connection (1): fractal.jumpnow
     created with URL: ./management/v1/deployments/deployments/fab35a4c-4399-443d-a706-2756fb9027ad
     deployment ID:  fab35a4c-4399-443d-a706-2756fb9027ad
+
+If you wanted to deploy to multiple devices at one time you would use the **-e** parameter multiple times.
+
+So for example deploying a previously uploaded artifact **wandq-test-5** to both wandboards in my test network
+
+    ~/mender/mender-backend-cli$ ./mender-backend deployment add \
+        -a wandq-test-5 \
+        -n wandboards  \
+        -e 5a54b487d502db00014b77b5 \
+        -e 5a563257d502db00014b77c7
 
 
 ### keygen patch
