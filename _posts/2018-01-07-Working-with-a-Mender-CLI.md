@@ -2,22 +2,22 @@
 layout: post
 title: Working with a Mender CLI
 description: "Using a python command line interface to Mender"
-date: 2018-01-10 16:40:00
+date: 2018-01-10 16:49:00
 categories: linux
 tags: [mender, linux, beaglebone, duovero, wandboard, yocto]
 ---
 
 I came across cool Python tool called [mender-backend-cli][mender-backend-cli] for working with the [Mender][mender-io] server from a command line.
 
-It solves the problem on how to upload [upgrade artifacts][mender-artifacts] built on a server without a GUI.
+It simplifies uploading [artifacts][mender-artifacts] from a build server.
 
-Until now I have been manually moving the **artifacts** to a workstation first then using a browser to upload with Mender's web interface.
+### Background
 
 I am testing with a collection of [BeagleBones][mender-bbb], [Duoveros][mender-duovero] and  [Wandboards][mender-wandboard] running a [mender server][mender-server-repo] locally.
 
-The mender server is [standard][mender-production-installation] with two small exceptions.
+The mender server is from the **1.3.x branch** using the [standard install instructions][mender-production-installation] with two small exceptions.
 
-1. I have **dynomite** logging disabled as per this [mailing list thread][dynomite-thread] and [patch][dynomite-logging-disable] from Mender. 
+1. I have **dynomite** logging disabled as per this [mailing list thread][dynomite-thread] and [patch][dynomite-logging-disable] from Mender. Without it the dynomite docker volume gets big really fast.
 
 2. I changed the Mender  [keygen script][mender-server-keygen] to add a **SubjectAltName** section to the certs it generates. This quiets warnings from Python. The **keygen** patch is not necessary but explains why you might see more warnings then I am showing in the examples. The patch is at the bottom of this post.
 
@@ -76,13 +76,13 @@ You can use **--help** for any command.
       -u USER_TOKEN, --user-token USER_TOKEN
                             User token file (default: usertoken)
 
-Every command requires the **-s SERVER** and the default value pointing to Mender's server is not useful so I changed it to my local server by editing this file
+Every command requires the **-s SERVER** and the default value pointing to Mender's server is not very useful so I changed the default to my local server by editing this file
 
     mender/cli/__init__.py 
 
-I will switch the code to using an environment variable later, but for the following examples this is why my commands do not have a **-s SERVER** specified.
+I will switch the code to using an environment variable later, but for the following examples this is why the commands I am showing do not have a **-s SERVER** specified.
 
-I will just show a few commands.
+I will show a few commands.
 
 Here is a list of devices.
 
@@ -95,8 +95,9 @@ Here is a list of devices.
       5a54f15cd502db00014b77c3 (type: beaglebone, updated: 2018-01-10T15:44:33.972Z)
       5a563257d502db00014b77c7 (type: wandboard, updated: 2018-01-10T15:44:50.345Z)
 
+I built a new **mender-test-image** with Yocto.
 
-I built a new artifact and then signed it using the **sign-mender-image.sh** script
+I then created a signed artifact of that image using the **sign-mender-image.sh** script
 
     ~/bbb-mender/meta-bbb/scripts$ ./sign-mender-image.sh
     Creating artifact using the following parameters
