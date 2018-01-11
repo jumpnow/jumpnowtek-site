@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2017-12-16 15:03:00
+date: 2018-01-11 15:12:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi zero wireless, rpi compute]
 ---
@@ -82,6 +82,7 @@ You will need at least the following packages installed
     build-essential
     chrpath
     diffstat
+    gawk
     libncurses5-dev
     texinfo
 
@@ -89,9 +90,10 @@ For **16.04** you also need to install the **python 2.7** package
 
     python2.7
 
-And then create a link for it in `/usr/bin`
+And then create some links for it in `/usr/bin`
 
     sudo ln -sf /usr/bin/python2.7 /usr/bin/python
+    sudo ln -sf /usr/bin/python2.7 /usr/bin/python2
 
 For all versions of Ubuntu, you should change the default Ubuntu shell from **dash** to **bash** by running this command from a shell
  

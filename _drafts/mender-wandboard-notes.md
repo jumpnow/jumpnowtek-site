@@ -1,14 +1,14 @@
 ## Overview
 
-Some notes on getting the [Mender][mender-io] upgrade software working with [Wandboard][wandboard-org] systems. 
+Some notes on getting the [Mender][mender-io] upgrade software working with [Wandboard][wandboard-org] boards. 
 
-I am using Yocto and a custom meta layer to build the Wandboard systems.
+I am using Yocto and a [custom meta layer][meta-wandboard] to build the Wandboard systems.
 
 ### U-Boot
 
-**a)** I am using the default version of u-boot **2017.09** that comes with the latest Yocto 2.4 [rocko] branch. 
+**a)** The u-boot version is **2017.09** that comes with the latest Yocto 2.4 [rocko] branch. 
 
-I did need a **u-boot\_%.bbappend** for the wandboards for the following customizations
+A **u-boot\_%.bbappend** is needed for the following customizations
 
     FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
@@ -21,7 +21,7 @@ I did need a **u-boot\_%.bbappend** for the wandboards for the following customi
 
 The **0001-Add-bootargs-setting.patch** is required to define a **bootargs** variable in the u-boot environment that mender uses.
 
-The **0002-Add-environment-debug.patch** was only for debugging, but it doesn't hurt anything. I would remove it for any production project.
+The **0002-Add-environment-debug.patch** was only for debugging, but it doesn't hurt anything. I would remove it for a production project.
 
 
 **b)** Mender requires utilities from the **u-boot-fw-utils** package. 
@@ -196,8 +196,9 @@ The **tar.xz** type is there for my installer script.
 
     meta-wandboard/scripts/sign-mender-image.sh
 
-The output from this script can be uploaded to the mender server.	 
+The output from this script, a *.mender file, can be uploaded as an artifact to the mender server.	 
  
 [mender-io]: https://mender.io/	 
 [mender-prod-server-doc]: https://docs.mender.io/1.3/administration/production-installation
-[wandboard-org]: https://www.wandboard.org/	
+[wandboard-org]: https://www.wandboard.org/
+[meta-wandboard]: http://jumpnowtek.com/wandboard/Wandboard-Systems-with-Yocto.html	

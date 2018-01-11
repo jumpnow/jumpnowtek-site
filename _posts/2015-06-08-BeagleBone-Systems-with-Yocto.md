@@ -2,7 +2,7 @@
 layout: post
 title: Building BeagleBone Systems with Yocto
 description: "Building customized systems for the BeagleBones using tools from the Yocto Project"
-date: 2018-01-08 17:20:00
+date: 2018-01-11 15:10:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
@@ -59,7 +59,7 @@ There are some simple loopback test programs included in the console image.
   
 ### Ubuntu Setup
 
-I am primarily using **16.04** 64-bit servers for builds. Older versions should work.
+I primarily use **16.04** 64-bit servers for builds. Other versions should work.
 
 You will need at least the following packages installed
 
@@ -67,22 +67,19 @@ You will need at least the following packages installed
     chrpath
     diffstat
     gawk
-    git
     libncurses5-dev
-    pkg-config
-    subversion
-    texi2html
     texinfo
 
-For **16.04** you also need to install the **python 2.7** package.
+For **16.04** you also need to install the **python 2.7** package
 
     python2.7
 
-And then create a link for it in `/usr/bin`
+And then create some links for it in `/usr/bin`
 
     sudo ln -sf /usr/bin/python2.7 /usr/bin/python
+    sudo ln -sf /usr/bin/python2.7 /usr/bin/python2
 
-For all versions of Ubuntu, you should change the default Ubuntu shell from `dash` to `bash` by running this command from a shell
+For all versions of Ubuntu, you should change the default Ubuntu shell from **dash** to **bash** by running this command from a shell
  
     sudo dpkg-reconfigure dash
 
