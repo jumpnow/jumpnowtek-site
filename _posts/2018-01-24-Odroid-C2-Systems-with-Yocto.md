@@ -2,7 +2,7 @@
 layout: post
 title: Building Odroid-C2 Systems with Yocto
 description: "Building customized systems for Odroid-C2 using tools from the Yocto Project"
-date: 2018-01-24 09:15:00
+date: 2018-01-24 10:55:00
 categories: odroid 
 tags: [linux, odroid-c2, yocto]
 ---
@@ -279,7 +279,7 @@ You only have to create this directory once.
 
 #### copy_boot.sh
 
-This script copies the bootloaders (SPL and u-boot) to the *unpartitioned* 4MB beginning section of the SD card.
+This script copies the bootloader files (u-boot.bin and bl1.bin.hardkernel) to the *unpartitioned* 4MB beginning section of the SD card.
 
 This script needs to know the **TMPDIR** to find the binaries. It looks for an environment variable called **OETMP**.
 
