@@ -2,7 +2,7 @@
 layout: post
 title: Building Odroid-C2 Systems with Yocto
 description: "Building customized systems for Odroid-C2 using tools from the Yocto Project"
-date: 2018-01-27 09:29:00
+date: 2018-01-27 09:34:00
 categories: odroid 
 tags: [linux, odroid-c2, yocto]
 ---
@@ -232,9 +232,11 @@ And then continue with the full build.
  
 ### Copying the binaries to an SD card
 
-After the build completes, the bootloader, kernel and rootfs image files can be found in **<TMPDIR>/deploy/images/odroid-c2/**.
+After the build completes, the bootloader, kernel and rootfs files can be found in 
 
-The **meta-odroid-c2/scripts** directory has some helper scripts to format and copy the files to a microSD card.
+    <TMPDIR>/deploy/images/odroid-c2/
+
+The **meta-odroid-c2/scripts** directory has some utility scripts to format and copy the files to a microSD or eMMC card.
 
 #### mk1part.sh
 
