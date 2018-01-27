@@ -2,7 +2,7 @@
 layout: post
 title: Building Odroid-C2 Systems with Yocto
 description: "Building customized systems for Odroid-C2 using tools from the Yocto Project"
-date: 2018-01-27 08:51:00
+date: 2018-01-27 09:19:00
 categories: odroid 
 tags: [linux, odroid-c2, yocto]
 ---
@@ -19,9 +19,9 @@ I tried building from the [meta-odroid][meta-odroid] layer listed in the [OpenEm
 
 I did take the **secure-boot** and **arm-trusted-firmware recipes** from that [meta-odroid][meta-odroid] layer. 
 
-I opted to use a mainline kernel and u-boot rather then any vendor versions or custom patches. 
+I opted to use a mainline kernel and u-boot rather then any vendor versions or custom patches. I did add a patch to the mainline **dtb** to get the **eMMC** working.
 
-Because of that I did not expect accelerated video to work, but as it is now I get no HDMI output. I do know the hardware is good from running an Ubuntu image. I might just be missing some kernel command line parameters.
+Because I am running a mainline kernel I did not really expect accelerated video to work, but as it is now I get no HDMI output at all. I do know the hardware is good from running an Ubuntu image when I first got the board. I might just be missing some kernel command line parameters.
 
 The things that do work are ethernet, USB, serial console and either SD card or eMMC booting. These are the only subsystems I have looked at so far.
 
@@ -35,23 +35,15 @@ The default kernel is **4.14** 64-bit.
 
 The only dtb built is **meson-gxbb-odroidc2.dtb**.
 
-The systems are 64-bit.
+The kernel and userland are 64-bit.
 
 The u-boot version is **2017.09**.
 
+A **boot.scr** is required. There are source files for either SD card or eMMC booting. You can choose which with a variable in **local.conf** described below.
+
 These are **sysvinit** systems using [eudev][eudev].
 
-Python **3.5.3** is installed.
-
-A **boot.scr** is required. The default builds for use with an SD card.
-
-    meta-odroid-c2/recipes-bsp/u-boot-scr/files/sd-boot.cmd
-
-There is an eMMC version also.
-
-    meta-odroid-c2/recipes-bsp/u-boot-scr/files/emmc-boot.cmd
-
-Modify the **u-boot-scr.bb** recipe to switch.
+Python **3.5.3** is installed as are the standard C/C++ compiler tools.
 
 ### Ubuntu Setup
 
@@ -208,13 +200,17 @@ The default location is in the **build** directory, **~/odroid-c2/build/sstate-c
 
 #### EMMC_BOOT
 
-If you are using an eMMC device then uncomment the line **EMMC_BOOT** line. This causes the **u-boot-scr** recipe to use a different source file to build the **boot.scr**.
+If you are using an eMMC device then uncomment this line 
+
+    EMMC_BOOT = "1"
+
+When defined this causes the **u-boot-scr.bb** recipe to use a different source file to build the **boot.scr**. If you leave the line commented the default is to build **boot.scr** for SD card use.
 
 The recipe is here
 
     meta-odroid-c2/recipes-bsp/u-boot-scr/u-boot-scr.bb
 
-Easy enough to modify.
+Easy enough to modify if you want to customize the boot script.
 
 ### Build
 
