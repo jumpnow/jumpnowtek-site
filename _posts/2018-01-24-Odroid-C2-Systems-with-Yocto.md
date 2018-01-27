@@ -2,7 +2,7 @@
 layout: post
 title: Building Odroid-C2 Systems with Yocto
 description: "Building customized systems for Odroid-C2 using tools from the Yocto Project"
-date: 2018-01-27 09:24:00
+date: 2018-01-27 09:29:00
 categories: odroid 
 tags: [linux, odroid-c2, yocto]
 ---
@@ -140,8 +140,8 @@ There are some sample configuration files in the **meta-odroid-c2/conf** directo
 
 Copy them to the **build/conf** directory (removing the '-sample')
 
-    ~/odroid-c2$ cp meta-odroid-c2/conf/local.conf.sample build/conf/local.conf
-    ~/odroid-c2$ cp meta-odroid-c2/conf/bblayers.conf.sample build/conf/bblayers.conf
+    ~/odroid-c2$ cp meta-odroid-c2/conf/local.conf-sample build/conf/local.conf
+    ~/odroid-c2$ cp meta-odroid-c2/conf/bblayers.conf-sample build/conf/bblayers.conf
 
 If you used the **oe-init-build-env** script to create the build directory, it generated some generic configuration files in the **build/conf** directory. If you want to look at them, save them with a different name before overwriting.
 
@@ -180,7 +180,7 @@ All of the following modifications are optional.
 
 ##### TMPDIR
 
-This is where temporary build files and the final build binaries will end up. Expect to use at least **50GB**.
+This is where temporary build files and the final build binaries will end up. Expect to use at least **25GB**.
 
 The default location is under the **build** directory, in this example **~/odroid-c2/build/tmp**.
 
@@ -194,7 +194,7 @@ The default location is in the **build** directory, **~/odroid-c2/build/sources*
 
 ##### SSTATE_DIR
 
-This is another Yocto build directory that can get pretty big, greater then **8GB**. I often put this somewhere else other then my home directory as well.
+This is another Yocto build directory that can get pretty big, greater then **3GB**. I often put this somewhere else other then my home directory as well.
 
 The default location is in the **build** directory, **~/odroid-c2/build/sstate-cache**.
 
