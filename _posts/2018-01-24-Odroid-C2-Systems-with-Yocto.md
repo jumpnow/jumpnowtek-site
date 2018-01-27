@@ -2,7 +2,7 @@
 layout: post
 title: Building Odroid-C2 Systems with Yocto
 description: "Building customized systems for Odroid-C2 using tools from the Yocto Project"
-date: 2018-01-27 09:19:00
+date: 2018-01-27 09:24:00
 categories: odroid 
 tags: [linux, odroid-c2, yocto]
 ---
@@ -19,13 +19,13 @@ I tried building from the [meta-odroid][meta-odroid] layer listed in the [OpenEm
 
 I did take the **secure-boot** and **arm-trusted-firmware recipes** from that [meta-odroid][meta-odroid] layer. 
 
-I opted to use a mainline kernel and u-boot rather then any vendor versions or custom patches. I did add a patch to the mainline **dtb** to get the **eMMC** working.
+I opted to use a mainline kernel and u-boot rather then any vendor versions or custom patches. I did have to add a patch to the mainline **dtb** to get the **eMMC** working.
 
-Because I am running a mainline kernel I did not really expect accelerated video to work, but as it is now I get no HDMI output at all. I do know the hardware is good from running an Ubuntu image when I first got the board. I might just be missing some kernel command line parameters.
+Because I am running a mainline kernel I did not really expect accelerated video to work, but as it is now I get no HDMI output. I know the hardware is good from running an Ubuntu image when I first got the board. I might be missing some kernel command line parameters.
 
-The things that do work are ethernet, USB, serial console and either SD card or eMMC booting. These are the only subsystems I have looked at so far.
+Things that do work are ethernet, USB, serial console, SD card and eMMC. These are the only subsystems I have looked at.
 
-I had this board sitting in a drawer for a year and my only intended use now is as another [Mender][mender] client running headless. I probably won't look into the HDMI issue until I need it.
+I had this board sitting in a drawer for a year and my only intended use now is as a [Mender][mender] client running headless. I probably won't look into the HDMI issue until I need it.
 
 ### System Info
 
@@ -39,7 +39,7 @@ The kernel and userland are 64-bit.
 
 The u-boot version is **2017.09**.
 
-A **boot.scr** is required. There are source files for either SD card or eMMC booting. You can choose which with a variable in **local.conf** described below.
+A **boot.scr** is required. There are source files for either SD card or eMMC booting. You can choose with a variable in **local.conf** described below.
 
 These are **sysvinit** systems using [eudev][eudev].
 
