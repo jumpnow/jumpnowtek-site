@@ -2,7 +2,7 @@
 layout: post
 title: Building Odroid-C2 Systems with Yocto
 description: "Building customized systems for Odroid-C2 using tools from the Yocto Project"
-date: 2018-01-24 10:55:00
+date: 2018-01-27 08:51:00
 categories: odroid 
 tags: [linux, odroid-c2, yocto]
 ---
@@ -21,13 +21,11 @@ I did take the **secure-boot** and **arm-trusted-firmware recipes** from that [m
 
 I opted to use a mainline kernel and u-boot rather then any vendor versions or custom patches. 
 
-Because of that I did not expect accelerated video to work, but as it is now I get no HDMI video. I do know the hardware is good.
+Because of that I did not expect accelerated video to work, but as it is now I get no HDMI output. I do know the hardware is good from running an Ubuntu image. I might just be missing some kernel command line parameters.
 
-The things that do work are ethernet, USB, serial console, SD card and eMMC booting (though my eMMC has what looks like some bad block hardware issues). These are the only subsystems I have looked at so far.
+The things that do work are ethernet, USB, serial console and either SD card or eMMC booting. These are the only subsystems I have looked at so far.
 
-I had this board sitting in a drawer for a year. My only intended use now is as another [Mender][mender] testing client. The systems will be running headless and so the HDMI issue is not important.
-
-If you need HDMI working I suggest you look somewhere else. I probably won't look into it anytime soon.
+I had this board sitting in a drawer for a year and my only intended use now is as another [Mender][mender] client running headless. I probably won't look into the HDMI issue until I need it.
 
 ### System Info
 
@@ -184,6 +182,7 @@ The variables you may want to customize are the following:
 * TMPDIR
 * DL\_DIR
 * SSTATE\_DIR
+* EMMC_BOOT
 
 All of the following modifications are optional.
 
@@ -206,6 +205,16 @@ The default location is in the **build** directory, **~/odroid-c2/build/sources*
 This is another Yocto build directory that can get pretty big, greater then **8GB**. I often put this somewhere else other then my home directory as well.
 
 The default location is in the **build** directory, **~/odroid-c2/build/sstate-cache**.
+
+#### EMMC_BOOT
+
+If you are using an eMMC device then uncomment the line **EMMC_BOOT** line. This causes the **u-boot-scr** recipe to use a different source file to build the **boot.scr**.
+
+The recipe is here
+
+    meta-odroid-c2/recipes-bsp/u-boot-scr/u-boot-scr.bb
+
+Easy enough to modify.
 
 ### Build
 
@@ -235,9 +244,9 @@ The **meta-odroid-c2/scripts** directory has some helper scripts to format and c
 
 This script will partition an SD card with the single partition required for the boards. The script leaves a 4 MB empty region before the first partition for use as explained below.
 
-Insert the microSD into your workstation and note where it shows up.
+Insert the microSD or eMMC with adapter into your workstation and note where it shows up.
 
-[lsblk][lsblk] is convenient for finding the microSD card. 
+[lsblk][lsblk] is convenient for finding the device. 
 
 For example
 
