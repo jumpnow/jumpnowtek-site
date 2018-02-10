@@ -2,18 +2,24 @@
 layout: post
 title: Working with a Mender CLI
 description: "Using a python command line interface to Mender"
-date: 2018-01-10 16:49:00
+date: 2018-02-10 13:49:00
 categories: linux
 tags: [mender, linux, beaglebone, duovero, wandboard, yocto]
 ---
 
-I came across cool Python tool called [mender-backend-cli][mender-backend-cli] for working with the [Mender][mender-io] server from a command line.
+I came across a useful Python [utility][mender-backend-cli] for working with the [Mender][mender-io] server from a command line.
 
-It simplifies uploading [artifacts][mender-artifacts] from a build server.
+It simplifies uploading [mender artifacts][mender-artifacts] from a headless build server.
 
 ### Background
 
-I am testing with a collection of [BeagleBones][mender-bbb], [Duoveros][mender-duovero] and  [Wandboards][mender-wandboard] running a [mender server][mender-server-repo] locally.
+I am testing with a collection of boards now running a [mender server][mender-server-repo] locally.
+
+* [BeagleBone][mender-bbb]
+* [Gumstix Duovero][mender-duovero]
+* [Wandboard][mender-wandboard]
+* [Odroid-C2][mender-odroid-c2]
+
 
 The mender server is from the **1.3.x branch** using the [standard install instructions][mender-production-installation] with two small exceptions.
 
@@ -187,6 +193,7 @@ I am using this instead
 [mender-wandboard]: http://www.jumpnowtek.com/wandboard/Adding-Mender-to-a-Wandboard-System.html
 [mender-bbb]: http://www.jumpnowtek.com/beaglebone/Adding-Mender-to-a-BeagleBone-System.html
 [mender-duovero]: http://www.jumpnowtek.com/gumstix-linux/Adding-Mender-to-a-Duovero-System.html
+[mender-odroid-c2]: http://www.jumpnowtek.com/odroid/Adding-Mender-to-a-Odroid-C2-System.html
 [mender-production-installation]: https://docs.mender.io/1.3/administration/production-installation
 [stackexchange-post]: https://security.stackexchange.com/questions/74345/provide-subjectaltname-to-openssl-directly-on-command-line
 [mender-server-repo]: https://github.com/mendersoftware/integration
