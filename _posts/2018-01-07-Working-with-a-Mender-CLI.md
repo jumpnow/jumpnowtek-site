@@ -2,7 +2,7 @@
 layout: post
 title: Working with a Mender CLI
 description: "Using a python command line interface to Mender"
-date: 2018-02-10 13:49:00
+date: 2018-02-10 14:19:00
 categories: linux
 tags: [mender, linux, beaglebone, duovero, wandboard, yocto]
 ---
@@ -13,7 +13,7 @@ It simplifies uploading [mender artifacts][mender-artifacts] from a headless bui
 
 ### Background
 
-I am testing with a collection of boards now running a [mender server][mender-server-repo] locally.
+I am testing with a collection of boards running a [mender server][mender-server-repo] locally
 
 * [BeagleBone][mender-bbb]
 * [Gumstix Duovero][mender-duovero]
@@ -96,10 +96,11 @@ Here is a list of devices.
     INFO:root:loading user token from usertoken
     INFO:requests.packages.urllib3.connectionpool:Starting new HTTPS connection (1): fractal.jumpnow
     devices:
-      5a54b487d502db00014b77b5 (type: wandboard, updated: 2018-01-10T15:42:40.005Z)
-      5a54b4c4d502db00014b77bb (type: duovero, updated: 2018-01-10T15:43:00.827Z)
-      5a54f15cd502db00014b77c3 (type: beaglebone, updated: 2018-01-10T15:44:33.972Z)
-      5a563257d502db00014b77c7 (type: wandboard, updated: 2018-01-10T15:44:50.345Z)
+    5a54f15cd502db00014b77c3 (type: beaglebone, updated: 2018-02-10T18:54:43.616Z)
+    5a5d1f42d502db0001689ab1 (type: duovero, updated: 2018-02-10T18:55:07.918Z)
+    5a772d02d502db0001bbcfcd (type: odroid-c2, updated: 2018-02-10T18:54:53.118Z)
+    5a778a68d502db0001bbcfd3 (type: wandboard, updated: 2018-02-10T18:52:38.75Z)
+    5a778a5cd502db0001bbcfd1 (type: wandboard, updated: 2018-02-10T18:55:12.87Z)
 
 I built a new **mender-test-image** with Yocto.
 
