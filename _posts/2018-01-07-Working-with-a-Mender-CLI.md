@@ -2,9 +2,9 @@
 layout: post
 title: Working with a Mender CLI
 description: "Using a python command line interface to Mender"
-date: 2018-02-10 14:19:00
+date: 2018-02-16 09:46:00
 categories: linux
-tags: [mender, linux, beaglebone, duovero, wandboard, yocto]
+tags: [mender, linux, beaglebone, duovero, wandboard, raspberry pi, technexion, yocto]
 ---
 
 I came across a useful Python [utility][mender-backend-cli] for working with the [Mender][mender-io] server from a command line.
@@ -16,10 +16,11 @@ It simplifies uploading [mender artifacts][mender-artifacts] from a headless bui
 I am testing with a collection of boards running a [mender server][mender-server-repo] locally
 
 * [BeagleBone][mender-bbb]
-* [Gumstix Duovero][mender-duovero]
-* [Wandboard][mender-wandboard]
+* Gumstix [Duovero][mender-duovero]
 * [Odroid-C2][mender-odroid-c2]
-
+* [Raspberry Pis][rpi]
+* Technexion [edm1-cf-imx6][edm1-cf-imx6] and [edm1-imx6plus][edm1-imx6plus]
+* [Wandboard][mender-wandboard]
 
 The mender server is from the **1.3.x branch** using the [standard install instructions][mender-production-installation] with two small exceptions.
 
@@ -202,3 +203,6 @@ I am using this instead
 [keygen-SAN-patch]: https://gist.github.com/scottellis/b27773a4c8242b1a395854b8418d6900 
 [dynomite-thread]: https://groups.google.com/a/lists.mender.io/forum/#!topic/mender/v4nH_Vxsg_s
 [dynomite-logging-disable]: https://github.com/mendersoftware/integration/commit/64c9c5287247
+[edm1-cf-imx6]: https://www.technexion.com/products/system-on-modules/edm/edm-modules/detail/EDM1-CF-IMX6
+[edm1-imx6plus]: https://www.technexion.com/products/system-on-modules/edm/edm-modules/detail/EDM1-IMX6PLUS
+[rpi]: https://www.raspberrypi.org
