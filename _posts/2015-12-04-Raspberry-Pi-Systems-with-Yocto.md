@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2018-01-11 15:12:00
+date: 2018-03-08 09:36:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi zero wireless, rpi compute]
 ---
@@ -55,7 +55,7 @@ All systems are setup to use a serial console. For the RPi's that have it, a dhc
 
 The Yocto version is **2.4**, the `[rocko]` branch.
 
-The **4.9.68** Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
+The **4.14** Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
 
 These are **sysvinit** systems using [eudev][eudev].
 
@@ -261,6 +261,25 @@ The default location is in the **build** directory, **~/rpi/build/sources**.
 This is another Yocto build directory that can get pretty big, greater then **8GB**. I often put this somewhere else other then my home directory as well.
 
 The default location is in the **build** directory, **~/rpi/build/sstate-cache**.
+
+##### ROOT PASSWORD
+
+There is only one login user by default, **root**.
+
+The default password is set to **jumpnowtek** by these two lines in the **local.conf** file
+
+    INHERIT += "extrausers"
+    EXTRA_USERS_PARAMS = "usermod -P jumpnowtek root; "
+
+Obviously you should change this.
+
+If you want no password, convenient for development, comment those two lines and uncomment this line
+
+    EXTRA_IMAGE_FEATURES = "debug-tweaks"
+    #INHERIT += "extrausers"
+    #EXTRA_USERS_PARAMS = "usermod -P jumpnowtek root; "
+
+You can also change or add a password once logged in.
 
 ### Run the build
 

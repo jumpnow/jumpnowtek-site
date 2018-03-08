@@ -2,7 +2,7 @@
 layout: post
 title: Building Odroid-C2 Systems with Yocto
 description: "Building customized systems for Odroid-C2 using tools from the Yocto Project"
-date: 2018-01-27 09:34:00
+date: 2018-03-08 09:35:00
 categories: odroid 
 tags: [linux, odroid-c2, yocto]
 ---
@@ -31,7 +31,7 @@ I had this board sitting in a drawer for a year and my only intended use now is 
 
 The Yocto version is **2.4**, the `[rocko]` branch.
 
-The default kernel is **4.14** 64-bit.
+The default kernel is **4.15** 64-bit.
 
 The only dtb built is **meson-gxbb-odroidc2.dtb**.
 
@@ -211,6 +211,25 @@ The recipe is here
     meta-odroid-c2/recipes-bsp/u-boot-scr/u-boot-scr.bb
 
 Easy enough to modify if you want to customize the boot script.
+
+#### ROOT PASSWORD
+
+There is only one login user by default, **root**.
+
+The default password is set to **jumpnowtek** by these two lines in the **local.conf** file
+
+    INHERIT += "extrausers"
+    EXTRA_USERS_PARAMS = "usermod -P jumpnowtek root; "
+
+Obviously you should change this.
+
+If you want no password, convenient for development, comment those two lines and uncomment this line
+
+    EXTRA_IMAGE_FEATURES = "debug-tweaks"
+    #INHERIT += "extrausers"
+    #EXTRA_USERS_PARAMS = "usermod -P jumpnowtek root; "
+
+You can also change or add a password once logged in.
 
 ### Build
 

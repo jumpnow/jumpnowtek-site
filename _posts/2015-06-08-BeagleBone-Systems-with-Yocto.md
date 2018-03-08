@@ -2,7 +2,7 @@
 layout: post
 title: Building BeagleBone Systems with Yocto
 description: "Building customized systems for the BeagleBones using tools from the Yocto Project"
-date: 2018-01-11 15:10:00
+date: 2018-03-08 10:02:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
@@ -199,6 +199,25 @@ The default location is in the `build` directory, `~/bbb/build/sources`.
 This is another Yocto build directory that can get pretty big, greater then 5GB. I often put this somewhere else other then my home directory as well.
 
 The default location is in the `build` directory, `~/bbb/build/sstate-cache`.
+
+##### ROOT PASSWORD
+
+There is only one login user by default, **root**.
+
+The default password is set to **jumpnowtek** by these two lines in the **local.conf** file
+
+    INHERIT += "extrausers"
+    EXTRA_USERS_PARAMS = "usermod -P jumpnowtek root; "
+
+Obviously you should change this.
+
+If you want no password, convenient for development, comment those two lines and uncomment this line
+
+    EXTRA_IMAGE_FEATURES = "debug-tweaks"
+    #INHERIT += "extrausers"
+    #EXTRA_USERS_PARAMS = "usermod -P jumpnowtek root; "
+
+You can also change or add a password once logged in.
 
 ### Run the build
 
