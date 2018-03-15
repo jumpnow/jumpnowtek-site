@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Buildroot
 description: "Building customized systems for the Raspberry Pi using Buildroot"
-date: 2017-11-12 11:12:00
+date: 2018-03-15 06:52:00
 categories: rpi
 tags: [linux, rpi, buildroot, rpi3, qt5, pyqt, pyqt5]
 ---
@@ -19,9 +19,11 @@ The `[master]` branch of the repository is a mirror of the official Buildroot re
 
 The default `[jumpnow]` branch has a few additions on top of `[master]` for my own customizations and is what I am using for these examples.
 
+I am using a **4.14** kernel from the [official RPi repo][rpi-linux].
+
 The demo images I am building include [Qt5][qt] support, since many of the projects I work on use it. Qt is big and if you don't need it you should remove it from the config.
 
-Buildroot offers two versions of Qt5, **5.9.2** and **5.6.3**. I'm using **5.9.2** for the demos. I am building both the Qt [EGLFS][qpa-eglfs] and linuxfb platform plugins.
+Buildroot offers two versions of Qt5, **5.9.4** and **5.6.x**. I'm using **5.9.4** for the demos. I am building both the Qt [EGLFS][qpa-eglfs] and linuxfb platform plugins.
 
 I have also included PyQt5.
 
@@ -133,22 +135,24 @@ The [RPi serial console][rpi-serial] console is configured and I'm running the f
 The password is **jumpnowtek**. You should change it.
 
     # uname -a
-    Linux rpi3 4.9.61-v7 #1 SMP Sun Nov 12 12:02:37 EST 2017 armv7l GNU/Linux
+    Linux rpi3 4.14.26-v7 #1 SMP Wed Mar 14 17:00:40 EDT 2018 armv7l GNU/Linux
 
     # free
                   total        used        free      shared  buff/cache   available
-    Mem:         949580       17412      913168         164       19000      919216
+    Mem:         949476       16888      878480         228       54108      919040
     Swap:             0           0           0
+
 
 The SD card is not fully utilized because I used the `sdcard.img` and in the config set the rootfs size to 2G.
 
     # df -h
     Filesystem                Size      Used Available Use% Mounted on
-    /dev/root                 1.8G    219.8M      1.5G  13% /
-    devtmpfs                459.2M         0    459.2M   0% /dev
-    tmpfs                   463.7M         0    463.7M   0% /dev/shm
-    tmpfs                   463.7M     32.0K    463.6M   0% /tmp
-    tmpfs                   463.7M    132.0K    463.5M   0% /run
+    /dev/root                 1.8G    222.2M      1.5G  13% /
+    devtmpfs                459.1M         0    459.1M   0% /dev
+    tmpfs                   463.6M         0    463.6M   0% /dev/shm
+    tmpfs                   463.6M    116.0K    463.5M   0% /tmp
+    tmpfs                   463.6M    112.0K    463.5M   0% /run
+
 
 The system is pretty big at **220M** but that's because of all the Qt5 and Python stuff I threw in.
 
@@ -197,7 +201,8 @@ The ssh server is listening. I have one connection going.
 I also added an **ntp** package and set the timezone to **EST5EDT** in the defconfig and that is working.
 
     # date
-    Sun Nov 12 13:23:32 EST 2017
+    Thu Mar 15 06:49:21 EDT 2018
+
 
 My Qt Widgets touchscreen test application [tspress][tspress] works fine.
 
@@ -223,13 +228,13 @@ You can see from the Qt messages that the *eglfs* plugin is being used.
 I did include the *linuxfb* plugin in the build just for testing.
 
     # ls -l /usr/lib/qt/plugins/platforms/
-    total 964
-    -rwxr-xr-x    1 root     root          9576 Nov 12 12:07 libqeglfs.so
-    -rwxr-xr-x    1 root     root        319104 Nov 12 12:07 libqlinuxfb.so
-    -rwxr-xr-x    1 root     root        133536 Nov 12 12:07 libqminimal.so
-    -rwxr-xr-x    1 root     root        162612 Nov 12 12:07 libqminimalegl.so
-    -rwxr-xr-x    1 root     root        145996 Nov 12 12:07 libqoffscreen.so
-    -rwxr-xr-x    1 root     root        207956 Nov 12 12:07 libqvnc.so
+    total 960
+    -rwxr-xr-x    1 root     root          9568 Mar 14 17:02 libqeglfs.so
+    -rwxr-xr-x    1 root     root        315012 Mar 14 17:02 libqlinuxfb.so
+    -rwxr-xr-x    1 root     root        133540 Mar 14 17:02 libqminimal.so
+    -rwxr-xr-x    1 root     root        162612 Mar 14 17:02 libqminimalegl.so
+    -rwxr-xr-x    1 root     root        146000 Mar 14 17:02 libqoffscreen.so
+    -rwxr-xr-x    1 root     root        207960 Mar 14 17:02 libqvnc.so
   
 
 PyQt5 applications work fine. There is small example installed called `pytouch.py`.
