@@ -2,7 +2,7 @@
 layout: post
 title: Building Odroid-C2 Systems with Yocto
 description: "Building customized systems for Odroid-C2 using tools from the Yocto Project"
-date: 2018-03-08 09:35:00
+date: 2018-05-09 10:00:00
 categories: odroid 
 tags: [linux, odroid-c2, yocto]
 ---
@@ -25,13 +25,13 @@ Because I am running a mainline kernel I did not really expect accelerated video
 
 Things that do work are ethernet, USB, serial console, SD card and eMMC. These are the only subsystems I have looked at.
 
-I had this board sitting in a drawer for a year and my only intended use now is as a [Mender][mender] client running headless. I probably won't look into the HDMI issue until I need it.
+I had this board sitting in a drawer for a year and my only intended use now is as a [Mender][mender] client running a Syntro application (headless, Qt5, streaming USB camera). I probably won't look into the HDMI issue until I need it.
 
 ### System Info
 
 The Yocto version is **2.4**, the `[rocko]` branch.
 
-The default kernel is **4.15** 64-bit.
+The default kernel is **4.14.40** 64-bit. There is a 4.16 recipe, but it has issues that I need time to dig into.
 
 The only dtb built is **meson-gxbb-odroidc2.dtb**.
 
