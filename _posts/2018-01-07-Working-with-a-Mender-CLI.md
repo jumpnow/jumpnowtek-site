@@ -2,8 +2,8 @@
 layout: post
 title: Working with a Mender CLI
 description: "Using a python command line interface to Mender"
-date: 2018-02-16 09:46:00
-categories: linux
+date: 2018-05-29 05:36:00
+categories: miscellaneous
 tags: [mender, linux, beaglebone, duovero, wandboard, raspberry pi, technexion, yocto]
 ---
 
