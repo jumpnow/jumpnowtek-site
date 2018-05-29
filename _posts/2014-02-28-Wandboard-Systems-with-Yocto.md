@@ -2,7 +2,7 @@
 layout: post
 title: Building Wandboard Systems with Yocto
 description: "Building customized systems for Wandboards using tools from the Yocto Project"
-date: 2018-03-08 10:01:00
+date: 2018-05-29 05:20:00
 categories: wandboard 
 tags: [linux, wandboard, yocto]
 ---
@@ -19,26 +19,35 @@ I have a custom Yocto layer for the wandboards called [meta-wandboard][meta-wand
 
 ### System Info
 
-The Yocto version is **2.4**, the `[rocko]` branch.
+The Yocto version is **2.5**, the `[sumo]` branch.
 
-The default kernel is **4.14**. A recipe for a **4.9** kernel is also available.
+The default kernel is **4.16**. A recipe for a **4.14** kernel is also available.
 
-The u-boot version is **2017.09**.
+The u-boot version is **2018.05**.
 
 These are **sysvinit** systems using [eudev][eudev].
 
-Python **3.5.3** is installed.
+Python **3.5.5** is installed.
+
+The Qt version is **5.10.1** built with the **linuxfb** backend. 
+
+There is no video hardware acceleration in these systems. That requires some additional work.
 
 My systems use **sysvinit**, but Yocto supports **systemd** if you would rather use that.
 
 The following device tree binaries (dtbs) are built and installed
 
-* imx6dl-wandboard-revb1.dtb
-* imx6dl-wandboard.dtb
-* imx6q-wandboard-revb1.dtb
 * imx6q-wandboard.dtb
+* imx6q-wandboard-revb1.dtb
+* imx6q-wandboard-revd1.dtb
+* imx6qp-wandboard-revd1.dtb
+* imx6dl-wandboard.dtb
+* imx6dl-wandboard-revb1.dtb
+* imx6dl-wandboard-revd1.dtb
 
 U-boot should detect the correct **dtb** to load when it boots the kernel.
+
+I don't have any of the **revd1** boards with the new wifi and PMIC chips so the status of that is questionable.
 
 In order to run an unmodified mainline u-boot a **boot.scr** is required. You can find a simple example in 
 
@@ -93,18 +102,19 @@ Fedora already uses **bash** as the shell.
 
 ### Clone the dependency repositories
 
-For all upstream repositories, use the `[rocko]` branch.
+For all upstream repositories, use the `[sumo]` branch.
 
 The directory layout I am describing here is my preference. All of the paths to the meta-layers are configurable. If you choose something different, adjust the following instructions accordingly.
 
 First the main Yocto project **poky** layer
 
-    ~# git clone -b rocko git://git.yoctoproject.org/poky.git poky-rocko
+    ~# git clone -b sumo git://git.yoctoproject.org/poky.git poky-sumo
 
 Then the dependency layers under that
 
-    ~$ cd poky-rocko
-    ~/poky-rocko$ git clone -b rocko git://git.openembedded.org/meta-openembedded
+    ~$ cd poky-sumo
+    ~/poky-sumo$ git clone -b sumo git://git.openembedded.org/meta-openembedded
+    ~/poky-sumo$ git clone -b sumo https://github.com/meta-qt5/meta-qt5.git
 
 These repositories shouldn't need modifications other then periodic updates and can be reused for different projects or different boards.
 
@@ -114,7 +124,7 @@ Create a sub-directory for the `meta-wandboard` repository before cloning
 
     $ mkdir ~/wandboard
     ~$ cd ~/wandboard
-    ~/wandboard$ git clone -b rocko git://github.com/jumpnow/meta-wandboard
+    ~/wandboard$ git clone -b sumo git://github.com/jumpnow/meta-wandboard
 
 The `meta-wandboard/README.md` file has the last commits from the dependency repositories that I tested. You can always checkout those commits explicitly if you run into problems.
 
@@ -131,7 +141,7 @@ You could manually create the directory structure like this
 
 Or you could use the Yocto environment script **oe-init-build-env** like this passing in the path to the build directory
 
-    ~$ source poky-rocko/oe-init-build-env ~/wandboard/build
+    ~$ source poky-sumo/oe-init-build-env ~/wandboard/build
 
 The Yocto environment script will create the build directory if it does not already exist.
  
@@ -158,8 +168,9 @@ In **bblayers.conf** file replace **${HOME}** with the appropriate path to the m
 
 For example, if your directory structure does not look exactly like this, you will need to modify `bblayers.conf`
 
-    ~/poky-rocko/
+    ~/poky-sumo/
          meta-openembedded/
+         meta-qt5/
          ...
 
     ~/wandboard/
@@ -295,11 +306,11 @@ This script needs to know the `TMPDIR` to find the binaries. It looks for an env
 
 For instance, if I had this in the `local.conf`
 
-    TMPDIR = "/oe9/wand/tmp-rocko"
+    TMPDIR = "/oe6/wand/tmp-sumo"
 
 then I would export this environment variable before running `copy_boot.sh`
 
-    ~/wandboard/meta-wandboard/scripts$ export OETMP=/oe9/wand/tmp-rocko
+    ~/wandboard/meta-wandboard/scripts$ export OETMP=/oe6/wand/tmp-sumo
 
 If you didn't override the default **TMPDIR** in `local.conf`, then set it to the default **TMPDIR**
 
@@ -334,7 +345,7 @@ The copy scripts will **NOT** unmount partitions automatically. If an SD card pa
 Here's a realistic example session where I want to copy already built images to a second SD card that I just inserted.
 
     ~$ sudo umount /dev/sdb1
-    ~$ export OETMP=/oe9/wand/tmp-jethro
+    ~$ export OETMP=/oe6/wand/tmp-sumo
     ~$ cd wandboard/meta-wandboard/scripts
     ~/wandboard/meta-wandboard/scripts$ ./copy_boot.sh sdb
     ~/wandboard/meta-wandboard/scripts$ ./copy_rootfs.sh sdb console wandq2

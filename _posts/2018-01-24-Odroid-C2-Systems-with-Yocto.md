@@ -2,7 +2,7 @@
 layout: post
 title: Building Odroid-C2 Systems with Yocto
 description: "Building customized systems for Odroid-C2 using tools from the Yocto Project"
-date: 2018-05-09 10:00:00
+date: 2018-05-29 05:00:00
 categories: odroid 
 tags: [linux, odroid-c2, yocto]
 ---
@@ -19,31 +19,27 @@ I tried building from the [meta-odroid][meta-odroid] layer listed in the [OpenEm
 
 I did take the **secure-boot** and **arm-trusted-firmware recipes** from that [meta-odroid][meta-odroid] layer. 
 
-I opted to use a mainline kernel and u-boot rather then any vendor versions or custom patches. I did have to add a patch to the mainline **dtb** to get the **eMMC** working.
-
-Because I am running a mainline kernel I did not really expect accelerated video to work, but as it is now I get no HDMI output. I know the hardware is good from running an Ubuntu image when I first got the board. I might be missing some kernel command line parameters.
-
-Things that do work are ethernet, USB, serial console, SD card and eMMC. These are the only subsystems I have looked at.
-
-I had this board sitting in a drawer for a year and my only intended use now is as a [Mender][mender] client running a Syntro application (headless, Qt5, streaming USB camera). I probably won't look into the HDMI issue until I need it.
-
 ### System Info
 
-The Yocto version is **2.4**, the `[rocko]` branch.
+The Yocto version is **2.5**, the `[sumo]` branch.
 
-The default kernel is **4.14.40** 64-bit. There is a 4.16 recipe, but it has issues that I need time to dig into.
+The default kernel is **4.16** 64-bit. There is a 4.14 recipe as well.
 
 The only dtb built is **meson-gxbb-odroidc2.dtb**.
 
 The kernel and userland are 64-bit.
 
-The u-boot version is **2017.09**.
+The u-boot version is **2018.01**.
 
 A **boot.scr** is required. There are source files for either SD card or eMMC booting. You can choose with a variable in **local.conf** described below.
 
 These are **sysvinit** systems using [eudev][eudev].
 
-Python **3.5.3** is installed as are the standard C/C++ compiler tools.
+Python **3.5.5** is installed as are the standard C/C++ compiler tools.
+
+The Qt version is **5.10.1** built with the **linuxfb** QPA backend.
+
+There is no hardware video acceleration.
 
 ### Ubuntu Setup
 
@@ -92,18 +88,19 @@ Fedora already uses **bash** as the shell.
 
 ### Clone the dependency repositories
 
-For all upstream repositories, use the **[rocko]** branch.
+For all upstream repositories, use the **[sumo]** branch.
 
 The directory layout I am describing here is my preference. All of the paths to the meta-layers are configurable. If you choose something different, adjust the following instructions accordingly.
 
 First the main Yocto project **poky** layer
 
-    ~# git clone -b rocko git://git.yoctoproject.org/poky.git poky-rocko
+    ~# git clone -b sumo git://git.yoctoproject.org/poky.git poky-sumo
 
 Then the dependency layers under that
 
-    ~$ cd poky-rocko
-    ~/poky-rocko$ git clone -b rocko git://git.openembedded.org/meta-openembedded
+    ~$ cd poky-sumo
+    ~/poky-sumo$ git clone -b sumo git://git.openembedded.org/meta-openembedded
+    ~/poky-sumo$ git clone -b sumo https://github.com/meta-qt5/meta-qt5.git
 
 These repositories shouldn't need modifications other then periodic updates and can be reused for different projects or different boards.
 
@@ -113,7 +110,7 @@ Create a sub-directory for the **meta-odroid-c2** repository before cloning
 
     $ mkdir ~/odroid-c2
     ~$ cd ~/odroid-c2
-    ~/odroid-c2$ git clone -b rocko git://github.com/jumpnow/meta-odroid-c2
+    ~/odroid-c2$ git clone -b sumo git://github.com/jumpnow/meta-odroid-c2
 
 The **meta-odroid-c2/README.md** file has the last commits from the dependency repositories that I tested. You can always checkout those commits explicitly if you run into problems.
 
@@ -130,7 +127,7 @@ You could manually create the directory structure like this
 
 Or you could use the Yocto environment script **oe-init-build-env** like this passing in the path to the build directory
 
-    ~$ source poky-rocko/oe-init-build-env ~/odroid-c2/build
+    ~$ source poky-sumo/oe-init-build-env ~/odroid-c2/build
 
 The Yocto environment script will create the build directory if it does not already exist.
  
@@ -157,8 +154,9 @@ In **bblayers.conf** file replace **${HOME}** with the appropriate path to the m
 
 For example, if your directory structure does not look exactly like this, you will need to modify `bblayers.conf`
 
-    ~/poky-rocko/
+    ~/poky-sumo/
          meta-openembedded/
+         meta-qt5/
          ...
 
     ~/odroid-c2/
@@ -311,11 +309,11 @@ This script needs to know the **TMPDIR** to find the binaries. It looks for an e
 
 For instance, if I had this in the `local.conf`
 
-    TMPDIR = "/oe9/oc2/tmp-rocko"
+    TMPDIR = "/oe6/oc2/tmp-sumo"
 
 then I would export this environment variable before running `copy_boot.sh`
 
-    ~/odroid-c2/meta-odroid-c2/scripts$ export OETMP=/oe9/oc2/tmp-rocko
+    ~/odroid-c2/meta-odroid-c2/scripts$ export OETMP=/oe9/oc2/tmp-sumo
 
 If you didn't override the default **TMPDIR** in `local.conf`, then set it to the default **TMPDIR**
 
@@ -350,7 +348,7 @@ The copy scripts will **NOT** unmount partitions automatically. If an SD card pa
 Here's a realistic example session where I want to copy already built images to a second SD card that I just inserted.
 
     ~$ sudo umount /dev/sdb1
-    ~$ export OETMP=/oe9/oc2/tmp-jethro
+    ~$ export OETMP=/oe6/oc2/tmp-sumo
     ~$ cd odroid-c2/meta-odroid-c2/scripts
     ~/odroid-c2/meta-odroid-c2/scripts$ ./copy_boot.sh sdb
     ~/odroid-c2/meta-odroid-c2/scripts$ ./copy_rootfs.sh sdb console
