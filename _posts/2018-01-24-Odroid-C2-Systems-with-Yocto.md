@@ -2,7 +2,7 @@
 layout: post
 title: Building Odroid-C2 Systems with Yocto
 description: "Building customized systems for Odroid-C2 using tools from the Yocto Project"
-date: 2018-05-29 05:00:00
+date: 2018-06-10 10:14:00
 categories: odroid 
 tags: [linux, odroid-c2, yocto]
 ---
@@ -23,7 +23,7 @@ I did take the **secure-boot** and **arm-trusted-firmware recipes** from that [m
 
 The Yocto version is **2.5**, the `[sumo]` branch.
 
-The default kernel is **4.16** 64-bit. There is a 4.14 recipe as well.
+The default kernel is **4.17** 64-bit. There are 4.14 and 4.16 recipes as well.
 
 The only dtb built is **meson-gxbb-odroidc2.dtb**.
 
