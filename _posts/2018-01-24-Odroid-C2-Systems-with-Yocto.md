@@ -15,7 +15,7 @@ Yocto uses what it calls **meta-layers** to define the configuration for a syste
 
 I have a custom Yocto layer for the **odroid-c2** called [meta-odroid-c2][meta-odroid-c2].
 
-I tried building from the [meta-odroid][meta-odroid] layer listed in the [OpenEmbedded Layer Index][oe-layer-index], but the systems would not boot for me.
+I initially tried building from the [meta-odroid][meta-odroid] layer listed in the [OpenEmbedded Layer Index][oe-layer-index], but the systems would not boot for me.
 
 I did take the **secure-boot** and **arm-trusted-firmware recipes** from that [meta-odroid][meta-odroid] layer. 
 
