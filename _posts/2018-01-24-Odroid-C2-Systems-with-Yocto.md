@@ -2,7 +2,7 @@
 layout: post
 title: Building Odroid-C2 Systems with Yocto
 description: "Building customized systems for Odroid-C2 using tools from the Yocto Project"
-date: 2018-06-10 10:14:00
+date: 2018-06-18 05:25:00
 categories: odroid 
 tags: [linux, odroid-c2, yocto]
 ---
@@ -13,11 +13,9 @@ Yocto is a set of tools for building a custom embedded Linux distribution. The s
 
 Yocto uses what it calls **meta-layers** to define the configuration for a system build. Within each meta-layer are recipes, classes and configuration files that support the primary build tool, a python framework called **bitbake**. 
 
-I have a custom Yocto layer for the **odroid-c2** called [meta-odroid-c2][meta-odroid-c2].
+I have a Yocto layer for the **odroid-c2** called [meta-odroid-c2][meta-odroid-c2].
 
-I initially tried building from the [meta-odroid][meta-odroid] layer listed in the [OpenEmbedded Layer Index][oe-layer-index], but the systems would not boot for me.
-
-I did take the **secure-boot** and **arm-trusted-firmware recipes** from that [meta-odroid][meta-odroid] layer. 
+I am using the **odroid-c2** with some USB webcams in a monitoring system built with Qt.
 
 ### System Info
 
