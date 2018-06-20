@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2018-03-08 09:36:00
+date: 2018-06-20 14:02:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi zero wireless, rpi compute]
 ---
@@ -17,9 +17,9 @@ Yocto uses what it calls **meta-layers** to define the configuration for a syste
 
 The Yocto system, while very powerful, does have a substantial learning curve and you may want to look at another popular but simpler tool for building embedded systems [Buildroot][buildroot].
 
-I have created a custom layer for the RPi boards called [meta-rpi][meta-rpi].
+I have created a custom meta-layer for the RPi boards called [meta-rpi][meta-rpi].
 
-The systems build from this layer use the same GPU firmware, linux kernel and include the same dtb overlays as the official Raspbian systems. No hardware functionality (compared to Raspbian) is lost using Yocto. It is only the **userland** software that differs and that is configurable by you.
+The systems built from this layer use the same GPU firmware, linux kernel and include the same dtb overlays as the official Raspbian systems. So no hardware functionality (compared to Raspbian) is lost using Yocto. It is only the **userland** software that differs and that is configurable by you.
 
 There are a some example **images** in [meta-rpi][meta-rpi] that support the programming languages and tools that I use in my own projects.
 
@@ -59,7 +59,7 @@ The **4.14** Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kern
 
 These are **sysvinit** systems using [eudev][eudev].
 
-The Qt version is **5.9.2** There is no **X11** and no desktop installed. [Qt][qt] GUI applications can be run fullscreen using one of the [Qt embedded linux plugins][embedded-linux-qpa] like **eglfs** or **linuxfb**, both are provided. The default is **eglfs**.
+The Qt version is **5.9.6** There is no **X11** and no desktop installed. [Qt][qt] GUI applications can be run fullscreen using one of the [Qt embedded linux plugins][embedded-linux-qpa] like **eglfs** or **linuxfb**, both are provided. The default is **eglfs**.
 
 Python **2.7.13** and **3.5.3** are both installed, each with a number of modules included.
 
