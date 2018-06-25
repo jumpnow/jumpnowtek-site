@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2018-06-20 14:02:00
+date: 2018-06-25 10:45:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi zero wireless, rpi compute]
 ---
@@ -53,15 +53,15 @@ All systems are setup to use a serial console. For the RPi's that have it, a dhc
 
 ### System Info
 
-The Yocto version is **2.4**, the `[rocko]` branch.
+The Yocto version is **2.5**, the `[sumo]` branch.
 
 The **4.14** Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
 
 These are **sysvinit** systems using [eudev][eudev].
 
-The Qt version is **5.9.6** There is no **X11** and no desktop installed. [Qt][qt] GUI applications can be run fullscreen using one of the [Qt embedded linux plugins][embedded-linux-qpa] like **eglfs** or **linuxfb**, both are provided. The default is **eglfs**.
+The Qt version is **5.10.1** There is no **X11** and no desktop installed. [Qt][qt] GUI applications can be run fullscreen using one of the [Qt embedded linux plugins][embedded-linux-qpa] like **eglfs** or **linuxfb**, both are provided. The default is **eglfs**.
 
-Python **2.7.13** and **3.5.3** are both installed, each with a number of modules included.
+Python **3.5.5** with a number of modules is included.
 
 [omxplayer][omxplayer] is installed for playing video and audio from the command line, hardware accelerated.
 
@@ -120,21 +120,21 @@ Fedora already uses **bash** as the shell.
 
 ### Clone the dependency repositories
 
-For all upstream repositories, use the `[rocko]` branch.
+For all upstream repositories, use the `[sumo]` branch.
 
 The directory layout I am describing here is my preference. All of the paths to the meta-layers are configurable. If you choose something different, adjust the following instructions accordingly.
 
 First the main Yocto project **poky** layer
 
-    ~# git clone -b rocko git://git.yoctoproject.org/poky.git poky-rocko
+    ~# git clone -b sumo git://git.yoctoproject.org/poky.git poky-sumo
 
 Then the dependency layers under that
 
-    ~$ cd poky-rocko
-    ~/poky-rocko$ git clone -b rocko git://git.openembedded.org/meta-openembedded
-    ~/poky-rocko$ git clone -b rocko https://github.com/meta-qt5/meta-qt5
-    ~/poky-rocko$ git clone -b rocko git://git.yoctoproject.org/meta-security
-    ~/poky-rocko$ git clone -b rocko git://git.yoctoproject.org/meta-raspberrypi
+    ~$ cd poky-sumo
+    ~/poky-sumo$ git clone -b sumo git://git.openembedded.org/meta-openembedded
+    ~/poky-sumo$ git clone -b sumo https://github.com/meta-qt5/meta-qt5
+    ~/poky-sumo$ git clone -b sumo git://git.yoctoproject.org/meta-security
+    ~/poky-sumo$ git clone -b sumo git://git.yoctoproject.org/meta-raspberrypi
 
 These repositories shouldn't need modifications other then periodic updates and can be reused for different projects or different boards.
 
@@ -144,7 +144,7 @@ Create a separate sub-directory for the **meta-rpi** repository before cloning. 
 
     ~$ mkdir ~/rpi
     ~$ cd ~/rpi
-    ~/rpi$ git clone -b rocko git://github.com/jumpnow/meta-rpi
+    ~/rpi$ git clone -b sumo git://github.com/jumpnow/meta-rpi
 
 The `meta-rpi/README.md` file has the last commits from the dependency repositories that I tested. You can always checkout those commits explicitly if you run into problems.
 
@@ -161,7 +161,7 @@ You could manually create the directory structure like this
 
 Or you could use the Yocto environment script **oe-init-build-env** like this passing in the path to the build directory
 
-    ~$ source poky-rocko/oe-init-build-env ~/rpi/build
+    ~$ source poky-sumo/oe-init-build-env ~/rpi/build
 
 The Yocto environment script will create the build directory if it does not already exist.
  
@@ -188,7 +188,7 @@ In **bblayers.conf** file replace **${HOME}** with the appropriate path to the m
 
 For example, if your directory structure does not look exactly like this, you will need to modify `bblayers.conf`
 
-    ~/poky-rocko/
+    ~/poky-sumo/
          meta-openembedded/
          meta-qt5/
          meta-raspberrypi
@@ -285,7 +285,7 @@ You can also change or add a password once logged in.
 
 You need to [source][source-script] the Yocto environment into your shell before you can use [bitbake][bitbake]. The **oe-init-build-env** will not overwrite your customized conf files.
 
-    ~$ source poky-rocko/oe-init-build-env ~/rpi/build
+    ~$ source poky-sumo/oe-init-build-env ~/rpi/build
 
     ### Shell environment set up for builds. ###
 
@@ -399,11 +399,11 @@ This **copy_boot.sh** script needs to know the **TMPDIR** to find the binaries. 
 
 For instance, if I had this in `build/conf/local.conf`
 
-    TMPDIR = "/oe8/rpi/tmp-rocko"
+    TMPDIR = "/oe4/rpi/tmp-sumo"
 
 Then I would export this environment variable before running `copy_boot.sh`
 
-    ~/rpi/meta-rpi/scripts$ export OETMP=/oe8/rpi/tmp-rocko
+    ~/rpi/meta-rpi/scripts$ export OETMP=/oe4/rpi/tmp-sumo
 
 If you didn't override the default **TMPDIR** in `local.conf`, then set it to the default **TMPDIR**
 
@@ -411,11 +411,11 @@ If you didn't override the default **TMPDIR** in `local.conf`, then set it to th
 
 The `copy_boot.sh` script also needs a **MACHINE** environment variable specifying the type of RPi board.
 
-	~/rpi/meta-rpi/scripts$ export MACHINE=raspberrypi2
+	~/rpi/meta-rpi/scripts$ export MACHINE=raspberrypi3
 
 or
 
-	~/rpi/meta-rpi/scripts$ export MACHINE=raspberrypi
+	~/rpi/meta-rpi/scripts$ export MACHINE=raspberrypi0-wifi
 
 
 Then run the **copy_boot.sh** script passing the location of SD card
@@ -454,7 +454,7 @@ Here's a realistic example session where I want to copy already built images to 
 
     ~$ sudo umount /dev/sdb1
     ~$ sudo umount /dev/sdb2
-    ~$ export OETMP=/oe8/rpi/tmp-rocko
+    ~$ export OETMP=/oe4/rpi/tmp-sumo
     ~$ export MACHINE=raspberrypi2
     ~$ cd rpi/meta-rpi/scripts
     ~/rpi/meta-rpi/scripts$ ./copy_boot.sh sdb
@@ -487,7 +487,7 @@ Check the **README** in the [tspress][tspress] repository for usage.
 
 To display the list of available recipes from the **meta-layers** included in **bblayers.conf**
 
-    ~$ source poky-rocko/oe-init-build-env ~/rpi/build
+    ~$ source poky-sumo/oe-init-build-env ~/rpi/build
 
     ~/rpi/build$ bitbake -s
 
