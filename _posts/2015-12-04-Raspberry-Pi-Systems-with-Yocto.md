@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2018-06-25 10:45:00
+date: 2018-06-26 04:07:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi zero wireless, rpi compute]
 ---
@@ -27,7 +27,7 @@ I often use meta-rpi as the starting point for customer projects, but moved to a
 
 I use meta-rpi for my experiments.
 
-My systems use **sysvinit**, but Yocto supports **systemd** if you would rather use that. A lot of my customers do.
+My systems use **sysvinit**, but Yocto supports **systemd** if you would rather use that.
 
 If you are [Qt5][qt] developer then you will appreciate that the RPi comes with working **OpenGL** drivers for the RPi GPU. This means [Qt OpenGL][qt-opengl] and [QML][qml] applications will work when using the [eglfs][qt-eglfs] platform plugin. 
 
