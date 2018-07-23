@@ -2,26 +2,26 @@
 layout: post
 title: An upgrade strategy for embedded Linux systems
 description: "Implementing a simple upgrade strategy for deployed embedded Linux systems"
-date: 2016-09-21 13:44:00
+date: 2018-07-23 05:09:00
 categories: linux 
 tags: [linux, embedded, upgrades, beaglebone, gumstix, overo, duovero]
 ---
 
-Here is a simple upgrade strategy for deployed small board Linux systems like [Gumstix][gumstix], [BeagleBones][beaglebone] or others running off an *SD card* or *eMMC*.
+Here is a simple upgrade strategy for deployed small board Linux systems like [Gumstix][gumstix], [BeagleBones][beaglebone] or others running off an SD card or eMMC.
 
-These boards use [U-Boot][uboot] for the *bootloader* and run a Linux distribution built with tools from the [Yocto Project][yocto].
+These boards use [U-Boot][uboot] for the bootloader and run a Linux distribution built with tools from the [Yocto Project][yocto].
 
-The upgrades I am considering here are *full-system* upgrades, everything but the *bootloader*. These are not incremental upgrades using package managers like rpm, apt or opkg.
+The upgrades I am considering here are full-system upgrades, everything but the bootloader. These are not incremental upgrades using package managers like rpm, apt or opkg.
 
-*Full-system* upgrades are nice because they are *atomic* and easy to rollback to a known good state assuming the previous system was not modified.
+Full-system upgrades are nice because they are atomic and easy to rollback to a known good state assuming the previous system was not modified.
 
-The drawback to *full-system* upgrades is traditionally the size when distributing (bandwidth) and the system resources when installing (not enough space for two systems, takes too long to run the upgrade). 
+The drawback to full-system upgrades is traditionally the size when distributing (bandwidth) and the system resources when installing (not enough space for two systems, takes too long to run the upgrade). 
 
 With the embedded Linux systems I work on these are typically non-issues. 
 
 The size of a [Yocto][yocto] built system as a compressed tarball is usually around 50 MB and almost never greater then 100 MB.
 
-*SD cards* or *eMMC* sizes are rarely less then 4 GB eliminating the storage issue. RAM is typically 512 MB or greater with processors running close to 1 GHz at the low end and frequently multi-core. System resources required to perform the upgrade are not a problem.
+SD cards or eMMC sizes are rarely less then 4 GB eliminating the storage issue. RAM is typically 512 MB or greater with processors running close to 1 GHz at the low end and frequently multi-core. System resources required to perform the upgrade are not a problem.
 
 Distribution of the new system can be over a network (ethernet or wifi) or through a USB removable drive.  Transferring files less then 100 MB is fairly trivial today even over wifi.
 
@@ -29,20 +29,20 @@ Another nice feature in an upgrade system is the ability to run in the backgroun
 
 ### Background
 
-The core idea is nothing radical. There will be two *rootfs* partitions, one active and potentially **read-only** and the other inactive and not mounted.
+The core idea is nothing radical. There will be two rootfs partitions, one active and potentially **read-only** and the other inactive and not mounted.
 
-The upgrade will mount and install the new *rootfs* on the non-active partition and then make whatever changes are necessary to let the bootloader know which partition to use on the next boot. 
+The upgrade will mount and install the new rootfs on the non-active partition and then make whatever changes are necessary to let the bootloader know which partition to use on the next boot. 
 
-The implementation described assumes storage of at least **4GB**, with the two *rootfs* partitions being **1GB** each. This amount of storage is not a hard requirement, but as a practical matter less available storage is unlikely to be encountered.
+The implementation described assumes storage of at least **4GB**, with the two rootfs partitions being **1GB** each. This amount of storage is not a hard requirement, but as a practical matter less available storage is unlikely to be encountered.
 
 ### Requirements
 
 Here are some of my self-imposed requirements
 
-1. The upgrade is a full *rootfs* upgrade, not just select packages.
+1. The upgrade is a full rootfs upgrade, not just select packages.
 2. No dependencies other then a Linux shell ([BusyBox][busybox] is sufficient) and some basic disk utilities (dd, sfdisk, mkfs).
-3. The currently running *rootfs* is the fallback if the upgrade fails for any reason.
-4. No modifications to mainline *u-boot*. (Currently using 2016.07).
+3. The currently running rootfs is the fallback if the upgrade fails for any reason.
+4. No modifications to mainline u-boot. (Currently using 2018.01).
 5. The upgrade is allowed to modify files on a dedicated partition of the storage device.
 6. Storage has already been partitioned appropriately with some onetime install scripts.
 
@@ -50,13 +50,13 @@ Here are some of my self-imposed requirements
 
 These assumptions could be worked-around or ignored, but for now I am treating them as true.
 
-1. The running *rootfs* is **read-only**.
-2. The *boot* partition is **read-only**.
+1. The running rootfs is **read-only**.
+2. The boot partition is **read-only**.
 3. There is temporary space available on the storage device for the compressed tarball (i.e. we are not trying to run the upgrade out of RAM). If the new image comes on a USB drive, that is sufficient.
 
 ### Distribution
 
-An actual implementation will have to handle the details of getting the new *rootfs* tarball onto the device and checking for corruption and validity.
+An actual implementation will have to handle the details of getting the new rootfs tarball onto the device and checking for corruption and validity.
 
 I'm going to skip over this since the details tend to have project specific nuances that don't immediately affect the low-level implementation I am covering here. 
 
@@ -86,7 +86,7 @@ Here's a representative partitioning using an 8 GB SD card prepped for a Gumstix
 
 **p2** and **p3** are the two rootfs partitions.
 
-**p5** will be for *flag* files used by the upgrade system.
+**p5** will be for flag files used by the upgrade system.
 
 **p6** is extra space for application use and general storage. 
 
@@ -95,17 +95,17 @@ Here's a representative partitioning using an 8 GB SD card prepped for a Gumstix
 
 Here are some of the things the upgrade script needs to check
 
-1. On which partition is the current *rootfs* running?
+1. On which partition is the current rootfs running?
 2. Is storage partitioned appropriately?
 3. Do we have a writable location for flagging the partition to use?
 
 
-Installing the *rootfs* from a tarball once we know the partition is 5 steps
+Installing the rootfs from a tarball once we know the partition is 5 steps
 
 1. Format the new partition as ext4
 2. Mount the partition at a temporary location
-3. Untar the new *rootfs*
-4. Copy any config files, app files, etc that we want to transfer from the current *rootfs* to the new one
+3. Untar the new rootfs
+4. Copy any config files, app files, etc that we want to transfer from the current rootfs to the new one
 5. Unmount the partition
 
 The actual code will be something like this (without any error handling)
@@ -117,17 +117,17 @@ The actual code will be something like this (without any error handling)
     # umount <new-root-partition>
 
 
-The final step is updating the bootloader so that it knows about the new *rootfs*.
+The final step is updating the bootloader so that it knows about the new rootfs.
 
 A bootscript file (`uEnv.txt`) is commonly used with *u-boot* to customize the boot process. The bootscript is typically used to specify a *.dtb for the kernel and also to pass command line parameters to the kernel.
 
-One of the command line parameters that can be passed is the location of the *rootfs*.
+One of the command line parameters that can be passed is the location of the rootfs.
 
 The `uEnv.txt` file is located on the boot partition **p1** which I am considering **read-only**, so I won't be modifying `uEnv.txt`.
 
-But *u-boot* runs a [Hush][hush] shell that allows some simple scripting. 
+But u-boot runs a [Hush][hush] shell that allows some simple scripting.
 
-Some of the things that can be done with the *u-boot* shell
+Some of the things that can be done with the u-boot shell
 
 * Test for file existence
 * Create new files
@@ -136,13 +136,13 @@ This what the **p5** partition will be used for. I'll call this the **flags** pa
 
 There will be at most three flag files at any one time.
 
-If **p2** is the *rootfs* partition, the possible files would be
+If **p2** is the rootfs partition, the possible files would be
 
     two
     two_tried
     two_ok
 
-or if **p3** is the *rootfs*, they would be
+or if **p3** is the rootfs, they would be
 
     three
     three_tried
@@ -195,11 +195,13 @@ Once the new system has booted successfully, Linux runs a script like the follow
 
     umount <flag partition>
 
-If Linux doesn't update the **flags** partition, the system will revert back to the previous *rootfs* on the next boot because of the `_tried` file written by u-boot. 
+If Linux doesn't update the **flags** partition, the system will revert back to the previous rootfs on the next boot because of the `_tried` file written by u-boot. 
 
 ### Real code
 
-A working implementation for [Yocto][yocto] built systems can be found in this recipe [github.com/jumpnow/meta-overo/tree/krogoth/recipes-support/system-upgrader][system-upgrader].
+**NOTE:** A more recent, cleaner example for upgrading a BBB eMMC system can be found here: [emmc-upgrader][emmc-upgrader]
+
+A working implementation for [Yocto][yocto] built systems can be found in this recipe: [system-upgrader][system-upgrader].
 
 Here is an example `uEnv.txt` for a Gumstix Overo optimized somewhat knowing that **p2** is the default root partition.
 
@@ -248,7 +250,7 @@ Here is an example `uEnv.txt` for a Gumstix Overo optimized somewhat knowing tha
         fi;
 
 
-The data being written in the *fatwrite* commands is irrelevant since the implementation only cares about file existence.
+The data being written in the fatwrite commands is irrelevant since the implementation only cares about file existence.
 
 
 An example upgrade run over an ssh session looks like this
@@ -285,7 +287,7 @@ An example upgrade run over an ssh session looks like this
 
 The upgrade script took about 90 seconds and the system was completely usable while it was running.
 
-On the first boot into the new system, the output from the *bootpart-flags* script looks like this
+On the first boot into the new system, the output from the bootpart-flags script looks like this
 
     ...
     Finding the current root partition : /dev/mmcblk0p2
@@ -301,7 +303,7 @@ On the first boot into the new system, the output from the *bootpart-flags* scri
     Unmounting /dev/mmcblk0p5 : OK
     ...
 
-On a subsequent boot this is the output of the *bootpart-flags* script
+On a subsequent boot this is the output of the bootpart-flags script
 
     ...
     Finding the current root partition : /dev/mmcblk0p2
@@ -358,3 +360,4 @@ After reboot
 [system-upgrader]: https://github.com/jumpnow/meta-overo/tree/krogoth/recipes-support/system-upgrader
 [yocto]: http://www.yoctoproject.org
 [overo-build]: http://www.jumpnowtek.com/gumstix-linux/Overo-Systems-with-Yocto.html
+[emmc-upgrader]: https://github.com/jumpnow/meta-bbb/tree/sumo/recipes-support/emmc-upgrader
