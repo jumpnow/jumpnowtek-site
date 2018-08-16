@@ -2,7 +2,7 @@
 layout: post
 title: Building Wandboard Systems with Yocto
 description: "Building customized systems for Wandboards using tools from the Yocto Project"
-date: 2018-06-11 04:35:00
+date: 2018-08-16 10:35:00
 categories: wandboard 
 tags: [linux, wandboard, yocto]
 ---
@@ -19,15 +19,19 @@ I have a custom Yocto layer for the wandboards called [meta-wandboard][meta-wand
 
 ### System Info
 
-The Yocto version is **2.5**, the `[sumo]` branch.
+The Yocto version is **2.5.1**, the `[sumo]` branch.
 
-The default kernel is **4.17**. Recipes for **4.14** and **4.16** are also available.
+The default kernel is **4.18**. Recipes for **4.14 LTS** and **4.17** are also available.
 
 The u-boot version is **2018.05**.
 
 These are **sysvinit** systems using [eudev][eudev].
 
 Python **3.5.5** is installed.
+
+gcc/g++ **7.3.0** and associated build tools are installed.
+
+git **2.16.1** is installed.
 
 The Qt version is **5.10.1** built with the **linuxfb** backend. 
 

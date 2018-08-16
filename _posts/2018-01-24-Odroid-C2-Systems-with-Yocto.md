@@ -2,7 +2,7 @@
 layout: post
 title: Building Odroid-C2 Systems with Yocto
 description: "Building customized systems for Odroid-C2 using tools from the Yocto Project"
-date: 2018-06-18 05:25:00
+date: 2018-08-16 10:35:00
 categories: odroid 
 tags: [linux, odroid-c2, yocto]
 ---
@@ -19,9 +19,9 @@ I am using the **odroid-c2** with some USB webcams in a monitoring system built 
 
 ### System Info
 
-The Yocto version is **2.5**, the `[sumo]` branch.
+The Yocto version is **2.5.1**, the `[sumo]` branch.
 
-The default kernel is **4.17** 64-bit. There are 4.14 and 4.16 recipes as well.
+The default kernel is **4.18** 64-bit. There are **4.14 LTS** and **4.17** recipes as well.
 
 The only dtb built is **meson-gxbb-odroidc2.dtb**.
 
@@ -34,6 +34,10 @@ A **boot.scr** is required. There are source files for either SD card or eMMC bo
 These are **sysvinit** systems using [eudev][eudev].
 
 Python **3.5.5** is installed as are the standard C/C++ compiler tools.
+
+gcc/g++ **7.3.0** and associated build tools are installed.
+
+git **2.16.1** is installed.
 
 The Qt version is **5.10.1** built with the **linuxfb** QPA backend.
 
