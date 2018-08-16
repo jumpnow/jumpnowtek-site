@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2018-06-26 04:07:00
+date: 2018-08-16 10:55:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi zero wireless, rpi compute]
 ---
@@ -13,29 +13,27 @@ Yocto is a set of tools for building a custom embedded Linux distribution. The s
 
 If you are looking for a general purpose development system with access to pre-built packages, I suggest you stick with a more user-friendly distribution like [Raspbian][raspbian].
 
-Yocto uses what it calls **meta-layers** to define the configuration for a system build. Within each meta-layer are recipes, classes and configuration files that support the primary build tool, a python framework called **bitbake**. 
+And while the Yocto system is very powerful, it does have a substantial learning curve. You may want to look at another popular, but simpler tool for building embedded systems [Buildroot][buildroot].
 
-The Yocto system, while very powerful, does have a substantial learning curve and you may want to look at another popular but simpler tool for building embedded systems [Buildroot][buildroot].
+Yocto uses what it calls **meta-layers** to define the configuration for a build. Within each meta-layer are recipes, classes and configuration files that support the primary build tool, a python app called **bitbake**.
 
 I have created a custom meta-layer for the RPi boards called [meta-rpi][meta-rpi].
 
-The systems built from this layer use the same GPU firmware, linux kernel and include the same dtb overlays as the official Raspbian systems. So no hardware functionality (compared to Raspbian) is lost using Yocto. It is only the **userland** software that differs and that is configurable by you.
+The systems built from this layer use the same GPU firmware, linux kernel and include the same dtb overlays as the official Raspbian systems. This means that no hardware functionality is lost with these Yocto built systems as compared to the "official" Raspbian distro. It is only the **userland** software that differs when you use Yocto built systems and that completely configurable by you.
 
-There are a some example **images** in [meta-rpi][meta-rpi] that support the programming languages and tools that I use in my own projects.
+There are a some example **images** in [meta-rpi][meta-rpi] that support the programming languages and tools that I commonly use in my own projects. 
 
-I often use meta-rpi as the starting point for customer projects, but moved to another repository.
+When using this repository for customer projects, I first fork and move it to another repository. I recommend you do the same if you require stability. I use the meta-rpi layer for my experiments.
 
-I use meta-rpi for my experiments.
-
-My systems use **sysvinit**, but Yocto supports **systemd** if you would rather use that.
+My systems use **sysvinit**, but Yocto supports **systemd**.
 
 If you are [Qt5][qt] developer then you will appreciate that the RPi comes with working **OpenGL** drivers for the RPi GPU. This means [Qt OpenGL][qt-opengl] and [QML][qml] applications will work when using the [eglfs][qt-eglfs] platform plugin. 
 
-I am using the official Yocto [meta-raspberrypi][meta-raspberrypi] layer, but have updated recipes for the Linux kernel and [gpu firmware][firmware-repo] to keep them more current. I also have occasional 'fixes' to other components, sometimes for bugs, but often just because I don't like the upstream defaults.
+I am using the official Yocto [meta-raspberrypi][meta-raspberrypi] layer, but have updated recipes for the Linux kernel and [gpu firmware][firmware-repo] to keep them more current. I also have occasional 'fixes' to other components, sometimes for bugs, but often just because I don't like the **meta-raspberrypi** defaults.
 
-I have access to all of the RPi boards and at one time or another have tested these builds with all of them including the [RPi CM/CM3][rpi-compute] modules.
+I have access to all of the RPi boards and have at one time or another have tested these builds with all of them including the [RPi CM and CM3][rpi-compute] modules.
 
-Most of the time I only test meta-rpi with the RPi3 and RPi0-W boards.
+Most of the time I test only with RPi3 and RPi0-W boards.
 
 ### Downloads
 
@@ -53,7 +51,7 @@ All systems are setup to use a serial console. For the RPi's that have it, a dhc
 
 ### System Info
 
-The Yocto version is **2.5**, the `[sumo]` branch.
+The Yocto version is **2.5.1**, the `[sumo]` branch.
 
 The **4.14** Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
 
@@ -62,6 +60,10 @@ These are **sysvinit** systems using [eudev][eudev].
 The Qt version is **5.10.1** There is no **X11** and no desktop installed. [Qt][qt] GUI applications can be run fullscreen using one of the [Qt embedded linux plugins][embedded-linux-qpa] like **eglfs** or **linuxfb**, both are provided. The default is **eglfs**.
 
 Python **3.5.5** with a number of modules is included.
+
+gcc/g++ **7.3.0** and associated build tools are installed.
+
+git **2.16.1** is installed.
 
 [omxplayer][omxplayer] is installed for playing video and audio from the command line, hardware accelerated.
 
