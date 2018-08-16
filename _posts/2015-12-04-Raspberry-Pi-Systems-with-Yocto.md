@@ -2,24 +2,24 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2018-08-16 10:55:00
+date: 2018-08-16 12:03:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi zero wireless, rpi compute]
 ---
 
-This post is about building Linux systems for [Raspberry Pi][rpi] boards using tools from the [Yocto Project][Yocto].
+This post is about building Linux systems for [Raspberry Pi][rpi] boards using software from the [Yocto Project][Yocto].
 
 Yocto is a set of tools for building a custom embedded Linux distribution. The systems are usually targeted for a particular application like a commercial product.
 
-If you are looking for a general purpose development system with access to pre-built packages, I suggest you stick with a more user-friendly distribution like [Raspbian][raspbian].
+If you are looking to build a general purpose development system with access to pre-built packages, I suggest you stick with a more user-friendly distribution like [Raspbian][raspbian].
 
 And while the Yocto system is very powerful, it does have a substantial learning curve. You may want to look at another popular, but simpler tool for building embedded systems [Buildroot][buildroot].
 
-Yocto uses what it calls **meta-layers** to define the configuration for a build. Within each meta-layer are recipes, classes and configuration files that support the primary build tool, a python app called **bitbake**.
+Yocto uses what it calls **meta-layers** to define the configuration. Within each meta-layer are recipes, classes and configuration files that support the primary build tool, a python app called **bitbake**.
 
 I have created a custom meta-layer for the RPi boards called [meta-rpi][meta-rpi].
 
-The systems built from this layer use the same GPU firmware, linux kernel and include the same dtb overlays as the official Raspbian systems. This means that no hardware functionality is lost with these Yocto built systems as compared to the "official" Raspbian distro. It is only the **userland** software that differs when you use Yocto built systems and that completely configurable by you.
+The systems built from this layer use the same GPU firmware, linux kernel and include the same dtb overlays as the official Raspbian systems. This means that no hardware functionality is lost with these Yocto built systems as compared to the "official" Raspbian distro. It is only the **userland** software that differs and that is completely configurable by you.
 
 There are a some example **images** in [meta-rpi][meta-rpi] that support the programming languages and tools that I commonly use in my own projects. 
 
