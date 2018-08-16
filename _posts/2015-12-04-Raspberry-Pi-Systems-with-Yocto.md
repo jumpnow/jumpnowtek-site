@@ -19,19 +19,19 @@ Yocto uses what it calls **meta-layers** to define the configuration. Within eac
 
 I have created a custom meta-layer for the RPi boards called [meta-rpi][meta-rpi].
 
-The systems built from this layer use the same GPU firmware, linux kernel and include the same dtb overlays as the official Raspbian systems. This means that no hardware functionality is lost with these Yocto built systems as compared to the "official" Raspbian distro. It is only the **userland** software that differs and that is completely configurable by you.
+The systems built from this layer use the same GPU firmware, linux kernel and include the same dtb overlays as the official Raspbian systems. This means that no hardware functionality is lost with these Yocto built systems as compared to the "official" Raspbian distro. It is only the userland software that differs and that is completely configurable by you.
 
-There are a some example **images** in [meta-rpi][meta-rpi] that support the programming languages and tools that I commonly use in my own projects. 
+There are a some example images in [meta-rpi][meta-rpi] that support the programming languages and tools that I commonly use in my own projects. 
 
-When using this repository for customer projects, I first fork and move it to another repository. I recommend you do the same if you require stability. I use the meta-rpi layer for my experiments.
+When using this repository for customer projects, I first fork and move it to another repository, usually with a different name. I recommend you do the same if you require stability. I use the meta-rpi layer for my experiments.
 
 My systems use **sysvinit**, but Yocto supports **systemd**.
 
-If you are [Qt5][qt] developer then you will appreciate that the RPi comes with working **OpenGL** drivers for the RPi GPU. This means [Qt OpenGL][qt-opengl] and [QML][qml] applications will work when using the [eglfs][qt-eglfs] platform plugin. 
+If you are [Qt5][qt] developer then you will appreciate that the RPi comes with working OpenGL drivers for the RPi GPU. This means [Qt OpenGL][qt-opengl] and [QML][qml] applications will work when using the [eglfs][qt-eglfs] platform plugin. 
 
 I am using the official Yocto [meta-raspberrypi][meta-raspberrypi] layer, but have updated recipes for the Linux kernel and [gpu firmware][firmware-repo] to keep them more current. I also have occasional 'fixes' to other components, sometimes for bugs, but often just because I don't like the **meta-raspberrypi** defaults.
 
-I have access to all of the RPi boards and have at one time or another have tested these builds with all of them including the [RPi CM and CM3][rpi-compute] modules.
+I have access to all of the RPi boards and have at one time or another tested these builds with all of them including the [RPi CM and CM3][rpi-compute] modules.
 
 Most of the time I test only with RPi3 and RPi0-W boards.
 
