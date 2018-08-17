@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Analyzing SPI driver performance on the Raspberry Pi
-date: 2017-03-21 10:30:00
+date: 2018-08-17 08:25:00
 categories: rpi
 tags: [linux, rpi, spi, mcp3008, adc]
 ---
