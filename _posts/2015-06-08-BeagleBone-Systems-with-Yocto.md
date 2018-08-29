@@ -2,7 +2,7 @@
 layout: post
 title: Building BeagleBone Systems with Yocto
 description: "Building customized systems for the BeagleBones using tools from the Yocto Project"
-date: 2018-03-08 10:02:00
+date: 2018-08-29 07:30:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
@@ -22,30 +22,34 @@ I use this layer as a template when starting new BeagleBone projects.
 
 ### System Info
 
-The Yocto version is **2.4** the `[rocko]` branch.
+The Yocto version is **2.5.1** the `[sumo]` branch.
 
-The default **4.14** Linux kernel comes from the [linux-stable][linux-stable] repository. Recipes for **4.9** and **4.4** LTS kernels are also available.)
+The default **4.14** Linux kernel comes from the [linux-stable][linux-stable] repository. Recipes for **4.9** and **4.18** are also available.)
 
-The [u-boot][uboot] version is `2017.09`.
+The [u-boot][uboot] version is `2018.01`.
 
 These are **sysvinit** systems using [eudev][eudev].
 
-The Qt version is **5.9.2**. There is no *X11* and no desktop installed. [Qt][qt] GUI applications can be run using the *linuxfb* platform plugin.
+The Qt version is **5.10.1**. There is no *X11* and no desktop installed. [Qt][qt] GUI applications can be run using the *linuxfb* platform plugin.
 
 A light-weight **X11** desktop can be added with minimal changes to the build configuration. For instance **X11** is needed to run Java GUI apps or browser kiosk applications.
 
-Python `3.5.3` is installed.
+Python `3.5.5` is installed.
 
-I have not added any display dtbs to the **4.14** kernels yet. No requests.
+gcc/g++ 7.3.0 and associated build tools are installed.
 
-For the **4.9** and **4.4** kernels, device tree binaries are built that support
+git 2.16.1 is installed.
+
+For the **4.9** and **4.14** kernels, device tree binaries are built that support
 
 1. HDMI (`bbb-hdmi.dtb`) not for the [BBG][bbg]
 2. No HDMI (`bbb-nohdmi.dtb`)
 3. [4DCape 4.3-inch resistive touchscreen cape][4dcape43t] (`bbb-4dcape43t.dtb`)
 4. [4DCape 7-inch resistive touchscreen cape][4dcape70t] (`bbb-4dcape70t.dtb`)
-5. [Newhaven 5-inch capacitive touchscreen cape][nh5cape] (`bbb-nh5cape.dtb`)
+5. [Newhaven 5-inch capacitive touchscreen cape][nh5cape] (`bbb-nh5cape.dtb`, **4.9 only currently**)
 6. [Newhaven 7-inch capacitive touchscreen cape][nhd7cape] (`bbb-nhd7cape.dtb`)
+
+I have not added all display dtbs to the **4.18** kernels yet. No requests.
 
 The DTBs are easy enough to switch between using a [u-boot][uboot] script file `uEnv.txt`
 
@@ -104,11 +108,11 @@ Fedora already uses **bash** as the shell.
 
 ### Clone the repositories
 
-    ~$ git clone -b rocko git://git.yoctoproject.org/poky.git poky-rocko
+    ~$ git clone -b sumo git://git.yoctoproject.org/poky.git poky-sumo
 
-    ~$ cd poky-rocko
-    ~/poky-rocko$ git clone -b rocko git://git.openembedded.org/meta-openembedded
-    ~/poky-rocko$ git clone -b rocko https://github.com/meta-qt5/meta-qt5.git
+    ~$ cd poky-sumo
+    ~/poky-sumo$ git clone -b sumo git://git.openembedded.org/meta-openembedded
+    ~/poky-sumo$ git clone -b sumo https://github.com/meta-qt5/meta-qt5.git
 
 I usually keep these repositories separated since they can be shared between projects and different boards.
 
@@ -118,7 +122,7 @@ Create a sub-directory for the `meta-bbb` repository before cloning
 
     ~$ mkdir ~/bbb
     ~$ cd ~/bbb
-    ~/bbb$ git clone -b rocko git://github.com/jumpnow/meta-bbb
+    ~/bbb$ git clone -b sumo git://github.com/jumpnow/meta-bbb
 
 The `meta-bbb/README.md` file has the last commits from the dependency repositories that I tested. You can always checkout those commits explicitly if you run into problems.
 
@@ -135,7 +139,7 @@ You could manually create the directory structure like this
 
 Or you could use the *Yocto* environment script `oe-init-build-env` like this passing in the path to the build directory
 
-    ~$ source poky-rocko/oe-init-build-env ~/bbb/build
+    ~$ source poky-sumo/oe-init-build-env ~/bbb/build
 
 The *Yocto* environment script will create the build directory if it does not already exist.
  
@@ -159,7 +163,7 @@ In `bblayers.conf` file replace **${HOME}** with the appropriate path to the met
 For example, if your directory structure does not look exactly like this, you will need to modify `bblayers.conf`
 
 
-    ~/poky-rocko/
+    ~/poky-sumo/
          meta-openembedded/
          meta-qt5/
          ...
@@ -223,7 +227,7 @@ You can also change or add a password once logged in.
 
 You need to [source][source-script] the Yocto environment into your shell before you can use [bitbake][bitbake]. The `oe-init-build-env` will not overwrite your customized conf files.
 
-    ~$ source poky-rocko/oe-init-build-env ~/bbb/build
+    ~$ source poky-sumo/oe-init-build-env ~/bbb/build
 
     ### Shell environment set up for builds. ###
 
@@ -264,7 +268,7 @@ The *console-image* has a line
 
     inherit core-image
 
-which is `poky-rocko/meta/classes/core-image.bbclass` and pulls in some required base packages.  This is useful to know if you create your own image recipe.
+which is `poky-sumo/meta/classes/core-image.bbclass` and pulls in some required base packages.  This is useful to know if you create your own image recipe.
 
 #### qt5-image
 
@@ -374,11 +378,11 @@ This *copy_boot.sh* script needs to know the `TMPDIR` to find the binaries. It l
 
 For instance, if I had this in the `local.conf`
 
-    TMPDIR = "/oe7/bbb/tmp-rocko"
+    TMPDIR = "/oe7/bbb/tmp-sumo"
 
 Then I would export this environment variable before running `copy_boot.sh`
 
-    ~/bbb/meta-bbb/scripts$ export OETMP=/oe7/bbb/tmp-rocko
+    ~/bbb/meta-bbb/scripts$ export OETMP=/oe7/bbb/tmp-sumo
 
 Then run the `copy_boot.sh` script passing the location of SD card
 
@@ -410,7 +414,7 @@ Here's a realistic example session where I want to copy already built images to 
 
     ~$ sudo umount /dev/sdb1
     ~$ sudo umount /dev/sdb2
-    ~$ export OETMP=/oe7/bbb/tmp-rocko
+    ~$ export OETMP=/oe7/bbb/tmp-sumo
     ~$ cd bbb/meta-bbb/scripts
     ~/bbb/meta-bbb/scripts$ ./copy_boot.sh sdb
     ~/bbb/meta-bbb/scripts$ ./copy_rootfs.sh sdb console bbb2
@@ -527,7 +531,7 @@ The bitbake recipe is here
 
 To display the list of available packages from the **meta-** repositories included in **bblayers.conf**
 
-    ~$ source poky-rocko/oe-init-build-env ~/bbb/build
+    ~$ source poky-sumo/oe-init-build-env ~/bbb/build
     ~/bbb/build$ bitbake -s
 
 Once you have the package name, you can choose to either
