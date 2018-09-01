@@ -18,7 +18,7 @@ Both drivers are enabled as modules in the standard RPi kernels.
 
 The drivers can be loaded by a device tree overlay already provided with the official RPi kernels
 
-    w1-gpio-overlay.dtb  
+    w1-gpio-overlay.dtb
 
 The overlay is the only requirement to use the DS18B20. There is no need for third-party libraries.
 
@@ -41,12 +41,12 @@ There are a couple of ways to wire the DS18B20 to the RPi. You need to provide s
 
 
 ##### config.txt
-     
+
     dtoverlay=w1-gpio,pullup=1
 
 
 ## Non-Parasitic Powering
- 
+
 ##### Wiring
 
     DS18B20          RPi
@@ -101,11 +101,11 @@ The interface to the DS18B20 shows up here
 
 The `28-0000071cbc72` directory represents this particular thermometer.
 
-The `28` identifies a DS18B20 device. 
+The `28` identifies a DS18B20 device.
 
 The `0000071cbc72` represents the unique device id for this particular thermometer. This allows you to have multiple thermometers on the same data line.
 
-Read the thermometer value by reading from `28-0000071cbc72/w1-slave` 
+Read the thermometer value by reading from `28-0000071cbc72/w1-slave`
 
     # cat /sys/bus/w1/devices/28-0000071cbc72/w1_slave
     73 01 4b 46 7f ff 0d 10 41 : crc=41 YES
@@ -161,5 +161,5 @@ Here's a simple python script that will read the temp and convert to Fahrenheit.
 
 
 [ds18b20]: https://www.maximintegrated.com/en/products/analog/sensors-and-sensor-interface/DS18B20.html#tab1
-[buildroot-rpi]: http://www.jumpnowtek.com/rpi/Raspberry-Pi-Systems-with-Buildroot.html
-[yocto-rpi]: http://www.jumpnowtek.com/rpi/Raspberry-Pi-Systems-with-Yocto.html
+[buildroot-rpi]: https://jumpnowtek.com/rpi/Raspberry-Pi-Systems-with-Buildroot.html
+[yocto-rpi]: https://jumpnowtek.com/rpi/Raspberry-Pi-Systems-with-Yocto.html

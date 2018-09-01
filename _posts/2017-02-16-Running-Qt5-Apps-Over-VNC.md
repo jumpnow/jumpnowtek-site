@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Running Qt5 Apps Over VNC Works Again 
+title: Running Qt5 Apps Over VNC Works Again
 date: 2017-02-16 15:23:00
 categories: rpi
 tags: [rpi, qt5, vnc, buildroot]
@@ -31,7 +31,7 @@ I ran it like this from the RPi
     QVncServer created on port 5900
 
 On a Fedora 25 workstation, I was using the *TigerVNC Viewer*.
- 
+
 On a Windows machine I was using [TightVNC][tightvnc] (only need the client pieces).
 
 I spoke with another developer who told me Ubuntu 16.04's *Remote Desktop Client* is working for him.

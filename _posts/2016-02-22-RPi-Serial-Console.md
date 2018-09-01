@@ -22,7 +22,7 @@ Using an [RPi Compute Module][rpi-compute] the pin connections are
     RXI              14 TXD0
     TXO              15 RXD0
 
-    
+
 The serial parameters are `1152008N1` with no flow control.
 
 On the [RPi3][rpi3-b] UART0 is normally used for the onboard Bluetooth radio.

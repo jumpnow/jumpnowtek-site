@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Qt5 Errors on Exit using QPA 
+title: Qt5 Errors on Exit using QPA
 date: 2016-09-02 13:50:00
 categories: yocto
 tags: [qt5, eglfs, linuxfb, qml, yocto]

@@ -50,7 +50,7 @@ Those magic numbers **240000** and **20000** come from a config file in the U-Bo
     #define CONFIG_ENV_IS_IN_NAND
     #define ONENAND_ENV_OFFSET              0x240000 /* environment starts here */
     #define SMNAND_ENV_OFFSET               0x240000 /* environment starts here */
-    
+
     #define CONFIG_SYS_ENV_SECT_SIZE        (128 << 10)     /* 128 KiB */
     #define CONFIG_ENV_OFFSET               SMNAND_ENV_OFFSET
     #define CONFIG_ENV_ADDR                 SMNAND_ENV_OFFSET
@@ -98,7 +98,7 @@ And from `arch/arm/mach-omap2/common-board-devices.h`
 SZ_128K = 131072 = 0x20000
 
 
-If you are booting from an SD card, you are usually only using the *uboot environment* section of the NAND. 
+If you are booting from an SD card, you are usually only using the *uboot environment* section of the NAND.
 
 The other pieces *MLO (xloader)*, *u-boot*, *kernel* and *rootfs* typically all come from the SD card when you are using one.
 

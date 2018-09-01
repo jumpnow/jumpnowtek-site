@@ -3,7 +3,7 @@ layout: post
 title: Building Wandboard Systems with Yocto
 description: "Building customized systems for Wandboards using tools from the Yocto Project"
 date: 2018-08-16 10:35:00
-categories: wandboard 
+categories: wandboard
 tags: [linux, wandboard, yocto]
 ---
 
@@ -11,7 +11,7 @@ This post is about building Linux systems for [i.MX6 Wandboards][wandboard] usin
 
 Yocto is a set of tools for building a custom embedded Linux distribution. The systems are usually targeted for a particular application like a commercial product.
 
-Yocto uses what it calls **meta-layers** to define the configuration for a system build. Within each meta-layer are recipes, classes and configuration files that support the primary build tool, a python framework called **bitbake**. 
+Yocto uses what it calls **meta-layers** to define the configuration for a system build. Within each meta-layer are recipes, classes and configuration files that support the primary build tool, a python framework called **bitbake**.
 
 The Yocto system, while very powerful, does have a substantial learning curve and you may want to look at another popular but simpler tool for building embedded systems [Buildroot][buildroot-wand].
 
@@ -33,7 +33,7 @@ gcc/g++ **7.3.0** and associated build tools are installed.
 
 git **2.16.1** is installed.
 
-The Qt version is **5.10.1** built with the **linuxfb** backend. 
+The Qt version is **5.10.1** built with the **linuxfb** backend.
 
 There is no video hardware acceleration in these systems. That requires some additional work.
 
@@ -53,7 +53,7 @@ U-boot should detect the correct **dtb** to load when it boots the kernel.
 
 I don't have any of the **revd1** boards with the new wifi and PMIC chips so the status of that is questionable.
 
-In order to run an unmodified mainline u-boot a **boot.scr** is required. You can find a simple example in 
+In order to run an unmodified mainline u-boot a **boot.scr** is required. You can find a simple example in
 
     meta-wandboard/recipes-bsp/u-boot-scr/files/boot.cmd
 
@@ -82,7 +82,7 @@ And then create some links for it in `/usr/bin`
     sudo ln -sf /usr/bin/python2.7 /usr/bin/python2
 
 For all versions of Ubuntu, you should change the default Ubuntu shell from **dash** to **bash** by running this command from a shell
- 
+
     sudo dpkg-reconfigure dash
 
 Choose **No** to dash when prompted.
@@ -102,7 +102,7 @@ and the package group
 
     Development Tools
 
-Fedora already uses **bash** as the shell. 
+Fedora already uses **bash** as the shell.
 
 ### Clone the dependency repositories
 
@@ -135,7 +135,7 @@ The `meta-wandboard/README.md` file has the last commits from the dependency rep
 ### Initialize the build directory
 
 Again much of the following are only my conventions.
- 
+
 Choose a build directory. I tend to do this on a per board and/or per project basis so I can quickly switch between projects. For this example I'll put the build directory under `~/wandboard/` with the `meta-wandboard` layer.
 
 You could manually create the directory structure like this
@@ -148,7 +148,7 @@ Or you could use the Yocto environment script **oe-init-build-env** like this pa
     ~$ source poky-sumo/oe-init-build-env ~/wandboard/build
 
 The Yocto environment script will create the build directory if it does not already exist.
- 
+
 ### Customize the configuration files
 
 There are some sample configuration files in the **meta-wandboard/conf** directory.
@@ -162,7 +162,7 @@ If you used the **oe-init-build-env** script to create the build directory, it g
 
 It is not necessary, but you may want to customize the configuration files before your first build.
 
-**Warning:** Do not use the '**~**' character when defining directory paths in the Yocto configuration files. 
+**Warning:** Do not use the '**~**' character when defining directory paths in the Yocto configuration files.
 
 ### Edit bblayers.conf
 
@@ -249,7 +249,7 @@ And then continue with the full build.
 
     ~/wandboard/build$ bitbake console-image
 
- 
+
 ### Copying the binaries to an SD card
 
 After the build completes, the bootloader, kernel and rootfs image files can be found in `<TMPDIR>/deploy/images/wandboard/`.
@@ -262,7 +262,7 @@ This script will partition an SD card with the single partition required for the
 
 Insert the microSD into your workstation and note where it shows up.
 
-[lsblk][lsblk] is convenient for finding the microSD card. 
+[lsblk][lsblk] is convenient for finding the microSD card.
 
 For example
 
@@ -329,7 +329,7 @@ This script should run very fast.
 #### copy_rootfs.sh
 
 This script formats the first partition of the SD card as an *EXT4* filesystem and copies the operating system to it.
- 
+
 The script accepts an optional command line argument for the image type, for example `console` or `qt5`. The default is `console` if no argument is provided.
 
 The script also accepts a `hostname` argument if you want the host name to be something other then the default `wandboard`.
@@ -366,5 +366,5 @@ Both **copy\_boot.sh** and **copy\_rootfs.sh** are simple scripts easily customi
 [bitbake]: https://www.yoctoproject.org/docs/1.8/bitbake-user-manual/bitbake-user-manual.html
 [source-script]: http://stackoverflow.com/questions/4779756/what-is-the-difference-between-source-script-sh-and-script-
 [buildroot]: https://buildroot.org/
-[buildroot-wand]: http://www.jumpnowtek.com/wandboard/Wandboard-Systems-with-Buildroot.html
+[buildroot-wand]: https://jumpnowtek.com/wandboard/Wandboard-Systems-with-Buildroot.html
 [eudev]: https://wiki.gentoo.org/wiki/Project:Eudev

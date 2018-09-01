@@ -25,7 +25,7 @@ I changed the pulse period to 50 ms with the following patch
     @@ -107,8 +107,8 @@ static uint8_t pin2gpio[MAX_CHANNELS];
      // will use too much memory bandwidth.  10us is a good value, though you
      // might be ok setting it as low as 2us.
-    
+
     -#define CYCLE_TIME_US  10000
     -#define SAMPLE_US              10
     +#define CYCLE_TIME_US          50000
@@ -62,7 +62,7 @@ If you prefer to keep the default **CYCLE\_TIME\_US = 10 ms** and **SAMPLE\_US =
     FILES_${PN} += "${sysconfdir}"
 
 
-In my builds, the pi-blaster daemon is disabled by default. 
+In my builds, the pi-blaster daemon is disabled by default.
 
 Set **ENABLED=yes** in `/etc/default/pi-blaster` to enable pi-blaster at boot.
 
@@ -133,4 +133,4 @@ I haven't done extensive testing with pi-blaster, but so far it is working well 
 [pi-blaster]: https://github.com/sarfata/pi-blaster
 [sg-5010]: https://www.adafruit.com/product/155
 [limits-post]: https://github.com/sarfata/pi-blaster/issues/5
-[hardware-pwm]: http://www.jumpnowtek.com/rpi/Using-the-Raspberry-Pi-Hardware-PWM-timers.html
+[hardware-pwm]: https://jumpnowtek.com/rpi/Using-the-Raspberry-Pi-Hardware-PWM-timers.html

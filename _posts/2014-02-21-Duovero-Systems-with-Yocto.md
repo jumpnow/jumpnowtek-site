@@ -3,7 +3,7 @@ layout: post
 title: Building Duovero Systems with Yocto
 description: "Building customized systems for Gumstix Duovero using tools from the Yocto Project"
 date: 2018-08-16 10:35:00
-categories: gumstix-linux 
+categories: gumstix-linux
 tags: [linux, gumstix, duovero, yocto]
 ---
 
@@ -63,7 +63,7 @@ And then create some links for it in `/usr/bin`
     sudo ln -sf /usr/bin/python2.7 /usr/bin/python2
 
 For all versions of Ubuntu, you should change the default Ubuntu shell from **dash** to **bash** by running this command from a shell
- 
+
     sudo dpkg-reconfigure dash
 
 Choose **No** to dash when prompted.
@@ -83,7 +83,7 @@ and the package group
 
     Development Tools
 
-Fedora already uses **bash** as the shell. 
+Fedora already uses **bash** as the shell.
 
 ### Clone the dependency repositories
 
@@ -115,7 +115,7 @@ The `meta-duovero/README.md` file has the last commits from the dependency repos
 ### Initialize the build directory
 
 Again much of the following are only my conventions.
- 
+
 Choose a build directory. I tend to do this on a per board and/or per project basis so I can quickly switch between projects. For this example I'll put the build directory under `~/duovero/` with the `meta-duovero` layer.
 
 You could manually create the directory structure like this
@@ -128,7 +128,7 @@ Or you could use the Yocto environment script **oe-init-build-env** like this pa
     ~$ source poky-sumo/oe-init-build-env ~/duovero/build
 
 The Yocto environment script will create the build directory if it does not already exist.
- 
+
 ### Customize the configuration files
 
 There are some sample configuration files in the **meta-duovero/conf** directory.
@@ -142,7 +142,7 @@ If you used the **oe-init-build-env** script to create the build directory, it g
 
 It is not necessary, but you may want to customize the configuration files before your first build.
 
-**Warning:** Do not use the '**~**' character when defining directory paths in the Yocto configuration files. 
+**Warning:** Do not use the '**~**' character when defining directory paths in the Yocto configuration files.
 
 ### Edit bblayers.conf
 
@@ -210,7 +210,7 @@ If you want no password, convenient for development, comment those two lines and
     #EXTRA_USERS_PARAMS = "usermod -P jumpnowtek root; "
 
 You can also change or add a password once logged in.
- 
+
 ### Build
 
 To build the `console-image` run the following command
@@ -247,7 +247,7 @@ This script will partition an SD card with the minimal 2 partitions required for
 
 Insert the microSD into your workstation and note where it shows up.
 
-[lsblk][lsblk] is convenient for finding the microSD card. 
+[lsblk][lsblk] is convenient for finding the microSD card.
 
 For example
 
@@ -269,7 +269,7 @@ For example
     `-sdb2    8:18   1   7.3G  0 part
 
 I would use `sdb` for the format and copy script parameters on this machine.
- 
+
 It doesn't matter if some partitions from the SD card are mounted. The `mk2parts.sh` script will unmount them.
 
 **BE CAREFUL** with this script. It will format any disk on your workstation.

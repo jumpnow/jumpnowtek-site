@@ -10,7 +10,7 @@ tags: [linux, rpi, mcp3008, adc]
 The [Microchip MCP3008][mcp3008] is a popular ADC for use in a Raspberry Pi projects. You can get them from [Adafruit][adafruit-mcp3008].
 
 They are SPI devices requiring 4 pins to the RPi (MOSI, MISO, CLK and CS).
- 
+
 A [Linux IIO][linux-iio] device driver for these chips exists `drivers/iio/adc/mcp320x.c` and is enabled as a loadable module in the default Raspberry Pi kernels (**CONFIG\_MCP320X**).
 
 Here's the relevant `Kconfig` block
@@ -33,7 +33,7 @@ A [device tree overlay][rpi-overlays] is necessary to enable and configure the d
 The overlay is called [mcp3008-overlay.dts][mcp3008-overlay].
 
 The help for it in the [overlays README][overlays-README] is a bit cryptic.
- 
+
     Name:   mcp3008
     Info:   Configures MCP3008 A/D converters
             For devices on spi1 or spi2, the interfaces should be enabled
@@ -51,7 +51,7 @@ To use SPI on the RPis you need to enable it which you can do with this line in 
 
     dtparam=spi=on
 
-SPI bus 0 is always enabled in the main DTBs for the RPis and so doesn't need any additional help. 
+SPI bus 0 is always enabled in the main DTBs for the RPis and so doesn't need any additional help.
 
 The SPI0 pins are
 
@@ -60,7 +60,7 @@ The SPI0 pins are
 * CLK : GPIO\_11
 * CE0 : GPIO\_8
 * CE1 : GPIO\_7
- 
+
 
 Here are some SPI0 examples
 
@@ -104,7 +104,7 @@ Here are some SPI bus 1 examples
 **SPI1.2**
 
     dtoverlay=spi-1cs:cs0_pin=16
-    dtoverlay=mcp3008:spi1-0-present    
+    dtoverlay=mcp3008:spi1-0-present
 
 Note that `spi1-0-present` is used for the mcp3008 overlay argument since this is still the first SPI1 device the kernel finds.
 
@@ -131,7 +131,7 @@ With the mcp3008 overlay loaded you should see the mcp320x driver
     uio_pdrv_genirq         3164  0
     uio                     8128  1 uio_pdrv_genirq
 
-The mcp320x driver interface is through sysfs. 
+The mcp320x driver interface is through sysfs.
 
 The first device will be found here `/sys/bus/iio/devices/iio:device0`
 

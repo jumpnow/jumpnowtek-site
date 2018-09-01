@@ -141,10 +141,10 @@ If I jumper `pin 15 (uart2.tx)` and `pin 17 (uart2.rx)` on the *Parlor* expansio
     /dev/ttyu1 @ 115200
     Wrote (62): ABCDEFJHIJKLMNOPQRSTUVWXYZ1234567890abcdefjhijklmnopqrstuvwxyz
     Read (62): ABCDEFJHIJKLMNOPQRSTUVWXYZ1234567890abcdefjhijklmnopqrstuvwxyz
-    
+
     Wrote (62): ABCDEFJHIJKLMNOPQRSTUVWXYZ1234567890abcdefjhijklmnopqrstuvwxyz
     Read (62): ABCDEFJHIJKLMNOPQRSTUVWXYZ1234567890abcdefjhijklmnopqrstuvwxyz
-    
+
     Wrote (62): ABCDEFJHIJKLMNOPQRSTUVWXYZ1234567890abcdefjhijklmnopqrstuvwxyz
     Read (62): ABCDEFJHIJKLMNOPQRSTUVWXYZ1234567890abcdefjhijklmnopqrstuvwxyz
 
@@ -157,7 +157,7 @@ If I jumper `pin 15 (uart2.tx)` and `pin 17 (uart2.rx)` on the *Parlor* expansio
 
     Wrote (62): ABCDEFJHIJKLMNOPQRSTUVWXYZ1234567890abcdefjhijklmnopqrstuvwxyz
     Read (62): ABCDEFJHIJKLMNOPQRSTUVWXYZ1234567890abcdefjhijklmnopqrstuvwxyz
-    
+
     Wrote (62): ABCDEFJHIJKLMNOPQRSTUVWXYZ1234567890abcdefjhijklmnopqrstuvwxyz
     Read (62): ABCDEFJHIJKLMNOPQRSTUVWXYZ1234567890abcdefjhijklmnopqrstuvwxyz
 

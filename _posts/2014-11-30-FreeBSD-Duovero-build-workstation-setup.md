@@ -23,7 +23,7 @@ Select *enable sshd* when prompted. You'll also want to add a normal user.
 
 After installation I built the *subversion* port so I could fetch a current `/usr/src`.
 
-Then I followed the [FreeBSD Handbook][fbsd-handbook-current-stable] instructions to update the system to *FreeBSD-CURRENT*. 
+Then I followed the [FreeBSD Handbook][fbsd-handbook-current-stable] instructions to update the system to *FreeBSD-CURRENT*.
 
 And finally I installed these extra ports
 
@@ -34,7 +34,7 @@ I'm doing everything on the workstations through *ssh* sessions, so I don't need
 
 ### Fetch the FreeBSD source
 
-I keep another copy of `CURRENT` source in my home directory that I patch up for the *Duovero* systems.  
+I keep another copy of `CURRENT` source in my home directory that I patch up for the *Duovero* systems.
 
 Fetch a copy like this
 
@@ -131,7 +131,7 @@ Here's what my default *config-duovero.sh* script looks like.
     FREEBSD_BUILDKERNEL_EXTRA_ARGS="-j10"
 
     option AutoSize
-    
+
     # uncomment these together
     #option UsrSrc
     #IMAGE_SIZE=$((4096 * 1000 * 1000))
@@ -177,7 +177,7 @@ If you used a *tmpfs* and want to save the image, then be sure to copy the image
 [crochet]: https://github.com/kientzle/crochet-freebsd
 [freebsd-download]: ftp://ftp.freebsd.org/pub/FreeBSD/snapshots/amd64/amd64/ISO-IMAGES/11.0/
 [fbsd-handbook-current-stable]: http://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/current-stable.html
-[shar-download]: http://jumpnowtek.com/downloads/freebsd/ports
+[shar-download]: https://jumpnowtek.com/downloads/freebsd/ports
 [crochet-scottellis]: https://github.com/scottellis/crochet-freebsd
 [duovero-freebsd]: https://github.com/scottellis/duovero-freebsd
 [tmpfs]: http://www.freebsd.org/cgi/man.cgi?query=tmpfs&apropos=0&sektion=0&manpath=FreeBSD+10.1-RELEASE&arch=default&format=html

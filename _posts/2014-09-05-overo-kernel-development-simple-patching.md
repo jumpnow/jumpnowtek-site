@@ -3,7 +3,7 @@ layout: post
 title: Overo Kernel Development - Simple patching
 description: "Applying a simple patch to the Overo Linux kernel"
 date: 2014-09-05 04:30:00
-categories: gumstix-linux 
+categories: gumstix-linux
 tags: [overo, linux, yocto, kernel development]
 ---
 
@@ -15,7 +15,7 @@ Instructions for using this *meta-layer* can be found [here][using-meta-overo]
 
 The kernel is `3.5.7`.
 
-The patch used in the example here is taken from a question on the 
+The patch used in the example here is taken from a question on the
 [gumstix mailing list][spi-mailing-list-thread] to change the priority of the SPI worker thread. I'm using it only because it's a simple one-line change.
 
 Find your *TMPDIR*, either defined in `build/conf/local.conf` or defaulting to `build/tmp`.
@@ -24,7 +24,7 @@ Change to the directory of the kernel source
 
     $ cd <TMPDIR>/work/overo-poky-linux-gnueabi/linux-stable/3.5.7-r0/git
 
-Edit the file(s) you want to change, in this example 
+Edit the file(s) you want to change, in this example
 
     $ <edit> drivers/spi/spi-omap2-mcspi.c
 
@@ -45,11 +45,11 @@ A quick look at the patch
     From: Scott Ellis <scott@jumpnowtek.com>
     Date: Fri, 5 Sep 2014 04:08:21 -0400
     Subject: [PATCH] add RT priority to spi worker thread
-    
+
     ---
      drivers/spi/spi-omap2-mcspi.c | 2 ++
      1 file changed, 2 insertions(+)
-    
+
     diff --git a/drivers/spi/spi-omap2-mcspi.c b/drivers/spi/spi-omap2-mcspi.c
     index d9848fe..2e4ef9b 100644
     --- a/drivers/spi/spi-omap2-mcspi.c
@@ -57,7 +57,7 @@ A quick look at the patch
     @@ -1198,6 +1198,8 @@ static int __devinit omap2_mcspi_probe(struct platform_device *pdev)
             if (status || omap2_mcspi_master_setup(mcspi) < 0)
                     goto disable_pm;
-    
+
     +       master->rt = 1;
     +
             status = spi_register_master(master);
@@ -65,7 +65,7 @@ A quick look at the patch
                     goto err_spi_register;
     --
     1.9.1
-  
+
 Copy the patch file to the *meta-layer* where the kernel *recipe* can find it
 
     $ cp 0001-add-RT-priority-to-spi-worker-thread.patch \
@@ -106,10 +106,10 @@ Rebuild the kernel
 Rebuild the image
 
     $ bitbake -c cleansstate console-image
-    
+
     (optional)
     $ rm <TMPDIR>/deploy/images/overo/console-image*
-        
+
     $ bitbake console-image
 
 
@@ -128,14 +128,14 @@ Commit the changes
     Changes not staged for commit:
       (use "git add <file>..." to update what will be committed)
       (use "git checkout -- <file>..." to discard changes in working directory)
-    
+
             modified:   recipes-kernel/linux/linux-stable_3.5.7.bb
-    
+
     Untracked files:
       (use "git add <file>..." to include in what will be committed)
-    
+
             recipes-kernel/linux/linux-stable-3.5/0036-add-RT-priority-to-spi-worker-thread.patch
-    
+
     no changes added to commit (use "git add" and/or "git commit -a")
 
     $ git add recipes-kernel/linux/linux-stable-3.5/0036-add-RT-priority-to-spi-worker-thread.patch
@@ -146,5 +146,5 @@ Commit the changes
 [gumstix]: http://www.gumstix.com/
 [yocto-project]: https://www.yoctoproject.org/
 [meta-overo]: https://github.com/jumpnow/meta-overo
-[using-meta-overo]: http://www.jumpnowtek.com/gumstix/overo/Overo-Systems-with-Yocto.html
+[using-meta-overo]: https://jumpnowtek.com/gumstix/overo/Overo-Systems-with-Yocto.html
 [spi-mailing-list-thread]: http://gumstix.8.x6.nabble.com/SPI-and-multi-threading-issue-td4969428.html

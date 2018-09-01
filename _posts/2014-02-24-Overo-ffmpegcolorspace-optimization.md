@@ -17,7 +17,7 @@ Here’s what the formats look like
 
     PIX_FMT_YUV422
     Y0 U0 Y1 V0 | Y2 U1 Y3 V1 | Y4 U2 Y5 V2 | ...
- 
+
     PIX_FMT_UYVY422
     U0 Y0 V0 Y1 | U1 Y2 V1 Y3 | U2 Y4 V2 Y5 | ...
 

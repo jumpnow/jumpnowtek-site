@@ -3,7 +3,7 @@ layout: post
 title: BeagleBone Black U-Boot
 description: "Some working notes on U-Boot for the BeagleBone Black"
 date: 2015-10-23 09:45:00
-categories: beaglebone 
+categories: beaglebone
 tags: [linux, beaglebone, uboot]
 ---
 
@@ -20,11 +20,11 @@ The u-boot configuration is specified here `meta-bbb/conf/machine/beaglebone.con
         ...
         PREFERRED_PROVIDER_virtual/bootloader = "u-boot"
         PREFERRED_PROVIDER_u-boot = "u-boot"
-        
+
         UBOOT_ENTRYPOINT = "0x80008000"
         UBOOT_LOADADDRESS = "0x80008000"
         UBOOT_MACHINE = "am335x_boneblack_config"
-        
+
         EXTRA_IMAGEDEPENDS += "u-boot"
         ...
 
@@ -38,7 +38,7 @@ The upstream git source repository and commit to retrieve the `2015.07` version 
         SRC_URI = " \
             git://git.denx.de/u-boot.git;branch=master;protocol=git \
         ...
-        
+
 Use the *virtual/bootloader* target to build u-boot for the BBB.
 
         ~/bbb/build:~$ bitbake virtual/bootloader
@@ -70,7 +70,7 @@ The binaries can be found under `<TMPDIR>/deploy/images/beaglebone`.
 5. Optionally apply any patches the bitbake recipe is using
 
         ~/bbb/u-boot$ git am ../meta-bbb/recipes-bsp/u-boot/u-boot-2015.07/*.patch
- 
+
 5. Configure u-boot
 
         ~/bbb/u-boot$ make am335x_boneblack_config
@@ -98,7 +98,7 @@ If later you want to clean everything including the configuration
 
         ~/bbb/u-boot$ make distclean
 
- 
+
 To install and test the new bootloader
 
 1. Over on a running BBB system, mount the FAT boot partition if it's not already mounted
@@ -116,7 +116,7 @@ Reboot the BBB.
 The configuration file for the BBB is `u-boot/configs/am335x_boneblack_defconfig`
 
 Here it is
- 
+
         CONFIG_ARM=y
         CONFIG_TARGET_AM335X_EVM=y
         CONFIG_SPL=y
@@ -134,7 +134,7 @@ Specific *AM335X\_EVM* source can be found under `u-boot/board/ti/am335x/`.
 
 Definitions and board specific options can be found in `u-boot/include/configs/am335x_evm.h`.
 
-# Why all the warnings from MLO? 
+# Why all the warnings from MLO?
 
 Here's what the *MLO* output looks like when booting from an SD card
 
@@ -143,7 +143,7 @@ Here's what the *MLO* output looks like when booting from an SD card
         MMC: block number 0x200 exceeds max(0x0)
         *** Error - No Valid Environment Area found
         *** Warning - bad CRC, using default environment
-        
+
         reading u-boot.img
         reading u-boot.img
 
@@ -168,7 +168,7 @@ This warning
 
         *** Warning - bad CRC, using default environment
 
-comes from 
+comes from
 
         spl_start_uboot() from board/ti/am335x_board.c line 196
         |--- env_relocate_spec() from common/env_mmc.c line 293
@@ -242,9 +242,9 @@ Here's what the *MLO* output looks like now when booting from an SD card
         reading u-boot.img
 
 
-*u-boot.img* really is read twice. 
+*u-boot.img* really is read twice.
 
-At first just the header to find the proper load address. Then a second read that loads *u-boot.img* into the proper location. 
+At first just the header to find the proper load address. Then a second read that loads *u-boot.img* into the proper location.
 
         board_init_r() from common/spl/spl.c line 206
         |-- spl_mmc_load_image() from common/spl/spl_mmc.c line 158
@@ -285,9 +285,9 @@ Or like this booting from the *eMMC*
 
         root@beaglebone:~# dmesg | grep ES2
         [    0.000000] AM335X ES2.0 (sgx neon )
-    
+
         root@beaglebone:~# fdisk -l /dev/mmcblk0boot0
-        
+
         Disk /dev/mmcblk0boot0: 1 MiB, 1048576 bytes, 2048 sectors
         Units: sectors of 1 * 512 = 512 bytes
         Sector size (logical/physical): 512 bytes / 512 bytes
@@ -297,9 +297,9 @@ And 2MB on the `ES2.1` boards
 
         root@beaglebone:~# dmesg | grep ES2
         [    0.000000] AM335X ES2.1 (sgx neon )
-        
+
         root@beaglebone:~# fdisk -l /dev/mmcblk0boot0
-         
+
         Disk /dev/mmcblk0boot0: 2 MiB, 2097152 bytes, 4096 sectors
         Units: sectors of 1 * 512 = 512 bytes
         Sector size (logical/physical): 512 bytes / 512 bytes
@@ -309,7 +309,7 @@ And 2MB on the `ES2.1` boards
 The `mmcblkboot` partitions may or may not have data in them when you initially receive a BBB.
 
 I've cleared mine already.
- 
+
         root@bbb:~# hexdump -C /dev/mmcblk0boot0
         00000000  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
         *
@@ -399,11 +399,11 @@ So the next questions are
 3. When is this environment data used?
 
 TO BE CONTINUED...
-    
+
 
 [uboot]: http://www.denx.de/wiki/U-Boot/
 [bbb]: http://www.beagleboard.org/
 [meta-bbb]: https://github.com/jumpnow/meta-bbb
-[bbb-yocto]: http://www.jumpnowtek.com/beaglebone/BeagleBone-Systems-with-Yocto.html
-[bbb-kernel-work]: http://www.jumpnowtek.com/beaglebone/Working-on-the-BeagleBone-kernel.html
+[bbb-yocto]: https://jumpnowtek.com/beaglebone/BeagleBone-Systems-with-Yocto.html
+[bbb-kernel-work]: https://jumpnowtek.com/beaglebone/Working-on-the-BeagleBone-kernel.html
 [mmc-dev-parts]: https://git.kernel.org/cgit/linux/kernel/git/stable/linux-stable.git/tree/Documentation/mmc/mmc-dev-parts.txt?id=refs/tags/v4.2.4

@@ -25,18 +25,18 @@ You can check whether or not the hwclock communication is working this way
     Sun Mar 12 13:49:26 2017  0.000000 seconds
 
 This is from a fixed system with the patches referenced below. A broken system will return zeros for the date and time.
- 
+
 The following summary comes from a variety of web postings mainly from upstream android and ti-omap kernel developers.
 
 It's difficult to get information about the Duovero PMIC, the [TWL6030][twl6030]. The full programming reference manual is not publicly available the way it is for the TWL4030.
 
-This [manual][swcs045c] has some information about the RTC. The **REAL-TIME CLOCK** section starting on page 32 has some information about the actual time registers. 
+This [manual][swcs045c] has some information about the RTC. The **REAL-TIME CLOCK** section starting on page 32 has some information about the actual time registers.
 
 The important information for this problem is under the **CONTROL INTERFACE (I2C, MSECURE, INTERRUPTS)** section and in particular the **Secure Registers** subsection starting on page 85.
 
 The **MSECURE** control signal determines whether the RTC can be set or cleared.
- 
-Gumstix doesn't provide a schematic of the signals between the OMAP4 and the TWL6030, but assuming they copied the [pandaboard design][pandaboard-schematic] (or that they both copied some other reference design), pin N2 **MSECURE** of the TWL6030 goes directly to pin AD2, the **FREF\_CLK0\_OUT** pad of the OMAP4. 
+
+Gumstix doesn't provide a schematic of the signals between the OMAP4 and the TWL6030, but assuming they copied the [pandaboard design][pandaboard-schematic] (or that they both copied some other reference design), pin N2 **MSECURE** of the TWL6030 goes directly to pin AD2, the **FREF\_CLK0\_OUT** pad of the OMAP4.
 
 Mode 2 of this pad is **SYS\_DRM\_MSECURE** which is what is required.
 
@@ -48,7 +48,7 @@ For at least the linux-stable 4.4 kernels onward, including `arch/arm/boot/dts/t
 
 I found this [TWL6030 Register Manual][twl6030-register-manual] on a non-TI site.
 
-From section 2.9, the **BBSPOR\_CFG** register is used to enable the RTC backup battery trickle charge. By default the **BB\_CHG\_EN** bit is off. 
+From section 2.9, the **BBSPOR\_CFG** register is used to enable the RTC backup battery trickle charge. By default the **BB\_CHG\_EN** bit is off.
 
 I'm using [Panasonic ML-621S/ZTN][panasonic-battery] batteries in the Duoveros, so I wanted the trickle charge cutoff to be at 3.15V. These batteries accept up to 3.2V. Charging info is [here][battery-charging].
 
@@ -65,7 +65,7 @@ Given that, this [patch][trickle-charge-patch] to the **linux-stable-4.4** kerne
     @@ -470,6 +470,41 @@ static struct rtc_class_ops twl_rtc_ops = {
      	.alarm_irq_enable = twl_rtc_alarm_irq_enable,
      };
- 
+
     +#define REG_BBSPOR_CFG 0xE6
     +#define VRTC_EN_SLP_STS        (1 << 6)
     +#define VRTC_EN_OFF_STS        (1 << 5)
@@ -102,20 +102,20 @@ Given that, this [patch][trickle-charge-patch] to the **linux-stable-4.4** kerne
     +}
     +
      /*----------------------------------------------------------------------*/
- 
+
      static int twl_rtc_probe(struct platform_device *pdev)
     @@ -525,6 +560,10 @@ static int twl_rtc_probe(struct platform_device *pdev)
      	if (ret < 0)
      		return ret;
- 
+
     +	ret = enable_rtc_battery_charging();
     +	if (ret < 0)
     +		dev_err(&pdev->dev, "Failed to enable rtc battery charging\n");
     +
      	device_init_wakeup(&pdev->dev, 1);
- 
+
      	rtc = devm_rtc_device_register(&pdev->dev, pdev->name,
-    -- 
+    --
     2.7.4
 
 ### Init scripts

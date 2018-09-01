@@ -27,7 +27,7 @@ The [README][overlays-readme] in the RPi kernel overlays directory shows the pin
     ...
 
 
-You can also find this information in the [BCM2835 ARM Peripherals][bcm2835-arm-peripherals-datasheet] datasheet, *Section 9.5 Quick Reference*. 
+You can also find this information in the [BCM2835 ARM Peripherals][bcm2835-arm-peripherals-datasheet] datasheet, *Section 9.5 Quick Reference*.
 
 At the end of *Section 9.5* is this note
 
@@ -54,7 +54,7 @@ This [mailing list thread][enabling-the-pwm-clock-at-boot] describes a device tr
 Since it's easy enough to do, I added two additional PWM overlays
 
 * pwm-with-clk.dtbo
-* pwm-2chan-with-clk.dtbo 
+* pwm-2chan-with-clk.dtbo
 
 You can find the source for them [here][pwm-dts-src].
 
@@ -108,11 +108,11 @@ When you boot with the pwm overlay loaded, you should see the kernel *pwm\_bcm28
     root@rpi3:~# lsmod | grep pwm
     pwm_bcm2835             2711  0
 
-It's a standard Linux kernel PWM driver. 
+It's a standard Linux kernel PWM driver.
 
 Instructions for using the PWM sysfs interface can be found in the Linux documentation [pwm.txt][pwm-txt].
 
-I have a [small Python class][pwmpy] that simplifies working with the PWM sysfs interface, but it's only a convenience and definitely not required to work with the timers. 
+I have a [small Python class][pwmpy] that simplifies working with the PWM sysfs interface, but it's only a convenience and definitely not required to work with the timers.
 
 You can use any language that can do file I/O including the Linux shell.
 
@@ -147,7 +147,7 @@ Prior to using a channel you must export it first
 That creates a new `pwm0` subdirectory
 
     root@rpi3:/sys/class/pwm/pwmchip0# ls
-    device  export  npwm  power  pwm0  subsystem  uevent  unexport    
+    device  export  npwm  power  pwm0  subsystem  uevent  unexport
 
     root@rpi3:/sys/class/pwm/pwmchip0# ls pwm0
     duty_cycle  enable  period  polarity  power  uevent
@@ -180,7 +180,7 @@ The *duty_cycle* should obviously not exceed the *period*.
 [pwm-dts-src]: https://github.com/jumpnow/meta-rpi/tree/krogoth/recipes-kernel/linux/linux-raspberrypi-4.4/dts
 [pwm-txt]: https://www.kernel.org/doc/Documentation/pwm.txt
 [meta-rpi]: https://github.com/jumpnow/meta-rpi/
-[meta-rpi-instructions]: http://www.jumpnowtek.com/rpi/Raspberry-Pi-Systems-with-Yocto.html
+[meta-rpi-instructions]: https://jumpnowtek.com/rpi/Raspberry-Pi-Systems-with-Yocto.html
 [raspbian]: https://www.raspberrypi.org/downloads/raspbian/
 [pwmpy]: https://github.com/scottellis/pwmpy
-[buildroot-instructions]: http://www.jumpnowtek.com/rpi/Raspberry-Pi-Systems-with-Buildroot.html
+[buildroot-instructions]: https://jumpnowtek.com/rpi/Raspberry-Pi-Systems-with-Buildroot.html

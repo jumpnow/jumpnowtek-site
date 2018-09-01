@@ -31,22 +31,22 @@ You can change the *I2C* bus speed three different ways
 3. Using a [loader.conf(5)][loader-conf] file
 
 ### 1. Device Tree File
-An example using a dts file can be found in this [duovero.dts][duovero-dts]. 
+An example using a dts file can be found in this [duovero.dts][duovero-dts].
 
 Here is an excerpt for one of the buses
 
     ...
-    i2c2: i2c@48072000 { 
-            compatible = "ti,i2c"; 
-            reg = <	0x48072000 0x100 >; 
-            interrupts = <89>; 
-            interrupt-parent = <&GIC>; 
-            i2c-device-id = <2>; 
-            clock-frequency = <400000>; 
-    }; 
+    i2c2: i2c@48072000 {
+            compatible = "ti,i2c";
+            reg = <	0x48072000 0x100 >;
+            interrupts = <89>;
+            interrupt-parent = <&GIC>;
+            i2c-device-id = <2>;
+            clock-frequency = <400000>;
+    };
     ...
 
-`clock-frequency` was the new addition to the *i2c* properties. 
+`clock-frequency` was the new addition to the *i2c* properties.
 
 ### 2. sysctl
 
@@ -78,7 +78,7 @@ Then you have to **reset** the bus using the [i2c(8)][i2c] utility for it to tak
 
 ### 3. loader.conf
 
-Given those two methods, there doesn't seem much need for the [loader.conf(5)][loader-conf] approach. By default, the *loader.conf* framework is not even used on most FreeBSD ARM boards. It adds significantly to the boot time. 
+Given those two methods, there doesn't seem much need for the [loader.conf(5)][loader-conf] approach. By default, the *loader.conf* framework is not even used on most FreeBSD ARM boards. It adds significantly to the boot time.
 
 But if you really want to, this is how you could use it.
 

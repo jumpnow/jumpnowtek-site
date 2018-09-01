@@ -3,7 +3,7 @@ layout: post
 title: Miscellaneous Yocto Notes
 description: ""
 date: 2016-02-17 09:30:00
-categories: yocto 
+categories: yocto
 tags: [yocto, linux]
 ---
 
@@ -11,17 +11,17 @@ tags: [yocto, linux]
 
     scott@fractal:~/elvaria/build$ oe-pkgdata-util -h
     usage: oe-pkgdata-util [-h] [-d] [-p PKGDATA_DIR] <subcommand> ...
-    
+
     OpenEmbedded pkgdata tool - queries the pkgdata files written out during
     do_package
-    
+
     optional arguments:
       -h, --help            show this help message and exit
       -d, --debug           Enable debug output
       -p PKGDATA_DIR, --pkgdata-dir PKGDATA_DIR
                             Path to pkgdata directory (determined automatically if
                             not specified)
-    
+
     subcommands:
       <subcommand>
         lookup-pkg          Translate between recipe-space package names and
@@ -32,7 +32,7 @@ tags: [yocto, linux]
         find-path           Find package providing a target path
         read-value          Read any pkgdata value for one or more packages
         glob                Expand package name glob expression
-    
+
     Use oe-pkgdata-util <subcommand> --help to get help on a specific command
 
 

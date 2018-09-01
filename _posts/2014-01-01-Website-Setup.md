@@ -3,7 +3,7 @@ layout: post
 title: Website Setup
 description: "Configure and deploy jumpnowtek on an Ubuntu server"
 date: 2014-01-01 00:01:00
-categories: miscellaneous 
+categories: miscellaneous
 tags: [linux, ubuntu, jekyll]
 ---
 

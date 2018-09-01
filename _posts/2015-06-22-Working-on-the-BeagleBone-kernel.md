@@ -3,7 +3,7 @@ layout: post
 title: Working on the BeagleBone Kernel
 description: "Working on and customizing the BeagleBone Black kernel"
 date: 2016-06-18 06:41:00
-categories: beaglebone 
+categories: beaglebone
 tags: [linux, beaglebone, kernel]
 ---
 
@@ -28,13 +28,13 @@ Which kernel to use comes from this line in `meta-bbb/conf/machine/beaglebone.co
 
 The kernel recipes are found here `meta-bbb/recipes-kernel/linux/`
 
-If you had multiple *linux-stable* recipes, maybe 
+If you had multiple *linux-stable* recipes, maybe
 
 * linux-stable_4.4.bb
-* linux-stable_4.5.bb 
+* linux-stable_4.5.bb
 * linux-stable_4.6.bb
 
-then the highest revision number, **4.6** in this case, would be used. 
+then the highest revision number, **4.6** in this case, would be used.
 
 To specify an earlier version, you could use a line like this in `build/conf/local.conf`
 
@@ -136,7 +136,7 @@ Then after the normal setting up of the Yocto build environment
     ~$ source poky-krogoth/oe-init-build-env ~/bbb/build
 
 build the sdk installer with the *populate_sdk* command, usually specifying the same image file you are using in your project
-    
+
     ~/bbb/build$ bitbake -c populate_sdk console-image
 
 When finished, the sdk installer will end up here
@@ -159,13 +159,13 @@ These lines have the details
 
 
 Be sure to pay attention to the branch.
-		
+
 Here are the commands to checkout that same kernel source
 
     $ cd ~/bbb
     $ git clone git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git
     $ cd linux-stable
-	
+
 Switch to the correct branch
 
     $ git checkout -b linux-4.4.y origin/linux-4.4.y
@@ -174,7 +174,7 @@ That gets you to the correct git branch, but depending on whether I've kept the 
 
 ### Apply existing patches
 
-Currently the `meta-bbb/recipes-kernel/linux/linux-stable_4.4.bb` recipe has a number of patches that I've included to add support for *spidev*, *i2c*, *uart4* and a few touchscreens. These are all completely optional and you probably want your own patches instead. 
+Currently the `meta-bbb/recipes-kernel/linux/linux-stable_4.4.bb` recipe has a number of patches that I've included to add support for *spidev*, *i2c*, *uart4* and a few touchscreens. These are all completely optional and you probably want your own patches instead.
 
 Whatever patches you decide to use when building with *Yocto*, you can use *git* to apply these same patches to the Linux source repository outside of *Yocto*.
 
@@ -373,7 +373,7 @@ Here's a working Yocto recipe that pulls the external module source from a priva
       unset CFLAGS CPPFLAGS CXXFLAGS LDFLAGS
       oe_runmake 'KERNELDIR=${STAGING_KERNEL_DIR}'
     }
-    
+
     do_install() {
       install -d ${D}${base_libdir}/modules/${KERNEL_VERSION}/kernel/drivers/${PN}
       install -m 0644 ads1278${KERNEL_OBJECT_SUFFIX} ${D}${base_libdir}/modules/${KERNEL_VERSION}/kernel/drivers/${PN}
@@ -383,6 +383,6 @@ Here's a working Yocto recipe that pulls the external module source from a priva
 You could then add the driver package, `ads128` in this example, to to the `IMAGE_INSTALL` variable for the *Yocto* image recipe you are using.
 
 
-[bbb-yocto]: http://www.jumpnowtek.com/beaglebone/BeagleBone-Systems-with-Yocto.html
+[bbb-yocto]: https://jumpnowtek.com/beaglebone/BeagleBone-Systems-with-Yocto.html
 [yocto]: https://www.yoctoproject.org/
 [meta-bbb]: https://github.com/jumpnow/meta-bbb

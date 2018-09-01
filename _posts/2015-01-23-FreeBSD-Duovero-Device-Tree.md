@@ -35,7 +35,7 @@ Hardware differences between the boards are handled by board specific `dts` file
 Here is the latest [omap443x.dtsi][omap443x-dtsi] I'm working with.
 
 And here is the breakdown
-  
+
 ### Top level
     / {
         \#address-cells = <1>;
@@ -55,7 +55,7 @@ The default is one *address* cell and one *size* cell for each device (*reg* pro
 
 
 Used in `sys/arm/ti/ti_machdep.c`
- 
+
     compatible = "ti,omap4430", "ti,omap4"
 
 
@@ -88,25 +88,25 @@ Used in `sys/dev/ofw/ofw_bus_subr.c`
 
     interrupt-controller
 
-*interrupt-cells* is the number of values the *interrupts* properties will have in child nodes. 
+*interrupt-cells* is the number of values the *interrupts* properties will have in child nodes.
 
-*FreeBSD* is still using **<1>**, just the irq number from a flat IRQ address space. The result is *SPI* irqs are +32 and *PPI* irqs are +16 from their *Linux* equivalents. 
+*FreeBSD* is still using **<1>**, just the irq number from a flat IRQ address space. The result is *SPI* irqs are +32 and *PPI* irqs are +16 from their *Linux* equivalents.
 
 Support exists in `sys/arm/arm/gic.c` for the the expanded *controller, irq, irq-type* definition for *interrupts* that *Linux* uses. This value will change to **<3>** if/when conversion to the expanded *interrupts* definition happens.
 
-Used in `sys/arm/arm/gic.c` 
+Used in `sys/arm/arm/gic.c`
 
     interrupt-cells = <1>
 
 
 Memory offsets and sizes come from  (1) page 1093, table 4-14.
 
-Additional information can be found in (3). 
+Additional information can be found in (3).
 
 *0x48241000* is the interrupt distributor interface, (3) table 1-3 and section 3.1.2. This is the region used for both **PPI** (private, per core) and **SPI** (shared peripheral) interrupt processing.
 
 *0x48240100* is the interrupt controller interface, (3) table 1-3 and section 3.1
- 
+
 Used in `sys/arm/arm/gic.c`
 
     reg = <0x48241000 0x1000>,
@@ -174,9 +174,9 @@ An empty *ranges* property means parent and child address spaces are mapped *1:1
 
     ranges;
 
-I'm not sure how the *bus-frequency* property is used by *FreeBSD* for the OMAP4. 
+I'm not sure how the *bus-frequency* property is used by *FreeBSD* for the OMAP4.
 
-There is reference to it in `sys/boot/fdt/fdt_loader_cmd.c` in the *sounds relevant* `fdt_fixup_cpubusfreqs()` function. 
+There is reference to it in `sys/boot/fdt/fdt_loader_cmd.c` in the *sounds relevant* `fdt_fixup_cpubusfreqs()` function.
 
 Maybe it is only for dtb's loaded at runtime by u-boot?
 
@@ -207,7 +207,7 @@ Used in `sys/arm/ti/omap4/omap4_prcm_clks.c`
 
 The register definitions are for
 
-* prm@4a306000  - device-level power and reset management 
+* prm@4a306000  - device-level power and reset management
 * cm1@4a004000  - device-level clock management 1
 * cm2@4a008000  - device-level clock management 2
 * scrm@4a30a000 - system-level clock and reset distribution and management
@@ -241,10 +241,10 @@ Used in `sys/arm/ti/omap4/omap4_prcm_clks.c`
 
 ### Timers
 
-Definitions for the core Global and Local timers. 
+Definitions for the core Global and Local timers.
 
 These are **NOT** the *General Purpose* or *32-kHZ Synchronized* timers from Section 22 of (1).
- 
+
     mp_tmr@48240200 {
         compatible = "arm,mpcore-timers";
         reg = <0x48240200 0x100>,
@@ -270,7 +270,7 @@ So **PERIPHBASE[31:13]** must be **0x48240000**. Table A-6 from (3) has a descri
 
     reg = <0x48240200 0x100>,
           <0x48240600 0x100>
-    
+
 
 From (3) Section 3.1.2
 
@@ -280,7 +280,7 @@ Private timer, PPI(2) - Each Cortex-A9 processor has its own private timers that
 
     interrupts = <27 29>
 
-Since these are **PPI** (private, peripheral interrupts), *Linux* uses **GIC\_PPI + 13** for the Private timers. 
+Since these are **PPI** (private, peripheral interrupts), *Linux* uses **GIC\_PPI + 13** for the Private timers.
 
 The Global timer is not configured in [omap4.dtsi][omap4-dtsi]. Not sure if *Linux* uses the Global timer.
 
@@ -297,14 +297,14 @@ The Global timer is not configured in [omap4.dtsi][omap4-dtsi]. Not sure if *Lin
 
 Only "ti,sdma" is used in `sys/arm/ti/ti_sdma.c`. A *compat* list could be added so that the *Linux* name "ti,omap4430-sdma" could be used.
 
-I listed both for now. 
+I listed both for now.
 
     compatible = "ti,omap4430-sdma", "ti,sdma"
 
 From (1), Section 16.6.1, Table 16-22
 
     reg = <0x4A056000 0x1000>
- 
+
 From (1), Section 17.3.2, Table 17-2
 
 * MA\_IRQ\_12 : SDMA\_IRQ\_0
@@ -360,7 +360,7 @@ From (1), Section 17.3.2, Table 17-2
 * MA_IRQ_32 : GPIO4_MPU_IRQ
 * MA_IRQ_33 : GPIO5_MPU_IRQ
 * MA_IRQ_34 : GPIO6_MPU_IRQ
- 
+
 which results in
 
     interrupts = <61 62 63 64 65 66>;
@@ -418,7 +418,7 @@ Used in `sys/dev/uart/uart_bus_fdt.c`
 From (1), Section 17.3.2, Table 17-2
 
 * MA_IRQ_74 : UART3_IRQ
- 
+
 which results in
 
     interrupts = <106>
@@ -428,13 +428,13 @@ Used in `sys/dev/uart/uart_dev_ti8250.c`
 This is an offset to **UART0_CLK** (`sys/arm/ti/ti_prcm.h`) for enabling the correct clock in `sys/arm/ti/omap4/omap4_prcm_clks.c`
 
 The clock register for *UART3* is from (1), Section 3.11.39.1, Table 3-1342
-  
+
     uart-device-id = <3>
 
 
 ### I2C
 
-There are 5 I2C controllers on the *OMAP4*, 4 of which are available for general purpose use. The fifth I2C controller is dedicated for use with the 
+There are 5 I2C controllers on the *OMAP4*, 4 of which are available for general purpose use. The fifth I2C controller is dedicated for use with the
 [TWL6030][twl6030] power management unit.
 
 I'm only showing *i2c1*. The others are similar.
@@ -471,7 +471,7 @@ Used in `sys/arm/ti/ti_i2c.c` to enable the clock for this device as an offset f
 *FreeBSD* only. Allows setting a default I2C bus speed in the dts. You can also change the bus speed through [sysctl(8)][sysctl].
 
     clock-frequency = <100000>
- 
+
 
 ### MMC
 
@@ -488,7 +488,7 @@ Used in `sys/arm/ti/ti_i2c.c` to enable the clock for this device as an offset f
 There are 5 MMC controllers.
 
 I'm only declaring the first one, which has dedicated hardware for an SD card on both the *Duovero* and *PandaBoard*.
-   
+
 Used in `sys/arm/ti/ti_sdhci.c`
 
     compatible = "ti,omap4-hsmmc"

@@ -26,7 +26,7 @@ The kernel also has the configuration of **P9.19** and **P9.20** as I2C cape man
 There is an `am33xx-pruss-uio.dtsi` included that can be used to enable the **uio\_pruss** driver.
 
 To get started, included in the image is a device tree file that I will use as the basis for the following PRU examples. The dts includes the `am33xx-pruss-uio.dtsi`.
- 
+
     /dts-v1/;
 
     #include "am33xx.dtsi"
@@ -71,9 +71,9 @@ To use the `bbb-pru-minimal.dtb` edit `/mnt/uEnv.txt` and set the **fdtfile** va
     fdtfile=bbb-pru-minimal.dtb
 	...
 
-	
+
 After a reboot you should see these kernel drivers loaded
-	
+
 	# lsmod
     Module                  Size  Used by    Not tainted
     uio_pruss               4356  0
@@ -190,7 +190,7 @@ Here's a simple PRU application written in assembler that loops for 20 times, wi
       call delay
       sub r1, r1, 1
       qbne main, r1, 0
-      mov r31.b0, PRU0_ARM_INTERRUPT + 16 ; notify ARM we are done 
+      mov r31.b0, PRU0_ARM_INTERRUPT + 16 ; notify ARM we are done
       halt
 
     delay:
@@ -226,7 +226,7 @@ Build and copy it to the BBB
     Writing Code Image of 11 word(s)
 
     ~/pru-code/loop$ scp loop.bin root@192.168.10.115:/root
-    loop.bin                                                                   
+    loop.bin
 
 Over on the BBB
 
@@ -243,10 +243,10 @@ Load and run the PRU app like this
 
 To doublecheck that we got the timing of the delay loop correct, 2 instructions @ 5ns each
 
-    20 * ((2 x 0.000000005 sec) * 50,000,000) = 10 sec  
+    20 * ((2 x 0.000000005 sec) * 50,000,000) = 10 sec
 
 time the run
-    
+
     # time ./loader loop.bin
     Executing program and waiting for termination
     Done
@@ -260,7 +260,7 @@ The next thing to try is controlling some gpio pins, both writing and reading.
 
 I have a [PRU Cape][ti-pru-cape] board which has some convenient components for testing the PRU hardware.
 
-In particular for gpio testing it has 
+In particular for gpio testing it has
 
 * 4 LEDs accessible as PRU0 output pins GPO 0,1,2,3
 * 3 LEDS accessible as PRU1 output pins GPO 1,3,5
@@ -270,7 +270,7 @@ The pins are connected to the BBB header as
 
 The PRU0 LEDs
 
-* P9.28 : pr1\_pru0\_pru\_r30\_3 
+* P9.28 : pr1\_pru0\_pru\_r30\_3
 * P9.29 : pr1\_pru0\_pru\_r30\_1
 * P9.30 : pr1\_pru0\_pru\_r30\_2
 * P9.31 : pr1\_pru0\_pru\_r30\_0
@@ -348,7 +348,7 @@ Copy the dts to the kernel source directory, build it and then copy the dtb to t
     DTC     arch/arm/boot/dts/bbb-pru-cape-gpio.dtb
 
     ~/ti-linux-kernel$ scp arch/arm/boot/dts/bbb-pru-cape-gpio.dtb root@192.168.10.115:/boot
-    bbb-pru-cape-gpio.dtb                
+    bbb-pru-cape-gpio.dtb
 
 Over on the BBB, modify `uEnv.txt` to use the new dtb.
 
@@ -443,7 +443,7 @@ Build and copy it to the BBB
     Writing Code Image of 28 word(s)
 
     ~/pru-code/cylon$ scp cylon.bin root@192.168.10.115:/root
-    cylon.bin                                             
+    cylon.bin
 
 
 Over on the BBB
@@ -464,7 +464,7 @@ And the D1-D4 LEDs on the PRU Cape board exhibit a little cylon scrolling behavi
 
 
 Buildroot also provides a package for the Texas Instruments CGT PRU compiler.
-  
+
     config BR2_PACKAGE_HOST_TI_CGT_PRU
             bool "host ti-cgt-pru"
             depends on BR2_PACKAGE_HOST_TI_CGT_PRU_ARCH_SUPPORTS
@@ -475,15 +475,15 @@ Buildroot also provides a package for the Texas Instruments CGT PRU compiler.
               Note: this is a binary cross toolchain that runs on x86 hosts
               targeting PRU cores found alongside some ARM processors.
 
-This provides the **clpru** C compiler for the PRUs. 
+This provides the **clpru** C compiler for the PRUs.
 
 Update your **PATH** if you want to try it out.
 
     export PATH=/br5/bbb/host/usr/share/ti-cgt-pru/bin:${PATH}
 
 
-[bbb-buildroot]: http://www.jumpnowtek.com/beaglebone/BeagleBone-Systems-with-Buildroot.html
-[bbb-yocto]: http://www.jumpnowtek.com/beaglebone/BeagleBone-Systems-with-Yocto.html
+[bbb-buildroot]: https://jumpnowtek.com/beaglebone/BeagleBone-Systems-with-Buildroot.html
+[bbb-yocto]: https://jumpnowtek.com/beaglebone/BeagleBone-Systems-with-Yocto.html
 [bbb-pru]: http://elinux.org/Ti_AM33XX_PRUSSv2
 [uio-pruss]: http://arago-project.org/git/projects/?p=linux-am33x.git;a=commit;h=f1a304e7941cc76353363a139cbb6a4b1ca7c737
 [RPMsg]: http://omappedia.org/wiki/Category:RPMsg

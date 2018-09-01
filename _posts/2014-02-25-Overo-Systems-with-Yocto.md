@@ -3,7 +3,7 @@ layout: post
 title: Building Overo Systems with Yocto
 description: "Building customized systems for Gumstix Overo using tools from the Yocto Project"
 date: 2016-05-23 08:30:00
-categories: gumstix-linux 
+categories: gumstix-linux
 tags: [linux, gumstix, overo, yocto]
 ---
 
@@ -47,7 +47,7 @@ You will need at least the following packages installed
     texinfo
 
 You also want to change the default Ubuntu shell from `dash` to `bash` by running this command from a shell
- 
+
     sudo dpkg-reconfigure dash
 
 Choose **No** to dash when prompted.
@@ -69,7 +69,7 @@ and the package group
 
 There might be more packages required since I had already installed *qt-creator* and the *Development Tools* group before I did the first build with Yocto.
 
-Fedora already uses `bash` as the shell. 
+Fedora already uses `bash` as the shell.
 
 ### Clone the dependency repositories
 
@@ -102,7 +102,7 @@ The `meta-overo/README.md` file has the last commits from the dependency reposit
 ### Initialize the build directory
 
 Much of the following are only the conventions that I use. All of the paths to the meta-layers are configurable.
- 
+
 First setup a build directory. I tend to do this on a per board and/or per project basis so I can quickly switch between projects. For this example I'll put the build directory under `~/overo/` with the `meta-overo` layer.
 
 You could manually create the directory structure like this
@@ -114,7 +114,7 @@ Or you could use the *Yocto* environment script `oe-init-build-env` like this pa
     scott@octo:~$ source poky-krogoth/oe-init-build-env ~/overo/build
 
 The *Yocto* environment script will create the build directory if it does not already exist.
- 
+
 ### Customize the configuration files
 
 There are some sample configuration files in the `meta-overo/conf` directory.
@@ -130,7 +130,7 @@ You may want to customize the configuration files before your first build.
 
 ### Edit bblayers.conf
 
-In `bblayers.conf` file replace `${HOME}` with the appropriate path to the meta-layer repositories on your system if you modified any of the above instructions when cloning. 
+In `bblayers.conf` file replace `${HOME}` with the appropriate path to the meta-layer repositories on your system if you modified any of the above instructions when cloning.
 
 For example, if your directory structure does not look exactly like this, you will need to modify `bblayers.conf`
 
@@ -175,7 +175,7 @@ This is another Yocto build directory that can get pretty big, greater then 5GB.
 
 The default location is in the `build` directory, `~/overo/build/sstate-cache`.
 
- 
+
 ### Run the build
 
 You need to source the environment every time you want to run a build. The `oe-init-build-env` when run a second time will not overwrite your customized conf files.
@@ -252,7 +252,7 @@ To build the `qt5-image` it would be
 The `cleansstate` command (with two s's) works for image recipes as well.
 
 The image files won't get deleted from the *TMPDIR* until the next time you build.
- 
+
 ### Copying the binaries to an SD card
 
 After the build completes, the bootloader, kernel and rootfs image files can be found in `<TMPDIR>/deploy/images/overo/`.
@@ -265,7 +265,7 @@ This script will partition an SD card with the minimal 2 partitions required for
 
 Insert the microSD into your workstation and note where it shows up.
 
-[lsblk][lsblk] is convenient for finding the microSD card. 
+[lsblk][lsblk] is convenient for finding the microSD card.
 
 For example
 
@@ -287,7 +287,7 @@ For example
     `-sdb2    8:18   1   7.3G  0 part
 
 I would use `sdb` for the format and copy script parameters on this machine.
- 
+
 It doesn't matter if some partitions from the SD card are mounted. The `mk2parts.sh` script will unmount them.
 
 **BE CAREFUL** with this script. It will format any disk on your workstation.
@@ -309,7 +309,7 @@ You only have to create this directory once.
 
 This script copies the bootloader (MLO, u-boot) and a u-boot script `uEnv.txt` to the boot partition of the SD card.
 
-A `uEnv.txt` is required until I upgrade u-boot. The reason is I'm using an *ext4* filesystem since *ext3* was deprecated in the newest kernels. But the default u-boot environment thinks the rootfs will be *ext3*. 
+A `uEnv.txt` is required until I upgrade u-boot. The reason is I'm using an *ext4* filesystem since *ext3* was deprecated in the newest kernels. But the default u-boot environment thinks the rootfs will be *ext3*.
 
 There is a default `uEnv.txt` provided (assumes an Overo Storm and a Tobi expansion board)
 
@@ -402,6 +402,6 @@ To add or upgrade packages to the system, you might be interested in using the b
 [meta-overo]: https://github.com/jumpnow/meta-overo
 [lsblk]: http://linux.die.net/man/8/lsblk
 [serialecho]: https://github.com/scottellis/serialecho
-[opkg-repo]: http://www.jumpnowtek.com/yocto/Using-your-build-workstation-as-a-remote-package-repository.html
-[bbb-kernel]: http://www.jumpnowtek.com/beaglebone/Working-on-the-BeagleBone-kernel.html
+[opkg-repo]: https://jumpnowtek.com/yocto/Using-your-build-workstation-as-a-remote-package-repository.html
+[bbb-kernel]: https://jumpnowtek.com/beaglebone/Working-on-the-BeagleBone-kernel.html
 [eudev]: https://wiki.gentoo.org/wiki/Project:Eudev

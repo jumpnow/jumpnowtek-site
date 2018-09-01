@@ -8,7 +8,7 @@ tags: [gumstix, duovero, linux, wifi, access point, hostap]
 
 These instructions are based on a system running a `4.1` Linux kernel built from the sources described in this [Building Duovero Systems with Yocto][yocto-duovero] post.
 
-The [Gumstix Duovero Zephyr][gumstix-duovero] come with a built-in combination `wifi/bluetooth` radio. 
+The [Gumstix Duovero Zephyr][gumstix-duovero] come with a built-in combination `wifi/bluetooth` radio.
 
 The wifi radio supports operating as an *access point*.
 
@@ -67,14 +67,14 @@ The following interface will then show up
               collisions:0 txqueuelen:1000
               RX bytes:2310017 (2.2 MiB)  TX bytes:78326100 (74.6 MiB)
 
- 
+
 The standard Linux software for access point management is [hostapd][hostapd].
 
-There is a recipe for *hostapd v2.3* called *hostap-daemon* in the [meta-duovero][meta-duovero] layer. One [patch][a6cc060] was backed out to get it to work with the Duovero. 
+There is a recipe for *hostapd v2.3* called *hostap-daemon* in the [meta-duovero][meta-duovero] layer. One [patch][a6cc060] was backed out to get it to work with the Duovero.
 
 You can find the recipe with [patch here][hostapd-patch].
 
-The *hostap-daemon* init script (`/etc/init.d/hostapd`) handles bringing up the `uap0` interface and running `ifup uap0` to assign an IP address before starting the *hostapd* daemon. 
+The *hostap-daemon* init script (`/etc/init.d/hostapd`) handles bringing up the `uap0` interface and running `ifup uap0` to assign an IP address before starting the *hostapd* daemon.
 
 If you want a full Duovero rootfs image recipe, you can use this [console-image.bb][console-image]. It includes some useful AP tools like a *dhcp server* and the *iptables* utility.
 
@@ -96,7 +96,7 @@ In `/etc/network/interfaces`, the `uap0` interface is given a default IP address
 	       netmask 255.255.255.0
 
 #### hostapd - /etc/hostapd.conf
- 
+
 The `hostapd` configuration file is `/etc/hostapd.conf`. There is a simple `WPA/WPA2` example that you can modify.
 
     --- /etc/hostapd.conf ---
@@ -109,7 +109,7 @@ The `hostapd` configuration file is `/etc/hostapd.conf`. There is a simple `WPA/
     wpa_passphrase=duovero-secret
     rsn_pairwise=CCMP
 
-Replace the values for *ssid* and *wpa_passphrase*. The *wpa_passphrase* has to be at least 8 characters long. 
+Replace the values for *ssid* and *wpa_passphrase*. The *wpa_passphrase* has to be at least 8 characters long.
 
 To create an open access point, you could use an even simpler configuration like this
 
@@ -133,10 +133,10 @@ Change the `HOSTAPD_ENABLE` value to **yes**.
 
 #### dhcpd - /etc/dhcp/dhcpd.conf
 
-You probably want the *access point* to give out *dhcp* addresses. There is a dhcp server installed in the *console-image*. 
+You probably want the *access point* to give out *dhcp* addresses. There is a dhcp server installed in the *console-image*.
 
 The main configuration file is `/etc/dhcp/dhcpd.conf`. The provided example assumes the `192.168.5.1` address for `uap0`.
- 
+
     --- /etc/dhcp/dhcpd.conf
 
     ddns-update-style none;
@@ -164,7 +164,7 @@ Here you need to specify the interface the *dhcp server* should listen on.
     INTERFACES="uap0"
 
 
-After making all of the configuration changes, you can restart the systems manually. 
+After making all of the configuration changes, you can restart the systems manually.
 
 This will stop the applicable services
 
@@ -181,7 +181,7 @@ This will start the services
 
 Or you can just reboot.
 
- 
+
 You should now be able to connect to the Duovero *access point* with a client. You should get an IP address from the *dhcp server*.
 
 From the client you should be able to *ssh* into the *access point* at `192.168.5.1` or whatever address you gave `uap0`.
@@ -202,7 +202,7 @@ To make this permanent uncomment this line in `/etc/sysctl.conf`
 
 
 Load the `iptable_nat` kernel module
- 
+
     root@duovero:~# modprobe iptable_nat
     [ 2109.500854] ip_tables: (C) 2000-2006 Netfilter Core Team
     [ 2109.516845] nf_conntrack version 0.5.0 (15836 buckets, 63344 max)
@@ -217,7 +217,7 @@ Add a basic *NAT routing* rule using the `eth0` interface
     root@duovero:~# iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 
 
-There is a `/etc/init.d/firewall` init script included in the *console-image* that will load the `iptable_nat` kernel module and add the NAT rule to iptables at startup. 
+There is a `/etc/init.d/firewall` init script included in the *console-image* that will load the `iptable_nat` kernel module and add the NAT rule to iptables at startup.
 
 To enable the *firewall* script, modify `/etc/default/firewall` and set *FIREWALL_ENABLE* to *yes*.
 
@@ -226,7 +226,7 @@ After that clients using the Duovero AP should be able to see the network that e
 
 #### Client Isolation
 
-I connected some more clients to the Duovero AP. They could all communicate fine with the AP, but they could **not** talk to each other. 
+I connected some more clients to the Duovero AP. They could all communicate fine with the AP, but they could **not** talk to each other.
 
 This is probably intentional [wireless client isolation][wireless-isolation] by the `mwifiex` driver or Marvell firmware. Some additional routing would need to be done by the Duovero in order to support client-to-client communication.
 
@@ -242,14 +242,14 @@ This is a pretty simple access point implementation, but it should be enough to 
 [gumstix-disable-uap-patch]: https://github.com/gumstix/meta-gumstix/commit/d82b49bfbbd4e35271ab928f1217636f86725d95
 [gumstix-parlor]: https://store.gumstix.com/index.php/products/287/
 [hostapd]: http://wireless.kernel.org/en/users/Documentation/hostapd
-[yocto-duovero]: http://www.jumpnowtek.com/gumstix/duovero/Duovero-Systems-with-Yocto.html
+[yocto-duovero]: https://jumpnowtek.com/gumstix/duovero/Duovero-Systems-with-Yocto.html
 [meta-duovero]: https://github.com/jumpnow/meta-duovero/tree/fido
 [linux-wireless]: http://comments.gmane.org/gmane.linux.kernel.wireless.general/92215
 [cgit-hostap]: http://w1.fi/cgit/hostap/
 [a6cc060]: http://w1.fi/cgit/hostap/commit/?id=a6cc0602dd62f4b2ea02556ddcfd6baf9cd6289d
 [hostapd-patch]: https://github.com/jumpnow/meta-duovero/tree/fido/recipes-connectivity/hostapd
 [console-image]: https://github.com/jumpnow/meta-duovero/blob/fido/images/console-image.bb
-[duovero-binaries]: http://jumpnowtek.com/downloads/duovero/fido
+[duovero-binaries]: https://jumpnowtek.com/downloads/duovero/fido
 [hostapd-conf]: http://hostap.epitest.fi/cgit/hostap/plain/hostapd/hostapd.conf
 [wireless-isolation]: http://www.wirelessisolation.com/
 [meta-gumstix]: https://github.com/gumstix/meta-gumstix

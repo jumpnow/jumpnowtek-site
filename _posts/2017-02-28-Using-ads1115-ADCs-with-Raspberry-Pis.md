@@ -9,10 +9,10 @@ tags: [linux, rpi, ads1115, ads1015, adc]
 
 The Texas Instruments [ADS1115][ads1115] is another multi-channel ADC that is easy to work with on the Raspberry Pi. AdaFruit sells a [breakout board][adafruit-ads1115] for the ADS1115.
 
-The RPi 4.9 kernels have the *ads1015.ko* kernel module enabled. 
+The RPi 4.9 kernels have the *ads1015.ko* kernel module enabled.
 
 Here is the help for the module
-    
+
     config SENSORS_ADS1015
             tristate "Texas Instruments ADS1015"
             depends on I2C
@@ -25,7 +25,7 @@ Here is the help for the module
 
 The ADS1015 and ADS1115 are I2C devices.
 
-A [device tree overlay][rpi-overlays] is necessary to enable and configure the driver for use. 
+A [device tree overlay][rpi-overlays] is necessary to enable and configure the driver for use.
 
 There are individual overlays for the two ADC chips
 
@@ -83,7 +83,7 @@ To enable all 4 channels of the ADC in single-ended mode, add the following
 
 This will use the default programmable gain setting of 4.096V and data sampling rate of 860 samples per second. (The ads1015 kernel module always drives the ADC in single-shot mode.)
 
-If you boot the system with those changes to `config.txt` you will see the following kernel modules 
+If you boot the system with those changes to `config.txt` you will see the following kernel modules
 
     root@rpi3:~# lsmod
     Module                  Size  Used by
@@ -117,7 +117,7 @@ The defaults are
     chc_cfg = 6
     chd_cfg = 7
 
-The values come from the Config Register, the 3 **MUX** bits 12-14. See the [datasheet][ads1115]. 
+The values come from the Config Register, the 3 **MUX** bits 12-14. See the [datasheet][ads1115].
 
 Here are the possible **MUX** (chX\_cfg) settings
 
@@ -137,7 +137,7 @@ So for instance if you wanted to use AIN0 and AIN1 in a differential configurati
 
 You would then see this in sysfs
 
-    root@rpi3:~# ls /sys/class/hwmon/hwmon0/device 
+    root@rpi3:~# ls /sys/class/hwmon/hwmon0/device
     driver  hwmon  in0_input  modalias  name  of_node  power  subsystem  uevent
 
 The in0\_input would be the differential reading between AIN0 and AIN1.
@@ -153,7 +153,7 @@ The following script reads the 4 channels configured in single-ended mode
             echo -n "ch[$i]: "
             cat /sys/class/hwmon/hwmon0/device/in${i}_input
         done
- 
+
         echo ""
         sleep 1
     done

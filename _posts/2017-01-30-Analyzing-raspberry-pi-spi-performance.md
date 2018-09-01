@@ -16,7 +16,7 @@ From the [datasheet][mcp3008-datasheet], the maximum SPI clock rate is 3.6 MHz w
 
 The device requires 18 clocks per data sample 8 clocks for addressing and setup and 10 clocks for the data.
 
-This gives us the maximum theoretical sample rate from the datasheet 
+This gives us the maximum theoretical sample rate from the datasheet
 
     3.6 MHz / 18 = 200k samples per second
 
@@ -120,11 +120,11 @@ The removal of that **udelay(10)** is my optimization explained later.
 
 **Transaction Delay** is ~10 us.
 
-So now each transaction is going to take at least 
+So now each transaction is going to take at least
 
     9.2 + 10 = 19.2 us
 
-And this brings the theoretical maximum sample rate for batched transactions down to 
+And this brings the theoretical maximum sample rate for batched transactions down to
 
     1 / 19.2 us = 52.1k transactions per second
 
@@ -138,7 +138,7 @@ blocks = 1
     theoretical transfer rate = 1 / 14.2 us = 70.4k
     measured transfer rate = 69.8k
 
-blocks = 10 
+blocks = 10
 
     10 transfers = (19.2 * 9) + 9.2 + 5 = 187 us = 18.7 us per transfer
     theoretical transfer rate = 1 / 18.7 us = 53.5k
@@ -159,7 +159,7 @@ blocks = 500
 
 From those results I'm pretty confident of my calculations.
 
-The big, obvious optimization is to reduce that `cs_change` delay in the kernel spi driver so we can take advantage of batched transactions. 
+The big, obvious optimization is to reduce that `cs_change` delay in the kernel spi driver so we can take advantage of batched transactions.
 
 Here is the original commit that added that 10 us delay
 
@@ -168,7 +168,7 @@ Here is the original commit that added that 10 us delay
     Date:   Sat Mar 29 23:48:07 2014 +0000
 
         spi: Fix handling of cs_change in core implementation
-    
+
         The core implementation of cs_change didn't follow the documentation
         which says that cs_change in the middle of the transfer means to briefly
         deassert chip select, instead it followed buggy drivers which change the
@@ -206,7 +206,7 @@ blocks = 1 (expect no change)
     theoretical transfer rate = 1 / 14.2 us = 70.4k
     measured transfer rate = 69.6k
 
-blocks = 10 
+blocks = 10
 
     10 transfers = (9.45 * 9) + 9.2 + 5 = 99.25 us = 9.925 us per transfer
     theoretical transfer rate = 1 / 9.925 us = 100.8k
@@ -230,7 +230,7 @@ The sweet spot seems to be around a block size of 100. Userland still gets data 
 
 I did uncover a problem with context switching times in my [Yocto built][yocto-rpi] RPi systems. The results are signicantly slower with blocks=1 where context switching times are most prominent, less so with higher block sizes.
 
-The [Buildroot systems][buildroot-rpi] match the Raspbian system performance on blocks=1 tests. 
+The [Buildroot systems][buildroot-rpi] match the Raspbian system performance on blocks=1 tests.
 
 This is all just an exercise at this point.
 
@@ -238,7 +238,7 @@ On the only two projects I've worked on that use the MCP3008 ADC, we poll the de
 
 
 [mcp3008-datasheet]: https://cdn-shop.adafruit.com/datasheets/MCP3008.pdf
-[using-mcp3008]: http://www.jumpnowtek.com/rpi/Using-mcp3008-ADCs-with-Raspberry-Pis.html
-[buildroot-rpi]: http://www.jumpnowtek.com/
-[yocto-rpi]: http://www.jumpnowtek.com/rpi/Raspberry-Pi-Systems-with-Yocto.html
+[using-mcp3008]: https://jumpnowtek.com/rpi/Using-mcp3008-ADCs-with-Raspberry-Pis.html
+[buildroot-rpi]: https://jumpnowtek.com/
+[yocto-rpi]: https://jumpnowtek.com/rpi/Raspberry-Pi-Systems-with-Yocto.html
 [mcp3008-speedtest]: https://github.com/scottellis/mcp3008-speedtest

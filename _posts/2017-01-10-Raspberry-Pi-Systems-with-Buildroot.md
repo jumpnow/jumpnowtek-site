@@ -9,13 +9,13 @@ tags: [linux, rpi, buildroot, rpi3, qt5, pyqt, pyqt5]
 
 This post is about building Linux systems for [Raspberry Pi][rpi] boards using [Buildroot][buildroot].
 
-Buildroot is a popular alternative to [Yocto][yocto] for building custom embedded Linux systems. 
+Buildroot is a popular alternative to [Yocto][yocto] for building custom embedded Linux systems.
 
-With a few exceptions you can build a similar Linux system with either tool. 
+With a few exceptions you can build a similar Linux system with either tool.
 
 I am using a [Buildroot clone][jumpnow-buildroot] I created in Github.
 
-The `[master]` branch of the repository is a mirror of the official Buildroot repository. 
+The `[master]` branch of the repository is a mirror of the official Buildroot repository.
 
 The default `[jumpnow]` branch has a few additions on top of `[master]` for my own customizations and is what I am using for these examples.
 
@@ -36,7 +36,7 @@ Here are some of the changes to Buildroot `[master]` in my `[jumpnow]` branch.
   1. **serialecho** - a C, Makefile based app
   2. **tspress** - a Qt5 Widgets GUI app using qmake
   3. **pytouch.py** - a [PyQt5][pyqt] app
- 
+
 * Custom Buildroot **defconfigs** to support my images for the RPi boards.
 
 * Sample rootfs overlays to customize conf files.
@@ -44,7 +44,7 @@ Here are some of the changes to Buildroot `[master]` in my `[jumpnow]` branch.
 * Some [patches to the kernel build][br-rpi-overlays] so that the RPi DTS overlays (DTBOs) are built from the kernel source and not just downloaded from the RPi firmware github repo. This make its a little easier (at least for my workflow) to include custom dts overlays when you need them by just including them as kernel patches.
 
 The **defconfig** is where non-default build information is stored. You will want to create a custom **defconfig** for your project.
- 
+
 The two custom **defconfigs** I am using in the demos are
 
 * jumpnow\_rpi3\_defconfig - for the RPi2, RPi3 and CM3 boards
@@ -61,11 +61,11 @@ To build a system, run the following (see the **ccache** notes below)
 
 **Note:** Don't run make with a **-jN** argument. The main Makefile is not designed to be run as a parallel build. The sub-projects will be run in parallel automatically.
 
-If you are missing tools on your workstation, you will get error messages telling you what you are missing. The dependencies are nothing out of the ordinary for a developer workstation and you can search the web for the particular packages you need to install for your distro. 
+If you are missing tools on your workstation, you will get error messages telling you what you are missing. The dependencies are nothing out of the ordinary for a developer workstation and you can search the web for the particular packages you need to install for your distro.
 
 The command
- 
-    make jumpnow_rpi3_defconfig 
+
+    make jumpnow_rpi3_defconfig
 
 created a `.config` file that completely describes to Buildroot how to generate the system.
 
@@ -79,21 +79,21 @@ Replace `/dev/sdb` with the location the SD card shows up on your workstation.
 #### Customizing the Build
 
 The [Buildroot Documentation][buildroot-docs] is good and you should probably be reading that first.
- 
-One easy optimization is use [ccache][ccache] to reduce redundant work by the C/C++ preprocessor. 
+
+One easy optimization is use [ccache][ccache] to reduce redundant work by the C/C++ preprocessor.
 
 Make sure your workstation has [ccache][ccache] installed, then run the Buildroot configuration tool after you have your initial *.config* generated.
 
-    ~/buildroot$ make menuconfig 
-    
+    ~/buildroot$ make menuconfig
+
 Under **Build options** select **Enable compiler cache** and then save the configuration.
 This will update your *.config*.
 
 You will need the *ncurses development* package for your distribution before you can run `menuconfig`.
 
-After that run *make* as usual to build your system. 
+After that run *make* as usual to build your system.
 
-Another option I've been using is to save the downloaded source files to a location outside the buildroot repository. 
+Another option I've been using is to save the downloaded source files to a location outside the buildroot repository.
 
 The download location is determined by the **BR2\_DL\_DIR** variable in the **config**
 
@@ -163,7 +163,7 @@ Logs are going to a tmpfs which is what you normally want on an embedded system.
 
 The expected interfaces are present. The default `/etc/network/interfaces` brings up eth0 using dhcp.
 
-I have verified the wifi interface works. 
+I have verified the wifi interface works.
 
     # ifconfig -a
     eth0      Link encap:Ethernet  HWaddr B8:27:EB:7B:E8:32
@@ -235,7 +235,7 @@ I did include the *linuxfb* plugin in the build just for testing.
     -rwxr-xr-x    1 root     root        162612 Mar 14 17:02 libqminimalegl.so
     -rwxr-xr-x    1 root     root        146000 Mar 14 17:02 libqoffscreen.so
     -rwxr-xr-x    1 root     root        207960 Mar 14 17:02 libqvnc.so
-  
+
 
 PyQt5 applications work fine. There is small example installed called `pytouch.py`.
 
@@ -334,10 +334,10 @@ Fetch and build a project
 [jumpnow-buildroot]: https://github.com/jumpnow/buildroot
 [ccache]: https://ccache.samba.org/
 [buildroot-docs]: http://nightly.buildroot.org/manual.html
-[rpi-serial]: http://www.jumpnowtek.com/rpi/RPi-Serial-Console.html
+[rpi-serial]: https://jumpnowtek.com/rpi/RPi-Serial-Console.html
 [tspress]: https://github.com/scottellis/tspress
-[download]: http://www.jumpnowtek.com/downloads/rpi/buildroot/
-[br-rpi-overlay-doc]: http://www.jumpnowtek.com/rpi/Compiling-Raspberry-Pi-Overlays-with-Buildroot.html
-[hardware-pwm]: http://www.jumpnowtek.com/rpi/Using-the-Raspberry-Pi-Hardware-PWM-timers.html
-[br-rpi-overlays]: http://www.jumpnowtek.com/rpi/Compiling-Raspberry-Pi-Overlays-with-Buildroot.html
-[AB-upgrades]: http://www.jumpnowtek.com/yocto/An-upgrade-strategy-for-embedded-Linux-systems.html
+[download]: https://jumpnowtek.com/downloads/rpi/buildroot/
+[br-rpi-overlay-doc]: https://jumpnowtek.com/rpi/Compiling-Raspberry-Pi-Overlays-with-Buildroot.html
+[hardware-pwm]: https://jumpnowtek.com/rpi/Using-the-Raspberry-Pi-Hardware-PWM-timers.html
+[br-rpi-overlays]: https://jumpnowtek.com/rpi/Compiling-Raspberry-Pi-Overlays-with-Buildroot.html
+[AB-upgrades]: https://jumpnowtek.com/yocto/An-upgrade-strategy-for-embedded-Linux-systems.html

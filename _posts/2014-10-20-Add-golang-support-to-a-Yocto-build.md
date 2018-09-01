@@ -42,7 +42,7 @@ Note the new path you are adding must point to where you *cloned* the repo above
 
 ### Add the example helloworld app to an image
 
-There is an example program recipe in the *oe-meta-go* layer 
+There is an example program recipe in the *oe-meta-go* layer
 
     oe-meta-go/recipes-devtools/examples/helloworld_0.1.bb
 
@@ -56,7 +56,7 @@ I'm using an existing *console-image* recipe to configure the bulk of the system
     $ <edit> go-image.bb
 
     SUMMARY = "A development image with a go program"
-    HOMEPAGE = "http://www.jumpnowtek.com"
+    HOMEPAGE = "https://jumpnowtek.com"
     LICENSE = "MIT"
 
     require console-image.bb
@@ -79,7 +79,7 @@ I'm using an existing *console-image* recipe to configure the bulk of the system
 After it builds, install the image to an SD card as usual.
 
 ### Test
- 
+
     root@overo:~# opkg list-installed | grep hello
     go-helloworld - 0.1-r0
 
@@ -91,5 +91,5 @@ After it builds, install the image to an SD card as usual.
 
 
 [golang]: http://golang.org/
-[overo-build]: http://www.jumpnowtek.com/gumstix/overo/Overo-Systems-with-Yocto.html
+[overo-build]: https://jumpnowtek.com/gumstix/overo/Overo-Systems-with-Yocto.html
 [overo]: https://www.gumstix.com

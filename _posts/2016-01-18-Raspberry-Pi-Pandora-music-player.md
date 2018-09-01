@@ -93,7 +93,7 @@ Here are the devices `alsa` sees
 
 Make sure to run [alsamixer][alsamixer] once after start-up to enable the analog and digital outputs as described in the [IQaudIO User Guide][iqaudio-pdf]. If you don't the digital output will default to the the maximum level which is too much for my speakers.
 
-    root@rpi2:~# alsamixer 
+    root@rpi2:~# alsamixer
 
 You can set your [Pandora][pandora] username and password in `/home/root/.config/pianobar/config` to avoid having to enter them every time.
 
@@ -109,7 +109,7 @@ I have the RPi audio system running headless in a corner of my office. I control
 
 [digiamp-plus]: http://www.iqaudio.co.uk/home/9-pi-digiamp-0712411999650.html
 [pianobar]: https://6xq.net/pianobar/
-[rpi-yocto]: http://www.jumpnowtek.com/rpi/Raspberry-Pi-Systems-with-Yocto.html
+[rpi-yocto]: https://jumpnowtek.com/rpi/Raspberry-Pi-Systems-with-Yocto.html
 [config-txt]: https://github.com/jumpnow/meta-rpi/blob/jethro/scripts/config.txt-iqaudio-example
 [audio-image]: https://github.com/jumpnow/meta-rpi/blob/jethro/images/audio-image.bb
 [meta-rpi]: https://github.com/jumpnow/meta-rpi

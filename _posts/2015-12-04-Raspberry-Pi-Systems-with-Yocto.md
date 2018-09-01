@@ -21,13 +21,13 @@ I have created a custom meta-layer for the RPi boards called [meta-rpi][meta-rpi
 
 The systems built from this layer use the same GPU firmware, linux kernel and include the same dtb overlays as the official Raspbian systems. This means that no hardware functionality is lost with these Yocto built systems as compared to the "official" Raspbian distro. It is only the userland software that differs and that is completely configurable by you.
 
-There are a some example images in [meta-rpi][meta-rpi] that support the programming languages and tools that I commonly use in my own projects. 
+There are a some example images in [meta-rpi][meta-rpi] that support the programming languages and tools that I commonly use in my own projects.
 
 When using this repository for customer projects, I first fork and move it to another repository, usually with a different name. I recommend you do the same if you require stability. I use the meta-rpi layer for my experiments.
 
 My systems use **sysvinit**, but Yocto supports **systemd**.
 
-If you are [Qt5][qt] developer then you will appreciate that the RPi comes with working OpenGL drivers for the RPi GPU. This means [Qt OpenGL][qt-opengl] and [QML][qml] applications will work when using the [eglfs][qt-eglfs] platform plugin. 
+If you are [Qt5][qt] developer then you will appreciate that the RPi comes with working OpenGL drivers for the RPi GPU. This means [Qt OpenGL][qt-opengl] and [QML][qml] applications will work when using the [eglfs][qt-eglfs] platform plugin.
 
 I am using the official Yocto [meta-raspberrypi][meta-raspberrypi] layer, but have updated recipes for the Linux kernel and [gpu firmware][firmware-repo] to keep them more current. I also have occasional 'fixes' to other components, sometimes for bugs, but often just because I don't like the **meta-raspberrypi** defaults.
 
@@ -37,11 +37,11 @@ Most of the time I test only with RPi3 and RPi0-W boards.
 
 ### Downloads
 
-If you want a quick look at the resulting systems, you can download some pre-built images [here][downloads]. 
+If you want a quick look at the resulting systems, you can download some pre-built images [here][downloads].
 
 Instructions for installing onto an SD card are in the [README][readme].
 
-The login user is **root** with password **jumpnowtek**. 
+The login user is **root** with password **jumpnowtek**.
 
 You should change that password.
 
@@ -98,7 +98,7 @@ And then create some links for it in `/usr/bin`
     sudo ln -sf /usr/bin/python2.7 /usr/bin/python2
 
 For all versions of Ubuntu, you should change the default Ubuntu shell from **dash** to **bash** by running this command from a shell
- 
+
     sudo dpkg-reconfigure dash
 
 Choose **No** to dash when prompted.
@@ -118,7 +118,7 @@ and the package group
 
     Development Tools
 
-Fedora already uses **bash** as the shell. 
+Fedora already uses **bash** as the shell.
 
 ### Clone the dependency repositories
 
@@ -153,7 +153,7 @@ The `meta-rpi/README.md` file has the last commits from the dependency repositor
 ### Initialize the build directory
 
 Again much of the following are only my conventions.
- 
+
 Choose a build directory. I tend to do this on a per board and/or per project basis so I can quickly switch between projects. For this example I'll put the build directory under `~/rpi/` with the `meta-rpi` layer.
 
 You could manually create the directory structure like this
@@ -166,7 +166,7 @@ Or you could use the Yocto environment script **oe-init-build-env** like this pa
     ~$ source poky-sumo/oe-init-build-env ~/rpi/build
 
 The Yocto environment script will create the build directory if it does not already exist.
- 
+
 ### Customize the configuration files
 
 There are some sample configuration files in the **meta-rpi/conf** directory.
@@ -180,7 +180,7 @@ If you used the **oe-init-build-env** script to create the build directory, it g
 
 It is not necessary, but you may want to customize the configuration files before your first build.
 
-**Warning:** Do not use the '**~**' character when defining directory paths in the Yocto configuration files. 
+**Warning:** Do not use the '**~**' character when defining directory paths in the Yocto configuration files.
 
 ### Edit bblayers.conf
 
@@ -307,7 +307,7 @@ You need to [source][source-script] the Yocto environment into your shell before
 
 I don't use any of those *Common targets*, but instead always write my own custom image recipes.
 
-The **meta-rpi** layer has some examples under **meta-rpi/images/**. 
+The **meta-rpi** layer has some examples under **meta-rpi/images/**.
 
 ### Build
 
@@ -334,7 +334,7 @@ The **cleansstate** command (with two s's) works for image recipes as well.
 
 The image files won't get deleted from the **TMPDIR** until the next time you build.
 
- 
+
 ### Copying the binaries to an SD card (or eMMC)
 
 After the build completes, the bootloader, kernel and rootfs image files can be found in **<TMPDIR>/deploy/images/$MACHINE** with **MACHINE** coming from your **local.conf**.
@@ -349,7 +349,7 @@ This script will partition an SD card with the minimal 2 partitions required for
 
 Insert the microSD into your workstation and note where it shows up.
 
-[lsblk][lsblk] is convenient for finding the microSD card. 
+[lsblk][lsblk] is convenient for finding the microSD card.
 
 For example
 
@@ -433,7 +433,7 @@ Take a look at the script if this is unclear.
 #### copy_rootfs.sh
 
 This script copies the root file system to the second partition of the SD card.
- 
+
 The **copy_rootfs.sh** script needs the same **OETMP** and **MACHINE** environment variables.
 
 The script accepts an optional command line argument for the image type, for example **console** or **qt5**. The default is **console** if no argument is provided.
@@ -464,7 +464,7 @@ Here's a realistic example session where I want to copy already built images to 
 
 Once past the development stage I usually wrap all of the above in another script for convenience.
 
-Both **copy_boot.sh** and **copy_rootfs.sh** are simple scripts, easily customized. 
+Both **copy_boot.sh** and **copy_rootfs.sh** are simple scripts, easily customized.
 
 #### Some custom package examples
 
@@ -525,7 +525,7 @@ For instance, to see the files for the **openssh-sshd** package
             /etc/ssh/sshd_config_readonly
             /usr/libexec/openssh/sshd_check_keys
             /usr/sbin/sshd
-   
+
 
 For a package to be installed in your image it has to get into the **IMAGE_INSTALL** variable some way or another. See the example image recipes for some common conventions.
 
@@ -538,7 +538,7 @@ Here's a reasonably sized example from the [Blender][blender] project to test
     root@rpi3:~# wget https://download.blender.org/demo/movies/Cycles_Demoreel_2015.mov
 
 You can play it like this (**-o hdmi** for hdmi audio)
-    
+
     root@rpi3:~# omxplayer -o hdmi Cycles_Demoreel_2015.mov
     Video codec omx-h264 width 1920 height 1080 profile 77 fps 25.000000
     Audio codec aac channels 2 samplerate 48000 bitspersample 16
@@ -612,22 +612,22 @@ A quick test of the camera, flipping the image because of the way I have my came
 [spiloop]: https://github.com/scottellis/spiloop
 [serialecho]: https://github.com/scottellis/serialecho
 [lsblk]: http://linux.die.net/man/8/lsblk
-[opkg-repo]: http://www.jumpnowtek.com/yocto/Using-your-build-workstation-as-a-remote-package-repository.html
+[opkg-repo]: https://jumpnowtek.com/yocto/Using-your-build-workstation-as-a-remote-package-repository.html
 [bitbake]: http://www.yoctoproject.org/docs/2.1/bitbake-user-manual/bitbake-user-manual.html
 [source-script]: http://stackoverflow.com/questions/4779756/what-is-the-difference-between-source-script-sh-and-script-sh
 [raspicam]: https://www.raspberrypi.org/documentation/usage/camera/raspicam/README.md
 [rpi_camera_module]: https://www.raspberrypi.org/documentation/raspbian/applications/camera.md
 [rpi-cam-v2]: https://www.raspberrypi.org/products/camera-module-v2/
-[downloads]: http://www.jumpnowtek.com/downloads/rpi/
-[readme]: http://www.jumpnowtek.com/downloads/rpi/README.txt
+[downloads]: https://jumpnowtek.com/downloads/rpi/
+[readme]: https://jumpnowtek.com/downloads/rpi/README.txt
 [digiamp-plus]: http://www.iqaudio.co.uk/home/9-pi-digiamp-0712411999650.html
 [pianobar]: https://6xq.net/pianobar/
 [pandora]: http://www.pandora.com
-[rpi-pandora]: http://www.jumpnowtek.com/rpi/Raspberry-Pi-Pandora-music-player.html
+[rpi-pandora]: https://jumpnowtek.com/rpi/Raspberry-Pi-Pandora-music-player.html
 [hifiberry-amp]: https://www.hifiberry.com/ampplus/
 [rpi-compute]: https://www.raspberrypi.org/products/compute-module/
 [rpi2-b]: https://www.raspberrypi.org/products/raspberry-pi-2-model-b/
-[rpi-compute-post]: http://www.jumpnowtek.com/rpi/Working-with-the-raspberry-pi-compute.html
+[rpi-compute-post]: https://jumpnowtek.com/rpi/Working-with-the-raspberry-pi-compute.html
 [rpi3-b]: https://www.raspberrypi.org/products/raspberry-pi-3-model-b/
 [gumstix-pi-compute]: https://store.gumstix.com/expansion/partners-3rd-party/gumstix-pi-compute-dev-board.html
 [rpi-zero]: https://www.raspberrypi.org/products/pi-zero/
@@ -641,19 +641,19 @@ A quick test of the camera, flipping the image because of the way I have my came
 [wd-media-stick]: http://store.wdc.com/store/wdus/en_US/DisplayAccesoryProductDetailsPage/ThemeID.40718400/Accessories/Media_Stick_for_Raspberry_Pi/productID.331153900/categoryId.70262300
 [pi-display]: https://www.raspberrypi.org/blog/the-eagerly-awaited-raspberry-pi-display/
 [pi-blaster]: https://github.com/sarfata/pi-blaster
-[pi-blaster-post]: http://www.jumpnowtek.com/rpi/Working-with-pi-blaster-on-the-RPi.html
+[pi-blaster-post]: https://jumpnowtek.com/rpi/Working-with-pi-blaster-on-the-RPi.html
 [qt-eglfs]: http://doc.qt.io/qt-5/embedded-linux.html
 [qt-quickcontrols2]: http://doc.qt.io/qt-5/qtquickcontrols2-index.html
 [qt-examples]: http://doc.qt.io/qt-5/qtexamplesandtutorials.html
 [qt-opengl]: http://doc.qt.io/qt-5/qtopengl-index.html
 [omxplayer]: http://elinux.org/Omxplayer
 [blender]: https://www.blender.org/
-[rpi-qt5-qml-dev]: http://www.jumpnowtek.com/rpi/Qt5-and-QML-Development-with-the-Raspberry-Pi.html
+[rpi-qt5-qml-dev]: https://jumpnowtek.com/rpi/Qt5-and-QML-Development-with-the-Raspberry-Pi.html
 [embedded-linux-qpa]: http://doc.qt.io/qt-5/embedded-linux.html
 [pitft35r]: https://www.adafruit.com/products/2441
 [pitft28r]: https://www.adafruit.com/products/1601
 [raspi2fb]: https://github.com/AndrewFromMelbourne/raspi2fb
-[jumpnow-buildroot]: http://www.jumpnowtek.com/rpi/Raspberry-Pi-Systems-with-Buildroot.html
+[jumpnow-buildroot]: https://jumpnowtek.com/rpi/Raspberry-Pi-Systems-with-Buildroot.html
 [code-qt-io]: http://code.qt.io/cgit/
 [mender-io]: https://mender.io/
 [buildroot]: https://buildroot.org/

@@ -9,7 +9,7 @@ tags: [freebsd, gumstix, duovero, usb, wireless]
 
 It was getting painful working without a network on the FreeBSD Duovero systems I've been playing with. So I took a look at what was involved to get a USB WIFI dongle working.
 
-One of the changes was to go back and get the *USB Host* initialization code I deleted in  `sys/arm/ti/omap4/duovero/duovero.c` when I copied it from `head/sys/arm/ti/omap4/pandaboard/pandaboard.c`. 
+One of the changes was to go back and get the *USB Host* initialization code I deleted in  `sys/arm/ti/omap4/duovero/duovero.c` when I copied it from `head/sys/arm/ti/omap4/pandaboard/pandaboard.c`.
 
 The Pandaboard has a built-in USB/ethernet controller that the Duovero doesn't. But the code I deleted enables the USB Host controller for anything on the USB Host port. (I thought at the time it was initialization only for the USB/ethernet.)
 
@@ -49,7 +49,7 @@ The changes were to add a new [wpa_supplicant.conf(5)][wpa-supplicant-conf]
             ssid="jumpnow"
             psk="november"
     }
- 
+
 And two lines added to [rc.conf(5)][rc-conf]
 
     wlans_urtwn0="wlan0"
@@ -188,5 +188,5 @@ The latest image binary can be downloaded from [here][downloads].
 [sshd]: https://www.freebsd.org/cgi/man.cgi?query=sshd&apropos=0&sektion=0&manpath=FreeBSD+11-current&arch=default&format=html
 [duovero-freebsd-github]: https://github.com/scottellis/duovero-freebsd
 [crochet]: https://github.com/scottellis/crochet-freebsd/tree/duovero
-[downloads]: http://www.jumpnowtek.com/downloads/freebsd/duovero/
+[downloads]: https://jumpnowtek.com/downloads/freebsd/duovero/
 [freebsd-handbook]: http://www.freebsd.org/doc/en/books/handbook/

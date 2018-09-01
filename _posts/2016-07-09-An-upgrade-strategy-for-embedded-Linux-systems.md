@@ -3,7 +3,7 @@ layout: post
 title: An upgrade strategy for embedded Linux systems
 description: "Implementing a simple upgrade strategy for deployed embedded Linux systems"
 date: 2018-07-23 05:09:00
-categories: linux 
+categories: linux
 tags: [linux, embedded, upgrades, beaglebone, gumstix, overo, duovero]
 ---
 
@@ -15,9 +15,9 @@ The upgrades I am considering here are full-system upgrades, everything but the 
 
 Full-system upgrades are nice because they are atomic and easy to rollback to a known good state assuming the previous system was not modified.
 
-The drawback to full-system upgrades is traditionally the size when distributing (bandwidth) and the system resources when installing (not enough space for two systems, takes too long to run the upgrade). 
+The drawback to full-system upgrades is traditionally the size when distributing (bandwidth) and the system resources when installing (not enough space for two systems, takes too long to run the upgrade).
 
-With the embedded Linux systems I work on these are typically non-issues. 
+With the embedded Linux systems I work on these are typically non-issues.
 
 The size of a [Yocto][yocto] built system as a compressed tarball is usually around 50 MB and almost never greater then 100 MB.
 
@@ -31,7 +31,7 @@ Another nice feature in an upgrade system is the ability to run in the backgroun
 
 The core idea is nothing radical. There will be two rootfs partitions, one active and potentially **read-only** and the other inactive and not mounted.
 
-The upgrade will mount and install the new rootfs on the non-active partition and then make whatever changes are necessary to let the bootloader know which partition to use on the next boot. 
+The upgrade will mount and install the new rootfs on the non-active partition and then make whatever changes are necessary to let the bootloader know which partition to use on the next boot.
 
 The implementation described assumes storage of at least **4GB**, with the two rootfs partitions being **1GB** each. This amount of storage is not a hard requirement, but as a practical matter less available storage is unlikely to be encountered.
 
@@ -58,14 +58,14 @@ These assumptions could be worked-around or ignored, but for now I am treating t
 
 An actual implementation will have to handle the details of getting the new rootfs tarball onto the device and checking for corruption and validity.
 
-I'm going to skip over this since the details tend to have project specific nuances that don't immediately affect the low-level implementation I am covering here. 
+I'm going to skip over this since the details tend to have project specific nuances that don't immediately affect the low-level implementation I am covering here.
 
 ### Preparation
 
 One of the requirements was that an initial install previously setup some partitions on the storage device.
 
 Here's a representative partitioning using an 8 GB SD card prepped for a Gumstix Overo
- 
+
     root@overo:~# fdisk -l /dev/mmcblk0
     Disk /dev/mmcblk0: 7.4 GiB, 7948206080 bytes, 15523840 sectors
     Units: sectors of 1 * 512 = 512 bytes
@@ -88,7 +88,7 @@ Here's a representative partitioning using an 8 GB SD card prepped for a Gumstix
 
 **p5** will be for flag files used by the upgrade system.
 
-**p6** is extra space for application use and general storage. 
+**p6** is extra space for application use and general storage.
 
 
 ### Implementation
@@ -195,7 +195,7 @@ Once the new system has booted successfully, Linux runs a script like the follow
 
     umount <flag partition>
 
-If Linux doesn't update the **flags** partition, the system will revert back to the previous rootfs on the next boot because of the `_tried` file written by u-boot. 
+If Linux doesn't update the **flags** partition, the system will revert back to the previous rootfs on the next boot because of the `_tried` file written by u-boot.
 
 ### Real code
 
@@ -359,5 +359,5 @@ After reboot
 [hush]: http://www.denx.de/wiki/view/DULG/CommandLineParsing#Section_14.2.17.2.
 [system-upgrader]: https://github.com/jumpnow/meta-overo/tree/krogoth/recipes-support/system-upgrader
 [yocto]: http://www.yoctoproject.org
-[overo-build]: http://www.jumpnowtek.com/gumstix-linux/Overo-Systems-with-Yocto.html
+[overo-build]: https://jumpnowtek.com/gumstix-linux/Overo-Systems-with-Yocto.html
 [emmc-upgrader]: https://github.com/jumpnow/meta-bbb/tree/sumo/recipes-support/emmc-upgrader

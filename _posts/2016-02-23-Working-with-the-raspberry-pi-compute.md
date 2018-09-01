@@ -21,9 +21,9 @@ Instructions for obtaining and building `rpiboot` are here : [Flashing the Compu
 
 Here is the *TLDR* version
 
-Install the *libusb-1.0-dev* dependency if you don't already have it 
+Install the *libusb-1.0-dev* dependency if you don't already have it
 
-    scott@fractal:~/rpi$ sudo apt-get install libusb-1.0-0-dev 
+    scott@fractal:~/rpi$ sudo apt-get install libusb-1.0-0-dev
 
 Then fetch and build the `rpiboot` utility
 
@@ -52,7 +52,7 @@ Here's the disk situation on the workstation before mounting the RPi eMMC.
 
 Put the RPi Compute `J4` jumper to the *USB Slave Enable* position, and plug the `J15` USB cable to the workstation and power the board through the `J2` USB connector.
 
-Now run `rpiboot`. 
+Now run `rpiboot`.
 
     scott@fractal:~/rpi/usbboot$ sudo ./rpiboot
     Waiting for BCM2835/6/7
@@ -87,13 +87,13 @@ Initialize the host environment for the *copy* scripts
     scott@fractal:~/rpi/usbboot$ export MACHINE=raspberrypi2
     scott@fractal:~/rpi/usbboot$ cd ../meta-rpi/scripts/
 
-Format the eMMC (this only needs to be done once) 
+Format the eMMC (this only needs to be done once)
 
 The `mk2parts` script creates the minimum two partitions.
 
     scott@fractal:~/rpi/meta-rpi/scripts$ sudo ./mk2parts.sh sdc
 
-Use the `copy_boot.sh` script to format the first partition as a *FAT* filesystem and copy the bootfiles. 
+Use the `copy_boot.sh` script to format the first partition as a *FAT* filesystem and copy the bootfiles.
 
     scott@octo:~/rpi/meta-rpi/scripts$ ./copy_boot.sh sdc
 
@@ -111,7 +111,7 @@ Watching the boot with a [serial console][rpi-serial-console]
     Poky (Yocto Project Reference Distro) 2.2.1 cm3 /dev/ttyAMA0
 
     cm3 login: root
-    
+
     root@cm3:~# uname -a
     Linux cm3 4.9.20 #1 SMP Sun Apr 9 06:31:32 EDT 2017 armv7l armv7l armv7l GNU/Linux
 
@@ -143,11 +143,11 @@ TODO: Start generating my own device trees blobs for the Compute Module GPU.
 
 
 [yocto]: https://www.yoctoproject.org
-[rpi-yocto]: http://www.jumpnowtek.com/rpi/Raspberry-Pi-Systems-with-Yocto.html
+[rpi-yocto]: https://jumpnowtek.com/rpi/Raspberry-Pi-Systems-with-Yocto.html
 [rpi-compute3]: https://www.raspberrypi.org/products/compute-module-3/
 [rpi-tools]: https://github.com/raspberrypi/tools
 [rpiboot-instructions]: https://www.raspberrypi.org/documentation/hardware/computemodule/cm-emmc-flashing.md
-[rpi-serial-console]: http://www.jumpnowtek.com/rpi/RPi-Serial-Console.html
+[rpi-serial-console]: https://jumpnowtek.com/rpi/RPi-Serial-Console.html
 [rpi-cm-camera]: https://www.raspberrypi.org/documentation/hardware/computemodule/cmio-camera.md
 [raspicam]: https://www.raspberrypi.org/documentation/raspbian/applications/camera.md
-[camera-module-v2]: https://www.raspberrypi.org/products/camera-module-v2/ 
+[camera-module-v2]: https://www.raspberrypi.org/products/camera-module-v2/

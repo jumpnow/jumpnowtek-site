@@ -9,13 +9,13 @@ tags: [linux, beaglebone, bbb, buildroot, qt5, pyqt, pyqt5, pru]
 
 This post is about building Linux systems for [beaglebone][bbb] boards using [Buildroot][buildroot].
 
-Buildroot is a popular alternative to [Yocto][yocto] for building custom embedded Linux systems. 
+Buildroot is a popular alternative to [Yocto][yocto] for building custom embedded Linux systems.
 
-With a few exceptions you can build a similar Linux system with either tool. 
+With a few exceptions you can build a similar Linux system with either tool.
 
 I am using a [Buildroot clone][jumpnow-buildroot] I created in Github to track my Buildroot customizations.
 
-The `[master]` branch of the repository is a mirror of the official Buildroot repository. 
+The `[master]` branch of the repository is a mirror of the official Buildroot repository.
 
 The default `[jumpnow]` branch has a few additions on top of `[master]` for my own customizations and is what I am using for these examples.
 
@@ -32,11 +32,11 @@ To build a system, run the following (see the **ccache** notes below)
 
 **Note:** Don't run make with a **-jN** argument. The main Makefile is not designed to be run as a parallel build. The sub-projects will be run in parallel automatically.
 
-If you are missing tools on your workstation, you will get error messages telling you what you are missing. The dependencies are nothing out of the ordinary for a developer workstation and you can search the web for the particular packages you need to install for your distro. 
+If you are missing tools on your workstation, you will get error messages telling you what you are missing. The dependencies are nothing out of the ordinary for a developer workstation and you can search the web for the particular packages you need to install for your distro.
 
 The command
- 
-    make jumpnow_bbb_defconfig 
+
+    make jumpnow_bbb_defconfig
 
 created a `.config` file that completely describes to Buildroot how to generate the system.
 
@@ -50,21 +50,21 @@ Replace `/dev/sdb` with the location the SD card shows up on your workstation.
 #### Customizing the Build
 
 The [Buildroot Documentation][buildroot-docs] is good and you should probably be reading that first.
- 
-One easy optimization is use [ccache][ccache] to reduce redundant work by the C/C++ preprocessor. 
+
+One easy optimization is use [ccache][ccache] to reduce redundant work by the C/C++ preprocessor.
 
 Make sure your workstation has [ccache][ccache] installed, then run the Buildroot configuration tool after you have your initial *.config* generated.
 
-    ~/buildroot$ make menuconfig 
-    
+    ~/buildroot$ make menuconfig
+
 Under **Build options** select **Enable compiler cache** and then save the configuration.
 This will update your *.config*.
 
 You will need the *ncurses development* package for your distribution before you can run `menuconfig`.
 
-After that run *make* as usual to build your system. 
+After that run *make* as usual to build your system.
 
-Another option I've been using is to save the downloaded source files to a location outside the buildroot repository. 
+Another option I've been using is to save the downloaded source files to a location outside the buildroot repository.
 
 The download location is determined by the **BR2\_DL\_DIR** variable in the **config**
 
@@ -96,7 +96,7 @@ The whole point of using build systems like Buildroot or Yocto is to customize t
 
 Here is a quick look at the system built by the **jumpnow_bbb_defconfig**.
 
-Assuming a serial console, you will get this on boot. 
+Assuming a serial console, you will get this on boot.
 
     ...
     Welcome to Buildroot

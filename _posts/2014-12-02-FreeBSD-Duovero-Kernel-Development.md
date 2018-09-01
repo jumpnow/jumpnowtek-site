@@ -7,7 +7,7 @@ categories: gumstix-freebsd
 tags: [freebsd, gumstix, duovero, kernel]
 ---
 
-Just a quick post. 
+Just a quick post.
 
 With `/usr/src` populated (*option UsrSrc* in crochet), rebuilding a kernel on the Duovero is very easy.
 
@@ -22,7 +22,7 @@ If you add a `-j2`, then the initial build time drops to about **23** minutes.
 But afterwards, incremental compiles take around 1.5 minutes.
 
     root@duovero:/usr/src # make buildkernel -DKERNFAST KERNCONF=DUOVERO
-    
+
     --------------------------------------------------------------
     >>> Kernel build for DUOVERO started on Tue Dec  2 07:09:45 EST 2014
     --------------------------------------------------------------
@@ -48,7 +48,7 @@ I'm using SanDisk Extreme 16GB UHS-I/U3 Micro SDHC Memory Cards. They cost aroun
 
 
 ### Note 2
- 
+
 Here are a couple of patches that change the behavior of reboot to be a warm reboot instead of a cold reboot on the OMAP4.
 
 [0005-omap4-prcm-use-defined-constants-in-reset-function.patch][prcm-use-constants-patch]
@@ -58,7 +58,7 @@ Here are a couple of patches that change the behavior of reboot to be a warm reb
 
 The patches won't apply cleanly unless some of the earlier *prcm* patches in that series are applied first. The `reboot` patch is trivial though and can be manually done.
 
-With these patches the duovero will now `reboot` when given the command. Unfortunately, occasionally the host USB does not come up on reboot. Additional investigation required, but without USB, no wifi and no networking. So you end up needing to do a second cold reboot when this happens. Most of the time `reboot` now works, but this random failure is annoying. 
+With these patches the duovero will now `reboot` when given the command. Unfortunately, occasionally the host USB does not come up on reboot. Additional investigation required, but without USB, no wifi and no networking. So you end up needing to do a second cold reboot when this happens. Most of the time `reboot` now works, but this random failure is annoying.
 
 Really need to write an ethernet driver...
 

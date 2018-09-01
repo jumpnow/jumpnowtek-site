@@ -3,7 +3,7 @@ layout: post
 title: Building Odroid-C2 Systems with Yocto
 description: "Building customized systems for Odroid-C2 using tools from the Yocto Project"
 date: 2018-08-16 10:35:00
-categories: odroid 
+categories: odroid
 tags: [linux, odroid-c2, yocto]
 ---
 
@@ -11,7 +11,7 @@ This post is about building Linux systems for the [Odroid-C2][odroid-c2] using t
 
 Yocto is a set of tools for building a custom embedded Linux distribution. The systems are usually targeted for a particular application like a commercial product.
 
-Yocto uses what it calls **meta-layers** to define the configuration for a system build. Within each meta-layer are recipes, classes and configuration files that support the primary build tool, a python framework called **bitbake**. 
+Yocto uses what it calls **meta-layers** to define the configuration for a system build. Within each meta-layer are recipes, classes and configuration files that support the primary build tool, a python framework called **bitbake**.
 
 I have a Yocto layer for the **odroid-c2** called [meta-odroid-c2][meta-odroid-c2].
 
@@ -66,7 +66,7 @@ And then create some links for it in `/usr/bin`
     sudo ln -sf /usr/bin/python2.7 /usr/bin/python2
 
 For all versions of Ubuntu, you should change the default Ubuntu shell from **dash** to **bash** by running this command from a shell
- 
+
     sudo dpkg-reconfigure dash
 
 Choose **No** to dash when prompted.
@@ -86,7 +86,7 @@ and the package group
 
     Development Tools
 
-Fedora already uses **bash** as the shell. 
+Fedora already uses **bash** as the shell.
 
 ### Clone the dependency repositories
 
@@ -119,7 +119,7 @@ The **meta-odroid-c2/README.md** file has the last commits from the dependency r
 ### Initialize the build directory
 
 Again much of the following are only my conventions.
- 
+
 Choose a build directory. I tend to do this on a per board and/or per project basis so I can quickly switch between projects. For this example I'll put the build directory under **~/odroid-c2/** with the **meta-odroid-c2** layer.
 
 You could manually create the directory structure like this
@@ -132,7 +132,7 @@ Or you could use the Yocto environment script **oe-init-build-env** like this pa
     ~$ source poky-sumo/oe-init-build-env ~/odroid-c2/build
 
 The Yocto environment script will create the build directory if it does not already exist.
- 
+
 ### Customize the configuration files
 
 There are some sample configuration files in the **meta-odroid-c2/conf** directory.
@@ -146,7 +146,7 @@ If you used the **oe-init-build-env** script to create the build directory, it g
 
 It is not necessary, but you may want to customize the configuration files before your first build.
 
-**Warning:** Do not use the '**~**' character when defining directory paths in the Yocto configuration files. 
+**Warning:** Do not use the '**~**' character when defining directory paths in the Yocto configuration files.
 
 ### Edit bblayers.conf
 
@@ -200,7 +200,7 @@ The default location is in the **build** directory, **~/odroid-c2/build/sstate-c
 
 #### EMMC_BOOT
 
-If you are using an eMMC device then uncomment this line 
+If you are using an eMMC device then uncomment this line
 
     EMMC_BOOT = "1"
 
@@ -248,10 +248,10 @@ And then continue with the full build.
 
     ~/odroid-c2/build$ bitbake console-image
 
- 
+
 ### Copying the binaries to an SD card
 
-After the build completes, the bootloader, kernel and rootfs files can be found in 
+After the build completes, the bootloader, kernel and rootfs files can be found in
 
     <TMPDIR>/deploy/images/odroid-c2/
 
@@ -263,7 +263,7 @@ This script will partition an SD card with the single partition required for the
 
 Insert the microSD or eMMC with adapter into your workstation and note where it shows up.
 
-[lsblk][lsblk] is convenient for finding the device. 
+[lsblk][lsblk] is convenient for finding the device.
 
 For example
 
@@ -330,7 +330,7 @@ This script should run very fast.
 #### copy_rootfs.sh
 
 This script formats the first partition of the SD card as an **ext4** filesystem and copies the operating system to it.
- 
+
 The script accepts an optional command line argument for the image type, for example **console**. Currently **console** is the only image provided, but you can create your own.
 
 The script also accepts a **hostname** argument if you want the host name to be something other then the default **odroid-c2**.

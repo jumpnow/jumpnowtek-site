@@ -9,7 +9,7 @@ tags: [freebsd, gumstix, duovero, gpio]
 
 Here's a first look at working with *GPIO* pins on a [Gumstix Duovero][duovero].
 
-I'm currently using a [Parlor][parlor] expansion board, so I'm most interested in *GPIO* accessible on the 40-pin header. 
+I'm currently using a [Parlor][parlor] expansion board, so I'm most interested in *GPIO* accessible on the 40-pin header.
 
 I chose the following pins
 
@@ -30,12 +30,12 @@ I added a new u-boot [gpio pin muxing patch][uboot-pinmux-patch] to my *crochet*
 Here's what it does
 
     PIN : GPIO : MUX
-    19  : 110  : Output  
+    19  : 110  : Output
     20  : 113  : Output
     21  : 112  : Output
     22  : 111  : Output
     23  : 118  : Input, pull-down
-     9  : 127  : Input, pull-up 
+     9  : 127  : Input, pull-up
 
 *FreeBSD* provides a [gpioctl(1)][gpioctl] utility for managing *GPIO* from userland. The *OMAP4* have 6 banks of 32 *GPIO* pins potentially available, though on any given board only a small subset are actually usable as *GPIO*.
 
@@ -127,7 +127,7 @@ Using *gpioctl* would work fine in a script.
 Working with *GPIO* from within a C program is more typical for me.
 
 The *gpioctl* source code provides a good example of all the features provided by the [gpio(4)][gpiobus] driver. But because I like to test these things myself, here is an simpler piece of code that only does *GPIO* reads and writes - [fbsd-gpio][fbsd-gpio].
- 
+
 
 
 [duovero]: https://store.gumstix.com/index.php/category/43/

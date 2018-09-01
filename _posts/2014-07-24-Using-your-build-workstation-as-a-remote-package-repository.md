@@ -10,13 +10,13 @@ During development of an embedded Linux system you'll frequently want to add sof
 
 I'm using tools from the [Yocto Project][yocto] to build an embedded Linux system and using [opkg][opkg] as the package manager.
 
-After the initial build, there are a number of ways I've used to go about adding new software packages to the systems 
+After the initial build, there are a number of ways I've used to go about adding new software packages to the systems
 
 1. Add the new packages to the *image* recipe, rebuild the image and do a complete reinstall to an SD card. This is the eventual goal solution for production, but it's the most time consuming during development.
 
 2. Build the packages with bitbake, manually copy the .ipk files to the target and use *opkg* to install. Works, but not very convenient.
 
-3. Cross-build on a workstation without using bitbake and copy the binaries to the target, usually with *scp*. Works okay during development, particularly with custom C/C++ projects. Doesn't work well for production. 
+3. Cross-build on a workstation without using bitbake and copy the binaries to the target, usually with *scp*. Works okay during development, particularly with custom C/C++ projects. Doesn't work well for production.
 
 4. Build directly on the embedded machine. Okay for smaller projects OR when cross-builds aren't working. Doesn't work well for production.
 
@@ -25,12 +25,12 @@ After the initial build, there are a number of ways I've used to go about adding
 The last method is what this document describes.
 
 ### Find your package directory
- 
+
 So assuming you've already built a system image with *Yocto*, you can find the installer files for packages you have already built in
 
     $(TMPDIR)/deploy/ipk
 
-where *$(TMPDIR)* comes from `build/conf/local.conf` or if it is not defined in `local.conf` it defaults to `build/tmp`. 
+where *$(TMPDIR)* comes from `build/conf/local.conf` or if it is not defined in `local.conf` it defaults to `build/tmp`.
 
 For this example, the *$(TMPDIR)* is `/oe7/dart/tmp-poky-dora-build`.
 
@@ -71,7 +71,7 @@ I'm running Ubuntu and want to use *nginx* as the web server
 
     sudo apt-get install nginx
 
-Add a new site configuration file for *nginx*. 
+Add a new site configuration file for *nginx*.
 
     sudo vi /etc/nginx/sites-available/dart-repo
 
@@ -89,7 +89,7 @@ Here is the contents of `dart-repo`
 Remove the *nginx* default enabled site
 
     sudo rm /etc/nginx/sites-enabled/default
-    
+
 Enable the new *dart-repo* site
 
     sudo ln -s /etc/nginx/sites-available/dart-repo /etc/nginx/sites-enabled/dart-repo
@@ -106,10 +106,10 @@ Point a browser at the workstation IP and you should see something like
     =================================================================
     ../
     all/                             24-Jul-2014 23:03          -
-    cortexa9hf-vfp-neon/             24-Jul-2014 23:03          -  
-    dart/                            24-Jul-2014 23:03          -  
-    Packages                         24-Jul-2014 23:03          0  
-    Packages.flock                   24-Jul-2014 23:03          0  
+    cortexa9hf-vfp-neon/             24-Jul-2014 23:03          -
+    dart/                            24-Jul-2014 23:03          -
+    Packages                         24-Jul-2014 23:03          0
+    Packages.flock                   24-Jul-2014 23:03          0
     Packages.gz                      24-Jul-2014 23:03         20
     Packages.stamps                  24-Jul-2014 23:03          0
     =================================================================
@@ -135,7 +135,7 @@ Replacing `192.168.10.8` with the IP of your build workstation.
 
 ### Test it out
 
-First run an *opkg* update. 
+First run an *opkg* update.
 
 Updates are not cached, so after a reboot you must run an update again first before running other *opkg* commands.
 
@@ -203,7 +203,7 @@ Note that the *Package* manifest files are still old.
 
 
 The embedded board does not see any changes
-    
+
     root@dart:~# opkg update
     ...
 
@@ -221,7 +221,7 @@ After rebuilding the *console-image* the *Package* manifests are updated.
 
 
 Now checking on the embedded board
- 
+
     root@dart:~# opkg update
     ...
 
@@ -269,7 +269,7 @@ The contents of `src` will be something like
     src/gz dart http://192.168.10.8/dart
 
 Adjust accordingly for your system.
- 
+
 
 [yocto]: https://www.yoctoproject.org/
 [opkg]: https://code.google.com/p/opkg/

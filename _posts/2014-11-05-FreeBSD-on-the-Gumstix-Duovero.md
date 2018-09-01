@@ -76,7 +76,7 @@ A little system probing
     -rwxr-xr-x  1 root  wheel  307196 Nov  5 05:27 u-boot.img
     -rwxr-xr-x  1 root  wheel  251107 Nov  5 05:27 ubldr
 
-Since it's a BSD, the system is already complete. No *distro* packaging stuff to be done the ways it has to with *Linux*. 
+Since it's a BSD, the system is already complete. No *distro* packaging stuff to be done the ways it has to with *Linux*.
 
 For instance, here's the compiler
 
@@ -87,7 +87,7 @@ For instance, here's the compiler
 
 I didn't install the source tree, but that's something [crochet][crochet-freebsd] supports doing as part of the image build. That should allow for native development. We'll see if that's the best way. Still new to this.
 
-I think the next step is to add a proper Duovero configuration to the FreeBSD source. 
+I think the next step is to add a proper Duovero configuration to the FreeBSD source.
 
 Then ethernet, wifi and USB Host support. That alone would cover the majority of my customer projects with the Duovero.
 
@@ -108,4 +108,4 @@ You can download the image [here][img-download].
 [freebsd-ports]: https://www.freebsd.org/ports/
 [wandboard]: http://www.wandboard.org/
 [crochet-duovero]: https://github.com/scottellis/crochet-freebsd/tree/duovero
-[img-download]: http://www.jumpnowtek.com/downloads/freebsd/duovero/
+[img-download]: https://jumpnowtek.com/downloads/freebsd/duovero/

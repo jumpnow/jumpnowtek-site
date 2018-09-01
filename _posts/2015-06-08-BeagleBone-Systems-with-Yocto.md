@@ -11,12 +11,12 @@ Building systems for [BeagleBone Black][bbb] and [BeagleBone Green][bbg] boards 
 
 Yocto is a set of tools for building a custom embedded Linux distribution. The systems are usually targeted at particular applications like commercial products.
 
-Yocto uses what it calls **meta-layers** to define the configuration for a system build. Within each meta-layer are recipes, classes and configuration files that support the primary build tool, a python framework called **bitbake**. 
+Yocto uses what it calls **meta-layers** to define the configuration for a system build. Within each meta-layer are recipes, classes and configuration files that support the primary build tool, a python framework called **bitbake**.
 
 The Yocto system, while very powerful, does have a substantial learning curve. You may want to look at another popular tool for building embedded systems [Buildroot][buildroot-bbb].
 
 
-The [meta-bbb][meta-bbb] layer generates some basic systems with packages that support C, C++, [Qt5][qt], Perl and Python development, the languages and tools I commonly use. Other languages are supported of course. 
+The [meta-bbb][meta-bbb] layer generates some basic systems with packages that support C, C++, [Qt5][qt], Perl and Python development, the languages and tools I commonly use. Other languages are supported of course.
 
 I use this layer as a template when starting new BeagleBone projects.
 
@@ -56,11 +56,11 @@ The DTBs are easy enough to switch between using a [u-boot][uboot] script file `
 *spidev* on SPI bus 1, *I2C1* and *I2C2* and *UART4* are configured for use from the *P9* header.
 
 There are some simple loopback test programs included in the console image.
- 
+
 [spiloop][spiloop] is a utility for testing the *spidev* driver.
 
 [serialecho][serialecho] is a utility for testing *uarts*.
-  
+
 ### Ubuntu Setup
 
 I primarily use **16.04** 64-bit servers for builds. Other versions should work.
@@ -84,7 +84,7 @@ And then create some links for it in `/usr/bin`
     sudo ln -sf /usr/bin/python2.7 /usr/bin/python2
 
 For all versions of Ubuntu, you should change the default Ubuntu shell from **dash** to **bash** by running this command from a shell
- 
+
     sudo dpkg-reconfigure dash
 
 Choose **No** to dash when prompted.
@@ -104,7 +104,7 @@ and the package group
 
     Development Tools
 
-Fedora already uses **bash** as the shell. 
+Fedora already uses **bash** as the shell.
 
 ### Clone the repositories
 
@@ -129,7 +129,7 @@ The `meta-bbb/README.md` file has the last commits from the dependency repositor
 ### Initialize the build directory
 
 Much of the following are only the conventions that I use. All of the paths to the meta-layers are configurable.
- 
+
 First setup a build directory. I tend to do this on a per board and/or per project basis so I can quickly switch between projects. For this example I'll put the build directory under `~/bbb/` with the `meta-bbb` layer.
 
 You could manually create the directory structure like this
@@ -142,7 +142,7 @@ Or you could use the *Yocto* environment script `oe-init-build-env` like this pa
     ~$ source poky-sumo/oe-init-build-env ~/bbb/build
 
 The *Yocto* environment script will create the build directory if it does not already exist.
- 
+
 ### Customize the configuration files
 
 There are some sample configuration files in the `meta-bbb/conf` directory.
@@ -307,7 +307,7 @@ The `cleansstate` command (with two s's) works for image recipes as well.
 
 The image files won't get deleted from the *TMPDIR* until the next time you build.
 
- 
+
 ### Copying the binaries to an SD card
 
 After the build completes, the bootloader, kernel and rootfs image files can be found in `<TMPDIR>/deploy/images/beaglebone/`.
@@ -320,7 +320,7 @@ This script will partition an SD card with the minimal 2 partitions required for
 
 Insert the microSD into your workstation and note where it shows up.
 
-[lsblk][lsblk] is convenient for finding the microSD card. 
+[lsblk][lsblk] is convenient for finding the microSD card.
 
 For example
 
@@ -364,7 +364,7 @@ You only have to create this directory once.
 
 This script copies the bootloaders (MLO and u-boot) to the boot partition of the SD card.
 
-The script also copies a *uEnv.txt* file to the boot partition if it finds one in either 
+The script also copies a *uEnv.txt* file to the boot partition if it finds one in either
 
     <TMPDIR>/deploy/images/beaglebone/
 
@@ -393,7 +393,7 @@ This script should run very fast.
 #### copy_rootfs.sh
 
 This script copies the zImage Linux kernel, the device tree binaries and the rest of the operating system to the root file system partition of the SD card.
- 
+
 The script accepts an optional command line argument for the image type, for example **console** or **qt5**. The default is **console** if no argument is provided.
 
 The script also accepts a **hostname** argument if you want the host name to be something other then the default **beaglebone**.
@@ -466,9 +466,9 @@ Power off, pull the SD card and reboot.
 
 #### Modifying uEnv.txt
 
-The **uEnv.txt** bootloader configuration script is where the kernel dtb is specified. 
+The **uEnv.txt** bootloader configuration script is where the kernel dtb is specified.
 
-The **uEnv.txt** file is located on the first partition of the SD card or eMMC. 
+The **uEnv.txt** file is located on the first partition of the SD card or eMMC.
 
 You can modify the **uEnv.txt** file at installation by adding a **uEnv.txt** file to the **meta-bbb/scripts** directory.
 
@@ -536,7 +536,7 @@ To display the list of available packages from the **meta-** repositories includ
 
 Once you have the package name, you can choose to either
 
-1. Add the new package to the **console-image** or **qt5-image**. 
+1. Add the new package to the **console-image** or **qt5-image**.
 
 2. Create a new image file and either include the **console-image** the way the **qt5-image** does or create a complete new image recipe.
 
@@ -568,7 +568,7 @@ There is a **emmc-upgrader** package in the **meta-bbb** layer that will add thi
 
 [bbb]: http://www.beagleboard.org/black
 [bbg]: http://www.beagleboard.org/green
-[buildroot-bbb]: http://www.jumpnowtek.com/beaglebone/BeagleBone-Systems-with-Buildroot.html
+[buildroot-bbb]: https://jumpnowtek.com/beaglebone/BeagleBone-Systems-with-Buildroot.html
 [linux-stable]: https://www.kernel.org/
 [uboot]: http://www.denx.de/wiki/U-Boot/WebHome
 [qt]: http://www.qt.io/
@@ -577,15 +577,15 @@ There is a **emmc-upgrader** package in the **meta-bbb** layer that will add thi
 [tspress]: https://github.com/scottellis/tspress
 [spiloop]: https://github.com/scottellis/spiloop
 [serialecho]: https://github.com/scottellis/serialecho
-[bbb-kernel]: http://www.jumpnowtek.com/beaglebone/Working-on-the-BeagleBone-kernel.html
+[bbb-kernel]: https://jumpnowtek.com/beaglebone/Working-on-the-BeagleBone-kernel.html
 [lsblk]: http://linux.die.net/man/8/lsblk
-[opkg-repo]: http://www.jumpnowtek.com/yocto/Using-your-build-workstation-as-a-remote-package-repository.html
-[bbb-uboot]: http://www.jumpnowtek.com/beaglebone/Beaglebone-Black-U-Boot-Notes.html
+[opkg-repo]: https://jumpnowtek.com/yocto/Using-your-build-workstation-as-a-remote-package-repository.html
+[bbb-uboot]: https://jumpnowtek.com/beaglebone/Beaglebone-Black-U-Boot-Notes.html
 [4dcape70t]: http://www.4dsystems.com.au/product/4DCAPE_70T/
 [4dcape43t]: http://www.4dsystems.com.au/product/4DCAPE_43/
 [nh5cape]: http://elinux.org/Nh5cape
 [nhd7cape]: http://www.mouser.com/new/newhavendisplay/newhaven-beaglebone-cape/
 [bitbake]: http://www.yoctoproject.org/docs/2.1/bitbake-user-manual/bitbake-user-manual.html
 [source-script]: http://stackoverflow.com/questions/4779756/what-is-the-difference-between-source-script-sh-and-script-sh
-[ab-upgrades]: http://www.jumpnowtek.com/linux/An-upgrade-strategy-for-embedded-Linux-systems.html
+[ab-upgrades]: https://jumpnowtek.com/linux/An-upgrade-strategy-for-embedded-Linux-systems.html
 [eudev]: https://wiki.gentoo.org/wiki/Project:Eudev

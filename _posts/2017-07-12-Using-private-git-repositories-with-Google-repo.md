@@ -17,7 +17,7 @@ Then your [Google Repo][repo] manifest xml can have a **remote** entry for the p
       <remote  name="github-public" fetch="git://github.com"/>
       <remote  name="github-private" fetch="ssh://git@github.com"/>
       <project name="scottellis/tspress" remote="github-public" revision="master"/>
-      <project name="scottellis/zmon" remote="github-private" revision="master"/>      
+      <project name="scottellis/zmon" remote="github-private" revision="master"/>
     </manifest>
 
 

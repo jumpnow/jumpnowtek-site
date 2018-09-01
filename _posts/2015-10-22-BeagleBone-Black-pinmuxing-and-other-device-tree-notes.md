@@ -17,8 +17,8 @@ Collecting some notes on the source of various register, address and other *magi
 4. From linux-stable 4.2.3 [arch/arm/boot/dts/am335x-bone-common.dtsi][am335x-bone-common.dtsi]
 5. From linux-stable 4.2.3 [arch/arm/boot/dts/am335x-boneblack.dts][am335x-boneblack.dts]
 
-[Texas Instruments][ti] also has an interactive web application [TI PinMux][ti-pinmux-app] to assist with pinmuxing and device tree configuration. A free TI account is required for use. 
- 
+[Texas Instruments][ti] also has an interactive web application [TI PinMux][ti-pinmux-app] to assist with pinmuxing and device tree configuration. A free TI account is required for use.
+
 ## PinMux Modes
 
 Most of the AM335x pads can support multiple modes of operation.
@@ -56,7 +56,7 @@ From the `sprs717` datasheet Table 4-1
 	Mode 5: pr1_edi0_data_in1
 	Mode 6: pr1_edio_data_out1
 	Mode 7: gpio0_5
-	
+
 ## Pinmux Register Offsets
 
 The pinmux register offsets come from the `spruh73` TRM, Section 9.3.1, Table 9-7.
@@ -66,7 +66,7 @@ Look up the pad with **conf_** prepended to the lower case pin name (mux mode 0)
 The device tree pinmux definitions want the offset from the base of the control module.
 
 This **0x800** base needs to be subtracted from the values in Table 9-7.
-  
+
 ##### Example: UART0\_RXD and UART0\_TXD
 
 From `am335x-bone-common.dtsi`
@@ -99,8 +99,8 @@ From `am335x-boneblack.dts`
 From `spruh73` TRM, Table 9-7
 
 	880h	conf_gpmc_csn1
- 
-	
+
+
 ##### Example: LCD\_VSYNC
 
 From `am335x-boneblack.dts`
@@ -118,7 +118,7 @@ From `spruh73` TRM, Table 9-7
 	8e0h	conf_lcd_vsync
 
 ## DMA Event Channels
-	
+
 EDMA event definitions come from the `spruh73` TRM, Section 11.3.20, Table 11-23 Direct Mapped and Table 11-24 Crossbar Mapped.
 
 Section 9.2.3, EDMA Event Multiplexing explains the purpose of the Crossbar Mapped table.
@@ -126,7 +126,7 @@ Section 9.2.3, EDMA Event Multiplexing explains the purpose of the Crossbar Mapp
 ##### Example: mmc0 (mmc1 in dts)
 
 From `am33xx.dtsi`
-	
+
     mmc1: mmc@48060000 {
         compatible = "ti,omap4-hsmmc";
         ti,hwmods = "mmc1";
@@ -149,9 +149,9 @@ From `spruh73` TRM, Table 11-23 Direct Mapped
 
 
 ##### Example: spi0
-	
+
 From `am33xx.dtsi`
-	
+
     spi0: spi@48030000 {
         compatible = "ti,omap4-mcspi";
         #address-cells = <1>;
@@ -174,7 +174,7 @@ From `spruh73` TRM, Table 11-23 Direct Mapped
 	17	SPIREVT0	MCSPI0
 	18	SPIXEVT1	MCSPI0
 	19	SPIREVT1	MCSPI0
-	
+
 ##### Example using crossbar: mmc2 (mmc3 in dts)
 
     &edma {
@@ -202,7 +202,7 @@ and from `spruh73` TRM, Table 11-23 Direct Mapped
 
 
 ## Interrupts
-	
+
 Interrupt numbers come from the `spruh73k` TRM, Section 6.3, Table 6-1
 
 ##### Example: gpio bank 0
@@ -241,7 +241,7 @@ From `spruh73k` TRM, Table 6-1
 
 	92		TINT4		DMTIMER4	POINTR_PEND
 
-	
+
 ##### Example: i2c2
 
 From `am33xx.dtsi`
@@ -257,12 +257,12 @@ From `am33xx.dtsi`
     };
 
 
-From `spruh73k` TRM, Table 6-1	
+From `spruh73k` TRM, Table 6-1
 
 	30		I2C2INT		I2C2INT		POINTRPEND1
 
 
-[bbb]: http://www.beagleboard.org/	
+[bbb]: http://www.beagleboard.org/
 [sprs717]: http://www.ti.com/lit/sprs717
 [spruh73]: http://www.ti.com/lit/spruh73
 [am33xx.dtsi]: https://git.kernel.org/cgit/linux/kernel/git/stable/linux-stable.git/tree/arch/arm/boot/dts/am33xx.dtsi?id=refs/tags/v4.2.3

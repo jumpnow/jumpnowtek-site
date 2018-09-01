@@ -7,7 +7,7 @@ categories: gumstix-freebsd
 tags: [freebsd, gumstix, duovero, i2c]
 ---
 
-The [Gumstix Duovero][duovero] has 4 general purpose *I2C* buses. 
+The [Gumstix Duovero][duovero] has 4 general purpose *I2C* buses.
 
 There is a 5th *I2C* bus dedicated for use with an external power management unit, a [TWL6030][twl6030] on the *Duovero*.
 
@@ -74,19 +74,19 @@ You can change the *I2C* bus speed three different ways
 ### 1. Device Tree File
 
 *clock-frequency* is a new *FreeBSD* dts property that can be used to set the initial bus speed.
- 
-An example can be found in [omap443x.dtsi][omap443x-dtsi]. 
+
+An example can be found in [omap443x.dtsi][omap443x-dtsi].
 
 Here is an excerpt for one of the buses
 
     ...
-    i2c2: i2c@48072000 { 
-            compatible = "ti,i2c"; 
-            reg = <0x48072000 0x100>; 
-            interrupts = <89>; 
-            i2c-device-id = <2>; 
-            clock-frequency = <100000>; 
-    }; 
+    i2c2: i2c@48072000 {
+            compatible = "ti,i2c";
+            reg = <0x48072000 0x100>;
+            interrupts = <89>;
+            i2c-device-id = <2>;
+            clock-frequency = <100000>;
+    };
     ...
 
 If *400 kHz* was preferred, it would be
@@ -125,7 +125,7 @@ Then you have to **reset** the bus using the [i2c(8)][i2c] utility for it to tak
 
 ### 3. loader.conf
 
-Given those two methods, there doesn't seem much need for the [loader.conf(5)][loader-conf] approach. By default, the *loader.conf* framework is not even used on most FreeBSD ARM boards. It adds significantly to the boot time. 
+Given those two methods, there doesn't seem much need for the [loader.conf(5)][loader-conf] approach. By default, the *loader.conf* framework is not even used on most FreeBSD ARM boards. It adds significantly to the boot time.
 
 But if you really want to, this is how you could use it.
 
@@ -142,7 +142,7 @@ When you reboot the system, the new speed will be in effect.
 
 The [Duovero Parlor][duovero-parlor] board only brings out one *I2C* bus to the 40-pin header, **I2C2_SCL** and **I2C2_SDA** on pins **12** and **14**.
 
-Because it was already sitting on my desk, the first device I tried was an [MCP4728][mcp4728] 12-Bit 4-channel DAC. I already had a Duovero connected to an [MCP4728 eval board][mcp4728-evalboard] through a [level shifter][level-shifter]. I knew the hardware was working since I'd just written a Linux userland driver for the board for another project. 
+Because it was already sitting on my desk, the first device I tried was an [MCP4728][mcp4728] 12-Bit 4-channel DAC. I already had a Duovero connected to an [MCP4728 eval board][mcp4728-evalboard] through a [level shifter][level-shifter]. I knew the hardware was working since I'd just written a Linux userland driver for the board for another project.
 
 I was only looking at porting the *FreeBSD* differences.
 
@@ -158,7 +158,7 @@ Here's what the [kdump(1)][kdump] output looks like on the Duovero when running 
     root@duovero:~ # ktrace -t+ i2c -s -f /dev/iic1
 
 [kdump output][kdump-output]
- 
+
 The important lines are these repeated failures
 
     807 i2c      CALL  ioctl(0x3,I2CSTART,0xbffffc30)
@@ -174,7 +174,7 @@ At this point I had no idea what *FreeBSD* was using for the *I2C* clock. I did 
 
 I put an oscope on the `SCL` line and found the clock running at *842 kHz*.
 
-Enabling **DEBUG** in the `sys/arm/ti/ti_i2c.c` driver showed that the communications were timing out waiting for a response. Not unexpected given the unusual clock frequency.  
+Enabling **DEBUG** in the `sys/arm/ti/ti_i2c.c` driver showed that the communications were timing out waiting for a response. Not unexpected given the unusual clock frequency.
 
 That *842 kHz* is most likely a mistake. The [iicbus(4)][iicbus] tries to set a default bus speed of **IIC_FASTEST** when it resets *I2C* buses. For the `OMAP4` code, the **IIC_FASTEST** was trying for *1 MHZ*, but the wrong divider values were being used.
 
@@ -186,7 +186,7 @@ I don't think *1 MHz* is a particularly good default either, so I added a [simpl
 
 Something on my `TODO` list is try and figure out if it's possible to change the *I2C* bus speed from userland. I think I see how to do it from a kernel driver, but that's more then I want to try just yet. It would also be nice to be able to set the default `<clock-speed>` from a *dts* file. Another `TODO`.
 
-After rebuilding the kernel, the [qdac][qdac] program worked just fine. You can see some sample output in the repository [README][qdac-readme]. 
+After rebuilding the kernel, the [qdac][qdac] program worked just fine. You can see some sample output in the repository [README][qdac-readme].
 
 The changes are actually pretty minor between the *FreeBSD* and *Linux* versions. I could just `ifdef` them and have one [qdac][qdac] codebase, but I was too lazy today.
 

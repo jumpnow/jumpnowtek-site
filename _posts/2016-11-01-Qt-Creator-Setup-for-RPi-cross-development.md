@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Using Qt Creator to cross-compile and debug Raspberry Pi Qt5 apps 
+title: Using Qt Creator to cross-compile and debug Raspberry Pi Qt5 apps
 description: "Setup of Qt Creator to use the Yocto RPi SDK"
 date: 2017-04-10 08:14:00
 categories: rpi
@@ -11,11 +11,11 @@ The following instructions assume a few things
 
 1) You have built a Linux system for the Raspberry Pi with tools from the Yocto Project using [these instructions][yocto-jumpnow-build] or something similar.
 
-2) You are currently running the [qt5-image][qt5-image] or another image with similar Qt5.7 headers, libs and associated dev tools installed.  
+2) You are currently running the [qt5-image][qt5-image] or another image with similar Qt5.7 headers, libs and associated dev tools installed.
 
 3) You have built a cross-compiler SDK with Yocto and installed it on the workstation you plan to develop on.
 
-For (3) you can refer to [this post][rpi-qt5-qml-dev] for some more details, but here is the short version 
+For (3) you can refer to [this post][rpi-qt5-qml-dev] for some more details, but here is the short version
 
 Setup the Yocto environment as normal
 
@@ -25,7 +25,7 @@ build the SDK
 
     scott@fractal:~/rpi/build$ bitbake meta-toolchain-qt5
 
-The resulting SDK installation script can be found in `${TMPDIR}/deploy/sdk`. 
+The resulting SDK installation script can be found in `${TMPDIR}/deploy/sdk`.
 
 Copy the script to the workstation you plan to work from and run it.
 
@@ -44,7 +44,7 @@ I chose `/opt/poky/rpi-2.1.1` instead for the install directory on my workstatio
 Startup Qt Creator, I'm using version 4.0.3, the default with Fedora 24.
 
 Open the `Tools | Options` dialog.
- 
+
 #### Add a Qt version
 
 Here is where you setup the path to *qmake* for the version of Qt the RPi is running.
@@ -67,7 +67,7 @@ Screenshot - [Qt Creator Compiler Setup][qtcreator-compiler-screenshot]
 
 #### Add a debugger
 
-Note: Remote debugging broke with the Yocto [morty] branch. Cross-compiling and remote deploy from Qt Creator still work. Use the Yocto [krogoth] branch if you require remote debugging. 
+Note: Remote debugging broke with the Yocto [morty] branch. Cross-compiling and remote deploy from Qt Creator still work. Use the Yocto [krogoth] branch if you require remote debugging.
 
 If you want to remotely debug your Qt applications you need to setup the path to *gdb*.
 
@@ -144,15 +144,15 @@ You can leave the *GDB server executable* blank. It will be found automatically.
 You should now be able to build, run and debug Qt5 applications on the Raspberry Pi from your Linux workstation.
 
 
-[yocto-jumpnow-build]: http://www.jumpnowtek.com/rpi/Raspberry-Pi-Systems-with-Yocto.html
+[yocto-jumpnow-build]: https://jumpnowtek.com/rpi/Raspberry-Pi-Systems-with-Yocto.html
 [qt5-image]: https://github.com/jumpnow/meta-rpi/blob/krogoth/images/qt5-image.bb
-[rpi-qt5-qml-dev]: http://www.jumpnowtek.com/rpi/Qt5-and-QML-Development-with-the-Raspberry-Pi.html
-[qtcreator-version-screenshot]: http://www.jumpnowtek.com/assets/qtcreator-version.png
-[qtcreator-compiler-screenshot]: http://www.jumpnowtek.com/assets/qtcreator-compiler.png
-[qtcreator-debugger-screenshot]: http://www.jumpnowtek.com/assets/qtcreator-debugger.png
-[qtcreator-kit-screenshot]: http://www.jumpnowtek.com/assets/qtcreator-kit.png
-[qtcreator-choose-kit-screenshot]: http://www.jumpnowtek.com/assets/qtcreator-choose-kit.png
-[qtcreator-devices-screenshot]: http://www.jumpnowtek.com/assets/qtcreator-devices.png
+[rpi-qt5-qml-dev]: https://jumpnowtek.com/rpi/Qt5-and-QML-Development-with-the-Raspberry-Pi.html
+[qtcreator-version-screenshot]: https://jumpnowtek.com/assets/qtcreator-version.png
+[qtcreator-compiler-screenshot]: https://jumpnowtek.com/assets/qtcreator-compiler.png
+[qtcreator-debugger-screenshot]: https://jumpnowtek.com/assets/qtcreator-debugger.png
+[qtcreator-kit-screenshot]: https://jumpnowtek.com/assets/qtcreator-kit.png
+[qtcreator-choose-kit-screenshot]: https://jumpnowtek.com/assets/qtcreator-choose-kit.png
+[qtcreator-devices-screenshot]: https://jumpnowtek.com/assets/qtcreator-devices.png
 
 
 

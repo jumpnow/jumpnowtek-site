@@ -22,7 +22,7 @@ I am testing with the following displays
 * Adafruit [3.5 inch][pitft35r] and [2.8 inch][pitft28r] resistive touchscreens
 
 
-This [Raspberry Pi TFT Displays and Qt5][jumpnow-pitft] post has more notes on working with the PiTFT displays. 
+This [Raspberry Pi TFT Displays and Qt5][jumpnow-pitft] post has more notes on working with the PiTFT displays.
 
 #### System Software
 
@@ -211,13 +211,13 @@ The SDK installation script can be found in `${TMPDIR}/deploy/sdk`.
 In my `local.conf` I have **TMPDIR=/oe4/rpi/tmp-krogoth**, so the SDK installer can be found here
 
     scott@fractal:~/rpi/build$ cd /oe4/rpi/tmp-krogoth/deploy/sdk
-    
+
     scott@fractal:/oe4/rpi/tmp-krogoth/deploy/sdk$ ls -l
     total 601760
     -rw-r--r-- 1 scott scott     10154 Sep  1 13:54 poky-glibc-x86_64-meta-toolchain-qt5-cortexa7hf-neon-vfpv4-toolchain-2.1.1.host.manifest
     -rwxr-xr-x 1 scott scott 616157351 Sep  1 13:57 poky-glibc-x86_64-meta-toolchain-qt5-cortexa7hf-neon-vfpv4-toolchain-2.1.1.sh
     -rw-r--r-- 1 scott scott     24508 Sep  1 13:54 poky-glibc-x86_64-meta-toolchain-qt5-cortexa7hf-neon-vfpv4-toolchain-2.1.1.target.manifest
-    
+
 Run the installer as root (I haven't tried a non-root install)
 
     scott@fractal:/oe4/rpi/tmp-krogoth/deploy/sdk$ sudo ./poky-glibc-x86_64-meta-toolchain-qt5-cortexa7hf-neon-vfpv4-toolchain-2.1.1.sh
@@ -228,7 +228,7 @@ To use the SDK, *source* the SDK environment using a provided script
 
     /opt/poky/2.1.1/environment-setup-cortexa7hf-neon-vfpv4-poky-linux-gnueabi
 
-Here is a complete cross-build example run from a headless 64-bit Linux server that does not have any native Qt software installed. 
+Here is a complete cross-build example run from a headless 64-bit Linux server that does not have any native Qt software installed.
 
 The meta-qt5 SDK was installed to `/opt/poky/rpi-meta-qt5-2.2.1`.
 
@@ -276,7 +276,7 @@ Copy it to the RPi
 
     scott@fractal:~/projects/qqtest$ scp qqtest root@192.168.10.114:/home/root
     Warning: Permanently added '192.168.10.114' (ECDSA) to the list of known hosts.
-    qqtest                                                                                                    
+    qqtest
 
 Then over on the RPi, the *qqtest* app should run fine.
 
@@ -285,15 +285,15 @@ Then over on the RPi, the *qqtest* app should run fine.
 Eventually you will want Yocto to build and install your app automatically in the image rootfs.
 
 The [Yocto documentation][yocto-docs] is the official resource for recipes, but I've found the easiest way to learn is looking at existing examples. The [meta-qt5][meta-qt5] repository has a number of Qt5 examples.
- 
+
 The [meta-qt5][meta-qt5] layer provides some extra tools that handle Qt5 specifics. The *require qt5.inc* line brings them in.
 
-Here is an example recipe for the *qqtest* application. 
+Here is an example recipe for the *qqtest* application.
 
 The source is pulled from the Github repository.
 
     SUMMARY = "Qt5 QML test app"
-    HOMEPAGE = "http://www.jumpnowtek.com"
+    HOMEPAGE = "https://jumpnowtek.com"
     LICENSE = "MIT"
     LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
@@ -319,7 +319,7 @@ The source is pulled from the Github repository.
 
 You can find the recipe here [meta-rpi/recipes-qt/qqtest/qqtest_git.bb][qqtest-recipe]
 
-And the *qqtest* package was added to the rootfs here [meta-rpi/images/qt5-image.bb][qt5-image-recipe] 
+And the *qqtest* package was added to the rootfs here [meta-rpi/images/qt5-image.bb][qt5-image-recipe]
 
 
 [rpi]: https://www.raspberrypi.org/
@@ -329,18 +329,18 @@ And the *qqtest* package was added to the rootfs here [meta-rpi/images/qt5-image
 [qml]: http://doc.qt.io/qt-5/qtqml-index.html
 [qtwidgets]: http://doc.qt.io/qt-5/qtwidgets-index.html
 [yocto]: https://www.yoctoproject.org/
-[yocto-jumpnow-build]: http://www.jumpnowtek.com/rpi/Raspberry-Pi-Systems-with-Yocto.html
-[jumpnow-build-download]: http://www.jumpnowtek.com/downloads/rpi/
+[yocto-jumpnow-build]: https://jumpnowtek.com/rpi/Raspberry-Pi-Systems-with-Yocto.html
+[jumpnow-build-download]: https://jumpnowtek.com/downloads/rpi/
 [qpa-eglfs]: http://doc.qt.io/qt-5/embedded-linux.html
 [meta-qt5]: https://github.com/meta-qt5/meta-qt5
 [rpi-userland]: https://github.com/raspberrypi/userland
 [pi-display]: https://www.raspberrypi.org/blog/the-eagerly-awaited-raspberry-pi-display/
-[qpa-exit-errors]: http://www.jumpnowtek.com/yocto/Qt5-Errors-On-Exit-with-QPA.html
+[qpa-exit-errors]: https://jumpnowtek.com/yocto/Qt5-Errors-On-Exit-with-QPA.html
 [qqtest-recipe]: https://github.com/jumpnow/meta-rpi/blob/krogoth/recipes-qt/qqtest/qqtest_git.bb
 [qt5-image-recipe]: https://github.com/jumpnow/meta-rpi/blob/krogoth/images/qt5-image.bb
 [yocto-docs]: http://www.yoctoproject.org/docs/2.1/mega-manual/mega-manual.html
 [pitft35r]: https://www.adafruit.com/products/2441
 [pitft28r]: https://www.adafruit.com/products/1601
 [raspi2fb]: https://github.com/AndrewFromMelbourne/raspi2fb
-[qtcreator-setup]: http://www.jumpnowtek.com/rpi/Qt-Creator-Setup-for-RPi-cross-development.html
-[jumpnow-pitft]: http://www.jumpnowtek.com/rpi/pitft-displays-and-qt5.html
+[qtcreator-setup]: https://jumpnowtek.com/rpi/Qt-Creator-Setup-for-RPi-cross-development.html
+[jumpnow-pitft]: https://jumpnowtek.com/rpi/pitft-displays-and-qt5.html

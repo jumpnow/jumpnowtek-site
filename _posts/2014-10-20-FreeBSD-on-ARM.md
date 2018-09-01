@@ -18,9 +18,9 @@ In particular, some of the boards I have are supported
 * beagleboard
 
 
-The [FreeBSD][freebsd] site has some pre-built [binaries][freebsd-download]. 
+The [FreeBSD][freebsd] site has some pre-built [binaries][freebsd-download].
 
-I'm going to be testing with *FreeBSD 11.0*, the *CURRENT* branch. 
+I'm going to be testing with *FreeBSD 11.0*, the *CURRENT* branch.
 
 *FreeBSD 10.0* is the *STABLE* branch.
 
@@ -41,7 +41,7 @@ Copy it to a microSD card (assuming the SD card shows up at */dev/sdb*)
 
     ~/freebsd$ sudo dd if=FreeBSD-11.0-CURRENT-arm-armv6-WANDBOARD-QUAD.img of=/dev/sdb bs=1M
 
-Insert into a *wandboard-quad* with serial console connected through a NULL modem (1152008N1) 
+Insert into a *wandboard-quad* with serial console connected through a NULL modem (1152008N1)
 
 Here is the [boot log][freebsd-boot-log].
 
@@ -96,13 +96,13 @@ Not much running other then [dhclient(8)][dhclient] and [sshd(8)][sshd].
 
 ### SSH Login
 
-A running [sshd(8)][sshd] server is a nice convenience since it's usually the first thing I install on Linux systems. 
+A running [sshd(8)][sshd] server is a nice convenience since it's usually the first thing I install on Linux systems.
 
 If you didn't want [sshd(8)][sshd] running at startup, you would change this line in [rc.conf(5)][rc.conf] in `/etc`
 
     sshd_enable="YES"
 
-Root logins over *ssh* are not allowed by default. 
+Root logins over *ssh* are not allowed by default.
 
 To get in with root, you can do this
 
@@ -142,7 +142,7 @@ If you wanted a *static* ipv4 address, you could make the following changes to [
     - ifconfig_ffec0="DHCP"
     + ifconfig_ffec0="inet <address> netmask <netmask>"
     + defaultrouter="<default router address>"
-    
+
 For example
 
     ifconfig_ffec0="inet 192.168.10.21 netmask 255.255.255.0"
@@ -154,7 +154,7 @@ And then you'll probably also want to add an entry in [resolv.conf(5)][resolv.co
     search jumpnow
     nameserver 192.168.10.2
 
-The *ffec0* portion of that *ifconfig_ffec0* entry comes from the kernel driver name for the ethernet adapter. You can see the name with [ifconfig(8)][ifconfig] 
+The *ffec0* portion of that *ifconfig_ffec0* entry comes from the kernel driver name for the ethernet adapter. You can see the name with [ifconfig(8)][ifconfig]
 
     root@wandq2:~ # ifconfig -a
     ffec0: flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST> metric 0 mtu 1500

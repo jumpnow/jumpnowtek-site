@@ -43,7 +43,7 @@ I already have a user account on the server, so I am logging in with that
     ~/mender/mender-backend-cli$ ./mender-backend -s https://fractal.jumpnow user login -u scott@jumpnowtek.com -p <some-password>
     INFO:requests.packages.urllib3.connectionpool:Starting new HTTPS connection (1): fractal.jumpnow
     INFO:root:request successful
-    INFO:root:token: 
+    INFO:root:token:
        ... <long token here>
 
 That command created  a **usertoken** file in the local directory that gets used automatically by later commands.
@@ -85,7 +85,7 @@ You can use **--help** for any command.
 
 Every command requires the **-s SERVER** and the default value pointing to Mender's server is not very useful so I changed the default to my local server by editing this file
 
-    mender/cli/__init__.py 
+    mender/cli/__init__.py
 
 I will switch the code to using an environment variable later, but for the following examples this is why the commands I am showing do not have a **-s SERVER** specified.
 
@@ -154,7 +154,7 @@ And now to start a deployment to the BeagleBone Green device
     $ ./mender-backend deployment add \
         -a 'bbg-test-2' \
         -n test \
-        -e 5a54f15cd502db00014b77c3 
+        -e 5a54f15cd502db00014b77c3
     INFO:root:loading user token from usertoken
     INFO:requests.packages.urllib3.connectionpool:Starting new HTTPS connection (1): fractal.jumpnow
     created with URL: ./management/v1/deployments/deployments/fab35a4c-4399-443d-a706-2756fb9027ad
@@ -192,15 +192,15 @@ I am using this instead
 [mender-io]: https://mender.io/what-is-mender
 [mender-artifacts]: https://docs.mender.io/1.3/architecture/mender-artifacts
 [wandboard]: http://www.wandboard.org/
-[mender-wandboard]: http://www.jumpnowtek.com/wandboard/Adding-Mender-to-a-Wandboard-System.html
-[mender-bbb]: http://www.jumpnowtek.com/beaglebone/Adding-Mender-to-a-BeagleBone-System.html
-[mender-duovero]: http://www.jumpnowtek.com/gumstix-linux/Adding-Mender-to-a-Duovero-System.html
-[mender-odroid-c2]: http://www.jumpnowtek.com/odroid/Adding-Mender-to-a-Odroid-C2-System.html
+[mender-wandboard]: https://jumpnowtek.com/wandboard/Adding-Mender-to-a-Wandboard-System.html
+[mender-bbb]: https://jumpnowtek.com/beaglebone/Adding-Mender-to-a-BeagleBone-System.html
+[mender-duovero]: https://jumpnowtek.com/gumstix-linux/Adding-Mender-to-a-Duovero-System.html
+[mender-odroid-c2]: https://jumpnowtek.com/odroid/Adding-Mender-to-a-Odroid-C2-System.html
 [mender-production-installation]: https://docs.mender.io/1.3/administration/production-installation
 [stackexchange-post]: https://security.stackexchange.com/questions/74345/provide-subjectaltname-to-openssl-directly-on-command-line
 [mender-server-repo]: https://github.com/mendersoftware/integration
 [mender-server-keygen]: https://github.com/mendersoftware/integration/blob/master/keygen
-[keygen-SAN-patch]: https://gist.github.com/scottellis/b27773a4c8242b1a395854b8418d6900 
+[keygen-SAN-patch]: https://gist.github.com/scottellis/b27773a4c8242b1a395854b8418d6900
 [dynomite-thread]: https://groups.google.com/a/lists.mender.io/forum/#!topic/mender/v4nH_Vxsg_s
 [dynomite-logging-disable]: https://github.com/mendersoftware/integration/commit/64c9c5287247
 [edm1-cf-imx6]: https://www.technexion.com/products/system-on-modules/edm/edm-modules/detail/EDM1-CF-IMX6

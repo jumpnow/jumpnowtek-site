@@ -22,7 +22,7 @@ Instead, Gumstix sells a [Pi Fast Flash Board][gumstix-pi-fast-flash-board] just
 
 The Gumstix *Fast Flash Board* is much more convenient when you are flashing multiple boards in succession.
 
-Assuming then that you have built your custom Yocto image using the instructions linked earlier. 
+Assuming then that you have built your custom Yocto image using the instructions linked earlier.
 
 And also assuming you have already built the RaspberryPi tool `rpiboot` from the [RPi Compute][jumpnow-rpi-compute] instructions.
 
@@ -63,7 +63,7 @@ When `rpiboot` exits, there should be a new device, `/dev/sdc` on my system.
 
 If this is the first time flashing your *RPi CM* the device probably won't have any partitions.
 
-This particular *CM* has already been partitioned, but there is no harm in re-partitioning. 
+This particular *CM* has already been partitioned, but there is no harm in re-partitioning.
 
 To partition the RPi *eMMC*, there is a simple 2 partition script in `meta-rpi/scripts`.
 
@@ -76,7 +76,7 @@ The *copy_* scripts use a temporary mount point `/media/card` on the workstation
 
     scott@fractal:~/rpi$ sudo mkdir -p /media/card
 
-Then export some environment variables for the scripts. (See the [instructions][jumpnow-yocto-rpi] for an explanation.) 
+Then export some environment variables for the scripts. (See the [instructions][jumpnow-yocto-rpi] for an explanation.)
 
     scott@fractal:~/rpi/meta-rpi/scripts$ export OETMP=/oe4/rpi/tmp-morty
     scott@fractal:~/rpi/meta-rpi/scripts$ export MACHINE=raspberrypi2
@@ -128,7 +128,7 @@ One of the nice features of the *Pi Dev Board* is the built-in USB serial consol
     Poky (Yocto Project Reference Distro) 2.2.1 cm3 /dev/ttyAMA0
 
     cm3 login: root
-    
+
     root@cm3:~# uname -a
     Linux cm3 4.9.20 #1 SMP Sun Apr 9 06:31:32 EDT 2017 armv7l armv7l armv7l GNU/Linux
 
@@ -164,7 +164,7 @@ Modify `config.txt` so the GPU can use the camera.
     root@cm3:~# echo 'gpu_mem=128' >> /mnt/fat/config.txt
     root@cm3:~# reboot
 
-  
+
 After that you can use the [raspicam][raspicam] tools installed on either the of test images in `meta-rpi`.
 
     root@cm3:~# raspistill -t 0 -hf -vf
@@ -176,9 +176,9 @@ After that you can use the [raspicam][raspicam] tools installed on either the of
 [gumstix-pi-dev-board]: https://store.gumstix.com/expansion/gumstix-pi-compute-dev-board.html
 [gumstix-gepetto]: https://www.gumstix.com/geppetto/
 [yocto]: https://www.yoctoproject.org
-[jumpnow-yocto-rpi]: http://www.jumpnowtek.com/rpi/Raspberry-Pi-Systems-with-Yocto.html
-[jumpnow-rpi-compute]: http://www.jumpnowtek.com/rpi/Working-with-the-raspberry-pi-compute.html
+[jumpnow-yocto-rpi]: https://jumpnowtek.com/rpi/Raspberry-Pi-Systems-with-Yocto.html
+[jumpnow-rpi-compute]: https://jumpnowtek.com/rpi/Working-with-the-raspberry-pi-compute.html
 [gumstix-pi-fast-flash-board]: https://store.gumstix.com/raspberry-pi-cm-fast-flash.html
-[bbb-upgrades]: http://www.jumpnowtek.com/beaglebone/Upgrade-strategy-for-BBB.html
+[bbb-upgrades]: https://jumpnowtek.com/beaglebone/Upgrade-strategy-for-BBB.html
 [rpi-cm-camera]: https://www.raspberrypi.org/documentation/hardware/computemodule/cmio-camera.md
 [raspicam]: https://www.raspberrypi.org/documentation/raspbian/applications/camera.md

@@ -56,7 +56,7 @@ and modified the kernel makefile to build the dtbos and copy them to an `overlay
     +endif # BR2_LINUX_KERNEL_DTS_OVERLAYS
     +
      endif # BR2_LINUX_KERNEL_DTS_SUPPORT
-    
+
      ifeq ($(BR2_LINUX_KERNEL_APPENDED_DTB),y)
     @@ -350,6 +358,10 @@ define LINUX_BUILD_CMDS
             @if grep -q "CONFIG_MODULES=y" $(@D)/.config; then      \
@@ -75,7 +75,7 @@ and modified the kernel makefile to build the dtbos and copy them to an `overlay
             $(call LINUX_INSTALL_DTB,$(BINARIES_DIR))
     +       $(call LINUX_INSTALL_DTB_OVERLAYS,$(BINARIES_DIR)/overlays)
      endef
-    
+
      ifeq ($(BR2_STRIP_strip),y)
 
 And I modified the **rpi-firmware** config so that it doesn't copy dtbos when the kernel built ones are being used.
@@ -85,7 +85,7 @@ And I modified the **rpi-firmware** config so that it doesn't copy dtbos when th
     --- a/package/rpi-firmware/Config.in
     +++ b/package/rpi-firmware/Config.in
     @@ -58,8 +58,9 @@ config BR2_PACKAGE_RPI_FIRMWARE_INSTALL_DTBS
-    
+
      config BR2_PACKAGE_RPI_FIRMWARE_INSTALL_DTB_OVERLAYS
             bool "Install DTB overlays"
     -       depends on BR2_PACKAGE_RPI_FIRMWARE_INSTALL_DTBS \
@@ -100,10 +100,10 @@ And I modified the **rpi-firmware** config so that it doesn't copy dtbos when th
 
 With those changes the dtbos will end up in `images/overlays`.
 
-The final piece is to get the `overlays/` directory installed onto the SD card FAT partition where the bootloader looks for them. 
+The final piece is to get the `overlays/` directory installed onto the SD card FAT partition where the bootloader looks for them.
 
 This can be handled with a minor change to the `board/raspberrypi/genimage-raspberrypiX.cfg` template that describes how to create the SD card image.
- 
+
     diff --git a/board/raspberrypi/genimage-raspberrypi3.cfg b/board/raspberrypi/genimage-raspberrypi3.cfg
     index baab0c4..9ceab77 100644
     --- a/board/raspberrypi/genimage-raspberrypi3.cfg

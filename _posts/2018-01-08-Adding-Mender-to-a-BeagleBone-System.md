@@ -3,7 +3,7 @@ layout: post
 title: Adding Mender to a BeagleBone System
 description: "Incorporating Mender into a Yocto built BeagleBone system"
 date: 2018-01-08 17:30:00
-categories: beaglebone 
+categories: beaglebone
 tags: [mender, beaglebone, yocto, linux]
 ---
 
@@ -13,7 +13,7 @@ For now integrating Mender is easiest if you are using [Yocto][yocto] to build y
 
 I have a simple [meta-bbb][meta-bbb] layer for [BeagleBone Black][bbb] and [BeagleBone Green][bbg] boards that can be adapted without too much effort to add Mender support.
 
-The steps to setup and build are similar to the ones outlined in this post [Building BeagleBone Systems with Yocto][bbb-yocto] with the following differences   
+The steps to setup and build are similar to the ones outlined in this post [Building BeagleBone Systems with Yocto][bbb-yocto] with the following differences
 
 1. The meta-mender repository needs to be cloned and added to **bblayers.conf**
 2. Add some mender classes and storage configuration to your **local.conf**
@@ -66,9 +66,9 @@ Copy it as your **local.conf**
 
 You can choose to edit **DL\_DIR**, **SSTATE\_DIR** and **TMPDIR** as described in the [Building BeagleBone Systems][bbb-yocto] post or leave them alone and commented.
 
-A **KERNEL\_DEVICETREE** needs to be set in this file (or in **machine.conf**) so both the mender classes and the kernel recipe can see it. 
+A **KERNEL\_DEVICETREE** needs to be set in this file (or in **machine.conf**) so both the mender classes and the kernel recipe can see it.
 
-Only declare one dtb here since the mender patched u-boot is going to embed in the u-boot environment this dtb as the one to feed the kernel. Mender (by default) will override any auto-detection in u-boot about which dtb to load. 
+Only declare one dtb here since the mender patched u-boot is going to embed in the u-boot environment this dtb as the one to feed the kernel. Mender (by default) will override any auto-detection in u-boot about which dtb to load.
 
 This behavior can be changed with some modifications to mender's u-boot changes, but to get started just choose the correct dtb for the board you are using.
 
@@ -104,7 +104,7 @@ If instead you choose to use Mender's [hosting service][hosted-mender-io-signup]
 
 and then add another variable with your mender tenant token
 
-    MENDER_TENANT_TOKEN = "<big long token>" 
+    MENDER_TENANT_TOKEN = "<big long token>"
 
 When using mender's hosting service or if your mender server has an officially signed CA cert, then you should remove the **server.crt** line from **SRC_URI** in my mender recipe bbappend.
 
@@ -123,7 +123,7 @@ There is a short README in the **meta-bbb** repository for setting up the signin
 If you follow those instructions you can immediately use a provided utility script to generate and sign mender artifacts for uploading to a mender server
 
     meta-bbb/scripts/sign-mender-image.sh
- 
+
 ### Add u-boot-fw-utils and mender init startup
 
 Mender requires the **u-boot-fw-utils** for maintaining the u-boot environment about the active root partition.
@@ -138,7 +138,7 @@ There is a simple Yocto image recipe you can use for testing that adds the two n
 
 Build it with bitbake after sourcing the Yocto environment
 
-    ~/bbb/build$ bitbake mender-test-image 
+    ~/bbb/build$ bitbake mender-test-image
 
 Note that only the two packages in **MENDER\_EXTRA** are required beyond the additions to **local.conf** to enable mender in the client.
 
@@ -156,7 +156,7 @@ The script does not require any arguments but you may have to modify the **TOPDI
 
 The result of this script can be copied to an SD card using **dd**
 
-    ~/bbb/upload$ sudo dd if=beaglebone-mender-test-4gb.img of=/dev/sdb bs=1M  
+    ~/bbb/upload$ sudo dd if=beaglebone-mender-test-4gb.img of=/dev/sdb bs=1M
 
 
 
@@ -165,7 +165,7 @@ The result of this script can be copied to an SD card using **dd**
 [meta-bbb]: https://github.com/jumpnow/meta-bbb
 [bbb]: http://www.beagleboard.org/black
 [bbg]: http://www.beagleboard.org/green
-[bbb-yocto]: http://jumpnowtek.com/beaglebone/BeagleBone-Systems-with-Yocto.html
+[bbb-yocto]: https://jumpnowtek.com/beaglebone/BeagleBone-Systems-with-Yocto.html
 [hosted-mender-io-signup]: https://mender.io/signup
 [mender-server-production-install]: https://docs.mender.io/1.3/administration/production-installation
 [server-keys]: https://docs.mender.io/1.3/administration/production-installation#certificates-and-keys

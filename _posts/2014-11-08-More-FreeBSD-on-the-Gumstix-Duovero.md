@@ -9,7 +9,7 @@ tags: [freebsd, gumstix, duovero]
 
 Continuing to experiment with [FreeBSD and the Duovero][freebsd-duovero], I created the necessary kernel files to define a new *DUOVERO* machine in FreeBSD.
 
-It's really just a copy of the *PANDABOARD* machine at this point, though I did remove the *USB ethernet* that the *Pandaboard* uses since that doesn't exist on the *Duovero*. The *Duovero* has a much better *GPMC* attached *LAN 9221* ethernet controller. 
+It's really just a copy of the *PANDABOARD* machine at this point, though I did remove the *USB ethernet* that the *Pandaboard* uses since that doesn't exist on the *Duovero*. The *Duovero* has a much better *GPMC* attached *LAN 9221* ethernet controller.
 
 I did add *i2c2* and *uart2* definitions to the `duovero.dts`. I chose those two devices since they are both exposed on the *Duovero Parlor* board expansion header and I wanted to try programming them with *FreeBSD*.
 
@@ -46,7 +46,7 @@ Here is the [duovero.dts][duovero-dts] I used (not showing the removed uart2).
 
 Now I need to go figure out how to point the *console* at the right uart in userland...
 
-[freebsd-duovero]: http://www.jumpnowtek.com/freebsd/FreeBSD-on-the-Gumstix-Duovero.html
+[freebsd-duovero]: https://jumpnowtek.com/freebsd/FreeBSD-on-the-Gumstix-Duovero.html
 [duovero-boot-log]: https://gist.github.com/scottellis/0413bd5198b94e74d319
 [duovero-dts]: https://github.com/scottellis/duovero-freebsd/blob/master/sys/boot/fdt/dts/arm/duovero.dts
 

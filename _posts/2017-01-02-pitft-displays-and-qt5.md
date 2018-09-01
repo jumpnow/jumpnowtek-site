@@ -21,7 +21,7 @@ I am primarily testing with RPi3s running a Yocto built system ([notes here][rpi
     g++ (GCC) 6.2.0
     ...
 
-These systems do not have a desktop or window manager installed. 
+These systems do not have a desktop or window manager installed.
 
 Qt applications are run fullscreen using either the `eglfs` or `linuxfb` [Qt5 platform plugins][embedded-linux-qpa].
 
@@ -33,7 +33,7 @@ Device tree overlays for both of these displays are built and installed by defau
     -rwxr-xr-x 1 root root 2802 Jan  1 10:07 /mnt/fat/overlays/pitft28-resistive.dtbo
     -rwxr-xr-x 1 root root 2802 Jan  1 10:07 /mnt/fat/overlays/pitft35-resistive.dtbo
 
-The backlight can be a simple gpio ON/OFF (the default) or controlled using PWM for the PiTFT35. See the notes at the bottom of this post for controlling the backlight. 
+The backlight can be a simple gpio ON/OFF (the default) or controlled using PWM for the PiTFT35. See the notes at the bottom of this post for controlling the backlight.
 
 When the appropriate dtoverlay has been setup in `config.txt`, the TFTs show up like this
 
@@ -147,9 +147,9 @@ Use of `tslib` is optional, but results in better touch accuracy for me.
 
 To use `QML` you must use the `eglfs` platform plugin.
 
-Using the `eglfs` plugin you cannot directly work with the TFT displays from Qt. 
+Using the `eglfs` plugin you cannot directly work with the TFT displays from Qt.
 
-The Qt 5.7 `eglfs` plugin uses the RPi opengl libraries from the [RPi userland][rpi-userland] package which are in turned backed up by hardware in the RPi VideoCore GPU. 
+The Qt 5.7 `eglfs` plugin uses the RPi opengl libraries from the [RPi userland][rpi-userland] package which are in turned backed up by hardware in the RPi VideoCore GPU.
 
     root@pi3:~# ldd /usr/lib/qt5/plugins/platforms/libqeglfs.so | grep -E 'EGL|GLE'
             libEGL.so.1 => /usr/lib/libEGL.so.1 (0x760d2000)
@@ -173,7 +173,7 @@ Several people have already written such *copy* applications for public use. The
 
 ##### config.txt
 
-To facilitate the copy of the framebuffers, setup a custom hdmi display for the GPU with the same dimensions as the TFT. 
+To facilitate the copy of the framebuffers, setup a custom hdmi display for the GPU with the same dimensions as the TFT.
 
 **PiTFT 2.8**
 
@@ -242,13 +242,13 @@ The calibration file is saved as `/etc/pointercal`.
 
 You probably want to run `ts_calibrate` to improve the touch calibration.
 
-Unfortunately I am not able to get a very accurate calibration of the TFT screen using the *eglfs* plugin, particularly near the display borders. 
+Unfortunately I am not able to get a very accurate calibration of the TFT screen using the *eglfs* plugin, particularly near the display borders.
 
-Using the *linuxfb* plugin, the screen can be calibrated very accurately.  
+Using the *linuxfb* plugin, the screen can be calibrated very accurately.
 
 This is not a huge problem if your GUI controls are decent size. For example, the controls in the demo apps `tspress` and `qqtest` work okay.
 
-If your application requires fine touch accuracy, then I recommend you stay with the *linuxfb* plugin and restrict yourself to Qt widgets. 
+If your application requires fine touch accuracy, then I recommend you stay with the *linuxfb* plugin and restrict yourself to Qt widgets.
 
 
 ## Backlight Control
@@ -287,7 +287,7 @@ Any programming language that can do file I/O can control the backlight this way
 
 #### pwm control for the PiTFT 3.5
 
-You'll need to enable a pwm driver on GPIO_18. 
+You'll need to enable a pwm driver on GPIO_18.
 
 This post on [Using the RPi hardware PWM timers][rpi-pwm] has more details, but the short version is add this line to `config.txt`
 
@@ -347,15 +347,15 @@ These commands to disable the gpio-backlight driver and export and configure the
     echo 900000 > /sys/class/pwm/pwmchip0/pwm0/duty_cycle
     echo 1 > /sys/class/pwm/pwmchip0/pwm0/enable
 
-And then further control could be done with whatever programming language you choose. 
+And then further control could be done with whatever programming language you choose.
 
 
-[rpi-yocto]: http://www.jumpnowtek.com/rpi/Raspberry-Pi-Systems-with-Yocto.html
-[rpi-qt5-qml-dev]: http://www.jumpnowtek.com/rpi/Qt5-and-QML-Development-with-the-Raspberry-Pi.html
+[rpi-yocto]: https://jumpnowtek.com/rpi/Raspberry-Pi-Systems-with-Yocto.html
+[rpi-qt5-qml-dev]: https://jumpnowtek.com/rpi/Qt5-and-QML-Development-with-the-Raspberry-Pi.html
 [embedded-linux-qpa]: http://doc.qt.io/qt-5/embedded-linux.html
 [pitft35r]: https://www.adafruit.com/products/2441
 [pitft28r]: https://www.adafruit.com/products/1601
 [raspi2fb]: https://github.com/AndrewFromMelbourne/raspi2fb
-[rpi-pwm]: http://www.jumpnowtek.com/rpi/Using-the-Raspberry-Pi-Hardware-PWM-timers.html
+[rpi-pwm]: https://jumpnowtek.com/rpi/Using-the-Raspberry-Pi-Hardware-PWM-timers.html
 [rpi-userland]: https://github.com/raspberrypi/userland
 [meta-rpi]: https://github.com/jumpnow/meta-rpi

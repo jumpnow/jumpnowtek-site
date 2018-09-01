@@ -21,7 +21,7 @@ Add the following line to your `build/conf/local.conf`
 
     # Enable fortran
     FORTRAN_forcevariable = ",fortran"
- 
+
 #### gcc-runtime.bbappend
 
 Add this one-liner `bbappend` to the `gcc-runtime` recipe
@@ -81,7 +81,7 @@ Here's a run
      Add:
     0
      Summation =          10
- 
+
     root@overo:~# ls
     SumData.DAT  fsum  sum.f90
 
@@ -115,12 +115,12 @@ After that, a `Makefile` like the following will work
     --- Makefile ---
     # Use Yocto cross-tools to compile a Fortran program
     # Source the setup-fortran-env.sh script first
-    
+
     CC = arm-poky-linux-gnueabi-gfortran
-    
+
     SRC = sum.f90
     TARGET = fsum
-    
+
     $(TARGET): $(SRC)
             $(CC) $(SRC) -o $(TARGET)
     --- end Makefile ---

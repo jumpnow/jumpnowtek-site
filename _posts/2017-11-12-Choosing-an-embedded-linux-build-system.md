@@ -6,7 +6,7 @@ categories: linux
 tags: [linux, embedded, buildroot, yocto, qt5]
 ---
 
-[Buildroot][buildroot] and [Yocto/Open Embedded][yocto] are two popular open source frameworks for building custom embedded Linux systems. 
+[Buildroot][buildroot] and [Yocto/Open Embedded][yocto] are two popular open source frameworks for building custom embedded Linux systems.
 
 Both are primarily targeted at commercial projects. Neither is a particularly good choice if you just want to build a general purpose Linux system.
 
@@ -28,7 +28,7 @@ So here is the quick summary I give customers when asked.
 
 * Simple Makefile approach, easier to understand how the build system works
 * Reduced resource requirements on the build machine
-* Very easy to customize the final root filesystem (overlays) 
+* Very easy to customize the final root filesystem (overlays)
 
 
 #### Yocto Advantages
@@ -36,7 +36,7 @@ So here is the quick summary I give customers when asked.
 * Convenient sharing of build configuration among similar projects (meta-layers)
 * Larger community ([Linux Foundation][linux-foundation] project)
 * Can build a toolchain that runs on the target
-* A package management system 
+* A package management system
 
 Those last two are deliberate decisions by **Buildroot** and not usually issues for commercial products
 
@@ -49,11 +49,11 @@ Those last two are deliberate decisions by **Buildroot** and not usually issues 
 
 If you have decided on a package manager approach to upgrades or have a family of products with slightly different package requirements, I would recommend **Yocto**.
 
-Otherwise I would recommend **Buildroot**. 
+Otherwise I would recommend **Buildroot**.
 
 It's just easier.
 
 [buildroot]: https://buildroot.org/
 [yocto]: https://www.yoctoproject.org/
-[AB-upgrades]: http://www.jumpnowtek.com/yocto/An-upgrade-strategy-for-embedded-Linux-systems.html
+[AB-upgrades]: https://jumpnowtek.com/yocto/An-upgrade-strategy-for-embedded-Linux-systems.html
 [linux-foundation]: https://www.linuxfoundation.org/
