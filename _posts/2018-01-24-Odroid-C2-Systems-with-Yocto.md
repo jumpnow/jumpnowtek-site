@@ -2,7 +2,7 @@
 layout: post
 title: Building Odroid-C2 Systems with Yocto
 description: "Building customized systems for Odroid-C2 using tools from the Yocto Project"
-date: 2018-08-16 10:35:00
+date: 2018-10-14 04:38:00
 categories: odroid
 tags: [linux, odroid-c2, yocto]
 ---
@@ -21,7 +21,7 @@ I am using the **odroid-c2** with some USB webcams in a monitoring system built 
 
 The Yocto version is **2.5.1**, the `[sumo]` branch.
 
-The default kernel is **4.18** 64-bit. There are **4.14 LTS** and **4.17** recipes as well.
+The default kernel is **4.18** 64-bit. There is a **4.14 LTS** recipe as well.
 
 The only dtb built is **meson-gxbb-odroidc2.dtb**.
 
@@ -357,6 +357,26 @@ Here's a realistic example session where I want to copy already built images to 
 
 Both **copy\_boot.sh** and **copy\_rootfs.sh** are simple scripts easily customized.
 
+#### Serial console
+
+The ttl uart header pins are on the [CON5 connector][console-uart] 
+
+* Pin 1 VCC
+* Pin 2 TXD
+* Pin 3 RXD
+* Pin 4 GND
+
+Pin 4 is closest to the LEDs.
+
+Using a [USB to TTL Serial Cable][adafruit-usb-ttl-serial] from [adafruit][adafruit] the connection is
+
+* Pin 1 Not used
+* Pin 2 White
+* Pin 3 Green
+* Pin 4 Black
+
+The default serial settings are **1152008N1**.
+
 
 [odroid-c2]: https://wiki.odroid.com/odroid-c2/odroid-c2
 [meta-odroid-c2]: https://github.com/jumpnow/meta-odroid-c2
@@ -369,3 +389,6 @@ Both **copy\_boot.sh** and **copy\_rootfs.sh** are simple scripts easily customi
 [source-script]: http://stackoverflow.com/questions/4779756/what-is-the-difference-between-source-script-sh-and-script-
 [eudev]: https://wiki.gentoo.org/wiki/Project:Eudev
 [mender]: https://mender.io/product/features
+[console-uart]: https://wiki.odroid.com/odroid-c2/application_note/gpio/uart
+[adafruit-usb-ttl-serial]: https://www.adafruit.com/product/954
+[adafruit]: https://www.adafruit.com/
