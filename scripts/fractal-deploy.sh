@@ -1,6 +1,8 @@
 #!/bin/bash
 
 cd ..
+rm -f _site/site.tgz
+rm -f site.tgz
 jekyll build
 tar -czf site.tgz _site 
 sudo systemctl stop nginx
