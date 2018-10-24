@@ -2,7 +2,7 @@
 layout: post
 title: Building Odroid-C2 Systems with Yocto
 description: "Building customized systems for Odroid-C2 using tools from the Yocto Project"
-date: 2018-10-14 04:38:00
+date: 2018-10-24 16:38:00
 categories: odroid
 tags: [linux, odroid-c2, yocto]
 ---
@@ -21,7 +21,7 @@ I am using the **odroid-c2** with some USB webcams in a monitoring system built 
 
 The Yocto version is **2.5.1**, the `[sumo]` branch.
 
-The default kernel is **4.18** 64-bit. There is a **4.14 LTS** recipe as well.
+The default kernel is **4.19** 64-bit. There are **4.18** and **4.14 LTS** recipes as well.
 
 The only dtb built is **meson-gxbb-odroidc2.dtb**.
 
@@ -221,15 +221,24 @@ The default password is set to **jumpnowtek** by these two lines in the **local.
     INHERIT += "extrausers"
     EXTRA_USERS_PARAMS = "usermod -P jumpnowtek root; "
 
-Obviously you should change this.
+These two lines force a password change on first login
 
-If you want no password, convenient for development, comment those two lines and uncomment this line
+    INHERIT += "chageusers"
+    CHAGE_USERS_PARAMS = "chage -d0 root; "
+
+You can comment them out if you do not want that behavior.
+
+If you want no password at all (development only hopefully), comment those four lines and uncomment this line
 
     EXTRA_IMAGE_FEATURES = "debug-tweaks"
+
     #INHERIT += "extrausers"
     #EXTRA_USERS_PARAMS = "usermod -P jumpnowtek root; "
 
-You can also change or add a password once logged in.
+    #INHERIT += "chageusers"
+    #CHAGE_USERS_PARAMS = "chage -d0 root; "
+
+You can always add or change the password once logged in.
 
 ### Build
 

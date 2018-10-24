@@ -2,7 +2,7 @@
 layout: post
 title: Building BeagleBone Systems with Yocto
 description: "Building customized systems for the BeagleBones using tools from the Yocto Project"
-date: 2018-08-29 07:30:00
+date: 2018-10-24 16:47:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
@@ -24,7 +24,7 @@ I use this layer as a template when starting new BeagleBone projects.
 
 The Yocto version is **2.5.1** the `[sumo]` branch.
 
-The default **4.14** Linux kernel comes from the [linux-stable][linux-stable] repository. Recipes for **4.9** and **4.18** are also available.)
+The default **4.14** Linux kernel comes from the [linux-stable][linux-stable] repository. Recipes for **4.9** and **4.19** are also available.)
 
 The [u-boot][uboot] version is `2018.01`.
 
@@ -204,7 +204,7 @@ This is another Yocto build directory that can get pretty big, greater then 5GB.
 
 The default location is in the `build` directory, `~/bbb/build/sstate-cache`.
 
-##### ROOT PASSWORD
+#### ROOT PASSWORD
 
 There is only one login user by default, **root**.
 
@@ -213,15 +213,24 @@ The default password is set to **jumpnowtek** by these two lines in the **local.
     INHERIT += "extrausers"
     EXTRA_USERS_PARAMS = "usermod -P jumpnowtek root; "
 
-Obviously you should change this.
+These two lines force a password change on first login
 
-If you want no password, convenient for development, comment those two lines and uncomment this line
+    INHERIT += "chageusers"
+    CHAGE_USERS_PARAMS = "chage -d0 root; "
+
+You can comment them out if you do not want that behavior.
+
+If you want no password at all (development only hopefully), comment those four lines and uncomment this line
 
     EXTRA_IMAGE_FEATURES = "debug-tweaks"
+
     #INHERIT += "extrausers"
     #EXTRA_USERS_PARAMS = "usermod -P jumpnowtek root; "
 
-You can also change or add a password once logged in.
+    #INHERIT += "chageusers"
+    #CHAGE_USERS_PARAMS = "chage -d0 root; "
+
+You can always add or change the password once logged in.
 
 ### Run the build
 
