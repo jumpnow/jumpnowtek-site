@@ -2,7 +2,7 @@
 layout: post
 title: Building Wandboard Systems with Yocto
 description: "Building customized systems for Wandboards using tools from the Yocto Project"
-date: 2018-10-24 16:44:00
+date: 2018-10-31 13:52:00
 categories: wandboard
 tags: [linux, wandboard, yocto]
 ---
@@ -19,21 +19,21 @@ I have a custom Yocto layer for the wandboards called [meta-wandboard][meta-wand
 
 ### System Info
 
-The Yocto version is **2.5.1**, the `[sumo]` branch.
+The Yocto version is **2.6**, the `[thud]` branch.
 
-The default kernel is **4.19**. Recipes for **4.14 LTS** and **4.18** are also available.
+The default kernel is **4.19**. A **4.14 LTS** kernel recipe is also available.
 
-The u-boot version is **2018.05**.
+The u-boot version is **2018.07**.
 
 These are **sysvinit** systems using [eudev][eudev].
 
-Python **3.5.5** is installed.
+Python **3.5.6** is installed.
 
-gcc/g++ **7.3.0** and associated build tools are installed.
+gcc/g++ **8.2.0** and associated build tools are installed.
 
-git **2.16.1** is installed.
+git **2.18.1** is installed.
 
-The Qt version is **5.10.1** built with the **linuxfb** backend.
+The Qt version is **5.11.2** built with the **linuxfb** backend.
 
 There is no video hardware acceleration in these systems. That requires some additional work.
 
@@ -106,19 +106,19 @@ Fedora already uses **bash** as the shell.
 
 ### Clone the dependency repositories
 
-For all upstream repositories, use the `[sumo]` branch.
+For all upstream repositories, use the `[thud]` branch.
 
 The directory layout I am describing here is my preference. All of the paths to the meta-layers are configurable. If you choose something different, adjust the following instructions accordingly.
 
 First the main Yocto project **poky** layer
 
-    ~# git clone -b sumo git://git.yoctoproject.org/poky.git poky-sumo
+    ~# git clone -b thud git://git.yoctoproject.org/poky.git poky-thud
 
 Then the dependency layers under that
 
-    ~$ cd poky-sumo
-    ~/poky-sumo$ git clone -b sumo git://git.openembedded.org/meta-openembedded
-    ~/poky-sumo$ git clone -b sumo https://github.com/meta-qt5/meta-qt5.git
+    ~$ cd poky-thud
+    ~/poky-thud$ git clone -b thud git://git.openembedded.org/meta-openembedded
+    ~/poky-thud$ git clone -b thud https://github.com/meta-qt5/meta-qt5.git
 
 These repositories shouldn't need modifications other then periodic updates and can be reused for different projects or different boards.
 
@@ -128,7 +128,7 @@ Create a sub-directory for the `meta-wandboard` repository before cloning
 
     $ mkdir ~/wandboard
     ~$ cd ~/wandboard
-    ~/wandboard$ git clone -b sumo git://github.com/jumpnow/meta-wandboard
+    ~/wandboard$ git clone -b thud git://github.com/jumpnow/meta-wandboard
 
 The `meta-wandboard/README.md` file has the last commits from the dependency repositories that I tested. You can always checkout those commits explicitly if you run into problems.
 
@@ -145,7 +145,7 @@ You could manually create the directory structure like this
 
 Or you could use the Yocto environment script **oe-init-build-env** like this passing in the path to the build directory
 
-    ~$ source poky-sumo/oe-init-build-env ~/wandboard/build
+    ~$ source poky-thud/oe-init-build-env ~/wandboard/build
 
 The Yocto environment script will create the build directory if it does not already exist.
 
@@ -172,7 +172,7 @@ In **bblayers.conf** file replace **${HOME}** with the appropriate path to the m
 
 For example, if your directory structure does not look exactly like this, you will need to modify `bblayers.conf`
 
-    ~/poky-sumo/
+    ~/poky-thud/
          meta-openembedded/
          meta-qt5/
          ...
@@ -201,13 +201,13 @@ The default location is under the **build** directory, in this example **~/wandb
 
 If you specify an alternate location as I do in the example conf file make sure the directory is writable by the user running the build.
 
-##### DL_DIR
+##### DL\_DIR
 
 This is where the downloaded source files will be stored. You can share this among configurations and builds so I always create a general location for this outside the project directory. Make sure the build user has write permission to the directory you decide on.
 
 The default location is in the **build** directory, **~/wandboard/build/sources**.
 
-##### SSTATE_DIR
+##### SSTATE\_DIR
 
 This is another Yocto build directory that can get pretty big, greater then **8GB**. I often put this somewhere else other then my home directory as well.
 
@@ -311,7 +311,7 @@ You will need to create a mount point on your workstation for the copy scripts t
 
 You only have to create this directory once.
 
-#### copy_boot.sh
+#### copy\_boot.sh
 
 This script copies the bootloaders (SPL and u-boot) to the *unpartitioned* 4MB beginning section of the SD card.
 
@@ -319,11 +319,11 @@ This script needs to know the `TMPDIR` to find the binaries. It looks for an env
 
 For instance, if I had this in the `local.conf`
 
-    TMPDIR = "/oe6/wand/tmp-sumo"
+    TMPDIR = "/oe6/wand/tmp-thud"
 
 then I would export this environment variable before running `copy_boot.sh`
 
-    ~/wandboard/meta-wandboard/scripts$ export OETMP=/oe6/wand/tmp-sumo
+    ~/wandboard/meta-wandboard/scripts$ export OETMP=/oe6/wand/tmp-thud
 
 If you didn't override the default **TMPDIR** in `local.conf`, then set it to the default **TMPDIR**
 
@@ -335,7 +335,7 @@ Run the `copy_boot.sh` script passing the location of SD card
 
 This script should run very fast.
 
-#### copy_rootfs.sh
+#### copy\_rootfs.sh
 
 This script formats the first partition of the SD card as an *EXT4* filesystem and copies the operating system to it.
 
@@ -358,7 +358,7 @@ The copy scripts will **NOT** unmount partitions automatically. If an SD card pa
 Here's a realistic example session where I want to copy already built images to a second SD card that I just inserted.
 
     ~$ sudo umount /dev/sdb1
-    ~$ export OETMP=/oe6/wand/tmp-sumo
+    ~$ export OETMP=/oe6/wand/tmp-thud
     ~$ cd wandboard/meta-wandboard/scripts
     ~/wandboard/meta-wandboard/scripts$ ./copy_boot.sh sdb
     ~/wandboard/meta-wandboard/scripts$ ./copy_rootfs.sh sdb console wandq2
