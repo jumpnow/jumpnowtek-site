@@ -126,7 +126,7 @@ After that its just a matter of tuning the rules for the network.
 
 ### Check It
 
-To verify things are working, here is a quick change to catch noisy [Nmap][nmap] scans.
+To verify things are working, here is a quick change to catch noisy portscans.
 
 Edit **/etc/snort/snort.conf** and modify these two lines
 
@@ -140,7 +140,7 @@ and
 
 Restart snort.
 
-Now running a scan of an **A** machine from a **B** machine
+Now running an [Nmap][nmap] scan of an **A** machine from a **B** machine
 
     ~# nmap 192.168.10.4
 
