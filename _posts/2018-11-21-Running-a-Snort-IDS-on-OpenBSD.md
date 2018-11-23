@@ -9,15 +9,15 @@ tags: [openbsd, snort, bridging]
 
 I wanted some practice with an [IDS][ids], writing custom rules, evading detection, that kind of thing.
 
-I like [OpenBSD][openbsd] as a platform for network applications like this. I have used [Snort][snort] before, but not on OpenBSD. A good reason to try it for this experiment.
+I like [OpenBSD][openbsd] as a platform for network applications. I have used [Snort][snort] before, but not on OpenBSD. A good reason to try it for this experiment.
 
-The test network looks like this on a single subnet.
+The existing test network looks like this on a single subnet.
 
     outside --- fw --- switch A --- switch B
                            |            |
                         group A      group B
 
-I want to monitor traffic between group A and group B machines.
+I want to monitor traffic between machines in group A and group B.
 
 Since neither switch supports a [network tap][network-tap], I am going to run the IDS box as a transparent bridge placed here
 
@@ -29,7 +29,7 @@ This configuration makes it easy to pull the IDS back out when I am done.
 
 I am using an older dual-core amd64 machine with 3 GigE nics for the hardware.
 
-The operating system is OpenBSD 6.4. I did a standard install, no X11 or games. I did install the compiler, but it's not necessary.
+The operating system is OpenBSD 6.4. I did a standard installation, no X11 or games. I did install the compiler, but it's not necessary.
 
 The 3 nics show up as **re0**, **em0** and **em1**.
 
