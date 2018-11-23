@@ -9,7 +9,7 @@ tags: [openbsd, snort, bridging]
 
 I wanted some practice with an [IDS][ids], writing custom rules, evading detection, that kind of thing.
 
-[OpenBSD][openbsd] is generally my preferred platform for network services and though I have used [Snort][snort] before it was never on OpenBSD. So that's what I decided to use for this experiment.
+I like [OpenBSD][openbsd] as a platform for network applications like this. I have used [Snort][snort] before, but not on OpenBSD. A good reason to try it for this experiment.
 
 The test network looks like this on a single subnet.
 
@@ -17,21 +17,21 @@ The test network looks like this on a single subnet.
                            |            |
                         group A      group B
 
-For testing I want to monitor traffic between group A and group B machines.
+I want to monitor traffic between group A and group B machines.
 
-Since neither of the switches supports a [network tap][network-tap], I am going to run the IDS machine as a bridge placed like this
+Since neither switch supports a [network tap][network-tap], I am going to run the IDS box as a transparent bridge placed here
 
     outside --- fw --- switch A --- IDS --- switch B
 
-This configuration makes it easy to pull the IDS back out of the network when I am done.
+This configuration makes it easy to pull the IDS back out when I am done.
 
 ### OpenBSD Setup
 
 I am using an older dual-core amd64 machine with 3 GigE nics for the hardware.
 
-The operating system is OpenBSD 6.4. I installed the compiler set though it is not necessary. I did not install X11 or games.
+The operating system is OpenBSD 6.4. I did a standard install, no X11 or games. I did install the compiler, but it's not necessary.
 
-The 3 nics show up as **re0**, **em0** and **em1**. 
+The 3 nics show up as **re0**, **em0** and **em1**.
 
 The **re0** interface has a static IP used for access.
 
@@ -46,7 +46,7 @@ The **em** interfaces used for the bridge do not need IP addresses.
     ~$ cat /etc/hostname.em1
     up
 
-And here is the bridge interface configuration
+Here is the bridge interface configuration
 
     ~$ cat /etc/hostname.bridge0
     add em0
@@ -88,11 +88,11 @@ Pretty simple.
 
 For more details see [this post][lteo_net_post] from the maintainer of the Snort port on OpenBSD.
 
-Snort can be installed with the package manager.
+Snort is in ports and can be installed with the package manager.
 
     ~# pkg_add snort
 
-I am using the [oinkcode][oinkcode] ruleset. 
+I am using the [oinkcode][oinkcode] ruleset.
 
 After downloading, install the ruleset like this
 
@@ -118,7 +118,7 @@ Snort alerts are logged here
 
     /var/snort/log/alert
 
-I did not install a GUI for Snort, but tail works fine. 
+I did not install a GUI for Snort, but tail works fine.
 
     ~# tail -f /var/snort/log/alert
 
