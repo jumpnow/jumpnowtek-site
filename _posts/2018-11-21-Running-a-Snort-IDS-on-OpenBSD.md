@@ -7,36 +7,38 @@ categories: security
 tags: [openbsd, snort, bridging]
 ---
 
-In order to get some practice with a network IDS I installed [Snort][snort] on an [OpenBSD][openbsd] machine that was available.
+I wanted to get some practice with an [intrusion detection system][ids], writing custom rules, evading detection, that kind of thing.
 
-The things I am most interested in are writing custom rules and on the offensive side, evading detection. 
+[OpenBSD][openbsd] is generally my goto O/S for network services and though I have used [Snort][snort] before it was not on OpenBSD. So that's what I decided to use for this experiment.
 
-The original network looked like this on a single subnet.
+The test network looks like this on a single subnet.
 
-    outside --- fw --- switch --- switch
-                          |          |
-                         test       dev
-                       machines   machines
+    outside --- fw --- switch A --- switch B
+                           |            |
+                        group A      group B
+                        machines     machines
 
-The two switches are in different parts of the building and I want to monitor traffic between test and dev machines.
+I want to monitor traffic between group A and group B machines.
 
-Since neither of the switches supports a [network tap][network-tap], I am running the IDS machine as a transparent bridge placed like this
+Since neither of the switches supports a [network tap][network-tap], I am running the IDS machine as a bridge placed like this
 
-    outside --- fw --- switch --- ids --- switch
+    outside --- fw --- switch A --- ids --- switch B
 
-With this kind of setup is nothing else on the network has to change other then where I plug in two of the ethernet cables.
 
-### OpenBSD
+### OpenBSD Setup
 
 I am using an dual-core amd64 machine with 3 GigE nics for the hardware.
 
-The operating system is OpenBSD 6.4. I installed the compiler sets, but no X11 or games.
+The operating system is OpenBSD 6.4. I installed the compiler sets, but not X11 or games.
 
 The 3 nics show up as **re0**, **em0** and **em1**. 
 
-The **re0** interface has a static IP that I use to access the machine.
+The **re0** interface has a static IP used for access.
 
-The **em** interfaces used for the bridge do not need IP addresses
+    ~$ cat /etc/hostname.re0
+    inet 192.168.10.2 255.255.255.0
+
+The **em** interfaces used for the bridge do not need IP addresses.
 
     ~$ cat /etc/hostname.em0
     up
@@ -44,11 +46,13 @@ The **em** interfaces used for the bridge do not need IP addresses
     ~$ cat /etc/hostname.em1
     up
 
-And here is the bridge interface
+And here is the bridge interface configuration
 
     ~$ cat /etc/hostname.bridge0
     add em0
     add em1
+    blocknonip em0
+    blocknonip em1
     up
 
 When running it looks like this
@@ -116,13 +120,13 @@ I did not install a GUI for Snort, but tail works fine.
 
     ~# tail -f /var/snort/log/alert
 
-After that its all about customizing the rules for your LAN.
+After that its just a matter of tuning the rules for the network.
 
-### Customizing rules
+### Check It
 
-Here is a quick change to catch noisy [Nmap][nmap] scans.
+To verify things are working, here is a quick change to catch noisy [Nmap][nmap] scans.
 
-Edit /etc/snort/snort.conf and modify these two lines
+Edit **/etc/snort/snort.conf** and modify these two lines
 
     - # preprocessor sfportscan: proto { all } memcap { 10000000 } sense_level { low }
     + preprocessor sfportscan: proto { all } scan_type { all } memcap { 10000000 } sense_level { low }
@@ -134,22 +138,22 @@ and
 
 Restart snort.
 
-Running a scan of a **dev** machine from a **test** machine
+Now running a scan of an **A** machine from a **B** machine
 
     ~# nmap 192.168.10.4
 
-This shows up in the snort alert log
+produces alerts like this in the snort log
 
     [**] [122:1:1] (portscan) TCP Portscan [**]
     [Classification: Attempted Information Leak] [Priority: 2]
     11/22-13:45:54.091767 192.168.10.240 -> 192.168.10.4
     RESERVED TTL:39 TOS:0x0 ID:59253 IpLen:20 DgmLen:165
 
-Or with a UDP scan
+Or a UDP scan
 
     ~# nmap -sU 192.168.10.4
 
-Alerts like this
+produces alerts like this
 
     [**] [122:17:1] (portscan) UDP Portscan [**]
     [Classification: Attempted Information Leak] [Priority: 2]
@@ -160,7 +164,7 @@ Alerts like this
 
 You can add firewall rules to the bridge.
 
-For example, just fooling around
+For example
 
     ~# cat /etc/pf.conf
 
@@ -168,25 +172,28 @@ For example, just fooling around
 
     nameserver = "192.168.10.1"
 
-    set skip on lo
-
     # block a noisy AP
     block in quick on $br0_if proto udp to port ssdp
 
-    # force everyone to use our nameserver
+    # force use of a nameserver
     pass in log quick on $br0_if proto { tcp, udp } from any \
         to ! $nameserver port domain rdr-to $nameserver
 
+The **pf** firewall logs in pcap format.
 
-To watch firewall log events in real-time
+To watch real-time events
 
     ~# tcpdump -i pflog0 -s 160 -e -n -ttt
 
-Or to look at the firewall log
+The historical log
 
-    ~# tcpdump -r /var/log/pflog -s 160 -e -n -ttt | less
+    ~# tcpdump -r /var/log/pflog -s 160 -e -n -ttt
 
 
+As with all things OpenBSD, the [man pages][openbsd-man] are the definitive resource.
+
+
+[ids]: https://en.wikipedia.org/wiki/Intrusion_detection_system
 [openbsd]: https://www.openbsd.org
 [snort]: https://snort.org
 [lteo_net_post]: http://lteo.net/blog/2016/10/26/testing-your-snort-rules-redux/
@@ -194,3 +201,4 @@ Or to look at the firewall log
 [rcctl]: https://man.openbsd.org/rcctl
 [network-tap]: https://en.wikipedia.org/wiki/Network_tap
 [nmap]: https://nmap.org/
+[openbsd-man]: https://man.openbsd.org/
