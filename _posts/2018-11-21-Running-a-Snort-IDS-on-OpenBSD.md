@@ -16,13 +16,12 @@ The test network looks like this on a single subnet.
     outside --- fw --- switch A --- switch B
                            |            |
                         group A      group B
-                        machines     machines
 
 For testing I want to monitor traffic between group A and group B machines.
 
 Since neither of the switches supports a [network tap][network-tap], I am going to run the IDS machine as a bridge placed like this
 
-    outside --- fw --- switch A --- ids --- switch B
+    outside --- fw --- switch A --- IDS --- switch B
 
 This configuration makes it easy to pull the IDS back out of the network when I am done.
 
@@ -30,7 +29,7 @@ This configuration makes it easy to pull the IDS back out of the network when I 
 
 I am using an older dual-core amd64 machine with 3 GigE nics for the hardware.
 
-The operating system is OpenBSD 6.4. I installed the compiler sets, but not X11 or games.
+The operating system is OpenBSD 6.4. I installed the compiler set though it is not necessary. I did not install X11 or games.
 
 The 3 nics show up as **re0**, **em0** and **em1**. 
 
