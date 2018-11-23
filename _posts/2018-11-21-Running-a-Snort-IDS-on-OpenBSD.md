@@ -7,9 +7,9 @@ categories: security
 tags: [openbsd, snort, bridging]
 ---
 
-I wanted to get some practice with an [intrusion detection system][ids], writing custom rules, evading detection, that kind of thing.
+I wanted some practice with an [IDS][ids], writing custom rules, evading detection, that kind of thing.
 
-[OpenBSD][openbsd] is generally my goto O/S for network services and though I have used [Snort][snort] before it was not on OpenBSD. So that's what I decided to use for this experiment.
+[OpenBSD][openbsd] is generally my preferred platform for network services and though I have used [Snort][snort] before it was never on OpenBSD. So that's what I decided to use for this experiment.
 
 The test network looks like this on a single subnet.
 
@@ -18,16 +18,17 @@ The test network looks like this on a single subnet.
                         group A      group B
                         machines     machines
 
-I want to monitor traffic between group A and group B machines.
+For testing I want to monitor traffic between group A and group B machines.
 
-Since neither of the switches supports a [network tap][network-tap], I am running the IDS machine as a bridge placed like this
+Since neither of the switches supports a [network tap][network-tap], I am going to run the IDS machine as a bridge placed like this
 
     outside --- fw --- switch A --- ids --- switch B
 
+This configuration makes it easy to pull the IDS back out of the network when I am done.
 
 ### OpenBSD Setup
 
-I am using an dual-core amd64 machine with 3 GigE nics for the hardware.
+I am using an older dual-core amd64 machine with 3 GigE nics for the hardware.
 
 The operating system is OpenBSD 6.4. I installed the compiler sets, but not X11 or games.
 
@@ -81,6 +82,8 @@ When running it looks like this
     pflog0: flags=141<UP,RUNNING,PROMISC> mtu 33136
             index 7 priority 0 llprio 3
             groups: pflog
+
+Pretty simple.
 
 ### Snort Setup
 
@@ -162,9 +165,11 @@ produces alerts like this
 
 ### Firewalling on the bridge
 
-You can add firewall rules to the bridge.
+You can add firewall rules to the bridge if you want to expand the experiment.
 
-For example
+In my setup, **em0** faces the B switch.
+
+A simple example
 
     ~# cat /etc/pf.conf
 
@@ -172,10 +177,10 @@ For example
 
     nameserver = "192.168.10.1"
 
-    # block a noisy AP
+    # block a noisy AP in the B group
     block in quick on $br0_if proto udp to port ssdp
 
-    # force use of a nameserver
+    # force use of a nameserver for B hosts
     pass in log quick on $br0_if proto { tcp, udp } from any \
         to ! $nameserver port domain rdr-to $nameserver
 
