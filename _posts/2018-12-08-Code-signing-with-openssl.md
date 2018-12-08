@@ -2,7 +2,7 @@
 layout: post
 title: Signing code with OpenSSL
 description: "Digital signing with OpenSSL"
-date: 2018-12-08 15:08:00
+date: 2018-12-08 15:25:00
 categories: security
 tags: [openssl, signing]
 ---
@@ -114,6 +114,21 @@ Now whenever you use the private key, you will be prompted for the password
 
 This does not affect how the public key is used.
 
+### Base64 encoding the Signature File
+
+The signature file is a binary file that may cause issues if you are planning to post the file on a web server.
+
+Openssl provides for [base64][base64] encoding the file to make it simple text.
+
+    $ openssl base64 -in data.sig -out data.b64
+
+    $ file data.b64
+    data.b64: ASCII text
+
+Before using for verification the signature file needs to be base64 decoded.
+
+    $ openssl base64 -d -in data.b64 -out data.sig
+
 
 [crypto-hash]: https://en.wikipedia.org/wiki/Cryptographic_hash_function
 [digital-sig]: https://en.wikipedia.org/wiki/Digital_signature
@@ -121,3 +136,4 @@ This does not affect how the public key is used.
 [openssl]: https://www.openssl.org/
 [genrsa]: https://www.openssl.org/docs/manmaster/man1/genrsa.html
 [aes]: https://en.wikipedia.org/wiki/Advanced_Encryption_Standard
+[base64]: https://en.wikipedia.org/wiki/Base64
