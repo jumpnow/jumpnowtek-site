@@ -116,7 +116,7 @@ This does not affect how the public key is used.
 
 ### Base64 encoding the Signature File
 
-The signature file is a binary file that may cause issues if you are planning to post the file on the web. 
+The signature file is a binary that may cause issues if you are planning on posting the file on the web. 
 
 Openssl provides for [base64][base64] encoding the file to make it simple text.
 
