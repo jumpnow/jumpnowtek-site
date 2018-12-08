@@ -2,7 +2,7 @@
 layout: post
 title: Signing code with OpenSSL
 description: "Digital signing with OpenSSL"
-date: 2018-12-08 10:00:00
+date: 2018-12-08 10:55:00
 categories: security
 tags: [openssl, signing]
 ---
@@ -13,20 +13,20 @@ In order to provide **authentication**, proof of authorship, we need a [digital 
 
 A digital signature involves [public key cryptography][pub-key-crypto].
 
-A digital signature provides **authentication**, **verification** and **non-repudiation**, though when signing code we are often not as interested in non-repudiation.
+A digital signature provides **authentication**, **verification** and **non-repudiation**.
 
-In software development, providing a digital signature is often called code signing.
+In software development, providing a digital signature is called code signing.
 
-The general algorithm is simple:
+The general algorithm:
 
 **To Sign**
 
-1. Generate a hash of the file
+1. Generate a hash of the data file
 2. Encrypt the hash with the private key producing a signature file
 
 **To Verify**
 
-1. Generate a hash of the file
+1. Generate a hash of the data file
 2. Unencrypt the signature file with the public key
 3. Compare the two
 
@@ -36,7 +36,7 @@ So why not just sign the original file?
 
 Public key cryptography is slow and doesn't work well on the large files. Hashing the data first means we only have to encrypt a small file of fixed size.
 
-The [OpenSSL][openssl] command line tool makes the work of signing code fairly easy.
+The [OpenSSL][openssl] command line utility provides all the tools we need to digitally sign files.
 
 ### Create a Public/Private Key Pair
 
@@ -48,7 +48,7 @@ Generate a public key from the private key.
 
     $ openssl rsa -in private.pem -pubout -out public.pem
 
-The private key is a secret and should not be given out.
+The private key is a secret.
 
 The public key is meant to be shared.
 
@@ -62,6 +62,8 @@ Assume the data file is some big binary blob.
 
     $ openssl dgst -sha256 -sign private.pem -out data.sig data
 
+The signature file **data.sig** should now be distributed with the data file.
+
 ### Verifying
 
 Verification requires the public key and knowledge of the hashing algorithm that was used.
@@ -73,6 +75,9 @@ A failure looks like this
 
     $ openssl dgst -sha256 -verify public.pem -signature data.sig modified-data
     Verification Failure
+
+
+If shell scripting the verification, the **$?** variable is set to zero on (success) or one on (failure) as you would expect.
 
 [crypto-hash]: https://en.wikipedia.org/wiki/Cryptographic_hash_function
 [digital-sig]: https://en.wikipedia.org/wiki/Digital_signature
