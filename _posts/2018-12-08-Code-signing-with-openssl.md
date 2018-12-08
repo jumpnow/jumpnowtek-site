@@ -2,7 +2,7 @@
 layout: post
 title: Signing code with OpenSSL
 description: "Digital signing with OpenSSL"
-date: 2018-12-08 15:28:00
+date: 2018-12-08 15:30:00
 categories: security
 tags: [openssl, signing]
 ---
@@ -34,7 +34,7 @@ Obviously the crypto hash algorithm has to be the same in both signing and verif
 
 So why not just sign the original file? 
 
-Public key cryptography is very slow and the size of the file you can encrypt with an algorithm like RSA is limited. By hashing the data first, we end up only encrypting a small, fixed-size file.
+Public key cryptography is very slow and the size of the file you can encrypt with an algorithm like RSA is limited. By hashing the data first, we only need to encrypt a small file.
 
 The [OpenSSL][openssl] command line utility provides all the tools we need to digitally sign files.
 
