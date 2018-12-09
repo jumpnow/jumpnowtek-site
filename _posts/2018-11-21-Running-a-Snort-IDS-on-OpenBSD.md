@@ -2,14 +2,14 @@
 layout: post
 title: Running Snort on OpenBSD
 description: "Running a Snort IDS on OpenBSD"
-date: 2018-11-21 18:00:00
+date: 2018-11-30 10:55:00
 categories: security
 tags: [openbsd, snort, bridging]
 ---
 
 I wanted some practice with an [IDS][ids], writing custom rules, evading detection, that kind of thing.
 
-I like [OpenBSD][openbsd] as a platform for network applications. I have used [Snort][snort] before, but not on OpenBSD. A good reason to try it for this experiment.
+I like [OpenBSD][openbsd] as a platform for network applications. I use OpenBSD on my local LAN for both authoritative ([nsd][nsd]) and caching ([unbound][unbound]) DNS services and as the primary firewall ([pf][pf]). I have used [Snort][snort] before, but not on OpenBSD and that seemed like a good reason to try it for this experiment.
 
 The existing test network looks like this on a single subnet.
 
@@ -29,7 +29,7 @@ This configuration makes it easy to pull the IDS back out when I am done.
 
 I am using an older dual-core amd64 machine with 3 GigE nics for the hardware.
 
-The operating system is OpenBSD 6.4. I did a standard installation, no X11 or games. I did install the compiler, but it's not necessary.
+The operating system is OpenBSD 6.4. I did a standard **amd64** installation, no X11 or games. I installed the compiler set, but it's not necessary.
 
 The 3 nics show up as **re0**, **em0** and **em1**.
 
@@ -206,3 +206,6 @@ As with all things OpenBSD, the [man pages][openbsd-man] are the definitive reso
 [network-tap]: https://en.wikipedia.org/wiki/Network_tap
 [nmap]: https://nmap.org/
 [openbsd-man]: https://man.openbsd.org/
+[nsd]: https://man.openbsd.org/nsd
+[unbound]: https://man.openbsd.org/unbound
+[pf]: https://man.openbsd.org/pf

@@ -2,12 +2,12 @@
 layout: post
 title: Speeding up initialization of the Linux RNG
 description: "Updating the entropy count when seeding the Linux random number generator"
-date: 2018-12-08 18:12:00
+date: 2018-12-09 05:03:00
 categories: linux
 tags: [linux, embedded, random, urandom, entropy, rng, seeding]
 ---
 
-Linux systems can seed the random number system at startup with a previously generated seed-file.
+Linux systems commonly seed the random number system at startup with a file from a previous run.
 
 Something like this
 
@@ -51,7 +51,7 @@ There are two ioctls for **/dev/urandom** to do this
 
 * RNDADDTOENTCNT
 
-The RNDADDTOENTROPY ioctl uses a struct object to update both the entropy count and the seed data at the same time.
+The RNDADDTOENTROPY ioctl passes a struct to update both the entropy count and the seed data at the same time.
 
 The RNDADDTOENTCNT ioctl just updates the entropy count.
 
@@ -59,7 +59,7 @@ If we trust the random-seed file that we generated on the last shutdown, we may 
 
 To minimize changes to existing systems, I am calling RNDADDTOENTCNT ioctl right after the existing startup script loads the seed file.
 
-Here is some code: [rndaddtoentcnt][rndaddtoentcnt]
+Here is the code: [rndaddtoentcnt][rndaddtoentcnt]
 
 I modified the existing **/etc/init.d/urandom** startup script like this
 
@@ -73,11 +73,11 @@ I modified the existing **/etc/init.d/urandom** startup script like this
     +           /usr/bin/rndaddtoentcnt 1024
     +       fi
         fi
-   ...
+    ...
 
-Being overly conservative I am claiming only 1024 bits of new entropy even though we added 4096 (512 bytes * 8). 
+Being overly conservative I am claiming only 1024 bits of new entropy even though we added 4096 (512 bytes * 8).
 
-This is still enough to reduce the startup time for a Python flask web app running on a BeagleBone Black from 155 seconds to 25 seconds. 
+This is still enough to reduce the startup time for a Python flask web app running on a BeagleBone Black from 155 seconds to 25 seconds.
 
 Here is an [lkml.org thread][lkml-thread] discussing the issue.
 
@@ -86,3 +86,4 @@ Here is an [lkml.org thread][lkml-thread] discussing the issue.
 [rndaddtoentcnt]: https://github.com/jumpnow/rndaddtoentcnt
 [lkml-thread]: https://lkml.org/lkml/2018/10/30/172
 [urandom-man]: http://man7.org/linux/man-pages/man4/random.4.html
+
