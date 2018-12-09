@@ -63,7 +63,6 @@ Here is the code: [rndaddtoentcnt][rndaddtoentcnt]
 
 I modified the existing **/etc/init.d/urandom** startup script like this
 
-    ...
         date +%s.%N > /dev/urandom
 
         if [ -f "$RANDOM_SEED_FILE" ]; then
@@ -73,11 +72,10 @@ I modified the existing **/etc/init.d/urandom** startup script like this
     +           /usr/bin/rndaddtoentcnt 1024
     +       fi
         fi
-    ...
 
-Being overly conservative I am claiming only 1024 bits of new entropy even though we added 4096 (512 bytes * 8).
+Being conservative I am claiming only 1024 bits of new entropy even though we added 4096 (512 bytes * 8).
 
-This is still enough to reduce the startup time for a Python flask web app running on a BeagleBone Black from 155 seconds to 25 seconds.
+After this the startup time for a [Python Flask][flask] web service running on a [BeagleBone Black][bbb] went from 155 seconds to 25 seconds.
 
 Here is an [lkml.org thread][lkml-thread] discussing the issue.
 
@@ -86,4 +84,6 @@ Here is an [lkml.org thread][lkml-thread] discussing the issue.
 [rndaddtoentcnt]: https://github.com/jumpnow/rndaddtoentcnt
 [lkml-thread]: https://lkml.org/lkml/2018/10/30/172
 [urandom-man]: http://man7.org/linux/man-pages/man4/random.4.html
+[flask]: http://flask.pocoo.org/
+[bbb]: http://beagleboard.org/black
 
