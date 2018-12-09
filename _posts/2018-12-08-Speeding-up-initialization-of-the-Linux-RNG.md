@@ -75,7 +75,7 @@ I modified the existing **/etc/init.d/urandom** startup script like this
 
 Being conservative I am claiming only 1024 bits of new entropy even though we added 4096 (512 bytes * 8).
 
-After this the startup time for a [Python Flask][flask] web service running on a [BeagleBone Black][bbb] went from 155 seconds to 25 seconds.
+With this change the startup time for a [Python Flask][flask] web service running on a [BeagleBone Black][bbb] went from 155 seconds to 25 seconds.
 
 Here is an [lkml.org thread][lkml-thread] discussing the issue.
 
