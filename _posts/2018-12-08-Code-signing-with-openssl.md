@@ -11,9 +11,7 @@ Including a [cryptographic hash][crypto-hash] for a file you are distributing pr
 
 In order to provide **authentication**, proof of authorship, we need a [digital signature][digital-sig].
 
-A digital signature involves [public key cryptography][pub-key-crypto].
-
-A digital signature provides **authentication**, **verification** and **non-repudiation**.
+A digital signature provides **authentication**, **verification** and **non-repudiation** using [public key cryptography][pub-key-crypto].
 
 In software development, providing a digital signature is called code signing.
 
