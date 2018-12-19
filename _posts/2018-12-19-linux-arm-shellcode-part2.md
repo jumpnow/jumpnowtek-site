@@ -260,7 +260,7 @@ Compile
 
 This error results from the fact that when we are in **thumb** mode the **add rN, pc, #immediate** has more restrictions then when in normal **arm** mode.
 
-I don't have an a online reference, but the "ARM System Developer's Guide" book, section 4.4 shows that the #immediate value has to be of the form (#immediate << 2) or a multiple of 4 when we are using the **pc* register.
+I don't have an a online reference, but the "ARM System Developer's Guide" book, section 4.4 shows that the #immediate value has to be of the form (#immediate << 2) or a multiple of 4 when we are using the **pc** register.
 
     ADD: add two 32-bit values
 	

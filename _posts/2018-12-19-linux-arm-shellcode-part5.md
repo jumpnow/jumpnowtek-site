@@ -19,11 +19,11 @@ First a short check to see if **ASLR** is working.
 
 	int main(int argc, char **argv)
 	{
-			char buff[64];
+	    char buff[64];
 
-			printf("buff address: %p\n", buff);
+	    printf("buff address: %p\n", buff);
 
-			return 0;
+	    return 0;
 	}
 
 

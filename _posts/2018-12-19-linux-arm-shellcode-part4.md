@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Linux ARM Shellcode - Part 1 - Functions and the Stack
+title: Linux ARM Shellcode - Part 4 - Functions and the Stack
 description: "Linux ARM Shellcode"
 date: 2018-12-19 15:30:00
 categories: shellcode
@@ -210,7 +210,7 @@ And **pc** has the address of the next instruction to execute **0x400578**
     (gdb) x/4x $sp
     0xbefffbe8:     0xbefffbf4      0x004005dc      0x00000000      0xb6ea3700
 
-The **lr** and **fp/r11** registers got pushed onto the stack in that order.
+The **lr** and **fp** registers got pushed onto the stack in that order.
 
     (gdb) si
     0x00400580 in hello ()
