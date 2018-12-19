@@ -1,0 +1,317 @@
+---
+layout: post
+title: Linux ARM Shellcode - Part 1 - Syscalls
+description: "Linux ARM Shellcode"
+date: 2018-12-19 15:30:00
+categories: shellcode
+tags: [linux, arm, shellcode, assembly]
+---
+
+## Linux Arm Shellcode - Part 1 - Syscalls
+
+The goal of these posts is to gain enough arm assembly knowledge that we can start writing [shellcode][shellcode] that exploits the stack and eventually move into return-to-libc/rop code exploits.
+
+The assumption is that you have some familiarity with systems programing on Linux using C.
+
+The approach will be to present some examples and then dissect them, letting the explanations for the actual assembly instructions come out on their own.
+ 
+### Hello World
+
+Starting with the standard **Hello world** program.
+
+    .text
+    .global _start
+
+    _start:
+            mov r0, #1              @ stdout
+            add r1, pc, #16         @ address of the string
+            mov r2, #12             @ string length
+            mov r7, #4              @ syscall for 'write'
+            swi #0                  @ software interrupt
+    
+	_exit:
+            mov r7, #1              @ syscall for 'exit'
+            swi #0                  @ software interrupt
+    
+	_string:
+    .asciz "Hello world\n"          @ our string, NULL terminated
+
+
+Use the GNU [as(1)][as] assembler and [ld(1)][ld] linker to generate a Linux executable
+
+    $ as hello.s -o hello.o
+    $ ld hello.o -o hello
+
+We can then run the program
+
+    $ ./hello
+    Hello world
+
+### Breakdown
+
+Linux ARM/EABI syscalls are invoked using a software interrupt.
+
+The function arguments go in registers **R0-R6**, the syscall number in register **R7**.
+
+This information can be found in [syscall(2)][syscall].
+
+A few tables from that man page
+
+    The first table lists the instruction used to transition to kernel mode,...
+
+    arch/ABI   instruction          syscall #   retval Notes
+       ───────────────────────────────────────────────────────────────────
+       arm/OABI   swi NR               -           a1     NR is syscall #
+       arm/EABI   swi 0x0              r7          r0
+       arm64      svc #0               x8          x0
+       blackfin   excpt 0x0            P0          R0
+       i386       int $0x80            eax         eax
+       ia64       break 0x100000       r15         r8     See below
+       mips       syscall              v0          v0     See below
+       parisc     ble 0x100(%sr2, %r0) r20         r28
+       s390       svc 0                r1          r2     See below
+       s390x      svc 0                r1          r2     See below
+       sparc/32   t 0x10               g1          o0
+       sparc/64   t 0x6d               g1          o0
+       x86_64     syscall              rax         rax    See below
+       x32        syscall              rax         rax    See below
+
+    The second table shows the registers used to pass the system call arguments.
+
+       arch/ABI      arg1  arg2  arg3  arg4  arg5  arg6  arg7  Notes
+       ──────────────────────────────────────────────────────────────────
+       arm/OABI      a1    a2    a3    a4    v1    v2    v3
+       arm/EABI      r0    r1    r2    r3    r4    r5    r6
+       arm64         x0    x1    x2    x3    x4    x5    -
+       blackfin      R0    R1    R2    R3    R4    R5    -
+       i386          ebx   ecx   edx   esi   edi   ebp   -
+       ia64          out0  out1  out2  out3  out4  out5  -
+       mips/o32      a0    a1    a2    a3    -     -     -     See below
+       mips/n32,64   a0    a1    a2    a3    a4    a5    -
+       parisc        r26   r25   r24   r23   r22   r21   -
+       s390          r2    r3    r4    r5    r6    r7    -
+       s390x         r2    r3    r4    r5    r6    r7    -
+       sparc/32      o0    o1    o2    o3    o4    o5    -
+       sparc/64      o0    o1    o2    o3    o4    o5    -
+       x86_64        rdi   rsi   rdx   r10   r8    r9    -
+       x32           rdi   rsi   rdx   r10   r8    r9    -
+
+
+Unless noted, all of the examples will assume **arm/EABI** systems.
+
+There are a couple of exceptions to that first table from the [syscall(2)][syscall] man page.
+
+The arm instruction **swi** is deprecated and gets converted to [svc][svc] during assembly. I'll use **svc** from now on.
+
+The argument to **svc** does not have to be zero. The cpu does not use this value. Software has the option to use the argument in the interrupt handler, but Linux does not. Linux syscalls rely only on the arguments passed in registers. That means we can use any number as the **svc** argument (subject to some max ranges) and for reasons explained later we will use a non-zero value like **#1** from now on.
+
+Syscall numbers for the system can be found in the **unistd-common.h** header file.
+
+    # cat /usr/include/asm/unistd-common.h
+    #ifndef _ASM_ARM_UNISTD_COMMON_H
+    #define _ASM_ARM_UNISTD_COMMON_H 1
+
+    #define __NR_restart_syscall (__NR_SYSCALL_BASE + 0)
+    #define __NR_exit (__NR_SYSCALL_BASE + 1)
+    #define __NR_fork (__NR_SYSCALL_BASE + 2)
+    #define __NR_read (__NR_SYSCALL_BASE + 3)
+    #define __NR_write (__NR_SYSCALL_BASE + 4)
+    #define __NR_open (__NR_SYSCALL_BASE + 5)
+    #define __NR_close (__NR_SYSCALL_BASE + 6)
+    ...
+
+That is where the #4 and #1 constant values for these instructions came from
+
+    mov r7, #4              @ syscall for 'write'
+    mov r7, #1              @ syscall for 'exit'
+
+The write system call takes 3 arguments: [write(2)][write].
+
+    ssize_t write(int fd, const void *buf, size_t count);
+
+So when we invoke the write syscall, the kernel expects to find arguments in registers **r0**, **r1** and **r2**.
+
+Standard POSIX, **stdout** is file descriptor 1.
+
+	mov r0, #1              @ stdout
+
+The calculation of the buffer address is a little confusing at first 
+
+    add r1, pc, #16         @ address of the string
+
+This instruction adds 16 to the current program counter **pc** into register **r1**.
+
+If we take a look at the object code for the program using the [objdump(1)][objdump] utility
+
+    # objdump -d hello.o
+
+    hello.o:     file format elf32-littlearm
+
+
+    Disassembly of section .text:
+
+    00000000 <_start>:
+       0:   e3a00001        mov     r0, #1
+       4:   e28f1010        add     r1, pc, #16
+       8:   e3a0200c        mov     r2, #12
+       c:   e3a07004        mov     r7, #4
+      10:   ef000000        svc     0x00000000
+
+    00000014 <_exit>:
+      14:   e3a07001        mov     r7, #1
+      18:   ef000000        svc     0x00000000
+
+    0000001c <_string>:
+      1c:   6c6c6548        .word   0x6c6c6548
+      20:   6f77206f        .word   0x6f77206f
+      24:   0a646c72        .word   0x0a646c72
+      28:   00              .byte   0x00
+      29:   00              .byte   0x00
+            ...
+
+We note that the memory values at the start of each line differ by 4 bytes.
+
+    0:
+    4:
+    8:
+    ...
+
+That's because each arm 32 instruction is 4 bytes.
+
+There are arm instruction sets like **thumb** where the instruction size is different, but we are just using the standard arm instructions for now. 
+
+Looking at these two instructions
+
+       4:   e28f1010        add     r1, pc, #16
+      1c:   6c6c6548        .word   0x6c6c6548
+
+We can see that the start of our string is at memory location **0x1c** (think little-endian).
+
+    1c:   6c6c6548 => 'lleH'
+    20:   6f77206f => 'ow o'
+    24:   0a646c72 => '\ndlr'
+
+Then we would expect the offset calculation from the current program counter **pc** to be
+
+    0x1c - 0x04 = 0x18 = 24 bytes
+
+So why isn't the instruction
+
+    add r1, pc, #24
+
+The reason has to do with the way the arm instruction pipeline works.
+
+The **pc** register points to the next instruction to **Fetch**.
+
+The arm instruction pipeline is either 3, 5 or 6 stages depending on the arm family, but for the boards I am looking at the pipelines share this start sequence
+
+    Fetch -> Decode -> Execute -> ...
+
+The side effect of this is that by the time we use the **pc** register in the **Execute** stage it has actually moved two instructions further along or 8 bytes.
+
+So if we want the address of the start of our string in **hello.s** we need to add **16** not **24** to the current **pc**.
+
+Note that regular programs would put data like our string into the **.data** or **.rodata** section of the program and the compiler would place this address into the instruction for us. 
+
+But we are interested in writing shell code where all of our code and data is going to inserted into a program at runtime to an unknown location in memory.
+
+So we need to use relative addressing when we reference our data. The **pc** register makes a good base for offset addressing like this.
+
+The final syscall argument is self-explanatory.
+
+    mov r2, #12             @ string length
+ 
+
+### Launching a shell
+
+Now a program a little more interesting.
+
+We want an assembly program equivalent to this C code to launch a shell.
+
+    #include <unistd.h>
+
+    void main()
+    {
+        execve("/bin/sh", NULL, NULL);
+    }
+
+
+We first note that the syscall number for [execve(2)][execve] is 11.
+
+    # grep execve /usr/include/asm/unistd-common.h
+    #define __NR_execve (__NR_SYSCALL_BASE + 11)
+    #define __NR_execveat (__NR_SYSCALL_BASE + 387)
+
+The arguments for [execve][execve] are
+  
+    int execve(const char *filename, char *const argv[], char *const envp[]);
+
+Here is the code
+
+    .text
+    .global _start
+
+    _start:
+            add r0, pc, #12
+            mov r1, #0
+            mov r2, #0
+            mov r7, #11
+            svc #1
+
+    _string:
+    .asciz  "/bin/sh"
+
+The code is very similar to the hello world example.
+
+The syscall to [exit(3)][exit] has been removed as unnecessary.
+
+Build and run the program
+
+    $ as shell.s -o shell.o
+    $ ld shell.o -o shell
+    $ echo $$
+    615
+    $ ./shell
+    bash-4.4$ echo $$
+    859
+    exit
+    $ echo $$
+    615
+
+Note the shell variable **$$** holds our current pid. In this example the shell prompt is different (and that has to do with not passing any other args to execve). But sometimes it's not obvious that you actually got a shell if it looks just like your standard one. Checking **$$** is just a habit for me.
+
+You can calculate the string offset to "/bin/sh" directly from [shell.s][shell_s], but for illustrative purposes I'll show the object dump again.
+
+    # objdump -d shell.o
+
+    shell.o:     file format elf32-littlearm
+
+
+    Disassembly of section .text:
+
+    00000000 <_start>:
+       0:   e28f000c        add     r0, pc, #12
+       4:   e3a01000        mov     r1, #0
+       8:   e3a02000        mov     r2, #0
+       c:   e3a0700b        mov     r7, #11
+      10:   ef000001        svc     0x00000001
+
+    00000014 <_string>:
+      14:   6e69622f        .word   0x6e69622f
+      18:   0068732f        .word   0x0068732f
+
+The offset calculation is
+
+    0x14 - 0x0 = 0x14
+    0x14 - 8 = 0x0c = 12 bytes
+
+
+[shellcode]: https://en.wikipedia.org/wiki/Shellcode
+[syscall]: http://man7.org/linux/man-pages/man2/syscall.2.html
+[write]: http://man7.org/linux/man-pages/man2/write.2.html
+[execve]: http://man7.org/linux/man-pages/man2/execve.2.html
+[exit]: http://man7.org/linux/man-pages/man3/exit.3.html
+[objdump]: http://man7.org/linux/man-pages/man1/objdump.1.html
+[as]: http://man7.org/linux/man-pages/man1/as.1.html
+[ld]: http://man7.org/linux/man-pages/man1/ld.1.html
+[svc]: http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0489c/Cihidabi.html
