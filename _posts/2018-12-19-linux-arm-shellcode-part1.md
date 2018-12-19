@@ -7,7 +7,7 @@ categories: shellcode
 tags: [linux, arm, shellcode, assembly]
 ---
 
-I was interested in learn about writing Linux ARM [shellcode][shellcode] and this series of posts are my notes.
+These are some notes I was gathering for a talk on Linux ARM [shellcode][shellcode] to present at a local [OWASP][owasp-me] meetup.
 
 Some familiarity with Linux systems programing is assumed, but not necessarily any ARM assembly knowledge.
 
@@ -300,6 +300,7 @@ The offset calculation is
 
 
 [shellcode]: https://en.wikipedia.org/wiki/Shellcode
+[owasp-me]: https://www.meetup.com/OWASP-Maine/
 [syscall]: http://man7.org/linux/man-pages/man2/syscall.2.html
 [write]: http://man7.org/linux/man-pages/man2/write.2.html
 [execve]: http://man7.org/linux/man-pages/man2/execve.2.html
