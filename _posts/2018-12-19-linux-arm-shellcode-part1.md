@@ -267,18 +267,13 @@ Build and run the program
 
     $ as shell.s -o shell.o
     $ ld shell.o -o shell
-    $ echo $$
-    615
     $ ./shell
     bash-4.4$ echo $$
     859
     exit
-    $ echo $$
-    615
 
-Note the shell variable **$$** holds our current pid. In this example the shell prompt is different (and that has to do with not passing any other args to execve). But sometimes it's not obvious that you actually got a shell if it looks just like your standard one. Checking **$$** is just a habit for me.
 
-You can calculate the string offset to "/bin/sh" directly from [shell.s][shell_s], but for illustrative purposes I'll show the object dump again.
+You can calculate the string offset to "/bin/sh" directly from the assembly source, but for illustrative purposes I'll show the object dump again.
 
     # objdump -d shell.o
 

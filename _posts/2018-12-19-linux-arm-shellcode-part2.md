@@ -61,7 +61,7 @@ We can use another GNU utility [objcopy(1)][objcopy] to extract just these instr
 
     # objcopy -O binary shell.o shell.bin
 
-And with [hexdump(1)][hexdump] look at the new file
+And with [hexdump(1)][hexdump] look at the file
 
     # hexdump -C shell.bin
     00000000  0c 00 8f e2 00 10 a0 e3  00 20 a0 e3 0b 70 a0 e3  |......... ...p..|
@@ -73,7 +73,7 @@ Because of the way we will be inserting our code into a running process, the **0
 
 ### Replacing Mov Zero instructions
 
-There are some simple alternatives to a **mov** zero instructions
+There are some simple alternatives to loading a zero value into a register that don't look like this
 
     mov rN, #0
 
@@ -83,7 +83,7 @@ We could subtract a register from itself
 
 or we could XOR a register with itself
 
-    eor rN, rN
+    eor rN, rN, rN
 
 Either of those instructions end up leaving zero in **rN** which is all we want.
 
@@ -262,14 +262,15 @@ This error results from the fact that when we are in **thumb** mode the **add rN
 
 I don't have an a online reference, but the "ARM System Developer's Guide" book, section 4.4 shows that the #immediate value has to be of the form (#immed << 2) or a multiple of 4.
 
-    ADD    add two 32-bit values    Rd = Rn + immediate
-	                                Rd = Rd + immediate
-									Rd = Rd + Rm
-									Rd = (pc & 0xfffffffc) + (immediate << 2)
-									Rd = sp + (immediate << 2)
-									sp = sp + (immediate << 2)
+    ADD    add two 32-bit values    
+	    Rd = Rn + immediate
+	    Rd = Rd + immediate
+		Rd = Rd + Rm
+		Rd = (pc & 0xfffffffc) + (immediate << 2)
+		Rd = sp + (immediate << 2)
+		sp = sp + (immediate << 2)
 
-TODO: Find a link for this.
+TODO: Find an online link for this.
 
 Our string currently starts at address **0x12 == 18** which is not 4 byte aligned. To be 4 byte aligned addresses will need to end in **0x0**, **0x4**, **0x8** or **0xc**.
 
