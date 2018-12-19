@@ -260,15 +260,16 @@ Compile
 
 This error results from the fact that when we are in **thumb** mode the **add rN, pc, #immediate** has more restrictions then when in normal **arm** mode.
 
-I don't have an a online reference, but the "ARM System Developer's Guide" book, section 4.4 shows that the #immediate value has to be of the form (#immed << 2) or a multiple of 4.
+I don't have an a online reference, but the "ARM System Developer's Guide" book, section 4.4 shows that the #immediate value has to be of the form (#immediate << 2) or a multiple of 4 when we are using the **pc* register.
 
-    ADD    add two 32-bit values    
-	    Rd = Rn + immediate
-	    Rd = Rd + immediate
-		Rd = Rd + Rm
-		Rd = (pc & 0xfffffffc) + (immediate << 2)
-		Rd = sp + (immediate << 2)
-		sp = sp + (immediate << 2)
+    ADD: add two 32-bit values
+	
+    Rd = Rn + immediate
+    Rd = Rd + immediate
+	Rd = Rd + Rm
+	Rd = (pc & 0xfffffffc) + (immediate << 2)
+	Rd = sp + (immediate << 2)
+	sp = sp + (immediate << 2)
 
 TODO: Find an online link for this.
 
@@ -345,7 +346,7 @@ We can put a placeholder for the NULL, by declaring the string like this
 
     .ascii "/bin/shA"
 
-Now we need to replace the 'A' with **0x00** at runtime without adding an **0x00** to our code.
+Now we need to replace the 'A' with **0x00** at runtime without adding a **0x00** to our code.
 
 There is a variant of the store instruction **str** that will let us save one-byte to memory, **strb**.
 
@@ -492,8 +493,7 @@ And run
 
 	# ./shelltest
 	Length: 28
-	bash-4.4# exit
-	exit
+	bash-4.4#
 
 
 
