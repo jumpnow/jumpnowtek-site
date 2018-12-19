@@ -7,8 +7,6 @@ categories: shellcode
 tags: [linux, arm, shellcode, assembly]
 ---
 
-## Linux Arm Shellcode - Part 2 - Removing NULLs
-
 Using the shell.s example from Part 1
 
     .text

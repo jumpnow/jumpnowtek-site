@@ -7,13 +7,11 @@ categories: shellcode
 tags: [linux, arm, shellcode, assembly]
 ---
 
-## Linux Arm Shellcode - Part 1 - Syscalls
+I was interested in learn about writing Linux ARM [shellcode][shellcode] and this series of posts are my notes.
 
-The goal of these posts is to gain enough arm assembly knowledge that we can start writing [shellcode][shellcode] that exploits the stack and eventually move into return-to-libc/rop code exploits.
+Some familiarity with Linux systems programing is assumed, but not necessarily any ARM assembly knowledge.
 
-The assumption is that you have some familiarity with systems programing on Linux using C.
-
-The approach will be to present some examples and then dissect them, letting the explanations for the actual assembly instructions come out on their own.
+I am using a variety of Raspberry Pis, BeagleBones and Wandboards as the target systems.
  
 ### Hello World
 

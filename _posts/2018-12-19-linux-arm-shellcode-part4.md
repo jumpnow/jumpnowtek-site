@@ -7,8 +7,6 @@ categories: shellcode
 tags: [linux, arm, shellcode, assembly]
 ---
 
-## Linux Arm Shellcode - Functions and the Stack
-
 Consider this C program
 
     #include <unistd.h>

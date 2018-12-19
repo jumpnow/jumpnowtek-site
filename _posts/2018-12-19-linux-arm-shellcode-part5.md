@@ -7,8 +7,6 @@ categories: shellcode
 tags: [linux, arm, shellcode, assembly, aslr]
 ---
 
-## Linux Arm Shellcode - Randomized Address Space
-
 One defense against memory exploits is to vary the locations of a program's different memory segments on every execution.
 
 Linux refers to this mitigation strategy as "address space layout randomization" or **ASLR** for short.

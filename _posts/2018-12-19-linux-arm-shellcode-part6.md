@@ -7,8 +7,6 @@ categories: shellcode
 tags: [linux, arm, shellcode, assembly]
 ---
 
-## Linux Arm Shellcode - Corrupting the Stack
-
 Function **main()** is like other functions in that the stack is setup in the prolog and restored for the caller in the epilog.
 
 Consider this program

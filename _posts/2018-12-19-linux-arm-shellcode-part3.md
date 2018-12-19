@@ -7,8 +7,6 @@ categories: shellcode
 tags: [linux, arm, shellcode, assembly]
 ---
 
-## Linux Arm Shellcode - Part 3 - The Stack
-
 Understanding the behavior of the arm stack is necessary if we are going to exploit it with our shellcode.
 
 Here is an example to show the basic stack operations **push** and **pop**

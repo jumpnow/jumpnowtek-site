@@ -7,8 +7,6 @@ categories: shellcode
 tags: [linux, arm, shellcode, assembly]
 ---
 
-## Linux Arm Shellcode - Exploiting the Stack
-
 The last example had a small stack, too small to fit our shellcode, so we will look at an example with a slightly larger stack.
 
 	#include <stdio.h>
