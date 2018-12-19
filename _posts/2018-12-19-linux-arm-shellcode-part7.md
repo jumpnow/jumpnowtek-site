@@ -89,7 +89,7 @@ The memory we have control of is the stack and so that is where we will be loadi
 
 At the same time we will need to set **lr** to point to the start of our shellcode.
 
-... WIP ...
+... in work ...
 
 	(gdb) x/14x $sp
 	0xbefffb80:     0xbefffd04      0x00000002      0xb6fcd130      0xb6fca000

@@ -15,22 +15,22 @@ Here is an example to show the basic stack operations **push** and **pop**
     .global _start
 
     _start:
-            mov r0, #0
-            mov r1, #1
-            mov r2, #2
-            mov r3, #3
-            mov r4, #4
+        mov r0, #0
+        mov r1, #1
+        mov r2, #2
+        mov r3, #3
+        mov r4, #4
     _push:
-            push {r0}
-            push {r1}
-            push {r2, r3, r4}
+        push {r0}
+        push {r1}
+        push {r2, r3, r4}
     _pop:
-            pop {r}
-            pop {r1}
-            pop {r2, r3, r4}
+        pop {r}
+        pop {r1}
+        pop {r2, r3, r4}
     _exit:
-            mov r7, #1
-            svc #1
+        mov r7, #1
+        svc #1
 
 Compile and dump the object file.
 

