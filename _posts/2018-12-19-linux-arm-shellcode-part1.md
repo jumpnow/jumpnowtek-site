@@ -7,15 +7,7 @@ categories: shellcode
 tags: [linux, arm, shellcode, assembly]
 ---
 
-These are some notes I was gathering for a talk on Linux ARM [shellcode][shellcode] to present at a local [OWASP][owasp-me] meetup.
-
-Some familiarity with Linux systems programing is assumed, but not necessarily any ARM assembly knowledge.
-
-I am using a variety of Raspberry Pis, BeagleBones and Wandboards as the target systems.
- 
-### Hello World
-
-Starting with the standard **Hello world** program.
+Jumping right into a standard **Hello world** program.
 
     .text
     .global _start
@@ -299,8 +291,7 @@ The offset calculation is
     0x14 - 8 = 0x0c = 12 bytes
 
 
-[shellcode]: https://en.wikipedia.org/wiki/Shellcode
-[owasp-me]: https://www.meetup.com/OWASP-Maine/
+
 [syscall]: http://man7.org/linux/man-pages/man2/syscall.2.html
 [write]: http://man7.org/linux/man-pages/man2/write.2.html
 [execve]: http://man7.org/linux/man-pages/man2/execve.2.html

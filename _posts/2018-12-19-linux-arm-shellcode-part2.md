@@ -214,16 +214,7 @@ Okay, what does the object dump look like?
       1a:   46c0            nop                     ; (mov r8, r8)
 
 
-So first off objdump is trying to be helpful interpreting our **_string** data as instructions and we can just ignore that.
-
-I am referring to this stuff.
-
-       .short  0x622f
-       .word   0x732f6e69
-       .short  0x0068
-       nop                     ; (mov r8, r8)
-
-The compiler also stuck a **nop** instruction at the end to 4-byte align the code.
+The compiler stuck a **nop** instruction at the end to 4-byte align the code.
 
 The real problem is our offset calculation from **pc** to point to the address of our string "/bin/sh".
 
@@ -275,7 +266,7 @@ TODO: Find an online link for this.
 
 Our string currently starts at address **0x12 == 18** which is not 4 byte aligned. To be 4 byte aligned addresses will need to end in **0x0**, **0x4**, **0x8** or **0xc**.
 
-What we can do is add an instruction that does nothing, a **NOP**, to push the start address of the string down 2 bytes and then adjust the offset from pc from #6 to #8 bytes.
+What we can do is add a **NOP** to push the start address of the string down 2 bytes and then adjust the offset from pc from #6 to #8 bytes.
 
 	.text
 	.global _start
