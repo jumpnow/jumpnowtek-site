@@ -207,10 +207,13 @@ But we are interested in writing shell code where all of our code and data is go
 
 So we need to use relative addressing when we reference our data. The **pc** register makes a good base for offset addressing like this.
 
+There is an instruction **adr** that will simplify this address calculation as long as the calculated address is a short distance away. This could have been used instead and the assembler will substitute an appropriate **add** or **sub** instruction as we did manually before.
+
+    adr r0, _string
+
 The final syscall argument is self-explanatory.
 
     mov r2, #12             @ string length
- 
 
 ### Launching a shell
 
@@ -242,7 +245,7 @@ Here is the code
     .global _start
 
     _start:
-        add r0, pc, #12
+        adr r0, _string
         mov r1, #0
         mov r2, #0
         mov r7, #11
@@ -264,31 +267,25 @@ Build and run the program
     859
     exit
 
-
-You can calculate the string offset to "/bin/sh" directly from the assembly source, but for illustrative purposes I'll show the object dump again.
+Here is the objdump
 
     # objdump -d shell.o
 
-    shell.o:     file format elf32-littlearm
+	shell.o:     file format elf32-littlearm
 
 
-    Disassembly of section .text:
+	Disassembly of section .text:
 
-    00000000 <_start>:
-       0:   e28f000c        add     r0, pc, #12
-       4:   e3a01000        mov     r1, #0
-       8:   e3a02000        mov     r2, #0
-       c:   e3a0700b        mov     r7, #11
-      10:   ef000001        svc     0x00000001
+	00000000 <_start>:
+	   0:   e28f000c        add     r0, pc, #12
+	   4:   e0211001        eor     r1, r1, r1
+	   8:   e0222002        eor     r2, r2, r2
+	   c:   e3a0700b        mov     r7, #11
+	  10:   ef000001        svc     0x00000001
 
-    00000014 <_string>:
-      14:   6e69622f        .word   0x6e69622f
-      18:   0068732f        .word   0x0068732f
-
-The offset calculation is
-
-    0x14 - 0x0 = 0x14
-    0x14 - 8 = 0x0c = 12 bytes
+	00000014 <_string>:
+	  14:   6e69622f        .word   0x6e69622f
+	  18:   0068732f        .word   0x0068732f
 
 
 

