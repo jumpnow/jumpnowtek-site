@@ -37,7 +37,7 @@ We can then run the program
     $ ./hello
     Hello world
 
-### Breakdown
+Now a breakdown.
 
 Linux ARM/EABI syscalls are invoked using a software interrupt.
 
@@ -215,9 +215,9 @@ The final syscall argument is self-explanatory.
 
     mov r2, #12             @ string length
 
-### Launching a shell
+Next a program a little more interesting.
 
-Now a program a little more interesting.
+### Launching a shell
 
 We want an assembly program equivalent to this C code to launch a shell.
 
@@ -256,7 +256,7 @@ Here is the code
 
 The code is very similar to the hello world example.
 
-The syscall to [exit(3)][exit] has been removed as unnecessary.
+The syscall to [exit(3)][exit] has been removed as unnecessary since **execve** does not return if successful.
 
 Build and run the program
 

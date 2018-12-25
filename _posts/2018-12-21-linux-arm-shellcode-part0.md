@@ -13,11 +13,12 @@ Some familiarity with Linux systems programing is assumed, but not necessarily a
 
 Below were my primary references putting together these posts
 
-* Computerphile [Buffer Overflow Attack][computerphile] video - General overview and a good start (I like all their videos)
+* Computerphile [Buffer Overflow Attack][computerphile] video - General overview and a good start
 * [Azeria Labs][azeria-labs] - Probably the best reference on ARM specific shellcoding
 * [ARM Systems Developers Guide][arm-sys-dev-guide] - Assembly reference book
+* [The Shellcoder's Handbook][shellcoders-handbook] - Discovering and Exploiting Security Holes, 2nd Edition
 * Shellstorm [Shellcode on ARM][shellstorm] - Tutorial with link to a database of examples
-* Steve Hanna @ vividmachines [Shellcoding for Linux and Windows Tutorial][vivid-machines] - Focus on x86 but good explanations 
+* [Shellcoding for Linux and Windows Tutorial][vivid-machines] - Focus on x86 but good explanations
 * [Billy Ellis][billy-ellis] - Focus on iOS targets
 
 
@@ -28,4 +29,5 @@ Below were my primary references putting together these posts
 [shellstorm]: http://shell-storm.org/blog/Shellcode-On-ARM-Architecture/
 [billy-ellis]: https://billy-ellis.github.io/
 [arm-sys-dev-guide]: https://www.elsevier.com/books/arm-system-developers-guide/sloss/978-1-55860-874-0
+[shellcoders-handbook]: https://www.wiley.com/en-us/The+Shellcoder%27s+Handbook%3A+Discovering+and+Exploiting+Security+Holes%2C+2nd+Edition-p-9780470080238
 [vivid-machines]: http://www.vividmachines.com/shellcode/shellcode.html
