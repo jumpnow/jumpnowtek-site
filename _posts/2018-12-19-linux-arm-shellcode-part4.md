@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Linux ARM Shellcode - Part 4 - Functions and the Stack
+title: Linux ARM Shellcode - Part 5 - Functions and the Stack
 description: "Linux ARM Shellcode"
 date: 2018-12-19 15:30:00
 categories: shellcode

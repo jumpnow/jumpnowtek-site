@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Linux ARM Shellcode - Part 3 - The Stack
+title: Linux ARM Shellcode - Part 4 - The Stack
 description: "Linux ARM Shellcode"
 date: 2018-12-19 15:30:00
 categories: shellcode
