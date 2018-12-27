@@ -2,7 +2,7 @@
 layout: post
 title: Building Duovero Systems with Yocto
 description: "Building customized systems for Gumstix Duovero using tools from the Yocto Project"
-date: 2018-10-31 13:50:00
+date: 2018-12-27 11:20:00
 categories: gumstix-linux
 tags: [linux, gumstix, duovero, yocto]
 ---
@@ -20,7 +20,7 @@ I have a custom Yocto layer for the Duoveros called [meta-duovero][meta-duovero]
 
 The Yocto version is **2.6**, the `[thud]` branch.
 
-The default kernel is **4.19**. A **4.14 LTS** kernel recipe is also available.
+The default kernel is **4.20**. Recipes for **4.19** and **4.14** LTS kernels are also available.
 
 The u-boot version is **2018.07**.
 
