@@ -24,7 +24,7 @@ I use this layer as a template when starting new BeagleBone projects.
 
 The Yocto version is **2.6** the `[thud]` branch.
 
-The default **4.20** Linux kernel comes from the [linux-stable][linux-stable] repository. Recipes for **4.19**, **4.14** and **4.9** are also available.)
+The default **4.20** Linux kernel comes from the [linux-stable][linux-stable] repository. Recipes for **4.19**, **4.14** and **4.9** LTS kernels are also available.
 
 The [u-boot][uboot] version is `2018.07`.
 
