@@ -34,7 +34,7 @@ So for example, here is a server with the following public keys
     /etc/ssh/ssh_host_rsa_key.pub
     ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCmbvmrcLgEw0c26Q4IHRLdSDBmpe/QjH9mvpzKahzaPk7R/GdIY7/EhBizizA5cIOlWHlqugOCUd9DdSaMgH0xuX6ot0ExU3rsGpUcVhNXHzsPrWgm8tJ/0wJvDftasjt8Z+IFCbwptLQNWKOCXnAH6RuwvefqPeRPPzqUoIxYYCZQT9haWNpqUP3MiwTzIBaOUGo5Vg4GqSEpxGB1rkRQ2SNHfDWf+BFRoaL709twZl5teGe1hOtEFd9XB5kkJUtAzB24sQZ2A0+AZ37/1kw3ZOEKxm9DkFzaur4dfo1Mj+hF+1cS4Byv8Dt5pooXqdFih5FW09RqqUeThtc9xZFb root@oc2
 
-The **ssh-keygen** utility can be used to show fingerprints, the default uses **sha256** hashing
+The [ssh-keygen][ssh-keygen] utility can be used to show fingerprints, the default uses **sha256** hashing
 
     server$ for i in /etc/ssh/*.pub; do echo; echo $i; ssh-keygen -lf $i; done; echo
 
@@ -47,7 +47,7 @@ The **ssh-keygen** utility can be used to show fingerprints, the default uses **
     /etc/ssh/ssh_host_rsa_key.pub
     2048 SHA256:SOwuptNrcECFjxB1tP6jw7Y3CJoDEdu9o4RQvDO6XUw root@oc2 (RSA)
 
-**ssh-keygen** can also show fingerprints using the older **md5** hash algorithm
+[ssh-keygen][ssh-keygen] can also show fingerprints using the older **md5** hash algorithm
 
     server$ for i in /etc/ssh/*.pub; do echo; echo $i; ssh-keygen -E md5 -lf $i; done; echo
 
@@ -98,7 +98,7 @@ You can specify if you want to see **md5** fingerprint hashes
 
     Nmap done: 1 IP address (1 host up) scanned in 2.78 seconds
 
-Digging a little deeper, NSE script [ssh-hostkey][nse-ssh-hostkey] uses the NSE library [ssh2][nse-ssh2] and in the **ssh2.fetch\_host\_key()** function called by ssh-hostkey there is no facility for specifying the hashing algorithm. It uses **md5**.
+Digging a little deeper, NSE script [ssh-hostkey][nse-ssh-hostkey] uses the NSE library [ssh2][nse-ssh2] and in the **ssh2.fetch\_host\_key()** function called by ssh-hostkey there is no facility for specifying the hashing algorithm.
 
     $ cat /usr/share/nmap/nselib/ssh2.lua
     ...
@@ -122,7 +122,7 @@ Digging a little deeper, NSE script [ssh-hostkey][nse-ssh-hostkey] uses the NSE 
                algorithm=algorithm,
                fingerprint=openssl.md5(public_host_key) }
     end
-  
+
 
 Finally, if for some unknown reason you do not have [ssh-keygen][ssh-keygen] available and want to generate fingerprints on the command line, here is a short Linux script that will do it.
 
@@ -139,7 +139,7 @@ Finally, if for some unknown reason you do not have [ssh-keygen][ssh-keygen] ava
 
     echo ""
 
-Calling it **fingerprint.sh** and run
+Calling it **fingerprint.sh** and running
 
     $ ./fingerprint.sh /etc/ssh
 
