@@ -13,7 +13,7 @@ An SSH session starts with the two sides first negotiating a set of encryption p
 
 They do this by each sending a list of supported algorithms and agreeing to use one of them.
 
-Then after a [Diffie-Hellman][diffie-hellman] exchange to get a session key, encrypted communications can begin starting with [hostkey-fingerprint checks][hostkey-fingerprints] and authentication.
+Then after a [Diffie-Hellman][diffie-hellman] exchange to get a session key, encrypted communications can begin starting with [hostkey-fingerprint][hostkey-fingerprints] checks and authentication.
 
 As with [SSL/TLS][nmap-tls-check], Nmap can be used to check the encryption algorithms an SSH server supports using an [NSE script][nsedoc].
 
@@ -71,7 +71,7 @@ The script for this is called [ssh2-enum-algos][ssh2-enum-algos] and run against
 
 
 
-In the embedded Linux world is not uncommon to use [Dropbear][dropbear] as the SSH server because of the smaller footprint it has over OpenSSH.
+In embedded Linux systems it is not uncommon to use [Dropbear][dropbear] as the SSH server because of the smaller footprint it has over OpenSSH.
 
 For example, the open-source firewall/router [pfSense][pfsense] uses Dropbear SSH. Router firmware [Asuswrt][asuswrt] and third-party versions of Asuswrt like [Asuswrt-merlin][asuswrt-merlin] also use Dropbear.
 
