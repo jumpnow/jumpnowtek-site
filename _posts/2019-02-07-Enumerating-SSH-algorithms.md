@@ -175,7 +175,7 @@ That patch is for the current development branch of Nmap.
 
 To use with released versions of Nmap, switch back to **stdnse.strsplit** instead of the newer **stringaux.strsplit**.
 
-On a related note, [Ncrack][ncrack], the standalone brute-force passsword cracking tool, also fails against Dropbear SSH servers. I am working on a patch for that.
+On a related note, [Ncrack][ncrack], the standalone brute-force passsword cracking tool, also fails against Dropbear SSH servers for the same reason. A similar tool [Hydra][thc-hydra] has no problems with Dropbear.
 
 But all is not lost as the NSE [ssh-brute][ssh-brute] script does work against either Dropbear or OpenSSH.
 
@@ -196,3 +196,4 @@ But all is not lost as the NSE [ssh-brute][ssh-brute] script does work against e
 [ncrack]: https://nmap.org/ncrack/
 [ssh-brute]: https://nmap.org/nsedoc/scripts/ssh-brute.html
 [hostkey-fingerprints]: https://jumpnowtek.com/security/SSH-Hostkey-Fingerprints.html
+[thc-hydra]: https://github.com/vanhauser-thc/thc-hydra
