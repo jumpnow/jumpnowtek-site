@@ -2,7 +2,7 @@
 layout: post
 title: Building Wandboard Systems with Yocto
 description: "Building customized systems for Wandboards using tools from the Yocto Project"
-date: 2018-12-27 11:20:00
+date: 2019-03-10 11:20:00
 categories: wandboard
 tags: [linux, wandboard, yocto]
 ---
@@ -21,7 +21,7 @@ I have a custom Yocto layer for the wandboards called [meta-wandboard][meta-wand
 
 The Yocto version is **2.6**, the `[thud]` branch.
 
-The default kernel is **4.20**. Recipes for **4.19** and **4.14** LTS kernels are also available.
+The default kernel is **5.0**. Recipes for **4.19** and **4.14** LTS kernels are also available.
 
 The u-boot version is **2018.07**.
 
