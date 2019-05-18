@@ -2,7 +2,7 @@
 layout: post
 title: Building Wandboard Systems with Yocto
 description: "Building customized systems for Wandboards using tools from the Yocto Project"
-date: 2019-03-10 11:20:00
+date: 2019-05-18 04:00:00
 categories: wandboard
 tags: [linux, wandboard, yocto]
 ---
@@ -19,21 +19,23 @@ I have a custom Yocto layer for the wandboards called [meta-wandboard][meta-wand
 
 ### System Info
 
-The Yocto version is **2.6**, the `[thud]` branch.
+The Yocto version is **2.7**, the `[warrior]` branch.
 
-The default kernel is **5.0**. Recipes for **4.19** and **4.14** LTS kernels are also available.
+The default kernel is **5.1**. A recipe for a **4.19** LTS kernel is also available.
 
-The u-boot version is **2018.07**.
+The u-boot version is **2019.01**.
 
 These are **sysvinit** systems using [eudev][eudev].
 
-Python **3.5.6** is installed.
+Python **3.7.2** is installed.
 
-gcc/g++ **8.2.0** and associated build tools are installed.
+gcc/g++ **8.3.0** and associated build tools are installed.
 
-git **2.18.1** is installed.
+git **2.20.1** is installed.
 
-The Qt version is **5.11.2** built with the **linuxfb** backend.
+wireguard **20190406' is installed.
+
+The Qt version is **5.12.3** built with the **linuxfb** backend.
 
 There is no video hardware acceleration in these systems. That requires some additional work.
 
@@ -106,19 +108,20 @@ Fedora already uses **bash** as the shell.
 
 ### Clone the dependency repositories
 
-For all upstream repositories, use the `[thud]` branch.
+For all upstream repositories, use the `[warrior]` branch.
 
 The directory layout I am describing here is my preference. All of the paths to the meta-layers are configurable. If you choose something different, adjust the following instructions accordingly.
 
 First the main Yocto project **poky** layer
 
-    ~# git clone -b thud git://git.yoctoproject.org/poky.git poky-thud
+    ~# git clone -b warrior git://git.yoctoproject.org/poky.git poky-warrior
 
 Then the dependency layers under that
 
-    ~$ cd poky-thud
-    ~/poky-thud$ git clone -b thud git://git.openembedded.org/meta-openembedded
-    ~/poky-thud$ git clone -b thud https://github.com/meta-qt5/meta-qt5.git
+    ~$ cd poky-warrior
+    ~/poky-warrior$ git clone -b warrior git://git.openembedded.org/meta-openembedded
+    ~/poky-warrior$ git clone -b warrior https://github.com/meta-qt5/meta-qt5.git
+    ~/poky-warrior$ git clone -b warrior git://git.yoctoproject.org/meta-security.git 
 
 These repositories shouldn't need modifications other then periodic updates and can be reused for different projects or different boards.
 
@@ -128,7 +131,7 @@ Create a sub-directory for the `meta-wandboard` repository before cloning
 
     $ mkdir ~/wandboard
     ~$ cd ~/wandboard
-    ~/wandboard$ git clone -b thud git://github.com/jumpnow/meta-wandboard
+    ~/wandboard$ git clone -b warrior git://github.com/jumpnow/meta-wandboard
 
 The `meta-wandboard/README.md` file has the last commits from the dependency repositories that I tested. You can always checkout those commits explicitly if you run into problems.
 
@@ -145,7 +148,7 @@ You could manually create the directory structure like this
 
 Or you could use the Yocto environment script **oe-init-build-env** like this passing in the path to the build directory
 
-    ~$ source poky-thud/oe-init-build-env ~/wandboard/build
+    ~$ source poky-warrior/oe-init-build-env ~/wandboard/build
 
 The Yocto environment script will create the build directory if it does not already exist.
 
@@ -172,7 +175,7 @@ In **bblayers.conf** file replace **${HOME}** with the appropriate path to the m
 
 For example, if your directory structure does not look exactly like this, you will need to modify `bblayers.conf`
 
-    ~/poky-thud/
+    ~/poky-warrior/
          meta-openembedded/
          meta-qt5/
          ...
@@ -319,11 +322,11 @@ This script needs to know the `TMPDIR` to find the binaries. It looks for an env
 
 For instance, if I had this in the `local.conf`
 
-    TMPDIR = "/oe6/wand/tmp-thud"
+    TMPDIR = "/oe6/wand/tmp-warrior"
 
 then I would export this environment variable before running `copy_boot.sh`
 
-    ~/wandboard/meta-wandboard/scripts$ export OETMP=/oe6/wand/tmp-thud
+    ~/wandboard/meta-wandboard/scripts$ export OETMP=/oe6/wand/tmp-warrior
 
 If you didn't override the default **TMPDIR** in `local.conf`, then set it to the default **TMPDIR**
 
@@ -358,7 +361,7 @@ The copy scripts will **NOT** unmount partitions automatically. If an SD card pa
 Here's a realistic example session where I want to copy already built images to a second SD card that I just inserted.
 
     ~$ sudo umount /dev/sdb1
-    ~$ export OETMP=/oe6/wand/tmp-thud
+    ~$ export OETMP=/oe6/wand/tmp-warrior
     ~$ cd wandboard/meta-wandboard/scripts
     ~/wandboard/meta-wandboard/scripts$ ./copy_boot.sh sdb
     ~/wandboard/meta-wandboard/scripts$ ./copy_rootfs.sh sdb console wandq2
@@ -372,7 +375,7 @@ Both **copy\_boot.sh** and **copy\_rootfs.sh** are simple scripts easily customi
 [uboot]: http://www.denx.de/wiki/U-Boot/WebHome
 [yocto]: https://www.yoctoproject.org/
 [lsblk]: http://linux.die.net/man/8/lsblk
-[bitbake]: https://www.yoctoproject.org/docs/1.8/bitbake-user-manual/bitbake-user-manual.html
+[bitbake]: https://www.yoctoproject.org/docs/current/bitbake-user-manual/bitbake-user-manual.html
 [source-script]: http://stackoverflow.com/questions/4779756/what-is-the-difference-between-source-script-sh-and-script-
 [buildroot]: https://buildroot.org/
 [buildroot-wand]: https://jumpnowtek.com/wandboard/Wandboard-Systems-with-Buildroot.html

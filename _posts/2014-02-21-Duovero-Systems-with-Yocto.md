@@ -2,7 +2,7 @@
 layout: post
 title: Building Duovero Systems with Yocto
 description: "Building customized systems for Gumstix Duovero using tools from the Yocto Project"
-date: 2019-03-10 11:20:00
+date: 2019-05-18 04:00:00
 categories: gumstix-linux
 tags: [linux, gumstix, duovero, yocto]
 ---
@@ -18,19 +18,21 @@ I have a custom Yocto layer for the Duoveros called [meta-duovero][meta-duovero]
 
 ### System Info
 
-The Yocto version is **2.6**, the `[thud]` branch.
+The Yocto version is **2.7**, the `[warrior]` branch.
 
-The default kernel is **5.0**. Recipes for **4.19** and **4.14** LTS kernels are also available.
+The default kernel is **5.1**. A recipe for the **4.19** LTS kernel is also available.
 
-The u-boot version is **2018.07**.
+The u-boot version is **2019.01**.
 
 These are **sysvinit** systems using [eudev][eudev].
 
-Python **3.5.6** is installed.
+Python **3.7.2** is installed.
 
-gcc/g++ **8.2.0** and associated build tools are installed.
+gcc/g++ **8.3.0** and associated build tools are installed.
 
-git **2.18.1** is installed.
+git **2.20.1** is installed.
+
+wireguard **20190406** is installed.
 
 My systems use **sysvinit**, but Yocto supports **systemd** if you would rather use that.
 
@@ -87,18 +89,18 @@ Fedora already uses **bash** as the shell.
 
 ### Clone the dependency repositories
 
-For all upstream repositories, use the `[thud]` branch.
+For all upstream repositories, use the `[warrior]` branch.
 
 The directory layout I am describing here is my preference. All of the paths to the meta-layers are configurable. If you choose something different, adjust the following instructions accordingly.
 
 First the main Yocto project **poky** layer
 
-    ~# git clone -b thud git://git.yoctoproject.org/poky.git poky-thud
+    ~# git clone -b warrior git://git.yoctoproject.org/poky.git poky-warrior
 
 Then the dependency layers under that
 
-    ~$ cd poky-thud
-    ~/poky-thud$ git clone -b thud git://git.openembedded.org/meta-openembedded
+    ~$ cd poky-warrior
+    ~/poky-warrior$ git clone -b warrior git://git.openembedded.org/meta-openembedded
 
 These repositories shouldn't need modifications other then periodic updates and can be reused for different projects or different boards.
 
@@ -108,7 +110,7 @@ Create a sub-directory for the `meta-duovero` repository before cloning
 
     ~$ mkdir ~/duovero
     ~$ cd ~/duovero
-    ~/duovero$ git clone -b thud git://github.com/jumpnow/meta-duovero
+    ~/duovero$ git clone -b warrior git://github.com/jumpnow/meta-duovero
 
 The `meta-duovero/README.md` file has the last commits from the dependency repositories that I tested. You can always checkout those commits explicitly if you run into problems.
 
@@ -125,7 +127,7 @@ You could manually create the directory structure like this
 
 Or you could use the Yocto environment script **oe-init-build-env** like this passing in the path to the build directory
 
-    ~$ source poky-thud/oe-init-build-env ~/duovero/build
+    ~$ source poky-warrior/oe-init-build-env ~/duovero/build
 
 The Yocto environment script will create the build directory if it does not already exist.
 
@@ -152,7 +154,7 @@ In **bblayers.conf** file replace **${HOME}** with the appropriate path to the m
 
 For example, if your directory structure does not look exactly like this, you will need to modify `bblayers.conf`
 
-    ~/poky-thud/
+    ~/poky-warrior/
          meta-openembedded/
          ...
 
@@ -304,11 +306,11 @@ This script needs to know the `TMPDIR` to find the binaries. It looks for an env
 
 For instance, if I had this in the `local.conf`
 
-    TMPDIR = "/oe9/duo/tmp-thud"
+    TMPDIR = "/oe9/duo/tmp-warrior"
 
 Then I would export this environment variable before running `copy_boot.sh`
 
-    ~/duovero/meta-duovero/scripts$ export OETMP=/oe9/duo/tmp-thud
+    ~/duovero/meta-duovero/scripts$ export OETMP=/oe9/duo/tmp-warrior
 
 Then run the `copy_boot.sh` script passing the location of SD card
 
@@ -337,7 +339,7 @@ Here's a realistic example session where I want to copy already built images to 
 
     ~$ sudo umount /dev/sdb1
     ~$ sudo umount /dev/sdb2
-    ~$ export OETMP=/oe9/duo/tmp-thud
+    ~$ export OETMP=/oe9/duo/tmp-warrior
     ~$ cd duovero/meta-duovero/scripts
     ~/duovero/meta-duovero/scripts$ ./copy_boot.sh sdb
     ~/duovero/meta-duovero/scripts$ ./copy_rootfs.sh sdb console duo2

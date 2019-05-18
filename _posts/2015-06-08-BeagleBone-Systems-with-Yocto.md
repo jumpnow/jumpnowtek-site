@@ -2,7 +2,7 @@
 layout: post
 title: Building BeagleBone Systems with Yocto
 description: "Building customized systems for the BeagleBones using tools from the Yocto Project"
-date: 2019-03-10 11:20:00
+date: 2019-05-18 04:00:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
@@ -22,23 +22,25 @@ I use this layer as a template when starting new BeagleBone projects.
 
 ### System Info
 
-The Yocto version is **2.6** the `[thud]` branch.
+The Yocto version is **2.7** the `[warrior]` branch.
 
-The default **5.0** Linux kernel comes from the [linux-stable][linux-stable] repository. Recipes for **4.19**, **4.14** and **4.9** LTS kernels are also available.
+The default **5.1** Linux kernel comes from the [linux-stable][linux-stable] repository. Recipes for **4.19**, **4.14** and **4.9** LTS kernels are also available.
 
-The [u-boot][uboot] version is `2018.07`.
+The [u-boot][uboot] version is **2019.01**.
 
 These are **sysvinit** systems using [eudev][eudev].
 
-The Qt version is **5.11.2**. There is no *X11* and no desktop installed. [Qt][qt] GUI applications can be run using the *linuxfb* platform plugin.
+The Qt version is **5.12.3**. There is no *X11* and no desktop installed. [Qt][qt] GUI applications can be run using the *linuxfb* platform plugin.
 
 A light-weight **X11** desktop can be added with minimal changes to the build configuration. For instance **X11** is needed to run Java GUI apps or browser kiosk applications.
 
-Python `3.5.6` is installed.
+Python **3.7.2** and **2.7.15** are installed.
 
-gcc/g++ 8.2.0 and associated build tools are installed.
+gcc/g++ **8.3.0** and associated build tools are installed.
 
-git 2.18.1 is installed.
+git **2.20.1** is installed.
+
+wireguard **20190406** is installed.
 
 For the **4.9** and **4.14** kernels, device tree binaries are built that support
 
@@ -46,10 +48,10 @@ For the **4.9** and **4.14** kernels, device tree binaries are built that suppor
 2. No HDMI (`bbb-nohdmi.dtb`)
 3. [4DCape 4.3-inch resistive touchscreen cape][4dcape43t] (`bbb-4dcape43t.dtb`)
 4. [4DCape 7-inch resistive touchscreen cape][4dcape70t] (`bbb-4dcape70t.dtb`)
-5. [Newhaven 5-inch capacitive touchscreen cape][nh5cape] (`bbb-nh5cape.dtb`, **4.9 only currently**)
+5. [Newhaven 5-inch capacitive touchscreen cape][nh5cape] (`bbb-nh5cape.dtb`, currently **4.9** only)
 6. [Newhaven 7-inch capacitive touchscreen cape][nhd7cape] (`bbb-nhd7cape.dtb`)
 
-I have not added all display dtbs to the **4.19** kernels yet. No requests.
+The newer kernels only have the default in-tree DTBs.
 
 The DTBs are easy enough to switch between using a [u-boot][uboot] script file `uEnv.txt`
 
@@ -108,11 +110,11 @@ Fedora already uses **bash** as the shell.
 
 ### Clone the repositories
 
-    ~$ git clone -b thud git://git.yoctoproject.org/poky.git poky-thud
+    ~$ git clone -b warrior git://git.yoctoproject.org/poky.git poky-warrior
 
-    ~$ cd poky-thud
-    ~/poky-thud$ git clone -b thud git://git.openembedded.org/meta-openembedded
-    ~/poky-thud$ git clone -b thud https://github.com/meta-qt5/meta-qt5.git
+    ~$ cd poky-warrior
+    ~/poky-warrior$ git clone -b warrior git://git.openembedded.org/meta-openembedded
+    ~/poky-warrior$ git clone -b warrior https://github.com/meta-qt5/meta-qt5.git
 
 I usually keep these repositories separated since they can be shared between projects and different boards.
 
@@ -122,7 +124,7 @@ Create a sub-directory for the `meta-bbb` repository before cloning
 
     ~$ mkdir ~/bbb
     ~$ cd ~/bbb
-    ~/bbb$ git clone -b thud git://github.com/jumpnow/meta-bbb
+    ~/bbb$ git clone -b warrior git://github.com/jumpnow/meta-bbb
 
 The `meta-bbb/README.md` file has the last commits from the dependency repositories that I tested. You can always checkout those commits explicitly if you run into problems.
 
@@ -139,7 +141,7 @@ You could manually create the directory structure like this
 
 Or you could use the *Yocto* environment script `oe-init-build-env` like this passing in the path to the build directory
 
-    ~$ source poky-thud/oe-init-build-env ~/bbb/build
+    ~$ source poky-warrior/oe-init-build-env ~/bbb/build
 
 The *Yocto* environment script will create the build directory if it does not already exist.
 
@@ -163,7 +165,7 @@ In `bblayers.conf` file replace **${HOME}** with the appropriate path to the met
 For example, if your directory structure does not look exactly like this, you will need to modify `bblayers.conf`
 
 
-    ~/poky-thud/
+    ~/poky-warrior/
          meta-openembedded/
          meta-qt5/
          ...
@@ -236,7 +238,7 @@ You can always add or change the password once logged in.
 
 You need to [source][source-script] the Yocto environment into your shell before you can use [bitbake][bitbake]. The `oe-init-build-env` will not overwrite your customized conf files.
 
-    ~$ source poky-thud/oe-init-build-env ~/bbb/build
+    ~$ source poky-warrior/oe-init-build-env ~/bbb/build
 
     ### Shell environment set up for builds. ###
 
@@ -277,7 +279,7 @@ The *console-image* has a line
 
     inherit core-image
 
-which is `poky-thud/meta/classes/core-image.bbclass` and pulls in some required base packages.  This is useful to know if you create your own image recipe.
+which is `poky-warrior/meta/classes/core-image.bbclass` and pulls in some required base packages.  This is useful to know if you create your own image recipe.
 
 #### qt5-image
 
@@ -387,11 +389,11 @@ This *copy_boot.sh* script needs to know the `TMPDIR` to find the binaries. It l
 
 For instance, if I had this in the `local.conf`
 
-    TMPDIR = "/oe7/bbb/tmp-thud"
+    TMPDIR = "/oe7/bbb/tmp-warrior"
 
 Then I would export this environment variable before running `copy_boot.sh`
 
-    ~/bbb/meta-bbb/scripts$ export OETMP=/oe7/bbb/tmp-thud
+    ~/bbb/meta-bbb/scripts$ export OETMP=/oe7/bbb/tmp-warrior
 
 Then run the `copy_boot.sh` script passing the location of SD card
 
@@ -423,7 +425,7 @@ Here's a realistic example session where I want to copy already built images to 
 
     ~$ sudo umount /dev/sdb1
     ~$ sudo umount /dev/sdb2
-    ~$ export OETMP=/oe7/bbb/tmp-thud
+    ~$ export OETMP=/oe7/bbb/tmp-warrior
     ~$ cd bbb/meta-bbb/scripts
     ~/bbb/meta-bbb/scripts$ ./copy_boot.sh sdb
     ~/bbb/meta-bbb/scripts$ ./copy_rootfs.sh sdb console bbb2
@@ -544,7 +546,7 @@ The bitbake recipe is here
 
 To display the list of available packages from the **meta-** repositories included in **bblayers.conf**
 
-    ~$ source poky-thud/oe-init-build-env ~/bbb/build
+    ~$ source poky-warrior/oe-init-build-env ~/bbb/build
     ~/bbb/build$ bitbake -s
 
 Once you have the package name, you can choose to either

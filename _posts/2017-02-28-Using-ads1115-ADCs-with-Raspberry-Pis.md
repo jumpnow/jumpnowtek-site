@@ -2,7 +2,7 @@
 layout: post
 title: Using ADS1115 ADCs with Raspberry Pis
 description: "Working with TI ADS1015 and ADS1115 ADCs on the RPi"
-date: 2017-03-01 11:06:00
+date: 2019-05-18 04:00:00
 categories: rpi
 tags: [linux, rpi, ads1115, ads1015, adc]
 ---
@@ -57,6 +57,8 @@ Here is the relevant section from the [overlays README][overlays-readme]
             For more information refer to the device datasheet at:
             http://www.ti.com/lit/ds/symlink/ads1115.pdf
 
+
+NOTE: In the following `config.txt` changes, do not add spaces between values and the equal sign.
 
 To use I2C on the RPis you need to enable it which you can do with this line in your `config.txt`
 
