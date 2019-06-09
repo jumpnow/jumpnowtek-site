@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2018-11-24 10:10:00
+date: 2019-06-09 09:10:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi zero wireless, rpi compute]
 ---
@@ -51,20 +51,21 @@ All systems are setup to use a serial console. For the RPi's that have it, a dhc
 
 ### System Info
 
-The Yocto version is **2.6.0**, the `[thud]` branch.
+The Yocto version is **2.7.0**, the `[warrior]` branch.
 
-The **4.14** Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
+The **4.19** Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
 
 These are **sysvinit** systems using [eudev][eudev].
 
-The Qt version is **5.11.2** There is no **X11** and no desktop installed. [Qt][qt] GUI applications can be run fullscreen using one of the [Qt embedded linux plugins][embedded-linux-qpa] like **eglfs** or **linuxfb**, both are provided. The default is **eglfs**.
+The Qt version is **5.12.1** There is no **X11** and no desktop installed. [Qt][qt] GUI applications can be run fullscreen using one of the [Qt embedded linux plugins][embedded-linux-qpa] like **eglfs** or **linuxfb**, both are provided. The default is **eglfs**.
 
-Python **3.5.6** with a number of modules is included.
+Python **3.7.2** with a number of modules is included.
 
-gcc/g++ **8.2.0** and associated build tools are installed.
+gcc/g++ **8.3.0** and associated build tools are installed.
 
-git **2.18.1** is installed.
+git **2.20.1** is installed.
 
+**Note**: omxplayer temporarily removed. There is a build issue with the latest Yocto branch at least with MACHINE=raspberrypi3.
 [omxplayer][omxplayer] is installed for playing video and audio from the command line, hardware accelerated.
 
 [Raspicam][raspicam] the command line tool for using the Raspberry Pi camera module is installed.
@@ -122,20 +123,20 @@ Fedora already uses **bash** as the shell.
 
 ### Clone the dependency repositories
 
-For all upstream repositories, use the `[thud]` branch.
+For all upstream repositories, use the `[warrior]` branch.
 
 The directory layout I am describing here is my preference. All of the paths to the meta-layers are configurable. If you choose something different, adjust the following instructions accordingly.
 
 First the main Yocto project **poky** layer
 
-    ~# git clone -b thud git://git.yoctoproject.org/poky.git poky-thud
+    ~# git clone -b warrior git://git.yoctoproject.org/poky.git poky-warrior
 
 Then the dependency layers under that
 
-    ~$ cd poky-thud
-    ~/poky-thud$ git clone -b thud git://git.openembedded.org/meta-openembedded
-    ~/poky-thud$ git clone -b thud https://github.com/meta-qt5/meta-qt5
-    ~/poky-thud$ git clone -b thud git://git.yoctoproject.org/meta-raspberrypi
+    ~$ cd poky-warrior
+    ~/poky-warrior$ git clone -b warrior git://git.openembedded.org/meta-openembedded
+    ~/poky-warrior$ git clone -b warrior https://github.com/meta-qt5/meta-qt5
+    ~/poky-warrior$ git clone -b warrior git://git.yoctoproject.org/meta-raspberrypi
 
 These repositories shouldn't need modifications other then periodic updates and can be reused for different projects or different boards.
 
@@ -145,7 +146,7 @@ Create a separate sub-directory for the **meta-rpi** repository before cloning. 
 
     ~$ mkdir ~/rpi
     ~$ cd ~/rpi
-    ~/rpi$ git clone -b thud git://github.com/jumpnow/meta-rpi
+    ~/rpi$ git clone -b warrior git://github.com/jumpnow/meta-rpi
 
 The `meta-rpi/README.md` file has the last commits from the dependency repositories that I tested. You can always checkout those commits explicitly if you run into problems.
 
@@ -162,7 +163,7 @@ You could manually create the directory structure like this
 
 Or you could use the Yocto environment script **oe-init-build-env** like this passing in the path to the build directory
 
-    ~$ source poky-thud/oe-init-build-env ~/rpi/build
+    ~$ source poky-warrior/oe-init-build-env ~/rpi/build
 
 The Yocto environment script will create the build directory if it does not already exist.
 
@@ -189,7 +190,7 @@ In **bblayers.conf** file replace **${HOME}** with the appropriate path to the m
 
 For example, if your directory structure does not look exactly like this, you will need to modify `bblayers.conf`
 
-    ~/poky-thud/
+    ~/poky-warrior/
          meta-openembedded/
          meta-qt5/
          meta-raspberrypi
@@ -294,7 +295,7 @@ You can always add or change the password once logged in.
 
 You need to [source][source-script] the Yocto environment into your shell before you can use [bitbake][bitbake]. The **oe-init-build-env** will not overwrite your customized conf files.
 
-    ~$ source poky-thud/oe-init-build-env ~/rpi/build
+    ~$ source poky-warrior/oe-init-build-env ~/rpi/build
 
     ### Shell environment set up for builds. ###
 
@@ -408,11 +409,11 @@ This **copy_boot.sh** script needs to know the **TMPDIR** to find the binaries. 
 
 For instance, if I had this in `build/conf/local.conf`
 
-    TMPDIR = "/oe4/rpi/tmp-thud"
+    TMPDIR = "/oe4/rpi/tmp-warrior"
 
 Then I would export this environment variable before running `copy_boot.sh`
 
-    ~/rpi/meta-rpi/scripts$ export OETMP=/oe4/rpi/tmp-thud
+    ~/rpi/meta-rpi/scripts$ export OETMP=/oe4/rpi/tmp-warrior
 
 If you didn't override the default **TMPDIR** in `local.conf`, then set it to the default **TMPDIR**
 
@@ -463,7 +464,7 @@ Here's a realistic example session where I want to copy already built images to 
 
     ~$ sudo umount /dev/sdb1
     ~$ sudo umount /dev/sdb2
-    ~$ export OETMP=/oe4/rpi/tmp-thud
+    ~$ export OETMP=/oe4/rpi/tmp-warrior
     ~$ export MACHINE=raspberrypi2
     ~$ cd rpi/meta-rpi/scripts
     ~/rpi/meta-rpi/scripts$ ./copy_boot.sh sdb
@@ -496,7 +497,7 @@ Check the **README** in the [tspress][tspress] repository for usage.
 
 To display the list of available recipes from the **meta-layers** included in **bblayers.conf**
 
-    ~$ source poky-thud/oe-init-build-env ~/rpi/build
+    ~$ source poky-warrior/oe-init-build-env ~/rpi/build
 
     ~/rpi/build$ bitbake -s
 
