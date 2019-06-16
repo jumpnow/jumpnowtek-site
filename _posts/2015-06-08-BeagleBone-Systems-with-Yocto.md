@@ -2,7 +2,7 @@
 layout: post
 title: Building BeagleBone Systems with Yocto
 description: "Building customized systems for the BeagleBones using tools from the Yocto Project"
-date: 2019-05-18 04:00:00
+date: 2019-06-16 10:25:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
@@ -40,7 +40,7 @@ gcc/g++ **8.3.0** and associated build tools are installed.
 
 git **2.20.1** is installed.
 
-wireguard **20190406** is installed.
+wireguard **20190601** is installed.
 
 For the **4.9** and **4.14** kernels, device tree binaries are built that support
 

@@ -2,7 +2,7 @@
 layout: post
 title: Building Odroid-C2 Systems with Yocto
 description: "Building customized systems for Odroid-C2 using tools from the Yocto Project"
-date: 2019-05-18 04:00:00
+date: 2019-06-16 09:55:00
 categories: odroid
 tags: [linux, odroid-c2, yocto]
 ---
@@ -39,7 +39,7 @@ gcc/g++ **8.3.0** and associated build tools are installed.
 
 git **2.20.1** is installed.
 
-wireguard **20190406** is installed.
+wireguard **20190601** is installed.
 
 The Qt version is **5.12.3** built with the **linuxfb** QPA backend.
 

@@ -2,7 +2,7 @@
 layout: post
 title: Building Duovero Systems with Yocto
 description: "Building customized systems for Gumstix Duovero using tools from the Yocto Project"
-date: 2019-05-18 04:00:00
+date: 2019-06-16 10:16:00
 categories: gumstix-linux
 tags: [linux, gumstix, duovero, yocto]
 ---
@@ -32,7 +32,7 @@ gcc/g++ **8.3.0** and associated build tools are installed.
 
 git **2.20.1** is installed.
 
-wireguard **20190406** is installed.
+wireguard **20190601** is installed.
 
 My systems use **sysvinit**, but Yocto supports **systemd** if you would rather use that.
 
