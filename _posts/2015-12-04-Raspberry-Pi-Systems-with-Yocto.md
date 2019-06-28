@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2019-06-15 08:14:00
+date: 2019-06-28 04:45:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi zero wireless, rpi compute]
 ---
@@ -64,6 +64,8 @@ Python **3.7.2** with a number of modules is included.
 gcc/g++ **8.3.0** and associated build tools are installed.
 
 git **2.20.1** is installed.
+
+wireguard **20190601** is installed.
 
 [omxplayer][omxplayer] is installed for playing video and audio from the command line, hardware accelerated.
 
