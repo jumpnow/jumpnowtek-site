@@ -2,7 +2,7 @@
 layout: post
 title: Building Odroid-C2 Systems with Yocto
 description: "Building customized systems for Odroid-C2 using tools from the Yocto Project"
-date: 2019-06-16 09:55:00
+date: 2019-07-11 01:28:00
 categories: odroid
 tags: [linux, odroid-c2, yocto]
 ---
@@ -21,7 +21,7 @@ I am using the **odroid-c2** with some USB webcams in a monitoring system built 
 
 The Yocto version is **2.7**, the `[warrior]` branch.
 
-The default kernel is **5.1**. A recipe for the **4.19** LTS kernel is also available. 
+The default kernel is **5.2**. A recipe for the **4.19** LTS kernel is also available. 
 
 The only dtb built is **meson-gxbb-odroidc2.dtb**.
 
