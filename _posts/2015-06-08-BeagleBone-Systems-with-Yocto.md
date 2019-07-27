@@ -40,7 +40,7 @@ gcc/g++ **8.3.0** and associated build tools are installed.
 
 git **2.20.1** is installed.
 
-wireguard **20190601** is installed.
+wireguard **20190702** is installed.
 
 For the **4.9** and **4.14** kernels, device tree binaries are built that support
 

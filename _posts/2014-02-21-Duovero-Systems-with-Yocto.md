@@ -32,7 +32,7 @@ gcc/g++ **8.3.0** and associated build tools are installed.
 
 git **2.20.1** is installed.
 
-wireguard **20190601** is installed.
+wireguard **20190702** is installed.
 
 My systems use **sysvinit**, but Yocto supports **systemd** if you would rather use that.
 

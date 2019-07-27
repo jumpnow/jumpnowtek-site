@@ -65,7 +65,7 @@ gcc/g++ **8.3.0** and associated build tools are installed.
 
 git **2.20.1** is installed.
 
-wireguard **20190601** is installed.
+wireguard **20190702** is installed.
 
 [omxplayer][omxplayer] is installed for playing video and audio from the command line, hardware accelerated.
 
