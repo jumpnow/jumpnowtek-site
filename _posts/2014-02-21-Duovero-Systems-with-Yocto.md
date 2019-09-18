@@ -2,7 +2,7 @@
 layout: post
 title: Building Duovero Systems with Yocto
 description: "Building customized systems for Gumstix Duovero using tools from the Yocto Project"
-date: 2019-07-11 01:27:00
+date: 2019-09-18 08:28:00
 categories: gumstix-linux
 tags: [linux, gumstix, duovero, yocto]
 ---
@@ -20,7 +20,7 @@ I have a custom Yocto layer for the Duoveros called [meta-duovero][meta-duovero]
 
 The Yocto version is **2.7**, the `[warrior]` branch.
 
-The default kernel is **5.2**. A recipe for the **4.19** LTS kernel is also available.
+The default kernel is **5.3**. A recipe for the **4.19** LTS kernel is also available.
 
 The u-boot version is **2019.01**.
 
@@ -32,7 +32,7 @@ gcc/g++ **8.3.0** and associated build tools are installed.
 
 git **2.20.1** is installed.
 
-wireguard **20190702** is installed.
+wireguard **20190913** is installed.
 
 My systems use **sysvinit**, but Yocto supports **systemd** if you would rather use that.
 

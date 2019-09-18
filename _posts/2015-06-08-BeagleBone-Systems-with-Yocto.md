@@ -2,7 +2,7 @@
 layout: post
 title: Building BeagleBone Systems with Yocto
 description: "Building customized systems for the BeagleBones using tools from the Yocto Project"
-date: 2019-07-11 01:29:00
+date: 2019-09-18 08:30:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
@@ -24,7 +24,7 @@ I use this layer as a template when starting new BeagleBone projects.
 
 The Yocto version is **2.7** the `[warrior]` branch.
 
-The default **5.2** Linux kernel comes from the [linux-stable][linux-stable] repository. Recipes for **4.19**, **4.14** and **4.9** LTS kernels are also available.
+The default **5.3** Linux kernel comes from the [linux-stable][linux-stable] repository. Recipes for **4.19**, **4.14** and **4.9** LTS kernels are also available.
 
 The [u-boot][uboot] version is **2019.01**.
 
@@ -40,7 +40,7 @@ gcc/g++ **8.3.0** and associated build tools are installed.
 
 git **2.20.1** is installed.
 
-wireguard **20190702** is installed.
+wireguard **20190913** is installed.
 
 For the **4.9** and **4.14** kernels, device tree binaries are built that support
 

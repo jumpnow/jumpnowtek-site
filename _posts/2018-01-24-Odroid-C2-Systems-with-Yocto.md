@@ -2,7 +2,7 @@
 layout: post
 title: Building Odroid-C2 Systems with Yocto
 description: "Building customized systems for Odroid-C2 using tools from the Yocto Project"
-date: 2019-07-11 01:28:00
+date: 2019-09-18 08:30:00
 categories: odroid
 tags: [linux, odroid-c2, yocto]
 ---
@@ -21,7 +21,7 @@ I am using the **odroid-c2** with some USB webcams in a monitoring system built 
 
 The Yocto version is **2.7**, the `[warrior]` branch.
 
-The default kernel is **5.2**. A recipe for the **4.19** LTS kernel is also available. 
+The default kernel is **5.3**. A recipe for the **4.19** LTS kernel is also available.
 
 The only dtb built is **meson-gxbb-odroidc2.dtb**.
 
@@ -39,7 +39,7 @@ gcc/g++ **8.3.0** and associated build tools are installed.
 
 git **2.20.1** is installed.
 
-wireguard **20190702** is installed.
+wireguard **20190913** is installed.
 
 The Qt version is **5.12.3** built with the **linuxfb** QPA backend.
 
@@ -371,7 +371,7 @@ Both **copy\_boot.sh** and **copy\_rootfs.sh** are simple scripts easily customi
 
 #### Serial console
 
-The ttl uart header pins are on the [CON5 connector][console-uart] 
+The ttl uart header pins are on the [CON5 connector][console-uart]
 
 * Pin 1 VCC
 * Pin 2 TXD
