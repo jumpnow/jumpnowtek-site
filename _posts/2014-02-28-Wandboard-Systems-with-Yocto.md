@@ -33,7 +33,7 @@ gcc/g++ **8.3.0** and associated build tools are installed.
 
 git **2.20.1** is installed.
 
-wireguard **20190913' is installed.
+wireguard **20190913** is installed.
 
 The Qt version is **5.12.3** built with the **linuxfb** backend.
 
