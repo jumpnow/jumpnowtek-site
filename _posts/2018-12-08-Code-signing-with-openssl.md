@@ -2,27 +2,25 @@
 layout: post
 title: Signing code with OpenSSL
 description: "Digital signing with OpenSSL"
-date: 2019-09-28 13:50:00
+date: 2019-09-29 17:04:00
 categories: security
 tags: [openssl, signing]
 ---
 
-Including a [cryptographic hash][crypto-hash] for a file you are distributing provides **integrity verification**, proof the file is not corrupt.
+Including a [cryptographic hash][crypto-hash] like an **md5** or **sha256** checksum for a file you distribute provides **integrity** verification, proof the file is not corrupt.
 
-In order to provide **authentication**, proof of authorship, we need a [digital signature][digital-sig].
+In order to provide **authentication**, to prove the file came from you, requires a [digital signature][digital-sig].
 
-A digital signature involves [public key cryptography][pub-key-crypto].
+Using [public key cryptography][pub-key-crypto] a digital signature can give us **authentication**, **integrity** and **non-repudiation**.
 
-A digital signature provides **authentication**, **integrity-verification** and **non-repudiation**.
-
-In software development, providing a digital signature is called code signing.
+In software development this is called [code signing][code-signing].
 
 The general algorithm:
 
 **To Sign**
 
 1. Generate a hash of the data file
-2. Encrypt the hash with the private key producing a signature file
+2. Encrypt the hash with a private key producing a signature file
 3. Distribute the data and signature files
 
 **To Verify**
@@ -35,7 +33,7 @@ Obviously the crypto hash algorithm has to be the same in both signing and verif
 
 So why not just sign the original file? 
 
-Public key cryptography is very slow and the size of the file you can encrypt with an algorithm like RSA is limited. By hashing the data first, we only need to encrypt a small file.
+Public key cryptography is slow and the size of the file you can encrypt with an algorithm like RSA is limited. By hashing the data first, we only need to encrypt a small file.
 
 The [OpenSSL][openssl] command line utility provides all the tools we need to digitally sign files.
 
@@ -44,7 +42,7 @@ The [OpenSSL][openssl] command line utility provides all the tools we need to di
 
 I am using **OpenSSL 1.1.1b** on an Ubuntu 19.04 machine for these examples.
 
-### Create a Public/Private Key Pair
+### Create an RSA public/private key pair with genrsa
 
 Generate a private key with key size of 4096 bits.
 
@@ -58,6 +56,8 @@ Generate a public key from the private key.
 
     $ openssl rsa -in private.pem -pubout -out public.pem
     writing RSA key
+
+The files
 
     $ ls -l
     total 8
@@ -80,11 +80,13 @@ This command creates the signature file (**data.sig** in this example).
 
     $ openssl dgst -sha512 -sign private.pem -out data.sig data
 
+The signature file **data.sig** is not big. 
+
     $ ls -l data*
     -rw-r--r-- 1 scott scott 155385 Sep 28 10:45 data
     -rw-r--r-- 1 scott scott    512 Sep 28 10:45 data.sig
 
-The signature file **data.sig** should now be distributed with the **data** file.
+**data.sig** should be distributed with the **data** file.
 
 ### Verifying
 
@@ -147,6 +149,68 @@ There are other options to provide the password. See the **Pass Phrase** section
 
 A password on the private key does not affect how the public key is used.
 
+### Using elliptic curve keys
+
+Elliptic curve (EC) keys are an alternative to RSA keys.
+
+The keys are smaller and operations are less CPU intensive, often important for embedded systems.
+
+The following command will generate a private key
+
+    $ openssl genpkey -algorithm EC \
+        -pkeyopt ec_paramgen_curve:P-256 \
+        -pkeyopt ec_param_enc:named_curve \
+        -out private.pem
+
+And this will generate a public key from the private key
+
+    $ openssl pkey -pubout -inform pem -outform pem -in private.pem -out public.pem
+
+
+Here you can see the keys are smaller than RSA keys 
+
+    $ ls -l *.pem
+    -rw------- 1 scott scott 241 Sep 29 06:56 private.pem
+    -rw-r--r-- 1 scott scott 178 Sep 29 06:56 public.pem
+
+
+Signing operations using openssl are the same.
+
+This creates a signature for a **data** file using the private key
+
+    $ openssl dgst -sha512 -sign private.pem -out data.sig data
+
+Here is a check of the signature using the public key
+
+    $ openssl dgst -sha512 -verify public.pem -signature data.sig data
+    Verified OK
+
+And this shows a failed check
+
+    $ openssl dgst -sha512 -verify public.pem -signature data.sig modified-data
+    Verification Failure
+
+
+As with RSA keys you can have openssl password protect the private key (here **-aes256**)
+
+    $ openssl genpkey -aes256 -algorithm EC \
+        -pkeyopt ec_paramgen_curve:P-256 
+        -pkeyopt ec_param_enc:named_curve \
+        -out private.pem
+    Enter PEM pass phrase:
+    Verifying - Enter PEM pass phrase:
+
+And now whenever you use the private key you will have to provide the password
+
+    $ openssl pkey -pubout -inform pem -outform pem -in private.pem -out public.pem
+    Enter pass phrase for private.pem:
+
+    $ openssl dgst -sha512 -sign private.pem -out data.sig data
+    Enter pass phrase for private.pem:
+
+
+Operations using the public key are unchanged.
+
 ### Base64 encoding the Signature File
 
 The signature file is a binary file. If you want to look at signature files, for example with a web browser, you could [base64][base64] encode the file. 
@@ -173,3 +237,4 @@ You could also use the standard [base64(1)][base64-man] utility from the **coreu
 [base64]: https://en.wikipedia.org/wiki/Base64
 [base64-man]: https://linux.die.net/man/1/base64
 [openssl-man]: https://linux.die.net/man/1/openssl
+[code-signing]: https://en.wikipedia.org/wiki/Code_signing
