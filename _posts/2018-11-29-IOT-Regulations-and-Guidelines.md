@@ -2,12 +2,14 @@
 layout: post
 title: IOT Regulations and Guidelines
 description: "A collection of new IOT regulations and guidelines"
-date: 2019-07-04 15:30:00
+date: 2019-10-05 05:35:00
 categories: security
 tags: [iot, regulations, laws, guidelines]
 ---
 
 * OWASP Internet of Things Project - [Top 10][owasp-top-10]
+
+* OWASP Secure Medical Device Deployment Standard v2- [pdf][owasp-smdds-v2]
 
 * Information privacy: connected devices ([SB-327][sb-327], [AB-1906][ab-1906]) (California)
 
@@ -21,6 +23,7 @@ tags: [iot, regulations, laws, guidelines]
 
 
 [owasp-top-10]: https://www.owasp.org/index.php/OWASP_Internet_of_Things_Project
+[owasp-smdds-v2]: https://www.owasp.org/images/9/95/OWASP_Secure_Medical_Devices_Deployment_Standard_7.18.18.pdf
 [sb-327]: http://leginfo.legislature.ca.gov/faces/billTextClient.xhtml?bill_id=201720180SB327
 [ab-1906]: https://leginfo.legislature.ca.gov/faces/billTextClient.xhtml?bill_id=201720180AB1906
 [nistir-8228]: https://www.nist.gov/publications/considerations-managing-internet-things-iot-cybersecurity-and-privacy-risks
