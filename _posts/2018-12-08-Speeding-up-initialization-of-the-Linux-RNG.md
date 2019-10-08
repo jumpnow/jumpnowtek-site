@@ -3,7 +3,7 @@ layout: post
 title: Speeding up initialization of the Linux RNG
 description: "Updating the entropy count when seeding the Linux random number generator"
 date: 2018-12-08 18:12:00
-categories: linux
+categories: security
 tags: [linux, embedded, random, urandom, entropy, rng, seeding]
 ---
 
@@ -75,9 +75,9 @@ I modified the existing **/etc/init.d/urandom** startup script like this
         fi
    ...
 
-Being overly conservative I am claiming only 1024 bits of new entropy even though we added 4096 (512 bytes * 8). 
+Being overly conservative I am claiming only 1024 bits of new entropy even though we added 4096 (512 bytes * 8).
 
-This is still enough to reduce the startup time for a Python flask web app running on a BeagleBone Black from 155 seconds to 25 seconds. 
+This is still enough to reduce the startup time for a Python flask web app running on a BeagleBone Black from 155 seconds to 25 seconds.
 
 Here is an [lkml.org thread][lkml-thread] discussing the issue.
 
