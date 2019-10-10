@@ -2,18 +2,18 @@
 layout: post
 title: Signing code with OpenSSL
 description: "Digital signing with OpenSSL"
-date: 2019-09-29 17:04:00
+date: 2019-10-09 05:25:00
 categories: security
 tags: [openssl, signing]
 ---
 
-Including a [cryptographic hash][crypto-hash] like an **md5** or **sha256** checksum for a file you distribute provides **integrity** verification, proof the file is not corrupt.
+Providing a [cryptographic hash][crypto-hash] like an **md5** or **sha256** checksum for a file you distribute only gives the receiver **integrity** verification, proof the file is not corrupt.
 
-In order to provide **authentication**, to prove the file came from you, requires a [digital signature][digital-sig].
+Including a [digital signature][digital-sig] with a file provides **authentication** and **non-repuditation** in addition to **integrity** verification.
 
-Using [public key cryptography][pub-key-crypto] a digital signature can give us **authentication**, **integrity** and **non-repudiation**.
+[Public key cryptography][pub-key-crypto] is used to generate digital signatures.
 
-In software development this is called [code signing][code-signing].
+In software development this is also called [code signing][code-signing].
 
 The general algorithm:
 
@@ -26,12 +26,12 @@ The general algorithm:
 **To Verify**
 
 1. Generate a hash of the data file
-2. Use the public key to unencrypt the signature file 
+2. Use the public key to unencrypt the signature file
 3. Check that the two values match
 
 Obviously the crypto hash algorithm has to be the same in both signing and verification.
 
-So why not just sign the original file? 
+So why not just sign the original file?
 
 Public key cryptography is slow and the size of the file you can encrypt with an algorithm like RSA is limited. By hashing the data first, we only need to encrypt a small file.
 
@@ -72,32 +72,32 @@ The public key **public.pem** is meant to be shared.
 
 Openssl can do the signing in a single command, combining the hashing and encryption in one step.
 
-This example uses **sha512** as the hashing (digest) algorithm. 
-
 Assume the **data** file is some big binary blob, for example a compressed tarball.
 
-This command creates the signature file (**data.sig** in this example).
+This example explicitly specifies **sha256** as the hashing (digest) algorithm, but this is the default.
 
-    $ openssl dgst -sha512 -sign private.pem -out data.sig data
+Here is how to create a signature file
 
-The signature file **data.sig** is not big. 
+    $ openssl dgst -sha256 -sign private.pem -out data.sig data
+
+The signature file **data.sig** is small.
 
     $ ls -l data*
     -rw-r--r-- 1 scott scott 155385 Sep 28 10:45 data
     -rw-r--r-- 1 scott scott    512 Sep 28 10:45 data.sig
 
-**data.sig** should be distributed with the **data** file.
+It should be distributed with the **data** file.
 
 ### Verifying
 
 Verification requires the public key and knowledge of the hashing algorithm that was used.
 
-    $ openssl dgst -sha512 -verify public.pem -signature data.sig data
+    $ openssl dgst -sha256 -verify public.pem -signature data.sig data
     Verified OK
 
 A failure looks like this
 
-    $ openssl dgst -sha512 -verify public.pem -signature data.sig modified-data
+    $ openssl dgst -sha256 -verify public.pem -signature data.sig modified-data
     Verification Failure
 
 
@@ -118,31 +118,31 @@ The extra **-aes256** argument will encrypt the private key using the [AES][aes]
     Verifying - Enter pass phrase for private.pem:
 
 See the help for encryption algorithm options [genrsa(1)][genrsa]
- 
+
 Now whenever you use the private key, you will need the password
 
     $ openssl rsa -in private.pem -pubout -out public.pem
     Enter pass phrase for private.pem:
     writing RSA key
 
-    $ openssl dgst -sha512 -sign private.pem -out data.sig data
+    $ openssl dgst -sign private.pem -out data.sig data
     Enter pass phrase for private.pem:
 
 Prompting for pass phrase is the default, but you can provide the password using other methods with the **-passin** argument
 
 Directly in the command
 
-    $ openssl dgst -sha512 -sign private.pem -passin pass:the-password -out data.sig data
+    $ openssl dgst -sign private.pem -passin pass:the-password -out data.sig data
 
 Using an environment variable
 
     $ SECRET=the-password
-    $ openssl dgst -sha512 -sign private.pem -passin env:SECRET -out data.sig data
+    $ openssl dgst -sign private.pem -passin env:SECRET -out data.sig data
 
-Using a **pathname** where the argument can be a file 
+Using a **pathname** where the argument can be a file
 
-    $ echo the-password > secret 
-    $ openssl dgst -sha512 -sign private.pem -passin file:secret -out data.sig data
+    $ echo the-password > secret
+    $ openssl dgst -sign private.pem -passin file:secret -out data.sig data
 
 There are other options to provide the password. See the **Pass Phrase** section of the [openssl(1)][openssl-man] man page.
 
@@ -164,10 +164,10 @@ The following command will generate a private key
 
 And this will generate a public key from the private key
 
-    $ openssl pkey -pubout -inform pem -outform pem -in private.pem -out public.pem
+    $ openssl pkey -in private.pem -pubout -out public.pem
 
 
-Here you can see the keys are smaller than RSA keys 
+Here you can see the keys are smaller than RSA keys
 
     $ ls -l *.pem
     -rw------- 1 scott scott 241 Sep 29 06:56 private.pem
@@ -176,25 +176,25 @@ Here you can see the keys are smaller than RSA keys
 
 Signing operations using openssl are the same.
 
-This creates a signature for a **data** file using the private key
+This creates a signature for a **data** file using the private key (default **-sha256** argument omitted)
 
-    $ openssl dgst -sha512 -sign private.pem -out data.sig data
+    $ openssl dgst -sign private.pem -out data.sig data
 
 Here is a check of the signature using the public key
 
-    $ openssl dgst -sha512 -verify public.pem -signature data.sig data
+    $ openssl dgst -verify public.pem -signature data.sig data
     Verified OK
 
 And this shows a failed check
 
-    $ openssl dgst -sha512 -verify public.pem -signature data.sig modified-data
+    $ openssl dgst -verify public.pem -signature data.sig modified-data
     Verification Failure
 
 
 As with RSA keys you can have openssl password protect the private key (here **-aes256**)
 
     $ openssl genpkey -aes256 -algorithm EC \
-        -pkeyopt ec_paramgen_curve:P-256 
+        -pkeyopt ec_paramgen_curve:P-256
         -pkeyopt ec_param_enc:named_curve \
         -out private.pem
     Enter PEM pass phrase:
@@ -202,10 +202,10 @@ As with RSA keys you can have openssl password protect the private key (here **-
 
 And now whenever you use the private key you will have to provide the password
 
-    $ openssl pkey -pubout -inform pem -outform pem -in private.pem -out public.pem
+    $ openssl pkey -in private.pem -pubout -out public.pem
     Enter pass phrase for private.pem:
 
-    $ openssl dgst -sha512 -sign private.pem -out data.sig data
+    $ openssl dgst -sign private.pem -out data.sig data
     Enter pass phrase for private.pem:
 
 
@@ -213,7 +213,7 @@ Operations using the public key are unchanged.
 
 ### Base64 encoding the Signature File
 
-The signature file is a binary file. If you want to look at signature files, for example with a web browser, you could [base64][base64] encode the file. 
+The signature file is a binary file. If you want to look at signature files, for example with a web browser, you could [base64][base64] encode the file.
 
 Openssl provides a utility.
 
@@ -226,7 +226,7 @@ Before using for verification the signature file needs to be decoded into binary
 
     $ openssl base64 -d -in data.sig.b64 -out data.sig
 
-You could also use the standard [base64(1)][base64-man] utility from the **coreutils** package for the encoding and decoding. 
+You could also use the standard [base64(1)][base64-man] utility from the **coreutils** package for the encoding and decoding.
 
 [crypto-hash]: https://en.wikipedia.org/wiki/Cryptographic_hash_function
 [digital-sig]: https://en.wikipedia.org/wiki/Digital_signature
