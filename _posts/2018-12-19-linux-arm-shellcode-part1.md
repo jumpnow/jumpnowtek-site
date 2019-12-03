@@ -203,7 +203,7 @@ So if we want the address of the start of our string in **hello.s** we need to a
 
 Note that regular programs would put data like our string into the **.data** or **.rodata** section of the program and the compiler would place this address into the instruction for us. 
 
-But we are interested in writing shell code where all of our code and data is going to inserted into a program at runtime to an unknown location in memory.
+But we are interested in writing shell code where all of our code and data is going to be inserted into a program at runtime to an unknown memory location.
 
 So we need to use relative addressing when we reference our data. The **pc** register makes a good base for offset addressing like this.
 

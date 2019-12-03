@@ -19,7 +19,9 @@ tags: [iot, regulations, laws, guidelines]
 
 * BSI TR-03148: Secure Broadband Routers ([TR03148.pdf][bsi-tr-03148]) (Germany)
 
-* European Telecommunications Standards Institute ([ETSI TS 103 645)][etsi-103-645] (EU, pdf)
+* European Telecommunications Standards Institute ([ETSI TS 103 645][etsi-103-645]) (EU, pdf)
+
+* Resources for Measuring Cybersecurity ([R Street Institute][r-street]) (pdf)
 
 
 [owasp-top-10]: https://www.owasp.org/index.php/OWASP_Internet_of_Things_Project
@@ -30,3 +32,4 @@ tags: [iot, regulations, laws, guidelines]
 [copfciots]: https://www.gov.uk/government/publications/code-of-practice-for-consumer-iot-security
 [bsi-tr-03148]: https://www.bsi.bund.de/SharedDocs/Downloads/DE/BSI/Publikationen/TechnischeRichtlinien/TR03148/TR03148.pdf
 [etsi-103-645]: https://www.etsi.org/deliver/etsi_ts/103600_103699/103645/01.01.01_60/ts_103645v010101p.pdf
+[r-street]: https://www.rstreet.org/wp-content/uploads/2019/10/Final-Cyberbibliography-2019.pdf

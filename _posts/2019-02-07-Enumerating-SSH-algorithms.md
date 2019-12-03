@@ -2,12 +2,12 @@
 layout: post
 title: Enumerating SSH Algorithms with Nmap
 description: "Using the Nmap ssh2-enum-algos script to check an ssh server"
-date: 2019-02-07 08:30:00
+date: 2019-12-03 16:07:00
 categories: security
 tags: [ssh, nmap, ssh2-enum-algos, encryption, keys, nse]
 ---
 
-[SSH][ssh] is an extremely popular way to securely communicate with a remote host.
+[SSH][ssh] is the standard for getting secure shell access to a remote host.
 
 An SSH session starts with the two sides first negotiating a set of encryption protocols to use.
 
@@ -15,7 +15,7 @@ They do this by each sending a list of supported algorithms and agreeing to use 
 
 Then after a [Diffie-Hellman][diffie-hellman] exchange to get a session key, encrypted communications can begin starting with [hostkey-fingerprint][hostkey-fingerprints] checks and authentication.
 
-As with [SSL/TLS][nmap-tls-check], Nmap can be used to check the encryption algorithms an SSH server supports using an [NSE script][nsedoc].
+As with [SSL/TLS][nmap-tls-check], Nmap can be used to check the encryption algorithms an SSH server supports using an [NSE][nsedoc] script.
 
 The script for this is called [ssh2-enum-algos][ssh2-enum-algos] and run against an [OpenSSH][openssh] server the output will look something like this
 
@@ -100,9 +100,7 @@ So the script processing goes like this and fails.
     Server -> <nothing>
 
 
-Here is what it looks like.
-
-For this test I was running a Dropbear server on a workstation on port 2222.
+Here is what it looks like (the Dropbear server is running on port 2222).
 
     # nmap -p2222 -n -sV --script ssh2-enum-algos 192.168.10.12
     Starting Nmap 7.70 ( https://nmap.org ) at 2019-02-07 06:14 EST
@@ -177,7 +175,7 @@ To use with released versions of Nmap, switch back to **stdnse.strsplit** instea
 
 On a related note, [Ncrack][ncrack], the standalone brute-force passsword cracking tool, also fails against Dropbear SSH servers for the same reason. A similar tool [Hydra][thc-hydra] has no problems with Dropbear.
 
-But all is not lost as the NSE [ssh-brute][ssh-brute] script does work against either Dropbear or OpenSSH.
+But all is not lost as the Nmap NSE [ssh-brute][ssh-brute] script does work against either Dropbear or OpenSSH.
 
 [ssh]: https://en.wikipedia.org/wiki/Secure_Shell
 [nmap-tls-check]: https://jumpnowtek.com/security/Using-nmap-to-check-certs-and-supported-algos.html
