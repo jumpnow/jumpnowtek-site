@@ -2,9 +2,9 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2019-06-28 04:45:00
+date: 2019-12-27 06:45:00
 categories: rpi
-tags: [linux, rpi, yocto, rpi2, rpi3, rpi zero, rpi zero wireless, rpi compute]
+tags: [linux, rpi, yocto, rpi2, rpi3, rpi4, rpi zero, rpi zero wireless, rpi compute]
 ---
 
 This post is about building Linux systems for [Raspberry Pi][rpi] boards using software from the [Yocto Project][Yocto].
@@ -51,7 +51,7 @@ All systems are setup to use a serial console. For the RPi's that have it, a dhc
 
 ### System Info
 
-The Yocto version is **2.7.0**, the `[warrior]` branch.
+The Yocto version is **3.0**, the `[zeus]` branch.
 
 The **4.19** Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
 
@@ -124,20 +124,24 @@ Fedora already uses **bash** as the shell.
 
 ### Clone the dependency repositories
 
-For all upstream repositories, use the `[warrior]` branch.
+For all upstream repositories, use the `[zeus]` branch.
 
 The directory layout I am describing here is my preference. All of the paths to the meta-layers are configurable. If you choose something different, adjust the following instructions accordingly.
 
 First the main Yocto project **poky** layer
 
-    ~# git clone -b warrior git://git.yoctoproject.org/poky.git poky-warrior
+    ~# git clone -b zeus git://git.yoctoproject.org/poky.git poky-zeus
 
 Then the dependency layers under that
 
-    ~$ cd poky-warrior
-    ~/poky-warrior$ git clone -b warrior git://git.openembedded.org/meta-openembedded
-    ~/poky-warrior$ git clone -b warrior https://github.com/meta-qt5/meta-qt5
-    ~/poky-warrior$ git clone -b warrior git://git.yoctoproject.org/meta-raspberrypi
+    ~$ cd poky-zeus
+    ~/poky-zeus$ git clone -b zeus git://git.openembedded.org/meta-openembedded
+    ~/poky-zeus$ git clone -b zeus https://github.com/meta-qt5/meta-qt5
+    ~/poky-zeus$ git clone -b zeus git://git.yoctoproject.org/meta-raspberrypi
+
+And my own common dependency layer which is mostly configuration tweaks to upstream packages.
+
+    ~/poky-zeus$ git clone -b zeus https://github.com/jumpnow/meta-jumpnow
 
 These repositories shouldn't need modifications other then periodic updates and can be reused for different projects or different boards.
 
@@ -147,7 +151,7 @@ Create a separate sub-directory for the **meta-rpi** repository before cloning. 
 
     ~$ mkdir ~/rpi
     ~$ cd ~/rpi
-    ~/rpi$ git clone -b warrior git://github.com/jumpnow/meta-rpi
+    ~/rpi$ git clone -b zeus git://github.com/jumpnow/meta-rpi
 
 The `meta-rpi/README.md` file has the last commits from the dependency repositories that I tested. You can always checkout those commits explicitly if you run into problems.
 
@@ -164,7 +168,7 @@ You could manually create the directory structure like this
 
 Or you could use the Yocto environment script **oe-init-build-env** like this passing in the path to the build directory
 
-    ~$ source poky-warrior/oe-init-build-env ~/rpi/build
+    ~$ source poky-zeus/oe-init-build-env ~/rpi/build
 
 The Yocto environment script will create the build directory if it does not already exist.
 
@@ -191,11 +195,12 @@ In **bblayers.conf** file replace **${HOME}** with the appropriate path to the m
 
 For example, if your directory structure does not look exactly like this, you will need to modify `bblayers.conf`
 
-    ~/poky-warrior/
-         meta-openembedded/
-         meta-qt5/
-         meta-raspberrypi
-         ...
+    ~/poky-zeus/
+        meta-jumpnow/
+        meta-openembedded/
+        meta-qt5/
+        meta-raspberrypi
+        ...
 
     ~/rpi/
         meta-rpi/
@@ -228,6 +233,7 @@ The choices for **MACHINE** are
 * raspberrypi0-wifi (BCM2835)
 * raspberrypi2 (BCM2836 or BCM2837 v1.2+)
 * raspberrypi3 (BCM2837)
+* raspberrypi4 (BCM2838)
 * raspberrypi-cm (BCM2835)
 * raspberrypi-cm3 (BCM2837)
 
@@ -296,7 +302,7 @@ You can always add or change the password once logged in.
 
 You need to [source][source-script] the Yocto environment into your shell before you can use [bitbake][bitbake]. The **oe-init-build-env** will not overwrite your customized conf files.
 
-    ~$ source poky-warrior/oe-init-build-env ~/rpi/build
+    ~$ source poky-zeus/oe-init-build-env ~/rpi/build
 
     ### Shell environment set up for builds. ###
 
@@ -410,11 +416,11 @@ This **copy_boot.sh** script needs to know the **TMPDIR** to find the binaries. 
 
 For instance, if I had this in `build/conf/local.conf`
 
-    TMPDIR = "/oe4/rpi/tmp-warrior"
+    TMPDIR = "/oe4/rpi/tmp-zeus"
 
 Then I would export this environment variable before running `copy_boot.sh`
 
-    ~/rpi/meta-rpi/scripts$ export OETMP=/oe4/rpi/tmp-warrior
+    ~/rpi/meta-rpi/scripts$ export OETMP=/oe4/rpi/tmp-zeus
 
 If you didn't override the default **TMPDIR** in `local.conf`, then set it to the default **TMPDIR**
 
@@ -465,7 +471,7 @@ Here's a realistic example session where I want to copy already built images to 
 
     ~$ sudo umount /dev/sdb1
     ~$ sudo umount /dev/sdb2
-    ~$ export OETMP=/oe4/rpi/tmp-warrior
+    ~$ export OETMP=/oe4/rpi/tmp-zeus
     ~$ export MACHINE=raspberrypi2
     ~$ cd rpi/meta-rpi/scripts
     ~/rpi/meta-rpi/scripts$ ./copy_boot.sh sdb
@@ -498,7 +504,7 @@ Check the **README** in the [tspress][tspress] repository for usage.
 
 To display the list of available recipes from the **meta-layers** included in **bblayers.conf**
 
-    ~$ source poky-warrior/oe-init-build-env ~/rpi/build
+    ~$ source poky-zeus/oe-init-build-env ~/rpi/build
 
     ~/rpi/build$ bitbake -s
 
