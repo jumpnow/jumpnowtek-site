@@ -1,10 +1,13 @@
 #!/bin/bash
 
 cd ..
+rm -f _site/site.tgz
+rm -f site.tgz
 jekyll build
-sudo /etc/init.d/nginx stop
+tar -czf site.tgz _site 
+sudo systemctl stop nginx
 sudo rm -rf /var/www/*
-sudo cp -r _site/* /var/www
-sudo /etc/init.d/nginx start
+sudo tar -C /var/www --strip 1 -xzf site.tgz
+sudo chown -R www-data:www-data /var/www
+sudo systemctl start nginx
 cd $OLDPWD  
-
