@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2019-12-27 06:45:00
+date: 2019-12-27 06:00:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi4, rpi zero, rpi zero wireless, rpi compute]
 ---
@@ -59,13 +59,13 @@ These are **sysvinit** systems using [eudev][eudev].
 
 The Qt version is **5.12.1** There is no **X11** and no desktop installed. [Qt][qt] GUI applications can be run fullscreen using one of the [Qt embedded linux plugins][embedded-linux-qpa] like **eglfs** or **linuxfb**, both are provided. The default is **eglfs**.
 
-Python **3.7.2** with a number of modules is included.
+Python **3.7.5** with a number of modules is included.
 
-gcc/g++ **8.3.0** and associated build tools are installed.
+gcc/g++ **9.2.0** and associated build tools are installed.
 
-git **2.20.1** is installed.
+git **2.23.0** is installed.
 
-wireguard **20190702** is installed.
+wireguard **20191219** is installed.
 
 [omxplayer][omxplayer] is installed for playing video and audio from the command line, hardware accelerated.
 
@@ -139,11 +139,11 @@ Then the dependency layers under that
     ~/poky-zeus$ git clone -b zeus https://github.com/meta-qt5/meta-qt5
     ~/poky-zeus$ git clone -b zeus git://git.yoctoproject.org/meta-raspberrypi
 
-And my own common dependency layer which is mostly configuration tweaks to upstream packages.
+These repositories shouldn't need modifications other then periodic updates and can be reused for different projects or different boards.
+
+My own common meta-layer changing some upstream package defaults and adding a few custom recipes.
 
     ~/poky-zeus$ git clone -b zeus https://github.com/jumpnow/meta-jumpnow
-
-These repositories shouldn't need modifications other then periodic updates and can be reused for different projects or different boards.
 
 ### Clone the meta-rpi repository
 

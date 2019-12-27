@@ -2,7 +2,7 @@
 layout: post
 title: Building BeagleBone Systems with Yocto
 description: "Building customized systems for the BeagleBones using tools from the Yocto Project"
-date: 2019-09-18 08:30:00
+date: 2019-12-27 06:00:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
@@ -22,46 +22,27 @@ I use this layer as a template when starting new BeagleBone projects.
 
 ### System Info
 
-The Yocto version is **2.7** the `[warrior]` branch.
+The Yocto version is **3.0** the `[zeus]` branch.
 
 The default **5.3** Linux kernel comes from the [linux-stable][linux-stable] repository. Recipes for **4.19**, **4.14** and **4.9** LTS kernels are also available.
 
-The [u-boot][uboot] version is **2019.01**.
+The [u-boot][uboot] version is **2019.07**.
 
 These are **sysvinit** systems using [eudev][eudev].
 
-The Qt version is **5.12.3**. There is no *X11* and no desktop installed. [Qt][qt] GUI applications can be run using the *linuxfb* platform plugin.
+The Qt version is **5.13.2**. There is no *X11* and no desktop installed. [Qt][qt] GUI applications can be run using the *linuxfb* platform plugin.
 
 A light-weight **X11** desktop can be added with minimal changes to the build configuration. For instance **X11** is needed to run Java GUI apps or browser kiosk applications.
 
-Python **3.7.2** and **2.7.15** are installed.
+Python **3.7.5** is installed.
 
-gcc/g++ **8.3.0** and associated build tools are installed.
+gcc/g++ **9.2.0** and associated build tools are installed.
 
-git **2.20.1** is installed.
+git **2.23.0** is installed.
 
-wireguard **20190913** is installed.
+wireguard **20191219** is installed.
 
-For the **4.9** and **4.14** kernels, device tree binaries are built that support
-
-1. HDMI (`bbb-hdmi.dtb`) not for the [BBG][bbg]
-2. No HDMI (`bbb-nohdmi.dtb`)
-3. [4DCape 4.3-inch resistive touchscreen cape][4dcape43t] (`bbb-4dcape43t.dtb`)
-4. [4DCape 7-inch resistive touchscreen cape][4dcape70t] (`bbb-4dcape70t.dtb`)
-5. [Newhaven 5-inch capacitive touchscreen cape][nh5cape] (`bbb-nh5cape.dtb`, currently **4.9** only)
-6. [Newhaven 7-inch capacitive touchscreen cape][nhd7cape] (`bbb-nhd7cape.dtb`)
-
-The newer kernels only have the default in-tree DTBs.
-
-The DTBs are easy enough to switch between using a [u-boot][uboot] script file `uEnv.txt`
-
-*spidev* on SPI bus 1, *I2C1* and *I2C2* and *UART4* are configured for use from the *P9* header.
-
-There are some simple loopback test programs included in the console image.
-
-[spiloop][spiloop] is a utility for testing the *spidev* driver.
-
-[serialecho][serialecho] is a utility for testing *uarts*.
+The default kernel is **5.4**. A **4.19** LTS kernel recipe is also available.
 
 ### Ubuntu Setup
 
@@ -110,13 +91,18 @@ Fedora already uses **bash** as the shell.
 
 ### Clone the repositories
 
-    ~$ git clone -b warrior git://git.yoctoproject.org/poky.git poky-warrior
+    ~$ git clone -b zeus git://git.yoctoproject.org/poky.git poky-zeus
 
-    ~$ cd poky-warrior
-    ~/poky-warrior$ git clone -b warrior git://git.openembedded.org/meta-openembedded
-    ~/poky-warrior$ git clone -b warrior https://github.com/meta-qt5/meta-qt5.git
+    ~$ cd poky-zeus
+    ~/poky-zeus$ git clone -b zeus git://git.openembedded.org/meta-openembedded
+    ~/poky-zeus$ git clone -b zeus https://github.com/meta-qt5/meta-qt5.git
+    ~/poky-zeus$ git clone -b zeus git://git.yoctoproject.org/meta-security.git
 
-I usually keep these repositories separated since they can be shared between projects and different boards.
+These repositories shouldn't need modifications other then periodic updates and can be reused for different projects or different boards.
+
+My own common meta-layer changing some upstream package defaults and adding a few custom recipes.
+
+    ~/poky-zeus$ git clone -b zeus https://github.com/jumpnow/meta-jumpnow.git
 
 ### Clone the meta-bbb repository
 
@@ -124,7 +110,7 @@ Create a sub-directory for the `meta-bbb` repository before cloning
 
     ~$ mkdir ~/bbb
     ~$ cd ~/bbb
-    ~/bbb$ git clone -b warrior git://github.com/jumpnow/meta-bbb
+    ~/bbb$ git clone -b zeus git://github.com/jumpnow/meta-bbb
 
 The `meta-bbb/README.md` file has the last commits from the dependency repositories that I tested. You can always checkout those commits explicitly if you run into problems.
 
@@ -141,7 +127,7 @@ You could manually create the directory structure like this
 
 Or you could use the *Yocto* environment script `oe-init-build-env` like this passing in the path to the build directory
 
-    ~$ source poky-warrior/oe-init-build-env ~/bbb/build
+    ~$ source poky-zeus/oe-init-build-env ~/bbb/build
 
 The *Yocto* environment script will create the build directory if it does not already exist.
 
@@ -165,9 +151,11 @@ In `bblayers.conf` file replace **${HOME}** with the appropriate path to the met
 For example, if your directory structure does not look exactly like this, you will need to modify `bblayers.conf`
 
 
-    ~/poky-warrior/
+    ~/poky-zeus/
+         meta-jumpnow/
          meta-openembedded/
          meta-qt5/
+         meta-security/
          ...
 
     ~/bbb/
@@ -238,27 +226,31 @@ You can always add or change the password once logged in.
 
 You need to [source][source-script] the Yocto environment into your shell before you can use [bitbake][bitbake]. The `oe-init-build-env` will not overwrite your customized conf files.
 
-    ~$ source poky-warrior/oe-init-build-env ~/bbb/build
+    ~$ source poky-zeus/oe-init-build-env ~/bbb/build
 
     ### Shell environment set up for builds. ###
 
-    You can now run 'bitbake '
+    You can now run 'bitbake <target>'
 
     Common targets are:
         core-image-minimal
         core-image-sato
         meta-toolchain
-        meta-toolchain-sdk
-        adt-installer
         meta-ide-support
 
     You can also run generated qemu images with a command like 'runqemu qemux86'
+
+    Other commonly useful commands are:
+     - 'devtool' and 'recipetool' handle common recipe tasks
+     - 'bitbake-layers' handles common layer tasks
+     - 'oe-pkgdata-util' handles common target package tasks
+
     scott@octo:~/bbb/build$
 
 
-I don't use those *Common targets*, but instead use my own custom image recipes.
+I don't use any of the *Common targets*, but instead use my own custom image recipes.
 
-There are two custom images available in the *meta-bbb* layer. The recipes for the images can be found in `meta-bbb/images/`
+There are a few custom images available in the *meta-bbb* layer. The recipes for the images can be found in `meta-bbb/images/`
 
 * console-image.bb
 * qt5-image.bb
@@ -279,7 +271,7 @@ The *console-image* has a line
 
     inherit core-image
 
-which is `poky-warrior/meta/classes/core-image.bbclass` and pulls in some required base packages.  This is useful to know if you create your own image recipe.
+which is `poky-zeus/meta/classes/core-image.bbclass` and pulls in some required base packages.  This is useful to know if you create your own image recipe.
 
 #### qt5-image
 
@@ -389,11 +381,11 @@ This *copy_boot.sh* script needs to know the `TMPDIR` to find the binaries. It l
 
 For instance, if I had this in the `local.conf`
 
-    TMPDIR = "/oe7/bbb/tmp-warrior"
+    TMPDIR = "/oe7/bbb/tmp-zeus"
 
 Then I would export this environment variable before running `copy_boot.sh`
 
-    ~/bbb/meta-bbb/scripts$ export OETMP=/oe7/bbb/tmp-warrior
+    ~/bbb/meta-bbb/scripts$ export OETMP=/oe7/bbb/tmp-zeus
 
 Then run the `copy_boot.sh` script passing the location of SD card
 
@@ -425,7 +417,7 @@ Here's a realistic example session where I want to copy already built images to 
 
     ~$ sudo umount /dev/sdb1
     ~$ sudo umount /dev/sdb2
-    ~$ export OETMP=/oe7/bbb/tmp-warrior
+    ~$ export OETMP=/oe7/bbb/tmp-zeus
     ~$ cd bbb/meta-bbb/scripts
     ~/bbb/meta-bbb/scripts$ ./copy_boot.sh sdb
     ~/bbb/meta-bbb/scripts$ ./copy_rootfs.sh sdb console bbb2
@@ -517,36 +509,12 @@ You first need to mount the bootloader partition
 
 You can edit `/etc/fstab` if you want the bootloader partition mounted all the time.
 
-#### Some custom package examples
-
-[spiloop][spiloop] is a *spidev* test application installed in `/usr/bin`.
-
-The *bitbake recipe* that builds and packages *spiloop* is here
-
-    meta-bbb/recipes-misc/spiloop/spiloop_1.0.bb
-
-Use it to test the *spidev* driver before and after placing a jumper between pins *P9.29* and *P9.30*.
-
-[serialecho][serialecho] is a similar test app for serial ports.
-
-The *bitbake recipe* that builds and packages *serialecho* is here
-
-    meta-bbb/recipes-misc/serialecho/serialecho.bb
-
-Use it to test *UART4* after placing a jumper between pins *P9.11* and *P9.13*.
-
-[tspress][tspress] is a Qt5 GUI application installed with the **qt5-image**.
-
-The bitbake recipe is here
-
-    meta-bbb/recipes-qt/tspress/tspress.bb
-
 
 #### Adding additional packages
 
 To display the list of available packages from the **meta-** repositories included in **bblayers.conf**
 
-    ~$ source poky-warrior/oe-init-build-env ~/bbb/build
+    ~$ source poky-zeus/oe-init-build-env ~/bbb/build
     ~/bbb/build$ bitbake -s
 
 Once you have the package name, you can choose to either

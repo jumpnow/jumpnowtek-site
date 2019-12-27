@@ -2,7 +2,7 @@
 layout: post
 title: Building Wandboard Systems with Yocto
 description: "Building customized systems for Wandboards using tools from the Yocto Project"
-date: 2019-09-18 08:30:00
+date: 2019-12-27 06:00:00
 categories: wandboard
 tags: [linux, wandboard, yocto]
 ---
@@ -19,25 +19,21 @@ I have a custom Yocto layer for the wandboards called [meta-wandboard][meta-wand
 
 ### System Info
 
-The Yocto version is **2.7**, the `[warrior]` branch.
+The Yocto version is **3.0**, the `[zeus]` branch.
 
-The default kernel is **5.3**. A recipe for a **4.19** LTS kernel is also available.
+The default kernel is **5.4**. A recipe for a **4.19** LTS kernel is also available.
 
-The u-boot version is **2019.01**.
+The u-boot version is **2019.07**.
 
 These are **sysvinit** systems using [eudev][eudev].
 
-Python **3.7.2** is installed.
+Python **3.7.5** is installed.
 
-gcc/g++ **8.3.0** and associated build tools are installed.
+gcc/g++ **9.2.0** and associated build tools are installed.
 
-git **2.20.1** is installed.
+git **2.23.0** is installed.
 
-wireguard **20190913** is installed.
-
-The Qt version is **5.12.3** built with the **linuxfb** backend.
-
-There is no video hardware acceleration in these systems. That requires some additional work.
+wireguard **20191219** is installed.
 
 My systems use **sysvinit**, but Yocto supports **systemd** if you would rather use that.
 
@@ -108,22 +104,25 @@ Fedora already uses **bash** as the shell.
 
 ### Clone the dependency repositories
 
-For all upstream repositories, use the `[warrior]` branch.
+For all upstream repositories, use the `[zeus]` branch.
 
 The directory layout I am describing here is my preference. All of the paths to the meta-layers are configurable. If you choose something different, adjust the following instructions accordingly.
 
 First the main Yocto project **poky** layer
 
-    ~# git clone -b warrior git://git.yoctoproject.org/poky.git poky-warrior
+    ~# git clone -b zeus git://git.yoctoproject.org/poky.git poky-zeus
 
 Then the dependency layers under that
 
-    ~$ cd poky-warrior
-    ~/poky-warrior$ git clone -b warrior git://git.openembedded.org/meta-openembedded
-    ~/poky-warrior$ git clone -b warrior https://github.com/meta-qt5/meta-qt5.git
-    ~/poky-warrior$ git clone -b warrior git://git.yoctoproject.org/meta-security.git 
+    ~$ cd poky-zeus
+    ~/poky-zeus$ git clone -b zeus git://git.openembedded.org/meta-openembedded
+    ~/poky-zeus$ git clone -b zeus git://git.yoctoproject.org/meta-security.git 
 
 These repositories shouldn't need modifications other then periodic updates and can be reused for different projects or different boards.
+
+My own common meta-layer changing some upstream package defaults and adding a few custom recipes.
+
+    ~/poky-zeus$ git clone -b zeus https://github.com/jumpnow/meta-jumpnow.git
 
 ### Clone the meta-wandboard repository
 
@@ -131,7 +130,7 @@ Create a sub-directory for the `meta-wandboard` repository before cloning
 
     $ mkdir ~/wandboard
     ~$ cd ~/wandboard
-    ~/wandboard$ git clone -b warrior git://github.com/jumpnow/meta-wandboard
+    ~/wandboard$ git clone -b zeus git://github.com/jumpnow/meta-wandboard
 
 The `meta-wandboard/README.md` file has the last commits from the dependency repositories that I tested. You can always checkout those commits explicitly if you run into problems.
 
@@ -148,7 +147,7 @@ You could manually create the directory structure like this
 
 Or you could use the Yocto environment script **oe-init-build-env** like this passing in the path to the build directory
 
-    ~$ source poky-warrior/oe-init-build-env ~/wandboard/build
+    ~$ source poky-zeus/oe-init-build-env ~/wandboard/build
 
 The Yocto environment script will create the build directory if it does not already exist.
 
@@ -175,9 +174,10 @@ In **bblayers.conf** file replace **${HOME}** with the appropriate path to the m
 
 For example, if your directory structure does not look exactly like this, you will need to modify `bblayers.conf`
 
-    ~/poky-warrior/
+    ~/poky-zeus/
+         meta-jumpnow/
          meta-openembedded/
-         meta-qt5/
+         meta-security/
          ...
 
     ~/wandboard/
@@ -322,11 +322,11 @@ This script needs to know the `TMPDIR` to find the binaries. It looks for an env
 
 For instance, if I had this in the `local.conf`
 
-    TMPDIR = "/oe6/wand/tmp-warrior"
+    TMPDIR = "/oe6/wand/tmp-zeus"
 
 then I would export this environment variable before running `copy_boot.sh`
 
-    ~/wandboard/meta-wandboard/scripts$ export OETMP=/oe6/wand/tmp-warrior
+    ~/wandboard/meta-wandboard/scripts$ export OETMP=/oe6/wand/tmp-zeus
 
 If you didn't override the default **TMPDIR** in `local.conf`, then set it to the default **TMPDIR**
 
@@ -342,7 +342,7 @@ This script should run very fast.
 
 This script formats the first partition of the SD card as an *EXT4* filesystem and copies the operating system to it.
 
-The script accepts an optional command line argument for the image type, for example `console` or `qt5`. The default is `console` if no argument is provided.
+The script accepts an optional command line argument for the image type. The default is `console` if no argument is provided.
 
 The script also accepts a `hostname` argument if you want the host name to be something other then the default `wandboard`.
 
@@ -361,7 +361,7 @@ The copy scripts will **NOT** unmount partitions automatically. If an SD card pa
 Here's a realistic example session where I want to copy already built images to a second SD card that I just inserted.
 
     ~$ sudo umount /dev/sdb1
-    ~$ export OETMP=/oe6/wand/tmp-warrior
+    ~$ export OETMP=/oe6/wand/tmp-zeus
     ~$ cd wandboard/meta-wandboard/scripts
     ~/wandboard/meta-wandboard/scripts$ ./copy_boot.sh sdb
     ~/wandboard/meta-wandboard/scripts$ ./copy_rootfs.sh sdb console wandq2

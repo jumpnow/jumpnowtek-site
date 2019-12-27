@@ -2,7 +2,7 @@
 layout: post
 title: Building Odroid-C2 Systems with Yocto
 description: "Building customized systems for Odroid-C2 using tools from the Yocto Project"
-date: 2019-09-18 08:30:00
+date: 2019-12-27 06:00:00
 categories: odroid
 tags: [linux, odroid-c2, yocto]
 ---
@@ -15,35 +15,29 @@ Yocto uses what it calls **meta-layers** to define the configuration for a syste
 
 I have a Yocto layer for the **odroid-c2** called [meta-odroid-c2][meta-odroid-c2].
 
-I am using the **odroid-c2** with some USB webcams in a monitoring system built with Qt.
-
 ### System Info
 
-The Yocto version is **2.7**, the `[warrior]` branch.
+The Yocto version is **3.0**, the `[zeus]` branch.
 
-The default kernel is **5.3**. A recipe for the **4.19** LTS kernel is also available.
+The default kernel is **5.4**. A recipe for the **4.19** LTS kernel is also available.
 
 The only dtb built is **meson-gxbb-odroidc2.dtb**.
 
 The kernel and userland are 64-bit.
 
-The u-boot version is **2019.01**.
+The u-boot version is **2019.07**.
 
 A **boot.scr** is required. There are source files for either SD card or eMMC booting. You can choose with a variable in **local.conf** described below.
 
 These are **sysvinit** systems using [eudev][eudev].
 
-Python **3.7.3** is installed.
+Python **3.7.5** is installed.
 
-gcc/g++ **8.3.0** and associated build tools are installed.
+gcc/g++ **9.2.0** and associated build tools are installed.
 
-git **2.20.1** is installed.
+git **2.23.0** is installed.
 
-wireguard **20190913** is installed.
-
-The Qt version is **5.12.3** built with the **linuxfb** QPA backend.
-
-There is no hardware video acceleration.
+wireguard **20191219** is installed.
 
 ### Ubuntu Setup
 
@@ -92,22 +86,25 @@ Fedora already uses **bash** as the shell.
 
 ### Clone the dependency repositories
 
-For all upstream repositories, use the **[warrior]** branch.
+For all upstream repositories, use the **[zeus]** branch.
 
 The directory layout I am describing here is my preference. All of the paths to the meta-layers are configurable. If you choose something different, adjust the following instructions accordingly.
 
 First the main Yocto project **poky** layer
 
-    ~# git clone -b warrior git://git.yoctoproject.org/poky.git poky-warrior
+    ~# git clone -b zeus git://git.yoctoproject.org/poky.git poky-zeus
 
 Then the dependency layers under that
 
-    ~$ cd poky-warrior
-    ~/poky-warrior$ git clone -b warrior git://git.openembedded.org/meta-openembedded
-    ~/poky-warrior$ git clone -b warrior https://github.com/meta-qt5/meta-qt5.git
-    ~/poky-warrior$ git clone -b warrior git://git.yoctoproject.org/meta-security.git
+    ~$ cd poky-zeus
+    ~/poky-zeus$ git clone -b zeus git://git.openembedded.org/meta-openembedded
+    ~/poky-zeus$ git clone -b zeus git://git.yoctoproject.org/meta-security.git
 
 These repositories shouldn't need modifications other then periodic updates and can be reused for different projects or different boards.
+
+My own common meta-layer changing some upstream package defaults and adding a few custom recipes.
+
+    ~/poky-zeus$ git clone -b zeus https://github.com/jumpnow/meta-jumpnow.git
 
 ### Clone the meta-odroid-c2 repository
 
@@ -115,7 +112,7 @@ Create a sub-directory for the **meta-odroid-c2** repository before cloning
 
     $ mkdir ~/odroid-c2
     ~$ cd ~/odroid-c2
-    ~/odroid-c2$ git clone -b warrior git://github.com/jumpnow/meta-odroid-c2
+    ~/odroid-c2$ git clone -b zeus git://github.com/jumpnow/meta-odroid-c2
 
 The **meta-odroid-c2/README.md** file has the last commits from the dependency repositories that I tested. You can always checkout those commits explicitly if you run into problems.
 
@@ -132,7 +129,7 @@ You could manually create the directory structure like this
 
 Or you could use the Yocto environment script **oe-init-build-env** like this passing in the path to the build directory
 
-    ~$ source poky-warrior/oe-init-build-env ~/odroid-c2/build
+    ~$ source poky-zeus/oe-init-build-env ~/odroid-c2/build
 
 The Yocto environment script will create the build directory if it does not already exist.
 
@@ -159,9 +156,10 @@ In **bblayers.conf** file replace **${HOME}** with the appropriate path to the m
 
 For example, if your directory structure does not look exactly like this, you will need to modify `bblayers.conf`
 
-    ~/poky-warrior/
+    ~/poky-zeus/
+         meta-jumpnow/
          meta-openembedded/
-         meta-qt5/
+         meta-security/
          ...
 
     ~/odroid-c2/
@@ -323,11 +321,11 @@ This script needs to know the **TMPDIR** to find the binaries. It looks for an e
 
 For instance, if I had this in the `local.conf`
 
-    TMPDIR = "/oe6/oc2/tmp-warrior"
+    TMPDIR = "/oe6/oc2/tmp-zeus"
 
 then I would export this environment variable before running `copy_boot.sh`
 
-    ~/odroid-c2/meta-odroid-c2/scripts$ export OETMP=/oe9/oc2/tmp-warrior
+    ~/odroid-c2/meta-odroid-c2/scripts$ export OETMP=/oe9/oc2/tmp-zeus
 
 If you didn't override the default **TMPDIR** in `local.conf`, then set it to the default **TMPDIR**
 
@@ -362,7 +360,7 @@ The copy scripts will **NOT** unmount partitions automatically. If an SD card pa
 Here's a realistic example session where I want to copy already built images to a second SD card that I just inserted.
 
     ~$ sudo umount /dev/sdb1
-    ~$ export OETMP=/oe6/oc2/tmp-warrior
+    ~$ export OETMP=/oe6/oc2/tmp-zeus
     ~$ cd odroid-c2/meta-odroid-c2/scripts
     ~/odroid-c2/meta-odroid-c2/scripts$ ./copy_boot.sh sdb
     ~/odroid-c2/meta-odroid-c2/scripts$ ./copy_rootfs.sh sdb console
