@@ -57,7 +57,7 @@ The **4.19** Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kern
 
 These are **sysvinit** systems using [eudev][eudev].
 
-The Qt version is **5.12.1** There is no **X11** and no desktop installed. [Qt][qt] GUI applications can be run fullscreen using one of the [Qt embedded linux plugins][embedded-linux-qpa] like **eglfs** or **linuxfb**, both are provided. The default is **eglfs**.
+The Qt version is **5.13.2** There is no **X11** and no desktop installed. [Qt][qt] GUI applications can be run fullscreen using one of the [Qt embedded linux plugins][embedded-linux-qpa] like **eglfs** or **linuxfb**, both are provided. The default is **eglfs**.
 
 Python **3.7.5** with a number of modules is included.
 
