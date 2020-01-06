@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2019-12-27 06:00:00
+date: 2020-01-06 05:00:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi4, rpi zero, rpi zero wireless, rpi compute]
 ---
@@ -79,7 +79,7 @@ The Adafruit [PiTFT 3.5"][pitft35r] and [PiTFT 2.8"][pitft28r] resistive touchsc
 
 ### Ubuntu Setup
 
-I primarily use **16.04** 64-bit servers for builds. Other versions should work.
+I primarily use **18.04** 64-bit servers for builds. Other versions should work.
 
 You will need at least the following packages installed
 
@@ -88,15 +88,15 @@ You will need at least the following packages installed
     diffstat
     gawk
     libncurses5-dev
+    python3-distutils
     texinfo
 
-For **16.04** you also need to install the **python 2.7** package
+For **18.04** you also need to install the **python 2.7** package
 
     python2.7
 
 And then create some links for it in `/usr/bin`
 
-    sudo ln -sf /usr/bin/python2.7 /usr/bin/python
     sudo ln -sf /usr/bin/python2.7 /usr/bin/python2
 
 For all versions of Ubuntu, you should change the default Ubuntu shell from **dash** to **bash** by running this command from a shell
@@ -104,23 +104,6 @@ For all versions of Ubuntu, you should change the default Ubuntu shell from **da
     sudo dpkg-reconfigure dash
 
 Choose **No** to dash when prompted.
-
-### Fedora Setup
-
-I have used a **Fedora 27** 64-bit workstation.
-
-The extra packages I needed to install for Yocto were
-
-    chrpath
-    perl-bignum
-    perl-Thread-Queue
-    texinfo
-
-and the package group
-
-    Development Tools
-
-Fedora already uses **bash** as the shell.
 
 ### Clone the dependency repositories
 
