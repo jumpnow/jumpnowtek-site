@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2020-01-06 05:00:00
+date: 2020-01-24 05:20:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi4, rpi zero, rpi zero wireless, rpi compute]
 ---
@@ -113,7 +113,7 @@ The directory layout I am describing here is my preference. All of the paths to 
 
 First the main Yocto project **poky** layer
 
-    ~# git clone -b zeus git://git.yoctoproject.org/poky.git poky-zeus
+    ~$ git clone -b zeus git://git.yoctoproject.org/poky.git poky-zeus
 
 Then the dependency layers under that
 
@@ -121,6 +121,7 @@ Then the dependency layers under that
     ~/poky-zeus$ git clone -b zeus git://git.openembedded.org/meta-openembedded
     ~/poky-zeus$ git clone -b zeus https://github.com/meta-qt5/meta-qt5
     ~/poky-zeus$ git clone -b zeus git://git.yoctoproject.org/meta-raspberrypi
+    ~/poky-zeus$ git clone -b zeus git://git.yoctoproject.org/meta-security.git
 
 These repositories shouldn't need modifications other then periodic updates and can be reused for different projects or different boards.
 
