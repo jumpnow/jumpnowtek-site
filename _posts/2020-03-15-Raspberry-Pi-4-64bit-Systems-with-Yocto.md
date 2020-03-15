@@ -2,7 +2,7 @@
 layout: post
 title: Building 64-bit Systems for Raspberry Pi 4 with Yocto
 description: "Building customized 64-bit systems for the Raspberry Pi 4 using tools from the Yocto Project"
-date: 2020-03-15 10:30:00
+date: 2020-03-15 11:11:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi4, 64-bit]
 ---
@@ -461,15 +461,15 @@ Both **copy_boot.sh** and **copy_rootfs.sh** are simple scripts, easily customiz
 
 The **bitbake recipe** that builds and packages **spiloop** is here
 
-    meta-rpi/recipes-misc/spiloop/spiloop_git.bb
+    meta-jumpnow/recipes-misc/spiloop/spiloop_git.bb
 
-Use it to test the **spidev** driver before and after placing a jumper between pins **19** and **21**.
+Use it to test the **spidev** driver before and after placing a jumper between pins the SPI data pins.
 
 [tspress][tspress] is a Qt5 QWidget application installed with the `qt5-image`. I use it for testing touchscreens.
 
 The recipe is here and can be used a guide for your own applications.
 
-    meta-rpi/recipes-qt/tspress/tspress_git.bb
+    meta-rpi64/recipes-qt/tspress/tspress_git.bb
 
 [qmlswipe][qmlswipe] is a Qt5 QML application installed with the `qt5-image`. Again just for basic testing.
 
@@ -489,7 +489,7 @@ Once you have the recipe name, you need to find what packages the recipe produce
 
 For instance, to see the packages produced by the **openssh** recipe
 
-    ~/rpi/build$ oe-pkgdata-util list-pkgs -p openssh
+    ~/rpi64/build$ oe-pkgdata-util list-pkgs -p openssh
     openssh-keygen
     openssh-scp
     openssh-ssh
