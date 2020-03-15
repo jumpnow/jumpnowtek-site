@@ -6,24 +6,16 @@ title: Jumpnow Technologies
 <div id="home">
   <p><img src="/assets/jumpnow-header.png" alt="jumpnow-logo"></p>
 
+  <p>
+    An embedded Linux consulting company.
+  </p>
+
   <h1>Security</h1>
   <ul class="posts">
     {% for post in site.categories['security'] %}
       <li><span>{{ post.date | date_to_string }}</span> &raquo; <a href="{{ post.url }}">{{ post.title }}</a></li>
     {% endfor %}
   </ul>  
-  <h1>ARM Shellcode</h1>
-  <ul class="posts">
-    {% for post in site.categories['shellcode'] %}
-      <li><span>{{ post.date | date_to_string }}</span> &raquo; <a href="{{ post.url }}">{{ post.title }}</a></li>
-    {% endfor %}
-  </ul>
-  <h1>Embedded Linux</h1>
-  <ul class="posts">
-    {% for post in site.categories['linux'] %}
-      <li><span>{{ post.date | date_to_string }}</span> &raquo; <a href="{{ post.url }}">{{ post.title }}</a></li>
-    {% endfor %}
-  </ul>
   <h1>Raspberry Pi</h1>
   <ul class="posts">
     {% for post in site.categories['rpi'] %}
@@ -33,6 +25,18 @@ title: Jumpnow Technologies
   <h1>BeagleBone</h1>
   <ul class="posts">
     {% for post in site.categories['beaglebone'] %}
+      <li><span>{{ post.date | date_to_string }}</span> &raquo; <a href="{{ post.url }}">{{ post.title }}</a></li>
+    {% endfor %}
+  </ul>
+  <h1>ARM Shellcode</h1>
+  <ul class="posts">
+    {% for post in site.categories['shellcode'] %}
+      <li><span>{{ post.date | date_to_string }}</span> &raquo; <a href="{{ post.url }}">{{ post.title }}</a></li>
+    {% endfor %}
+  </ul>
+  <h1>Embedded Linux</h1>
+  <ul class="posts">
+    {% for post in site.categories['linux'] %}
       <li><span>{{ post.date | date_to_string }}</span> &raquo; <a href="{{ post.url }}">{{ post.title }}</a></li>
     {% endfor %}
   </ul>
