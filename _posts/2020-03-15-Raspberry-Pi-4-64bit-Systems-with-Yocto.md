@@ -2,7 +2,7 @@
 layout: post
 title: Building 64-bit Systems for Raspberry Pi 4 with Yocto
 description: "Building customized 64-bit systems for the Raspberry Pi 4 using tools from the Yocto Project"
-date: 2020-03-15 11:11:00
+date: 2020-04-03 07:45:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi4, 64-bit]
 ---
@@ -10,8 +10,6 @@ tags: [linux, rpi, yocto, rpi4, 64-bit]
 This post is about building 64-bit Linux systems for [Raspberry Pi][rpi] 4 boards using software from the [Yocto Project][Yocto].
 
 Yocto is a set of tools for building a custom embedded Linux distribution. The systems are usually targeted for a particular application such as a commercial product.
-
-If you are looking to build a general purpose development system with access to pre-built packages, I suggest you stick with a more user-friendly distribution like [Raspbian][raspbian].
 
 Yocto uses what it calls **meta-layers** to define the configuration. Within each meta-layer are recipes, classes and configuration files that support the primary build tool, a python app called **bitbake**.
 
@@ -21,7 +19,7 @@ There are a some example images in [meta-rpi64][meta-rpi64] that I have been exp
 
 These systems use **sysvinit**, but Yocto supports **systemd**.
 
-The systems support both QWidget and QML [Qt][qt] applications using the [eglfs][qt-eglfs] backend, useful for dedicated full-screen applications that do not require a window manager. 
+The systems support both QWidget and QML [Qt][qt] applications using the [eglfs][qt-eglfs] backend, useful for dedicated full-screen applications that do not require a window manager.
 
 ### Downloads
 
@@ -33,9 +31,9 @@ The login user is **root** with password **jumpnowtek**.
 
 You will be prompted to change the password on first login.
 
-All systems are setup to use a serial console. For the RPi's that have it, a dhcp client will run on the ethernet interface and there is an ssh server running.
+A dhcp client will run on the ethernet interface and an ssh server is running.
 
-**Note:** There is a custom firewall rule that will lock your IP out for 1 minute if you fail to login with ssh after 3 attempts.
+**Note:** There is a firewall rule that will lock out your IP for 2 minutes after 5 failed logins.
 
 ### System Info
 
@@ -45,7 +43,7 @@ The **4.19** Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kern
 
 These are **sysvinit** systems using [eudev][eudev].
 
-The Qt version is **5.13.2** There is no **X11** and no desktop installed. [Qt][qt] GUI applications can be run fullscreen using one of the [Qt embedded linux plugins][embedded-linux-qpa] like **eglfs** or **linuxfb**, both are provided. The default is **eglfs**.
+The Qt version is **5.13.2** There is no **X11** and no desktop installed. [Qt][qt] GUI applications can be run fullscreen using one of the [Qt embedded linux plugins][qt-eglfs] like **eglfs** or **linuxfb**, both are provided. The default is **eglfs**.
 
 Python **3.7.6** with a number of modules is included.
 
@@ -53,7 +51,7 @@ gcc/g++ **9.2.0** and associated build tools are installed.
 
 git **2.23.1** is installed.
 
-wireguard **20191219** is installed.
+wireguard from [wireguard-linux-compat][wireguard-linux-compat] is installed.
 
 ### Ubuntu Setup
 
@@ -107,7 +105,7 @@ And my own common meta-layer that changes some upstream package defaults and add
 
 ### Clone the meta-rpi repository
 
-Create a separate sub-directory for the **meta-rpi64** repository before cloning. This is where you will be doing your customization.
+Create a separate sub-directory for the **meta-rpi64** repository before cloning. This is where you will be doing most of your customization.
 
     ~$ mkdir ~/rpi64
     ~$ cd ~/rpi64
@@ -140,9 +138,9 @@ Copy them to the **build/conf** directory (removing the '-sample')
     ~/rpi64$ cp meta-rpi64/conf/local.conf.sample build/conf/local.conf
     ~/rpi64$ cp meta-rpi64/conf/bblayers.conf.sample build/conf/bblayers.conf
 
-If you used the **oe-init-build-env** script to create the build directory, it generated some generic configuration files in the **build/conf** directory. If you want to look at them, save them with a different name before overwriting.
+If you used the **oe-init-build-env** script to create the build directory, it generated some generic configuration files in the **build/conf** directory. If you want to look at them, save them with a different name before overwriting. They are not needed.
 
-It is not necessary, but you may want to customize the configuration files before your first build.
+Also not necessary, but something you may want to do is customize the configuration files before your first build.
 
 **Warning:** Do not use the '**~**' character when defining directory paths in the Yocto configuration files.
 
@@ -177,17 +175,15 @@ The variables you may want to customize are the following:
 - SSTATE\_DIR
 
 
-The defaults for all of these work fine with the exception of **MACHINE**.
-
 ##### MACHINE
 
 The **MACHINE** variable is used to determine the target architecture and various compiler tuning flags.
 
 See the conf files under `meta-raspberrypi/conf/machine` for details.
 
-The only choice for **MACHINE** that I have tested is **raspberrypi4**.
+The only choice for **MACHINE** that I have tested with 64-bit builds is **raspberrypi4**.
 
-I think **raspberrypi3** should work as well, but I have not tried.
+I think **raspberrypi3** might work as well, but I have not tried.
 
 ##### TMPDIR
 
@@ -316,21 +312,21 @@ For example
     loop2    7:2    0  10.3M  1 loop /snap/doctl/281
     loop3    7:3    0  10.3M  1 loop /snap/doctl/276
     loop4    7:4    0  91.3M  1 loop /snap/core/8592
-    sda      8:0    0 931.5G  0 disk 
-    ├─sda1   8:1    0     1M  0 part 
+    sda      8:0    0 931.5G  0 disk
+    ├─sda1   8:1    0     1M  0 part
     ├─sda2   8:2    0   150G  0 part /
     ├─sda3   8:3    0   200G  0 part /src
     ├─sda4   8:4    0   200G  0 part /home
     ├─sda5   8:5    0   120G  0 part /oe5
     ├─sda6   8:6    0   120G  0 part /oe6
     └─sda7   8:7    0 141.5G  0 part /oe7
-    sdb      8:16   0 447.1G  0 disk 
+    sdb      8:16   0 447.1G  0 disk
     ├─sdb1   8:17   0   150G  0 part /oe8
     ├─sdb2   8:18   0   150G  0 part /oe9
     └─sdb3   8:19   0 147.1G  0 part /oe10
-    sdc      8:32   1   7.4G  0 disk 
-    ├─sdc1   8:33   1    64M  0 part 
-    └─sdc2   8:34   1     7.3G  0 part 
+    sdc      8:32   1   7.4G  0 disk
+    ├─sdc1   8:33   1    64M  0 part
+    └─sdc2   8:34   1     7.3G  0 part
 
 
 So I will use **sdc** for the card on this machine.
@@ -535,27 +531,27 @@ For a package to be installed in your image it has to get into the **IMAGE_INSTA
     Swap:             0           0           0
 
     root@raspberrypi4-64:~# ifconfig -a
-    eth0      Link encap:Ethernet  HWaddr DC:A6:32:06:C3:3D  
+    eth0      Link encap:Ethernet  HWaddr DC:A6:32:06:C3:3D
               inet addr:192.168.10.205  Bcast:192.168.10.255  Mask:255.255.255.0
               UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
               RX packets:223 errors:0 dropped:0 overruns:0 frame:0
               TX packets:170 errors:0 dropped:0 overruns:0 carrier:0
-              collisions:0 txqueuelen:1000 
+              collisions:0 txqueuelen:1000
               RX bytes:23841 (23.2 KiB)  TX bytes:21574 (21.0 KiB)
 
-    lo        Link encap:Local Loopback  
+    lo        Link encap:Local Loopback
               inet addr:127.0.0.1  Mask:255.0.0.0
               UP LOOPBACK RUNNING  MTU:65536  Metric:1
               RX packets:0 errors:0 dropped:0 overruns:0 frame:0
               TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
-              collisions:0 txqueuelen:1000 
+              collisions:0 txqueuelen:1000
               RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
 
-    wlan0     Link encap:Ethernet  HWaddr DC:A6:32:06:C3:3E  
+    wlan0     Link encap:Ethernet  HWaddr DC:A6:32:06:C3:3E
               BROADCAST MULTICAST  MTU:1500  Metric:1
               RX packets:0 errors:0 dropped:0 overruns:0 frame:0
               TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
-              collisions:0 txqueuelen:1000 
+              collisions:0 txqueuelen:1000
               RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
 
     root@raspberrypi4-64:~# df -h
@@ -582,6 +578,7 @@ For a package to be installed in your image it has to get into the **IMAGE_INSTA
 [qt]: http://www.qt.io/
 [qml]: http://doc.qt.io/qt-5/qtqml-index.html
 [yocto]: https://www.yoctoproject.org/
+[raspbian]: https://www.raspbian.org
 [meta-rpi64]: https://github.com/jumpnow/meta-rpi64
 [rpi-kernel]: https://github.com/raspberrypi/linux
 [tspress]: https://github.com/scottellis/tspress
@@ -598,4 +595,4 @@ For a package to be installed in your image it has to get into the **IMAGE_INSTA
 [meta-raspberrypi]: http://git.yoctoproject.org/cgit/cgit.cgi/meta-raspberrypi
 [eudev]: https://wiki.gentoo.org/wiki/Project:Eudev
 [qt-eglfs]: http://doc.qt.io/qt-5/embedded-linux.html
-
+[wireguard-linux-compat]: https://git.zx2c4.com/wireguard-linux-compat/about/

@@ -2,7 +2,7 @@
 layout: post
 title: Building BeagleBone Systems with Yocto
 description: "Building customized systems for the BeagleBones using tools from the Yocto Project"
-date: 2020-01-06 05:00:00
+date: 2020-04-03 07:45:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
@@ -11,10 +11,7 @@ Building systems for [BeagleBone Black][bbb] and [BeagleBone Green][bbg] boards 
 
 Yocto is a set of tools for building a custom embedded Linux distribution. The systems are usually targeted at particular applications like commercial products.
 
-Yocto uses what it calls **meta-layers** to define the configuration for a system build. Within each meta-layer are recipes, classes and configuration files that support the primary build tool, a python framework called **bitbake**.
-
-The Yocto system, while very powerful, does have a substantial learning curve. You may want to look at another popular tool for building embedded systems [Buildroot][buildroot-bbb].
-
+Yocto uses **meta-layers** to define the configuration for a system build. Within each meta-layer are recipes, classes and configuration files that support the primary build tool, a python framework called **bitbake**.
 
 The [meta-bbb][meta-bbb] layer generates some basic systems with packages that support C, C++, [Qt5][qt], Perl and Python development, the languages and tools I commonly use. Other languages are supported of course.
 
@@ -24,7 +21,7 @@ I use this layer as a template when starting new BeagleBone projects.
 
 The Yocto version is **3.0** the `[zeus]` branch.
 
-The default **5.4** Linux kernel comes from the [linux-stable][linux-stable] repository. A recipe for LTS **4.19** kernels is also available.
+The default kernel is **5.6** Recipes for **4.19** and **5.4** LTS kernels are also available.
 
 The [u-boot][uboot] version is **2019.07**.
 
@@ -40,9 +37,7 @@ gcc/g++ **9.2.0** and associated build tools are installed.
 
 git **2.23.0** is installed.
 
-wireguard **20191219** is installed.
-
-The default kernel is **5.4**. A **4.19** LTS kernel recipe is also available.
+wireguard is installed, [wireguard-linux-compat][wireguard-linux-compat] is used for kernels before 5.6.
 
 ### Ubuntu Setup
 
@@ -555,3 +550,4 @@ There is a **emmc-upgrader** package in the **meta-bbb** layer that will add thi
 [source-script]: http://stackoverflow.com/questions/4779756/what-is-the-difference-between-source-script-sh-and-script-sh
 [ab-upgrades]: https://jumpnowtek.com/linux/An-upgrade-strategy-for-embedded-Linux-systems.html
 [eudev]: https://wiki.gentoo.org/wiki/Project:Eudev
+[wireguard-linux-compat]: https://git.zx2c4.com/wireguard-linux-compat/about/

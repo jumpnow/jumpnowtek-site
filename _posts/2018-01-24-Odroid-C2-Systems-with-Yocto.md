@@ -2,7 +2,7 @@
 layout: post
 title: Building Odroid-C2 Systems with Yocto
 description: "Building customized systems for Odroid-C2 using tools from the Yocto Project"
-date: 2020-01-06 05:00:00
+date: 2020-04-03 07:45:00
 categories: odroid
 tags: [linux, odroid-c2, yocto]
 ---
@@ -11,7 +11,7 @@ This post is about building Linux systems for the [Odroid-C2][odroid-c2] using t
 
 Yocto is a set of tools for building a custom embedded Linux distribution. The systems are usually targeted for a particular application like a commercial product.
 
-Yocto uses what it calls **meta-layers** to define the configuration for a system build. Within each meta-layer are recipes, classes and configuration files that support the primary build tool, a python framework called **bitbake**.
+Yocto uses **meta-layers** to define the configuration for a system build. Within each meta-layer are recipes, classes and configuration files that support the primary build tool, a python framework called **bitbake**.
 
 I have a Yocto layer for the **odroid-c2** called [meta-odroid-c2][meta-odroid-c2].
 
@@ -19,7 +19,7 @@ I have a Yocto layer for the **odroid-c2** called [meta-odroid-c2][meta-odroid-c
 
 The Yocto version is **3.0**, the `[zeus]` branch.
 
-The default kernel is **5.4**. A recipe for the **4.19** LTS kernel is also available.
+The default kernel is **5.6**. Recipes for **4.19** and **5.4** LTS kernels are also available.
 
 The only dtb built is **meson-gxbb-odroidc2.dtb**.
 
@@ -37,7 +37,7 @@ gcc/g++ **9.2.0** and associated build tools are installed.
 
 git **2.23.0** is installed.
 
-wireguard **20191219** is installed.
+wireguard is installed, [wireguard-linux-compat][wireguard-linux-compat] is used for kernels before 5.6.
 
 ### Ubuntu Setup
 
@@ -385,3 +385,4 @@ The default serial settings are **1152008N1**.
 [console-uart]: https://wiki.odroid.com/odroid-c2/application_note/gpio/uart
 [adafruit-usb-ttl-serial]: https://www.adafruit.com/product/954
 [adafruit]: https://www.adafruit.com/
+[wireguard-linux-compat]: https://git.zx2c4.com/wireguard-linux-compat/about/

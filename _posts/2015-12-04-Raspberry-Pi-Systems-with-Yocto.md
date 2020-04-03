@@ -2,12 +2,14 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2020-01-24 05:20:00
+date: 2020-04-03 07:45:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi4, rpi zero, rpi zero wireless, rpi compute]
 ---
 
-This post is about building Linux systems for [Raspberry Pi][rpi] boards using software from the [Yocto Project][Yocto].
+This post is about building 32-bit Linux systems for [Raspberry Pi][rpi] boards using software from the [Yocto Project][Yocto].
+
+If you are interested in 64-bit systems for the RPi4 see [this post][rpi4-64bit-yocto].
 
 Yocto is a set of tools for building a custom embedded Linux distribution. The systems are usually targeted for a particular application like a commercial product.
 
@@ -15,7 +17,7 @@ If you are looking to build a general purpose development system with access to 
 
 And while the Yocto system is very powerful, it does have a substantial learning curve. You may want to look at another popular, but simpler tool for building embedded systems [Buildroot][buildroot].
 
-Yocto uses what it calls **meta-layers** to define the configuration. Within each meta-layer are recipes, classes and configuration files that support the primary build tool, a python app called **bitbake**.
+Yocto uses **meta-layers** to define the configuration. Within each meta-layer are recipes, classes and configuration files that support the primary build tool, a python app called **bitbake**.
 
 I have created a custom meta-layer for the RPi boards called [meta-rpi][meta-rpi].
 
@@ -47,7 +49,7 @@ You will be prompted to change the password on first login.
 
 All systems are setup to use a serial console. For the RPi's that have it, a dhcp client will run on the ethernet interface and there is an ssh server running.
 
-**Note:** There is a custom firewall rule that will lock your IP out for 1 minute if you fail to login with ssh after 3 attempts.
+**Note:** There is a firewall rule that will lock out your IP for 2 minutes after 5 failed logins.
 
 ### System Info
 
@@ -65,7 +67,7 @@ gcc/g++ **9.2.0** and associated build tools are installed.
 
 git **2.23.0** is installed.
 
-wireguard **20191219** is installed.
+wireguard from [wireguard-linux-compat][wireguard-linux-compat] is installed.
 
 [omxplayer][omxplayer] is installed for playing video and audio from the command line, hardware accelerated.
 
@@ -656,3 +658,6 @@ A quick test of the camera, flipping the image because of the way I have my came
 [code-qt-io]: http://code.qt.io/cgit/
 [mender-io]: https://mender.io/
 [buildroot]: https://buildroot.org/
+[rpi4-64bit-yocto]: https://jumpnowtek.com/rpi/Raspberry-Pi-4-64bit-Systems-with-Yocto.html
+[wireguard-linux-compat]: https://git.zx2c4.com/wireguard-linux-compat/about/
+

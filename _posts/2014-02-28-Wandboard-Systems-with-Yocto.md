@@ -2,7 +2,7 @@
 layout: post
 title: Building Wandboard Systems with Yocto
 description: "Building customized systems for Wandboards using tools from the Yocto Project"
-date: 2020-01-06 05:00:00
+date: 2020-04-03 07:45:00
 categories: wandboard
 tags: [linux, wandboard, yocto]
 ---
@@ -11,9 +11,7 @@ This post is about building Linux systems for [i.MX6 Wandboards][wandboard] usin
 
 Yocto is a set of tools for building a custom embedded Linux distribution. The systems are usually targeted for a particular application like a commercial product.
 
-Yocto uses what it calls **meta-layers** to define the configuration for a system build. Within each meta-layer are recipes, classes and configuration files that support the primary build tool, a python framework called **bitbake**.
-
-The Yocto system, while very powerful, does have a substantial learning curve and you may want to look at another popular but simpler tool for building embedded systems [Buildroot][buildroot-wand].
+Yocto uses **meta-layers** to define the configuration for a system build. Within each meta-layer are recipes, classes and configuration files that support the primary build tool, a python framework called **bitbake**.
 
 I have a custom Yocto layer for the wandboards called [meta-wandboard][meta-wandboard].
 
@@ -21,7 +19,7 @@ I have a custom Yocto layer for the wandboards called [meta-wandboard][meta-wand
 
 The Yocto version is **3.0**, the `[zeus]` branch.
 
-The default kernel is **5.4**. A recipe for a **4.19** LTS kernel is also available.
+The default kernel is **5.6**. Recipes for **4.19** and **5.4** LTS kernels are also available.
 
 The u-boot version is **2019.07**.
 
@@ -33,7 +31,7 @@ gcc/g++ **9.2.0** and associated build tools are installed.
 
 git **2.23.0** is installed.
 
-wireguard **20191219** is installed.
+wireguard is installed, [wireguard-linux-compat][wireguard-linux-compat] is used for kernels before 5.6.
 
 My systems use **sysvinit**, but Yocto supports **systemd** if you would rather use that.
 
@@ -363,3 +361,4 @@ Both **copy\_boot.sh** and **copy\_rootfs.sh** are simple scripts easily customi
 [buildroot]: https://buildroot.org/
 [buildroot-wand]: https://jumpnowtek.com/wandboard/Wandboard-Systems-with-Buildroot.html
 [eudev]: https://wiki.gentoo.org/wiki/Project:Eudev
+[wireguard-linux-compat]: https://git.zx2c4.com/wireguard-linux-compat/about/
