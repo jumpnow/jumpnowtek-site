@@ -2,7 +2,7 @@
 layout: post
 title: Signing code with OpenSSL
 description: "Digital signing with OpenSSL"
-date: 2019-10-09 05:25:00
+date: 2020-04-03 11:35:00
 categories: security
 tags: [openssl, signing]
 ---
@@ -228,6 +228,15 @@ Before using for verification the signature file needs to be decoded into binary
 
 You could also use the standard [base64(1)][base64-man] utility from the **coreutils** package for the encoding and decoding.
 
+### Additional Reading
+
+* [signify - sign and verify][tedu-signify]
+
+* [signify: Securing OpenBSD From Us To You][bsdcan-signify]
+
+* [How, why, and when you should hash check][proprivacy-hash-check]
+
+
 [crypto-hash]: https://en.wikipedia.org/wiki/Cryptographic_hash_function
 [digital-sig]: https://en.wikipedia.org/wiki/Digital_signature
 [pub-key-crypto]: https://en.wikipedia.org/wiki/Public-key_cryptography
@@ -238,3 +247,6 @@ You could also use the standard [base64(1)][base64-man] utility from the **coreu
 [base64-man]: https://linux.die.net/man/1/base64
 [openssl-man]: https://linux.die.net/man/1/openssl
 [code-signing]: https://en.wikipedia.org/wiki/Code_signing
+[tedu-signify]: https://flak.tedunangst.com/post/signify
+[bsdcan-signify]: http://www.openbsd.org/papers/bsdcan-signify.html
+[proprivacy-hash-check]: https://proprivacy.com/guides/how-why-and-when-you-should-hash-check
