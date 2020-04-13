@@ -2,7 +2,7 @@
 layout: post
 title: Building 64-bit Systems for Raspberry Pi 4 with Yocto
 description: "Building customized 64-bit systems for the Raspberry Pi 4 using tools from the Yocto Project"
-date: 2020-04-03 07:45:00
+date: 2020-04-13 17:30:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi4, 64-bit]
 ---
@@ -181,9 +181,8 @@ The **MACHINE** variable is used to determine the target architecture and variou
 
 See the conf files under `meta-raspberrypi/conf/machine` for details.
 
-The only choice for **MACHINE** that I have tested with 64-bit builds is **raspberrypi4**.
+The only choice for **MACHINE** that I have tested with 64-bit builds is **raspberrypi4-64**.
 
-I think **raspberrypi3** might work as well, but I have not tried.
 
 ##### TMPDIR
 
@@ -291,7 +290,7 @@ The image files won't get deleted from the **TMPDIR** until the next time you bu
 
 ### Copying the binaries to an SD card (or eMMC)
 
-After the build completes, the bootloader, kernel and rootfs image files can be found in **<TMPDIR>/deploy/images/$MACHINE** with **MACHINE** coming from your **local.conf**.
+After the build completes, the bootloader, kernel and rootfs image files can be found in **$TMPDIR/deploy/images/$MACHINE** with **TMPDIR** and **MACHINE** coming from your **local.conf**.
 
 The **meta-rpi64/scripts** directory has some helper scripts to format and copy the files to a microSD card.
 
@@ -380,7 +379,7 @@ The `copy_boot.sh` script also needs a **MACHINE** environment variable specifyi
 
 Again the script will attempt to figure this out, but if not you can specify with an environment variable.
 
-	~/rpi64/meta-rpi64/scripts$ export MACHINE=raspberrypi4
+	~/rpi64/meta-rpi64/scripts$ export MACHINE=raspberrypi4-64
 
 
 Then run the **copy_boot.sh** script passing the location of SD card
