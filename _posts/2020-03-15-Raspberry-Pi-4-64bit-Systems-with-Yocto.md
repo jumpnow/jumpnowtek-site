@@ -178,6 +178,7 @@ The variables you may want to customize are the following:
 - DL\_DIR
 - SSTATE\_DIR
 
+<br>
 
 ##### MACHINE
 
