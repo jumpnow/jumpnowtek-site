@@ -2,7 +2,7 @@
 layout: post
 title: Building 64-bit Systems for Raspberry Pi 4 with Yocto
 description: "Building customized 64-bit systems for the Raspberry Pi 4 using tools from the Yocto Project"
-date: 2020-04-13 17:30:00
+date: 2020-04-19 10:25:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi4, 64-bit]
 ---
@@ -39,7 +39,10 @@ A dhcp client will run on the ethernet interface and an ssh server is running.
 
 The Yocto version is **3.0**, the `[zeus]` branch.
 
-The **4.19** Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
+The default is a **4.19** Linux kernel from the [github.com/raspberrypi/linux][rpi-kernel] repository.
+
+There is also a **5.4** kernel available with a few caveats. Wifi and Qt **eglfs** are not working yet. Ethernet, bluetooth and Qt **linuxfb** are okay.
+
 
 These are **sysvinit** systems using [eudev][eudev].
 
@@ -164,6 +167,7 @@ For example, if your directory structure does not look exactly like this, you wi
         build/
             conf/
 
+<br>
 
 ### Edit local.conf
 
@@ -203,6 +207,20 @@ The default location is in the **build** directory, **~/rpi64/build/sources**.
 This is another Yocto build directory that can get pretty big, greater then **4GB**. I often put this somewhere else other then my home directory as well.
 
 The default location is in the **build** directory, **~/rpi64/build/sstate-cache**.
+
+#### KERNEL VERSION
+
+The default is **4.19**.
+
+Change this line
+
+    PREFERRED_VERSION_linux-raspberrypi = "4.19.%"
+
+to this
+
+    PREFERRED_VERSION_linux-raspberrypi = "5.4.%"
+
+to try out a **5.4** kernel.
 
 #### ROOT PASSWORD
 
@@ -471,6 +489,8 @@ The recipe is here and can be used a guide for your own applications.
 The recipe is here and can be used a guide for your own applications.
 
     meta-rpi64/recipes-qt/qmlswipe/qmlswipe_git.bb
+
+<br>
 
 #### Adding additional packages
 
