@@ -2,7 +2,7 @@
 layout: post
 title: Building Wandboard Systems with Yocto
 description: "Building customized systems for Wandboards using tools from the Yocto Project"
-date: 2020-04-03 07:45:00
+date: 2020-05-17 07:00:00
 categories: wandboard
 tags: [linux, wandboard, yocto]
 ---
@@ -17,19 +17,19 @@ I have a custom Yocto layer for the wandboards called [meta-wandboard][meta-wand
 
 ### System Info
 
-The Yocto version is **3.0**, the `[zeus]` branch.
+The Yocto version is **3.1**, the `[dunfell]` branch.
 
-The default kernel is **5.6**. Recipes for **4.19** and **5.4** LTS kernels are also available.
+The default kernel is **5.6**. Recipes for a **5.4** LTS kernel is also available.
 
-The u-boot version is **2019.07**.
+The u-boot version is **2020.01**.
 
 These are **sysvinit** systems using [eudev][eudev].
 
-Python **3.7.5** is installed.
+Python **3.8.2** is installed.
 
-gcc/g++ **9.2.0** and associated build tools are installed.
+gcc/g++ **9.3.0** and associated build tools are installed.
 
-git **2.23.0** is installed.
+git **2.24.1** is installed.
 
 wireguard is installed, [wireguard-linux-compat][wireguard-linux-compat] is used for kernels before 5.6.
 
@@ -57,7 +57,7 @@ This gets compiled and installed by default in the **console-image** described b
 
 ### Ubuntu Setup
 
-I primarily use **18.04** 64-bit servers for builds. Other versions should work.
+I am using **18.04** and **20.04** 64-bit servers for builds.
 
 You will need at least the following packages installed
 
@@ -69,14 +69,6 @@ You will need at least the following packages installed
     python3-distutils
     texinfo
 
-For **18.04** you also need to install the **python 2.7** package
-
-    python2.7
-
-And then create some links for it in `/usr/bin`
-
-    sudo ln -sf /usr/bin/python2.7 /usr/bin/python2
-
 For all versions of Ubuntu, you should change the default Ubuntu shell from **dash** to **bash** by running this command from a shell
 
     sudo dpkg-reconfigure dash
@@ -85,25 +77,25 @@ Choose **No** to dash when prompted.
 
 ### Clone the dependency repositories
 
-For all upstream repositories, use the `[zeus]` branch.
+For all upstream repositories, use the `[dunfell]` branch.
 
 The directory layout I am describing here is my preference. All of the paths to the meta-layers are configurable. If you choose something different, adjust the following instructions accordingly.
 
 First the main Yocto project **poky** layer
 
-    ~# git clone -b zeus git://git.yoctoproject.org/poky.git poky-zeus
+    ~# git clone -b dunfell git://git.yoctoproject.org/poky.git poky-dunfell
 
 Then the dependency layers under that
 
-    ~$ cd poky-zeus
-    ~/poky-zeus$ git clone -b zeus git://git.openembedded.org/meta-openembedded
-    ~/poky-zeus$ git clone -b zeus git://git.yoctoproject.org/meta-security.git 
+    ~$ cd poky-dunfell
+    ~/poky-dunfell$ git clone -b dunfell git://git.openembedded.org/meta-openembedded
+    ~/poky-dunfell$ git clone -b dunfell git://git.yoctoproject.org/meta-security.git 
 
 These repositories shouldn't need modifications other then periodic updates and can be reused for different projects or different boards.
 
 My own common meta-layer changing some upstream package defaults and adding a few custom recipes.
 
-    ~/poky-zeus$ git clone -b zeus https://github.com/jumpnow/meta-jumpnow.git
+    ~/poky-dunfell$ git clone -b dunfell https://github.com/jumpnow/meta-jumpnow.git
 
 ### Clone the meta-wandboard repository
 
@@ -111,7 +103,7 @@ Create a sub-directory for the `meta-wandboard` repository before cloning
 
     $ mkdir ~/wandboard
     ~$ cd ~/wandboard
-    ~/wandboard$ git clone -b zeus git://github.com/jumpnow/meta-wandboard
+    ~/wandboard$ git clone -b dunfell git://github.com/jumpnow/meta-wandboard
 
 The `meta-wandboard/README.md` file has the last commits from the dependency repositories that I tested. You can always checkout those commits explicitly if you run into problems.
 
@@ -128,7 +120,7 @@ You could manually create the directory structure like this
 
 Or you could use the Yocto environment script **oe-init-build-env** like this passing in the path to the build directory
 
-    ~$ source poky-zeus/oe-init-build-env ~/wandboard/build
+    ~$ source poky-dunfell/oe-init-build-env ~/wandboard/build
 
 The Yocto environment script will create the build directory if it does not already exist.
 
@@ -155,7 +147,7 @@ In **bblayers.conf** file replace **${HOME}** with the appropriate path to the m
 
 For example, if your directory structure does not look exactly like this, you will need to modify `bblayers.conf`
 
-    ~/poky-zeus/
+    ~/poky-dunfell/
          meta-jumpnow/
          meta-openembedded/
          meta-security/
@@ -303,11 +295,11 @@ This script needs to know the `TMPDIR` to find the binaries. It looks for an env
 
 For instance, if I had this in the `local.conf`
 
-    TMPDIR = "/oe6/wand/tmp-zeus"
+    TMPDIR = "/oe6/wand/tmp-dunfell"
 
 then I would export this environment variable before running `copy_boot.sh`
 
-    ~/wandboard/meta-wandboard/scripts$ export OETMP=/oe6/wand/tmp-zeus
+    ~/wandboard/meta-wandboard/scripts$ export OETMP=/oe6/wand/tmp-dunfell
 
 If you didn't override the default **TMPDIR** in `local.conf`, then set it to the default **TMPDIR**
 
@@ -342,7 +334,7 @@ The copy scripts will **NOT** unmount partitions automatically. If an SD card pa
 Here's a realistic example session where I want to copy already built images to a second SD card that I just inserted.
 
     ~$ sudo umount /dev/sdb1
-    ~$ export OETMP=/oe6/wand/tmp-zeus
+    ~$ export OETMP=/oe6/wand/tmp-dunfell
     ~$ cd wandboard/meta-wandboard/scripts
     ~/wandboard/meta-wandboard/scripts$ ./copy_boot.sh sdb
     ~/wandboard/meta-wandboard/scripts$ ./copy_rootfs.sh sdb console wandq2
@@ -358,7 +350,5 @@ Both **copy\_boot.sh** and **copy\_rootfs.sh** are simple scripts easily customi
 [lsblk]: http://linux.die.net/man/8/lsblk
 [bitbake]: https://www.yoctoproject.org/docs/current/bitbake-user-manual/bitbake-user-manual.html
 [source-script]: http://stackoverflow.com/questions/4779756/what-is-the-difference-between-source-script-sh-and-script-
-[buildroot]: https://buildroot.org/
-[buildroot-wand]: https://jumpnowtek.com/wandboard/Wandboard-Systems-with-Buildroot.html
 [eudev]: https://wiki.gentoo.org/wiki/Project:Eudev
 [wireguard-linux-compat]: https://git.zx2c4.com/wireguard-linux-compat/about/
