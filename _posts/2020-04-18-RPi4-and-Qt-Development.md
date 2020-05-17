@@ -1,7 +1,7 @@
 ---
 layout: post
 title: RPi4 and Qt Development
-date: 2020-04-19 06:30:00
+date: 2020-05-17 11:42:00
 categories: rpi
 tags: [rpi4, qt5, eglfs, opengl, qml, yocto]
 ---
@@ -23,79 +23,78 @@ I am using a generic development/test system built with [Yocto][yocto].
 
 You can find [instructions here][yocto-rpi64-build] or [download an image here][jumpnow-build-download].
 
-On these systems Qt defaults to using the [EGLFS platform plugin][qpa-eglfs].
+On these systems Qt defaults to using the [linuxfb platform plugin][qt-embedded].
 
 A glance at the system
 
     root@rpi4:~# uname -a
-    Linux rpi4 4.19.115 #1 SMP PREEMPT Fri Apr 17 10:01:11 UTC 2020 aarch64 aarch64 aarch64 GNU/Linux
-
-    root@rpi4:~# git --version
-    git version 2.23.1
+    Linux rpi4 5.4.40-v8 #1 SMP PREEMPT Fri May 15 16:20:21 UTC 2020 aarch64 aarch64 aarch64 GNU/Linux
 
     root@rpi4:~# g++ --version
-    g++ (GCC) 9.2.0
+    g++ (GCC) 9.3.0
     Copyright (C) 2019 Free Software Foundation, Inc.
     This is free software; see the source for copying conditions.  There is NO
     warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
     root@rpi4:~# qmake -v
     QMake version 3.1
-    Using Qt version 5.13.2 in /usr/lib
+    Using Qt version 5.14.1 in /usr/lib
 
     root@rpi4:~# ls /usr/lib/plugins/platforms
     libqeglfs.so  libqlinuxfb.so  libqminimal.so  libqminimalegl.so  libqoffscreen.so  libqvnc.so
 
-    root@rpi4:~# ls  /usr/lib/libQt5*.5.13.2
-    /usr/lib/libQt53DAnimation.so.5.13.2
-    /usr/lib/libQt53DCore.so.5.13.2
-    /usr/lib/libQt53DExtras.so.5.13.2
-    /usr/lib/libQt53DInput.so.5.13.2
-    /usr/lib/libQt53DLogic.so.5.13.2
-    /usr/lib/libQt53DQuick.so.5.13.2
-    /usr/lib/libQt53DQuickAnimation.so.5.13.2
-    /usr/lib/libQt53DQuickExtras.so.5.13.2
-    /usr/lib/libQt53DQuickInput.so.5.13.2
-    /usr/lib/libQt53DQuickRender.so.5.13.2
-    /usr/lib/libQt53DQuickScene2D.so.5.13.2
-    /usr/lib/libQt53DRender.so.5.13.2
-    /usr/lib/libQt5Bluetooth.so.5.13.2
-    /usr/lib/libQt5Charts.so.5.13.2
-    /usr/lib/libQt5Concurrent.so.5.13.2
-    /usr/lib/libQt5Core.so.5.13.2
-    /usr/lib/libQt5DBus.so.5.13.2
-    /usr/lib/libQt5EglFSDeviceIntegration.so.5.13.2
-    /usr/lib/libQt5EglFsKmsSupport.so.5.13.2
-    /usr/lib/libQt5Gui.so.5.13.2
-    /usr/lib/libQt5Location.so.5.13.2
-    /usr/lib/libQt5Multimedia.so.5.13.2
-    /usr/lib/libQt5MultimediaQuick.so.5.13.2
-    /usr/lib/libQt5MultimediaWidgets.so.5.13.2
-    /usr/lib/libQt5Network.so.5.13.2
-    /usr/lib/libQt5Nfc.so.5.13.2
-    /usr/lib/libQt5OpenGL.so.5.13.2
-    /usr/lib/libQt5Positioning.so.5.13.2
-    /usr/lib/libQt5PositioningQuick.so.5.13.2
-    /usr/lib/libQt5PrintSupport.so.5.13.2
-    /usr/lib/libQt5Qml.so.5.13.2
-    /usr/lib/libQt5Quick.so.5.13.2
-    /usr/lib/libQt5QuickControls2.so.5.13.2
-    /usr/lib/libQt5QuickParticles.so.5.13.2
-    /usr/lib/libQt5QuickShapes.so.5.13.2
-    /usr/lib/libQt5QuickTemplates2.so.5.13.2
-    /usr/lib/libQt5QuickTest.so.5.13.2
-    /usr/lib/libQt5QuickWidgets.so.5.13.2
-    /usr/lib/libQt5Sensors.so.5.13.2
-    /usr/lib/libQt5SerialBus.so.5.13.2
-    /usr/lib/libQt5SerialPort.so.5.13.2
-    /usr/lib/libQt5Sql.so.5.13.2
-    /usr/lib/libQt5Svg.so.5.13.2
-    /usr/lib/libQt5Test.so.5.13.2
-    /usr/lib/libQt5VirtualKeyboard.so.5.13.2
-    /usr/lib/libQt5WebSockets.so.5.13.2
-    /usr/lib/libQt5Widgets.so.5.13.2
-    /usr/lib/libQt5Xml.so.5.13.2
-    /usr/lib/libQt5XmlPatterns.so.5.13.2
+    root@rpi4:~# ls /usr/lib/libQt5*.5.14.1
+    /usr/lib/libQt53DAnimation.so.5.14.1
+    /usr/lib/libQt53DCore.so.5.14.1
+    /usr/lib/libQt53DExtras.so.5.14.1
+    /usr/lib/libQt53DInput.so.5.14.1
+    /usr/lib/libQt53DLogic.so.5.14.1
+    /usr/lib/libQt53DQuick.so.5.14.1
+    /usr/lib/libQt53DQuickAnimation.so.5.14.1
+    /usr/lib/libQt53DQuickExtras.so.5.14.1
+    /usr/lib/libQt53DQuickInput.so.5.14.1
+    /usr/lib/libQt53DQuickRender.so.5.14.1
+    /usr/lib/libQt53DQuickScene2D.so.5.14.1
+    /usr/lib/libQt53DRender.so.5.14.1
+    /usr/lib/libQt5Bluetooth.so.5.14.1
+    /usr/lib/libQt5Charts.so.5.14.1
+    /usr/lib/libQt5Concurrent.so.5.14.1
+    /usr/lib/libQt5Core.so.5.14.1
+    /usr/lib/libQt5DBus.so.5.14.1
+    /usr/lib/libQt5EglFSDeviceIntegration.so.5.14.1
+    /usr/lib/libQt5EglFsKmsSupport.so.5.14.1
+    /usr/lib/libQt5Gui.so.5.14.1
+    /usr/lib/libQt5Location.so.5.14.1
+    /usr/lib/libQt5Multimedia.so.5.14.1
+    /usr/lib/libQt5MultimediaQuick.so.5.14.1
+    /usr/lib/libQt5MultimediaWidgets.so.5.14.1
+    /usr/lib/libQt5Network.so.5.14.1
+    /usr/lib/libQt5Nfc.so.5.14.1
+    /usr/lib/libQt5OpenGL.so.5.14.1
+    /usr/lib/libQt5Positioning.so.5.14.1
+    /usr/lib/libQt5PositioningQuick.so.5.14.1
+    /usr/lib/libQt5PrintSupport.so.5.14.1
+    /usr/lib/libQt5Qml.so.5.14.1
+    /usr/lib/libQt5QmlModels.so.5.14.1
+    /usr/lib/libQt5QmlWorkerScript.so.5.14.1
+    /usr/lib/libQt5Quick.so.5.14.1
+    /usr/lib/libQt5QuickControls2.so.5.14.1
+    /usr/lib/libQt5QuickParticles.so.5.14.1
+    /usr/lib/libQt5QuickShapes.so.5.14.1
+    /usr/lib/libQt5QuickTemplates2.so.5.14.1
+    /usr/lib/libQt5QuickTest.so.5.14.1
+    /usr/lib/libQt5QuickWidgets.so.5.14.1
+    /usr/lib/libQt5Sensors.so.5.14.1
+    /usr/lib/libQt5SerialBus.so.5.14.1
+    /usr/lib/libQt5SerialPort.so.5.14.1
+    /usr/lib/libQt5Sql.so.5.14.1
+    /usr/lib/libQt5Svg.so.5.14.1
+    /usr/lib/libQt5Test.so.5.14.1
+    /usr/lib/libQt5VirtualKeyboard.so.5.14.1
+    /usr/lib/libQt5WebSockets.so.5.14.1
+    /usr/lib/libQt5Widgets.so.5.14.1
+    /usr/lib/libQt5Xml.so.5.14.1
+    /usr/lib/libQt5XmlPatterns.so.5.14.1
 
 That is most but not all of the Qt packages in `meta-qt5`.
 
@@ -116,7 +115,7 @@ You can provide a `-platform some-plugin` command line argument when starting ap
 Or you can use an environment variable `QT_QPA_PLATFORM` which is what I have done.
 
     root@rpi4:~# env | grep -i qt
-    QT_QPA_PLATFORM=eglfs
+    QT_QPA_PLATFORM=linuxfb
 
 
 The environment comes from `/etc/profile.d/qt5-env.sh` which in turn comes from this recipe in the Yocto build
@@ -124,12 +123,6 @@ The environment comes from `/etc/profile.d/qt5-env.sh` which in turn comes from 
     meta-rpi64/recipes-qt/qt5-env/qt5-env.bb
 
 in case you want to change the defaults.
-
-I also have `QT_QPA_EGLFS_PHYSICAL_WIDTH` and `QT_QPA_EGLFS_PHYSICAL_HEIGHT` set for the RPi touchscreen.
-
-Uncomment those variables if you are using it. 
-
-Details on other `QPA_EGLFS` variables can be found [here][qpa-eglfs].
 
 #### Building Qt Apps on the RPi
 
@@ -139,7 +132,6 @@ There are two examples applications already installed
 
 * tspress - a QWidget application 
 * qmlswipe - a QML application
-
 
 You can recompile them directly on the device to verify the tools.
 
@@ -159,16 +151,16 @@ For this example I will build the `qmlswipe` app.
     Info: creating stash file /home/root/qmlswipe/.qmake.stash
 
     root@rpi4:~/qmlswipe# make
-    g++ -c -pipe --sysroot= -O2 -std=gnu++11 -Wall -W -D_REENTRANT -fPIC -DQT_DEPRECATED_WARNINGS -DQT_NO_DEBUG -DQT_QUICKCONTROLS2_LIB -DQT_QUICK_LIB -DQT_GUI_LIB -DQT_QML_LIB -DQT_NETWORK_LIB -DQT_CORE_LIB -I. -I/usr/include/QtQuickControls2 -I/usr/include/QtQuick -I/usr/include/QtGui -I/usr/include/QtQml -I/usr/include/QtNetwork -I/usr/include/QtCore -I. -I/usr/lib/mkspecs/linux-g++ -o main.o main.cpp
-/usr/bin/rcc -name qml qml.qrc -o qrc_qml.cpp
-    g++ -c -pipe --sysroot= -O2 -std=gnu++11 -Wall -W -D_REENTRANT -fPIC -DQT_DEPRECATED_WARNINGS -DQT_NO_DEBUG -DQT_QUICKCONTROLS2_LIB -DQT_QUICK_LIB -DQT_GUI_LIB -DQT_QML_LIB -DQT_NETWORK_LIB -DQT_CORE_LIB -I. -I/usr/include/QtQuickControls2 -I/usr/include/QtQuick -I/usr/include/QtGui -I/usr/include/QtQml -I/usr/include/QtNetwork -I/usr/include/QtCore -I. -I/usr/lib/mkspecs/linux-g++ -o qrc_qml.o qrc_qml.cpp
-    g++ --sysroot= -Wl,-O1 -Wl,-rpath-link,/usr/lib -o qmlswipe main.o qrc_qml.o   /usr/lib/libQt5QuickControls2.so /usr/lib/libQt5Quick.so /usr/lib/libQt5Gui.so /usr/lib/libQt5Qml.so /usr/lib/libQt5Network.so /usr/lib/libQt5Core.so /usr/lib/libGLESv2.so -lpthread   
+    g++ -c -pipe --sysroot= -O2 -std=gnu++11 -Wall -Wextra -D_REENTRANT -fPIC -DQT_DEPRECATED_WARNINGS -DQT_NO_DEBUG -DQT_QUICKCONTROLS2_LIB -DQT_QUICK_LIB -DQT_GUI_LIB -DQT_QMLMODELS_LIB -DQT_QML_LIB -DQT_NETWORK_LIB -DQT_CORE_LIB -I. -I/usr/include/QtQuickControls2 -I/usr/include/QtQuick -I/usr/include/QtGui -I/usr/include/QtQmlModels -I/usr/include/QtQml -I/usr/include/QtNetwork -I/usr/include/QtCore -I. -I/usr/lib/mkspecs/linux-g++ -o main.o main.cpp
+    /usr/bin/rcc -name qml qml.qrc -o qrc_qml.cpp
+    g++ -c -pipe --sysroot= -O2 -std=gnu++11 -Wall -Wextra -D_REENTRANT -fPIC -DQT_DEPRECATED_WARNINGS -DQT_NO_DEBUG -DQT_QUICKCONTROLS2_LIB -DQT_QUICK_LIB -DQT_GUI_LIB -DQT_QMLMODELS_LIB -DQT_QML_LIB -DQT_NETWORK_LIB -DQT_CORE_LIB -I. -I/usr/include/QtQuickControls2 -I/usr/include/QtQuick -I/usr/include/QtGui -I/usr/include/QtQmlModels -I/usr/include/QtQml -I/usr/include/QtNetwork -I/usr/include/QtCore -I. -I/usr/lib/mkspecs/linux-g++ -o qrc_qml.o qrc_qml.cpp
+    g++ --sysroot= -Wl,-O1 -Wl,-rpath-link,/usr/lib -o qmlswipe main.o qrc_qml.o   /usr/lib/libQt5QuickControls2.so /usr/lib/libQt5Quick.so /usr/lib/libQt5Gui.so /usr/lib/libQt5QmlModels.so /usr/lib/libQt5Qml.so /usr/lib/libQt5Network.so /usr/lib/libQt5Core.so -lGLESv2 -lpthread   
 
     root@rpi4:~/qmlswipe# ./qmlswipe
-    Setting framebuffer size is only available with DRM atomic API
     qml: Button 1 clicked
     qml: Button 2 clicked
     qml: Button 1 clicked
+    qml: Button 2 clicked
     qml: Exit clicked
 
 <br>
@@ -181,7 +173,7 @@ The Yocto SDK is self-contained and easily installed, but over 1.5GB so I am not
 
 To build the toolchain, first setup the Yocto environment as normal
 
-    ~$ source poky-zeus/oe-init-build-env ~/rpi64/build
+    ~$ source poky-dunfell/oe-init-build-env ~/rpi64/build
 
 In `local.conf` specify the host machine architecture where the cross-tools will be used.
 
@@ -195,28 +187,28 @@ Build the SDK like this
 
 The resulting installation script can be found in `${TMPDIR}/deploy/sdk`.
 
-In my `local.conf` I have `TMPDIR=/oe8/rpi64/tmp-zeus`, so the SDK installer can be found here
+In my `local.conf` I have `TMPDIR=/oe10/rpi64/tmp-dunfell`, so the SDK installer can be found here
 
-    ~/rpi64$ ls -l /oe8/rpi64/tmp-zeus/deploy/sdk
-    total 1540876
-    -rw-r--r-- 1 scott scott      52049 Apr 13 20:59 poky-glibc-x86_64-meta-toolchain-qt5-aarch64-raspberrypi4-64-toolchain-3.0.2.host.manifest
-    -rwxr-xr-x 1 scott scott 1577499614 Apr 13 21:11 poky-glibc-x86_64-meta-toolchain-qt5-aarch64-raspberrypi4-64-toolchain-3.0.2.sh
-    -rw-r--r-- 1 scott scott      23437 Apr 13 20:58 poky-glibc-x86_64-meta-toolchain-qt5-aarch64-raspberrypi4-64-toolchain-3.0.2.target.manifest
-    -rw-r--r-- 1 scott scott     272407 Apr 13 20:58 poky-glibc-x86_64-meta-toolchain-qt5-aarch64-raspberrypi4-64-toolchain-3.0.2.testdata.json
+    scott@fractal:~/dunfell-rpi64/build$ ls -l /oe10/rpi64/tmp-dunfell/deploy/sdk
+    total 943452
+    -rw-r--r-- 1 scott scott     52107 May 17 13:47 poky-glibc-x86_64-meta-toolchain-qt5-aarch64-raspberrypi4-64-toolchain-3.1.host.manifest
+    -rwxr-xr-x 1 scott scott 965711652 May 17 13:56 poky-glibc-x86_64-meta-toolchain-qt5-aarch64-raspberrypi4-64-toolchain-3.1.sh
+    -rw-r--r-- 1 scott scott     22781 May 17 13:46 poky-glibc-x86_64-meta-toolchain-qt5-aarch64-raspberrypi4-64-toolchain-3.1.target.manifest
+    -rw-r--r-- 1 scott scott    297772 May 17 13:46 poky-glibc-x86_64-meta-toolchain-qt5-aarch64-raspberrypi4-64-toolchain-3.1.testdata.json
 
 Run the installer as root (I have not tried a non-root install)
 
 Here I copied the *.sh installer to another machine and ran the script. 
 
-    ~$ sudo ./poky-glibc-x86_64-meta-toolchain-qt5-aarch64-raspberrypi4-64-toolchain-3.0.2.sh
+    ~$ sudo ./poky-glibc-x86_64-meta-toolchain-qt5-aarch64-raspberrypi4-64-toolchain-3.1.sh
 
 The default install location is `/opt/poky/<version>`, but the script will ask.
 
-I chose to install it in `/opt/poky/rpi64-3.0.2`.
+I chose to install it in `/opt/poky/rpi64-3.1`.
 
 To use the SDK, *source* the SDK environment using the provided script
 
-    ~$ source /opt/poky/rpi64-3.0.2/environment-setup-aarch64-poky-linux
+    ~$ source /opt/poky/rpi64-3.1/environment-setup-aarch64-poky-linux
 
 
 Here I will cross-compile the `tspress` app.
@@ -233,18 +225,18 @@ Here I will cross-compile the `tspress` app.
     Info: creating stash file /home/scott/tspress/.qmake.stash
 
     ~/tspress$ make
-    aarch64-poky-linux-g++  -mcpu=cortex-a72+crc+crypto -fstack-protector-strong  -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security --sysroot=/opt/poky/rpi64-3.0.2/sysroots/aarch64-poky-linux -c -pipe  -O2 -pipe -g -feliminate-unused-debug-types  --sysroot=/opt/poky/rpi64-3.0.2/sysroots/aarch64-poky-linux -O2 -Wall -W -D_REENTRANT -fPIC -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -I. -IGeneratedFiles -I/opt/poky/rpi64-3.0.2/sysroots/aarch64-poky-linux/usr/include/QtWidgets -I/opt/poky/rpi64-3.0.2/sysroots/aarch64-poky-linux/usr/include/QtGui -I/opt/poky/rpi64-3.0.2/sysroots/aarch64-poky-linux/usr/include/QtCore -IGeneratedFiles -I/opt/poky/rpi64-3.0.2/sysroots/aarch64-poky-linux/usr/lib/mkspecs/linux-oe-g++ -o Objects/main.o main.cpp
-    aarch64-poky-linux-g++  -mcpu=cortex-a72+crc+crypto -fstack-protector-strong  -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security --sysroot=/opt/poky/rpi64-3.0.2/sysroots/aarch64-poky-linux -c -pipe  -O2 -pipe -g -feliminate-unused-debug-types  --sysroot=/opt/poky/rpi64-3.0.2/sysroots/aarch64-poky-linux -O2 -Wall -W -D_REENTRANT -fPIC -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -I. -IGeneratedFiles -I/opt/poky/rpi64-3.0.2/sysroots/aarch64-poky-linux/usr/include/QtWidgets -I/opt/poky/rpi64-3.0.2/sysroots/aarch64-poky-linux/usr/include/QtGui -I/opt/poky/rpi64-3.0.2/sysroots/aarch64-poky-linux/usr/include/QtCore -IGeneratedFiles -I/opt/poky/rpi64-3.0.2/sysroots/aarch64-poky-linux/usr/lib/mkspecs/linux-oe-g++ -o Objects/tspress.o tspress.cpp
-    aarch64-poky-linux-g++  -mcpu=cortex-a72+crc+crypto -fstack-protector-strong  -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security --sysroot=/opt/poky/rpi64-3.0.2/sysroots/aarch64-poky-linux -pipe  -O2 -pipe -g -feliminate-unused-debug-types  --sysroot=/opt/poky/rpi64-3.0.2/sysroots/aarch64-poky-linux -O2 -Wall -W -dM -E -o GeneratedFiles/moc_predefs.h /opt/poky/rpi64-3.0.2/sysroots/aarch64-poky-linux/usr/lib/mkspecs/features/data/dummy.cpp
-    /opt/poky/rpi64-3.0.2/sysroots/x86_64-pokysdk-linux/usr/bin/moc -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB --include /home/scott/tspress/GeneratedFiles/moc_predefs.h -I/opt/poky/rpi64-3.0.2/sysroots/aarch64-poky-linux/usr/lib/mkspecs/linux-oe-g++ -I/home/scott/tspress -I/home/scott/tspress/GeneratedFiles -I/opt/poky/rpi64-3.0.2/sysroots/aarch64-poky-linux/usr/include/QtWidgets -I/opt/poky/rpi64-3.0.2/sysroots/aarch64-poky-linux/usr/include/QtGui -I/opt/poky/rpi64-3.0.2/sysroots/aarch64-poky-linux/usr/include/QtCore -I/opt/poky/rpi64-3.0.2/sysroots/aarch64-poky-linux/usr/include/c++/9.2.0 -I/opt/poky/rpi64-3.0.2/sysroots/aarch64-poky-linux/usr/include/c++/9.2.0/aarch64-poky-linux -I/opt/poky/rpi64-3.0.2/sysroots/aarch64-poky-linux/usr/include/c++/9.2.0/backward -I/opt/poky/rpi64-3.0.2/sysroots/x86_64-pokysdk-linux/usr/lib/aarch64-poky-linux/gcc/aarch64-poky-linux/9.2.0/include -I/opt/poky/rpi64-3.0.2/sysroots/x86_64-pokysdk-linux/usr/lib/aarch64-poky-linux/gcc/aarch64-poky-linux/9.2.0/include-fixed -I/opt/poky/rpi64-3.0.2/sysroots/aarch64-poky-linux/usr/include tspress.h -o GeneratedFiles/moc_tspress.cpp
-    aarch64-poky-linux-g++  -mcpu=cortex-a72+crc+crypto -fstack-protector-strong  -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security --sysroot=/opt/poky/rpi64-3.0.2/sysroots/aarch64-poky-linux -c -pipe  -O2 -pipe -g -feliminate-unused-debug-types  --sysroot=/opt/poky/rpi64-3.0.2/sysroots/aarch64-poky-linux -O2 -Wall -W -D_REENTRANT -fPIC -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -I. -IGeneratedFiles -I/opt/poky/rpi64-3.0.2/sysroots/aarch64-poky-linux/usr/include/QtWidgets -I/opt/poky/rpi64-3.0.2/sysroots/aarch64-poky-linux/usr/include/QtGui -I/opt/poky/rpi64-3.0.2/sysroots/aarch64-poky-linux/usr/include/QtCore -IGeneratedFiles -I/opt/poky/rpi64-3.0.2/sysroots/aarch64-poky-linux/usr/lib/mkspecs/linux-oe-g++ -o Objects/moc_tspress.o GeneratedFiles/moc_tspress.cpp
-    aarch64-poky-linux-g++  -mcpu=cortex-a72+crc+crypto -fstack-protector-strong  -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security --sysroot=/opt/poky/rpi64-3.0.2/sysroots/aarch64-poky-linux -Wl,-O1 -Wl,--hash-style=gnu -Wl,--as-needed -fstack-protector-strong -Wl,-z,relro,-z,now --sysroot=/opt/poky/rpi64-3.0.2/sysroots/aarch64-poky-linux -Wl,-O1 -o tspress Objects/main.o Objects/tspress.o Objects/moc_tspress.o   /opt/poky/rpi64-3.0.2/sysroots/aarch64-poky-linux/usr/lib/libQt5Widgets.so /opt/poky/rpi64-3.0.2/sysroots/aarch64-poky-linux/usr/lib/libQt5Gui.so /opt/poky/rpi64-3.0.2/sysroots/aarch64-poky-linux/usr/lib/libQt5Core.so /opt/poky/rpi64-3.0.2/sysroots/aarch64-poky-linux/usr/lib/libGLESv2.so -lpthread   
+    aarch64-poky-linux-g++  -mcpu=cortex-a72+crc+crypto -fstack-protector-strong  -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security --sysroot=/opt/poky/rpi64-3.1/sysroots/aarch64-poky-linux -c -pipe  -O2 -pipe -g -feliminate-unused-debug-types  --sysroot=/opt/poky/rpi64-3.1/sysroots/aarch64-poky-linux -O2 -Wall -Wextra -D_REENTRANT -fPIC -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -I. -IGeneratedFiles -I/opt/poky/rpi64-3.1/sysroots/aarch64-poky-linux/usr/include/QtWidgets -I/opt/poky/rpi64-3.1/sysroots/aarch64-poky-linux/usr/include/QtGui -I/opt/poky/rpi64-3.1/sysroots/aarch64-poky-linux/usr/include/QtCore -IGeneratedFiles -I/opt/poky/rpi64-3.1/sysroots/aarch64-poky-linux/usr/lib/mkspecs/linux-oe-g++ -o Objects/main.o main.cpp
+    aarch64-poky-linux-g++  -mcpu=cortex-a72+crc+crypto -fstack-protector-strong  -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security --sysroot=/opt/poky/rpi64-3.1/sysroots/aarch64-poky-linux -c -pipe  -O2 -pipe -g -feliminate-unused-debug-types  --sysroot=/opt/poky/rpi64-3.1/sysroots/aarch64-poky-linux -O2 -Wall -Wextra -D_REENTRANT -fPIC -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -I. -IGeneratedFiles -I/opt/poky/rpi64-3.1/sysroots/aarch64-poky-linux/usr/include/QtWidgets -I/opt/poky/rpi64-3.1/sysroots/aarch64-poky-linux/usr/include/QtGui -I/opt/poky/rpi64-3.1/sysroots/aarch64-poky-linux/usr/include/QtCore -IGeneratedFiles -I/opt/poky/rpi64-3.1/sysroots/aarch64-poky-linux/usr/lib/mkspecs/linux-oe-g++ -o Objects/tspress.o tspress.cpp
+    aarch64-poky-linux-g++  -mcpu=cortex-a72+crc+crypto -fstack-protector-strong  -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security --sysroot=/opt/poky/rpi64-3.1/sysroots/aarch64-poky-linux -pipe  -O2 -pipe -g -feliminate-unused-debug-types  --sysroot=/opt/poky/rpi64-3.1/sysroots/aarch64-poky-linux -O2 -Wall -Wextra -dM -E -o GeneratedFiles/moc_predefs.h /opt/poky/rpi64-3.1/sysroots/aarch64-poky-linux/usr/lib/mkspecs/features/data/dummy.cpp
+    /opt/poky/rpi64-3.1/sysroots/x86_64-pokysdk-linux/usr/bin/moc -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB --include /home/scott/qt/tspress/GeneratedFiles/moc_predefs.h -I/opt/poky/rpi64-3.1/sysroots/aarch64-poky-linux/usr/lib/mkspecs/linux-oe-g++ -I/home/scott/qt/tspress -I/home/scott/qt/tspress/GeneratedFiles -I/opt/poky/rpi64-3.1/sysroots/aarch64-poky-linux/usr/include/QtWidgets -I/opt/poky/rpi64-3.1/sysroots/aarch64-poky-linux/usr/include/QtGui -I/opt/poky/rpi64-3.1/sysroots/aarch64-poky-linux/usr/include/QtCore -I/opt/poky/rpi64-3.1/sysroots/aarch64-poky-linux/usr/include/c++/9.3.0 -I/opt/poky/rpi64-3.1/sysroots/aarch64-poky-linux/usr/include/c++/9.3.0/aarch64-poky-linux -I/opt/poky/rpi64-3.1/sysroots/aarch64-poky-linux/usr/include/c++/9.3.0/backward -I/opt/poky/rpi64-3.1/sysroots/x86_64-pokysdk-linux/usr/lib/aarch64-poky-linux/gcc/aarch64-poky-linux/9.3.0/include -I/opt/poky/rpi64-3.1/sysroots/x86_64-pokysdk-linux/usr/lib/aarch64-poky-linux/gcc/aarch64-poky-linux/9.3.0/include-fixed -I/opt/poky/rpi64-3.1/sysroots/aarch64-poky-linux/usr/include tspress.h -o GeneratedFiles/moc_tspress.cpp
+    aarch64-poky-linux-g++  -mcpu=cortex-a72+crc+crypto -fstack-protector-strong  -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security --sysroot=/opt/poky/rpi64-3.1/sysroots/aarch64-poky-linux -c -pipe  -O2 -pipe -g -feliminate-unused-debug-types  --sysroot=/opt/poky/rpi64-3.1/sysroots/aarch64-poky-linux -O2 -Wall -Wextra -D_REENTRANT -fPIC -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -I. -IGeneratedFiles -I/opt/poky/rpi64-3.1/sysroots/aarch64-poky-linux/usr/include/QtWidgets -I/opt/poky/rpi64-3.1/sysroots/aarch64-poky-linux/usr/include/QtGui -I/opt/poky/rpi64-3.1/sysroots/aarch64-poky-linux/usr/include/QtCore -IGeneratedFiles -I/opt/poky/rpi64-3.1/sysroots/aarch64-poky-linux/usr/lib/mkspecs/linux-oe-g++ -o Objects/moc_tspress.o GeneratedFiles/moc_tspress.cpp
+    aarch64-poky-linux-g++  -mcpu=cortex-a72+crc+crypto -fstack-protector-strong  -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security --sysroot=/opt/poky/rpi64-3.1/sysroots/aarch64-poky-linux -Wl,-O1 -Wl,--hash-style=gnu -Wl,--as-needed -fstack-protector-strong -Wl,-z,relro,-z,now --sysroot=/opt/poky/rpi64-3.1/sysroots/aarch64-poky-linux -Wl,-O1 -o tspress Objects/main.o Objects/tspress.o Objects/moc_tspress.o   /opt/poky/rpi64-3.1/sysroots/aarch64-poky-linux/usr/lib/libQt5Widgets.so /opt/poky/rpi64-3.1/sysroots/aarch64-poky-linux/usr/lib/libQt5Gui.so /opt/poky/rpi64-3.1/sysroots/aarch64-poky-linux/usr/lib/libQt5Core.so -lGLESv2 -lpthread   
 
 
 You can check that the resulting executable is for an ARM 64-bit architecture
  
     ~/tspress$ file tspress
-    tspress: ELF 64-bit LSB pie executable, ARM aarch64, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux-aarch64.so.1, BuildID[sha1]=d193a00082cefe2c1db9babf6b69a13fa738f508, for GNU/Linux 3.14.0, with debug_info, not stripped
+    tspress: ELF 64-bit LSB pie executable, ARM aarch64, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux-aarch64.so.1, BuildID[sha1]=e848dd21cab0ef2746042fee07bcd63b501b72ee, for GNU/Linux 3.14.0, with debug_info, not stripped
 
 Copy it to the RPi4
 
@@ -263,7 +255,7 @@ Under the `meta-rpi64/recipes-qt` directory are the recipes for the example appl
 
 You can use either as templates for your own application.
 
-Check the `poky-zeus/meta-qt5` layer for additional examples.
+Check the `poky-dunfell/meta-qt5` layer for additional examples.
 
 
 [rpi]: https://www.raspberrypi.org/
@@ -274,6 +266,6 @@ Check the `poky-zeus/meta-qt5` layer for additional examples.
 [yocto]: https://www.yoctoproject.org/
 [yocto-rpi64-build]: https://jumpnowtek.com/rpi/Raspberry-Pi-4-64bit-Systems-with-Yocto.html
 [jumpnow-build-download]: https://jumpnowtek.com/downloads/rpi64
-[qpa-eglfs]: http://doc.qt.io/qt-5/embedded-linux.html
+[qt-embedded]: http://doc.qt.io/qt-5/embedded-linux.html
 [pi-display]: https://www.raspberrypi.org/products/raspberry-pi-touch-display/ 
 [yocto-docs]: http://www.yoctoproject.org/docs/2.1/mega-manual/mega-manual.html

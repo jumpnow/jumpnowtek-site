@@ -2,7 +2,7 @@
 layout: post
 title: Building 64-bit Systems for Raspberry Pi 4 with Yocto
 description: "Building customized 64-bit systems for the Raspberry Pi 4 using tools from the Yocto Project"
-date: 2020-04-19 10:25:00
+date: 2020-05-17 08:10:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi4, 64-bit]
 ---
@@ -19,7 +19,7 @@ There are a some example images in [meta-rpi64][meta-rpi64] that I have been exp
 
 These systems use **sysvinit**, but Yocto supports **systemd**.
 
-The systems support both QWidget and QML [Qt][qt] applications using the [eglfs][qt-eglfs] backend, useful for dedicated full-screen applications that do not require a window manager.
+The systems support both QWidget and QML [Qt][qt] applications using the [linuxfb][qt-embedded] backend, useful for dedicated full-screen applications that do not require a window manager.
 
 ### Downloads
 
@@ -37,28 +37,29 @@ A dhcp client will run on the ethernet interface and an ssh server is running.
 
 ### System Info
 
-The Yocto version is **3.0**, the `[zeus]` branch.
+The Yocto version is **3.1**, the `[dunfell]` branch.
 
-The default is a **4.19** Linux kernel from the [github.com/raspberrypi/linux][rpi-kernel] repository.
+The default is a **5.4** Linux kernel from the [github.com/raspberrypi/linux][rpi-kernel] repository.
 
-There is also a **5.4** kernel available with a few caveats. Wifi and Qt **eglfs** are not working yet. Ethernet, bluetooth and Qt **linuxfb** are okay.
-
+There is also a **4.19** kernel available though I am not testing this anymore.
 
 These are **sysvinit** systems using [eudev][eudev].
 
-The Qt version is **5.13.2** There is no **X11** and no desktop installed. [Qt][qt] GUI applications can be run fullscreen using one of the [Qt embedded linux plugins][qt-eglfs] like **eglfs** or **linuxfb**, both are provided. The default is **eglfs**.
+The Qt version is **5.13.2** There is no **X11** and no desktop installed. [Qt][qt] GUI applications can be run fullscreen using one of the [Qt embedded linux plugins][qt-embedded] like **linuxfb** or **eglfs**, both are provided. The default is **linuxfb**.
 
-Python **3.7.6** with a number of modules is included.
+**Note:** eglfs is not working with the **5.4** kernel, but QML apps are working now with **linuxfb** which is different from earlier versions.
 
-gcc/g++ **9.2.0** and associated build tools are installed.
+Python **3.8.2** with a number of modules is included.
 
-git **2.23.1** is installed.
+gcc/g++ **9.3.0** and associated build tools are installed.
+
+git **2.24.1** is installed.
 
 wireguard from [wireguard-linux-compat][wireguard-linux-compat] is installed.
 
 ### Ubuntu Setup
 
-I am using **18.04** 64-bit servers for builds. Other versions should work.
+I am using **18.04** and **20.04** 64-bit servers for builds.
 
 You will need at least the following packages installed
 
@@ -70,15 +71,7 @@ You will need at least the following packages installed
     python3-distutils
     texinfo
 
-For **18.04** you also need to install the **python 2.7** package
-
-    python2.7
-
-And then create some links for it in `/usr/bin`
-
-    sudo ln -sf /usr/bin/python2.7 /usr/bin/python2
-
-For all versions of Ubuntu, you should change the default Ubuntu shell from **dash** to **bash** by running this command from a shell
+You should change the default Ubuntu shell from **dash** to **bash** by running this command from a shell
 
     sudo dpkg-reconfigure dash
 
@@ -86,25 +79,27 @@ Choose **No** to dash when prompted.
 
 ### Clone the dependency repositories
 
-For all upstream repositories, use the `[zeus]` branch.
+For all upstream repositories, use the `[dunfell]` branch.
 
 The directory layout I am describing here is my preference. All of the paths to the meta-layers are configurable. If you choose something different, adjust the following instructions accordingly.
 
 First the main Yocto project **poky** layer
 
-    ~$ git clone -b zeus git://git.yoctoproject.org/poky.git poky-zeus
+    ~$ git clone -b dunfell git://git.yoctoproject.org/poky.git poky-dunfell
 
 Then the dependency layers under that
 
-    ~$ cd poky-zeus
-    ~/poky-zeus$ git clone -b zeus git://git.openembedded.org/meta-openembedded
-    ~/poky-zeus$ git clone -b zeus https://github.com/meta-qt5/meta-qt5
-    ~/poky-zeus$ git clone -b zeus git://git.yoctoproject.org/meta-raspberrypi
-    ~/poky-zeus$ git clone -b zeus git://git.yoctoproject.org/meta-security.git
+    ~$ cd poky-dunfell
+    ~/poky-dunfell$ git clone -b dunfell git://git.openembedded.org/meta-openembedded
+    ~/poky-dunfell$ git clone -b dunfell https://github.com/meta-qt5/meta-qt5
+    ~/poky-dunfell$ git clone -b dunfell git://git.yoctoproject.org/meta-raspberrypi
+    ~/poky-dunfell$ git clone -b dunfell git://git.yoctoproject.org/meta-security.git
 
 And my own common meta-layer that changes some upstream package defaults and adds a few custom recipes.
 
-    ~/poky-zeus$ git clone -b zeus https://github.com/jumpnow/meta-jumpnow
+    ~/poky-dunfell$ git clone -b dunfell https://github.com/jumpnow/meta-jumpnow
+
+<br/>
 
 ### Clone the meta-rpi repository
 
@@ -112,7 +107,7 @@ Create a separate sub-directory for the **meta-rpi64** repository before cloning
 
     ~$ mkdir ~/rpi64
     ~$ cd ~/rpi64
-    ~/rpi64$ git clone -b zeus git://github.com/jumpnow/meta-rpi64
+    ~/rpi64$ git clone -b dunfell git://github.com/jumpnow/meta-rpi64
 
 The `meta-rpi64/README.md` file has the last commits from the dependency repositories that I tested. You can always checkout those commits explicitly if you run into problems.
 
@@ -128,7 +123,7 @@ You could manually create the directory structure like this
 
 Or you could use the Yocto environment script **oe-init-build-env** like this passing in the path to the build directory
 
-    ~$ source poky-zeus/oe-init-build-env ~/rpi64/build
+    ~$ source poky-dunfell/oe-init-build-env ~/rpi64/build
 
 The Yocto environment script will create the build directory if it does not already exist.
 
@@ -155,7 +150,7 @@ In **bblayers.conf** file replace **${HOME}** with the appropriate path to the m
 
 For example, if your directory structure does not look exactly like this, you will need to modify `bblayers.conf`
 
-    ~/poky-zeus/
+    ~/poky-dunfell/
         meta-jumpnow/
         meta-openembedded/
         meta-qt5/
@@ -211,17 +206,17 @@ The default location is in the **build** directory, **~/rpi64/build/sstate-cache
 
 #### KERNEL VERSION
 
-The default is **4.19**.
+The default is **5.4**.
 
-Change this line
-
-    PREFERRED_VERSION_linux-raspberrypi = "4.19.%"
-
-to this
+Comment this line
 
     PREFERRED_VERSION_linux-raspberrypi = "5.4.%"
 
-to try out a **5.4** kernel.
+and uncomment this one
+
+    # PREFERRED_VERSION_linux-raspberrypi = "4.19.%"
+
+to use a **4.19** kernel.
 
 #### ROOT PASSWORD
 
@@ -255,7 +250,7 @@ You can always add or change the password once logged in.
 
 You need to [source][source-script] the Yocto environment into your shell before you can use [bitbake][bitbake]. The **oe-init-build-env** will not overwrite your customized conf files.
 
-    ~$ source poky-zeus/oe-init-build-env ~/rpi64/build
+    ~$ source poky-dunfell/oe-init-build-env ~/rpi64/build
 
     ### Shell environment set up for builds. ###
 
@@ -351,9 +346,9 @@ So I will use **sdc** for the card on this machine.
 
 It doesn't matter if some partitions from the SD card are mounted. The **mk2parts.sh** script will unmount them.
 
-**WARNING**: This script will format any disk on your workstation so make sure you choose the SD card.
+**NOTE**: This script will format any disk on your workstation so make sure you choose the SD card.
 
-The script tries to protect against accidents by not running against any device that has partitions currently mounted.
+The script tries to protect against accidents by not running against any device that has partitions currently mounted. I disable automount on my workstations to avoid having to manually unmount partitions.
 
     ~$ cd ~/rpi64/meta-rpi64/scripts
     ~/rpi64/meta-rpi64/scripts$ sudo ./mk2parts.sh sdc
@@ -384,11 +379,11 @@ If not it looks for an environment variable called **OETMP**.
 
 For instance, if I had this in `build/conf/local.conf`
 
-    TMPDIR = "/oe8/rpi64/tmp-zeus"
+    TMPDIR = "/oe8/rpi64/tmp-dunfell"
 
 Then I would export this environment variable before running `copy_boot.sh`
 
-    ~/rpi64/meta-rpi64/scripts$ export OETMP=/oe8/rpi64/tmp-zeus
+    ~/rpi64/meta-rpi64/scripts$ export OETMP=/oe8/rpi64/tmp-dunfell
 
 If you didn't override the default **TMPDIR** in `local.conf`, then set it to the default **TMPDIR**
 
@@ -439,7 +434,7 @@ Here is an example session copying the console-image system to an SD card alread
 
     ~/rpi64/meta-rpi64/scripts$ ./copy_boot.sh sdc
     MACHINE: raspberrypi4-64
-    OETMP: /oe8/rpi64/tmp-zeus
+    OETMP: /oe8/rpi64/tmp-dunfell
     Formatting FAT partition on /dev/sdc1
     mkfs.fat 4.1 (2017-01-24)
     Mounting /dev/sdc1
@@ -453,7 +448,7 @@ Here is an example session copying the console-image system to an SD card alread
 
     ~/rpi64/meta-rpi64/scripts$ ./copy_rootfs.sh sdc
     MACHINE: raspberrypi4-64
-    OETMP: /oe8/rpi64/tmp-zeus
+    OETMP: /oe8/rpi64/tmp-dunfell
     IMAGE: console
     HOSTNAME: raspberrypi4-64
     Formatting /dev/sdc2 as ext4
@@ -497,7 +492,7 @@ The recipe is here and can be used a guide for your own applications.
 
 To display the list of available recipes from the **meta-layers** included in **bblayers.conf**
 
-    ~$ source poky-zeus/oe-init-build-env ~/rpi64/build
+    ~$ source poky-dunfell/oe-init-build-env ~/rpi64/build
 
     ~/rpi64/build$ bitbake -s
 
@@ -539,59 +534,109 @@ For a package to be installed in your image it has to get into the **IMAGE_INSTA
 
 #### A running system
 
-    root@raspberrypi4-64:~# uname -a
-    Linux raspberrypi4-64 4.19.108 #1 SMP PREEMPT Thu Mar 12 17:55:43 UTC 2020 aarch64 aarch64 aarch64 GNU/Linux
+    root@rpi4:~# uname -a
+    Linux rpi4 5.4.40-v8 #1 SMP PREEMPT Fri May 15 16:20:21 UTC 2020 aarch64 aarch64 aarch64 GNU/Linux
 
-    root@raspberrypi4-64:~# cat /etc/issue
-    Poky (Yocto Project Reference Distro) 3.0.2 \n \l
+    root@rpi4:~# cat /etc/issue
+    Poky (Yocto Project Reference Distro) 3.1 \n \l
 
-    root@raspberrypi4-64:~# free
+    root@rpi4:~# free
                   total        used        free      shared  buff/cache   available
-    Mem:        3898244       78456     3780376         204       39412     3775068
+    Mem:        1896972       38708     1808644         220       49620     1826340
     Swap:             0           0           0
 
-    root@raspberrypi4-64:~# ifconfig -a
-    eth0      Link encap:Ethernet  HWaddr DC:A6:32:06:C3:3D
-              inet addr:192.168.10.205  Bcast:192.168.10.255  Mask:255.255.255.0
+    root@rpi4:~# ifconfig -a
+    eth0      Link encap:Ethernet  HWaddr DC:A6:32:31:A5:1C  
+              inet addr:192.168.10.206  Bcast:192.168.10.255  Mask:255.255.255.0
               UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
-              RX packets:223 errors:0 dropped:0 overruns:0 frame:0
-              TX packets:170 errors:0 dropped:0 overruns:0 carrier:0
-              collisions:0 txqueuelen:1000
-              RX bytes:23841 (23.2 KiB)  TX bytes:21574 (21.0 KiB)
+              RX packets:741 errors:0 dropped:1 overruns:0 frame:0
+              TX packets:525 errors:0 dropped:0 overruns:0 carrier:0
+              collisions:0 txqueuelen:1000 
+              RX bytes:67727 (66.1 KiB)  TX bytes:66960 (65.3 KiB)
 
-    lo        Link encap:Local Loopback
+    lo        Link encap:Local Loopback  
               inet addr:127.0.0.1  Mask:255.0.0.0
               UP LOOPBACK RUNNING  MTU:65536  Metric:1
               RX packets:0 errors:0 dropped:0 overruns:0 frame:0
               TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
-              collisions:0 txqueuelen:1000
+              collisions:0 txqueuelen:1000 
               RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
-
-    wlan0     Link encap:Ethernet  HWaddr DC:A6:32:06:C3:3E
+    
+    wlan0     Link encap:Ethernet  HWaddr DC:A6:32:31:A5:1D  
               BROADCAST MULTICAST  MTU:1500  Metric:1
-              RX packets:0 errors:0 dropped:0 overruns:0 frame:0
-              TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
-              collisions:0 txqueuelen:1000
-              RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
+              RX packets:6 errors:0 dropped:0 overruns:0 frame:0
+              TX packets:11 errors:0 dropped:0 overruns:0 carrier:0
+              collisions:0 txqueuelen:1000 
+              RX bytes:1026 (1.0 KiB)  TX bytes:1782 (1.7 KiB)
 
-    root@raspberrypi4-64:~# df -h
+    root@rpi4:~# df -h
     Filesystem      Size  Used Avail Use% Mounted on
-    /dev/root       7.2G  547M  6.3G   8% /
-    devtmpfs        1.8G     0  1.8G   0% /dev
-    tmpfs           1.9G  136K  1.9G   1% /run
-    tmpfs           1.9G   68K  1.9G   1% /var/volatile
+    /dev/root       7.2G  526M  6.3G   8% /
+    devtmpfs        798M     0  798M   0% /dev
+    tmpfs           927M  156K  927M   1% /run
+    tmpfs           927M   64K  927M   1% /var/volatile
 
-    root@raspberrypi4-64:~# gcc --version
-    gcc (GCC) 9.2.0
+    root@rpi4:~# gcc --version
+    gcc (GCC) 9.3.0
     Copyright (C) 2019 Free Software Foundation, Inc.
     This is free software; see the source for copying conditions.  There is NO
     warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-    root@raspberrypi4-64:~# git --version
-    git version 2.23.1
+    root@rpi4:~# git --version
+    git version 2.24.1
 
-    root@raspberrypi4-64:~# python3 --version
-    Python 3.7.6
+    root@rpi4:~# python3 --version
+    Python 3.8.2
+
+    root@rpi4:~# lsmod
+        Tainted: G  
+    ipv6 544768 18 [permanent], Live 0xffffffc008dfe000
+    ipt_REJECT 16384 1 - Live 0xffffffc008bcb000
+    nf_reject_ipv4 16384 1 ipt_REJECT, Live 0xffffffc008bc6000
+    xt_recent 24576 2 - Live 0xffffffc008b7e000
+    xt_tcpudp 16384 4 - Live 0xffffffc008b79000
+    xt_state 16384 0 - Live 0xffffffc008b8b000
+    xt_conntrack 16384 3 - Live 0xffffffc008b86000
+    nf_conntrack 147456 2 xt_state,xt_conntrack, Live 0xffffffc008dd9000
+    nf_defrag_ipv4 16384 1 nf_conntrack, Live 0xffffffc008b74000
+    nf_defrag_ipv6 20480 2 ipv6,nf_conntrack, Live 0xffffffc008b5f000
+    iptable_filter 16384 1 - Live 0xffffffc008b6f000
+    ip_tables 32768 2 iptable_filter, Live 0xffffffc008b66000
+    x_tables 45056 7 ipt_REJECT,xt_recent,xt_tcpudp,xt_state,xt_conntrack,iptable_filter,ip_tables, Live 0xffffffc008b53000
+    brcmfmac 339968 0 - Live 0xffffffc008d85000
+    brcmutil 20480 1 brcmfmac, Live 0xffffffc008bad000
+    sha256_generic 16384 0 - Live 0xffffffc008b4e000
+    libsha256 20480 1 sha256_generic, Live 0xffffffc008b2f000
+    bcm2835_codec 49152 0 - Live 0xffffffc008b41000 (C)
+    bcm2835_isp 32768 0 - Live 0xffffffc008a6d000 (C)
+    bcm2835_v4l2 49152 0 - Live 0xffffffc008bb9000 (C)
+    videobuf2_dma_contig 20480 2 bcm2835_codec,bcm2835_isp, Live 0xffffffc008bb3000
+    v4l2_mem2mem 36864 1 bcm2835_codec, Live 0xffffffc008ba3000
+    bcm2835_mmal_vchiq 36864 3 bcm2835_codec,bcm2835_isp,bcm2835_v4l2, Live 0xffffffc008b99000 (C)
+    videobuf2_vmalloc 20480 1 bcm2835_v4l2, Live 0xffffffc008a3c000
+    vc4 270336 0 - Live 0xffffffc008d42000
+    cfg80211 811008 1 brcmfmac, Live 0xffffffc008c7b000
+    videobuf2_memops 16384 2 videobuf2_dma_contig,videobuf2_vmalloc, Live 0xffffffc008b94000
+    videobuf2_v4l2 32768 4 bcm2835_codec,bcm2835_isp,bcm2835_v4l2,v4l2_mem2mem, Live 0xffffffc008b38000
+    v3d 73728 0 - Live 0xffffffc008b1c000
+    videobuf2_common 61440 5 bcm2835_codec,bcm2835_isp,bcm2835_v4l2,v4l2_mem2mem,videobuf2_v4l2, Live 0xffffffc008b0c000
+    raspberrypi_hwmon 16384 0 - Live 0xffffffc008b07000
+    cec 53248 1 vc4, Live 0xffffffc008c6d000
+    rfkill 36864 1 cfg80211, Live 0xffffffc008c47000
+    gpu_sched 40960 1 v3d, Live 0xffffffc008c32000
+    hwmon 32768 1 raspberrypi_hwmon, Live 0xffffffc008a33000
+    videodev 299008 6 bcm2835_codec,bcm2835_isp,bcm2835_v4l2,v4l2_mem2mem,videobuf2_v4l2,videobuf2_common, Live 0xffffffc008bd5000
+    snd_soc_core 229376 1 vc4, Live 0xffffffc008ace000
+    snd_compress 20480 1 snd_soc_core, Live 0xffffffc008a99000
+    mc 57344 6 bcm2835_codec,bcm2835_isp,v4l2_mem2mem,videobuf2_v4l2,videobuf2_common,videodev, Live 0xffffffc008abb000
+    snd_pcm_dmaengine 20480 1 snd_soc_core, Live 0xffffffc008ab1000
+    vc_sm_cma 40960 1 bcm2835_mmal_vchiq, Live 0xffffffc008aa1000 (C)
+    rpivid_mem 16384 0 - Live 0xffffffc008a43000
+    snd_pcm 135168 3 vc4,snd_soc_core,snd_pcm_dmaengine, Live 0xffffffc008a77000
+    snd_timer 45056 1 snd_pcm, Live 0xffffffc008a27000
+    snd 98304 4 snd_soc_core,snd_compress,snd_pcm,snd_timer, Live 0xffffffc008a54000
+    uio_pdrv_genirq 16384 0 - Live 0xffffffc008a4c000
+    uio 24576 1 uio_pdrv_genirq, Live 0xffffffc008a20000
 
 
 [rpi]: https://www.raspberrypi.org/
@@ -614,5 +659,5 @@ For a package to be installed in your image it has to get into the **IMAGE_INSTA
 [firmware-repo]: https://github.com/raspberrypi/firmware
 [meta-raspberrypi]: http://git.yoctoproject.org/cgit/cgit.cgi/meta-raspberrypi
 [eudev]: https://wiki.gentoo.org/wiki/Project:Eudev
-[qt-eglfs]: http://doc.qt.io/qt-5/embedded-linux.html
+[qt-embedded]: http://doc.qt.io/qt-5/embedded-linux.html
 [wireguard-linux-compat]: https://git.zx2c4.com/wireguard-linux-compat/about/
