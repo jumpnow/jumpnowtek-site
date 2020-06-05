@@ -2,7 +2,7 @@
 layout: post
 title: Building Raspberry Pi Systems with Yocto
 description: "Building customized systems for the Raspberry Pi using tools from the Yocto Project"
-date: 2020-04-03 07:45:00
+date: 2020-06-05 07:00:00
 categories: rpi
 tags: [linux, rpi, yocto, rpi2, rpi3, rpi4, rpi zero, rpi zero wireless, rpi compute]
 ---
@@ -15,17 +15,15 @@ Yocto is a set of tools for building a custom embedded Linux distribution. The s
 
 If you are looking to build a general purpose development system with access to pre-built packages, I suggest you stick with a more user-friendly distribution like [Raspbian][raspbian].
 
-And while the Yocto system is very powerful, it does have a substantial learning curve. You may want to look at another popular, but simpler tool for building embedded systems [Buildroot][buildroot].
-
 Yocto uses **meta-layers** to define the configuration. Within each meta-layer are recipes, classes and configuration files that support the primary build tool, a python app called **bitbake**.
 
-I have created a custom meta-layer for the RPi boards called [meta-rpi][meta-rpi].
+I have a custom meta-layer for the RPi boards called [meta-rpi][meta-rpi].
 
 The systems built from this layer use the same GPU firmware, linux kernel and include the same dtb overlays as the official Raspbian systems. This means that no hardware functionality is lost with these Yocto built systems as compared to the "official" Raspbian distro. It is only the userland software that differs and that is completely configurable by you.
 
 There are a some example images in [meta-rpi][meta-rpi] that support the programming languages and tools that I commonly use in my own projects.
 
-When using this repository for customer projects, I first fork and move it to another repository, usually with a different name. I recommend you do the same if you require stability. I use the meta-rpi layer for my experiments.
+When using this repository for customer projects, I first fork and move it to another repository, usually with a different name. I recommend you do the same if you require stability. I use the meta-rpi layer for experiments.
 
 My systems use **sysvinit**, but Yocto supports **systemd**.
 
@@ -35,7 +33,7 @@ I am using the official Yocto [meta-raspberrypi][meta-raspberrypi] layer, but ha
 
 I have access to all of the RPi boards and have at one time or another tested these builds with all of them including the [RPi CM and CM3][rpi-compute] modules.
 
-Most of the time I test only with RPi3 and RPi0-W boards.
+Most of the time I test only with RPi3 and RPi0-W boards. For RPi4 boards I use 64-bit builds (linked above). 
 
 ### Downloads
 
@@ -53,19 +51,17 @@ All systems are setup to use a serial console. For the RPi's that have it, a dhc
 
 ### System Info
 
-The Yocto version is **3.0**, the `[zeus]` branch.
+The Yocto version is **3.1**, the `[dunfell]` branch.
 
-The **4.19** Linux kernel comes from the [github.com/raspberrypi/linux][rpi-kernel] repository.
+The default **5.4** kernel comes from [github.com/raspberrypi/linux][rpi-kernel] repository. There is also a **4.19** recipe.
 
 These are **sysvinit** systems using [eudev][eudev].
 
-The Qt version is **5.13.2** There is no **X11** and no desktop installed. [Qt][qt] GUI applications can be run fullscreen using one of the [Qt embedded linux plugins][embedded-linux-qpa] like **eglfs** or **linuxfb**, both are provided. The default is **eglfs**.
+The Qt version is **5.14** There is no **X11** and no desktop installed. [Qt][qt] GUI applications can be run fullscreen using one of the [Qt embedded linux plugins][embedded-linux-qpa] like **eglfs** or **linuxfb**, both are provided. The default is **eglfs**.
 
-Python **3.7.5** with a number of modules is included.
+Python **3.8.2** with a number of modules is included.
 
-gcc/g++ **9.2.0** and associated build tools are installed.
-
-git **2.23.0** is installed.
+gcc/g++ **9.3.0** and associated build tools are installed.
 
 wireguard from [wireguard-linux-compat][wireguard-linux-compat] is installed.
 
@@ -81,7 +77,7 @@ The Adafruit [PiTFT 3.5"][pitft35r] and [PiTFT 2.8"][pitft28r] resistive touchsc
 
 ### Ubuntu Setup
 
-I primarily use **18.04** 64-bit servers for builds. Other versions should work.
+I use either **18.04** or **20.04** Ubuntu 64-bit servers for builds.
 
 You will need at least the following packages installed
 
@@ -93,14 +89,6 @@ You will need at least the following packages installed
     python3-distutils
     texinfo
 
-For **18.04** you also need to install the **python 2.7** package
-
-    python2.7
-
-And then create some links for it in `/usr/bin`
-
-    sudo ln -sf /usr/bin/python2.7 /usr/bin/python2
-
 For all versions of Ubuntu, you should change the default Ubuntu shell from **dash** to **bash** by running this command from a shell
 
     sudo dpkg-reconfigure dash
@@ -109,27 +97,27 @@ Choose **No** to dash when prompted.
 
 ### Clone the dependency repositories
 
-For all upstream repositories, use the `[zeus]` branch.
+For all upstream repositories, use the `[dunfell]` branch.
 
 The directory layout I am describing here is my preference. All of the paths to the meta-layers are configurable. If you choose something different, adjust the following instructions accordingly.
 
 First the main Yocto project **poky** layer
 
-    ~$ git clone -b zeus git://git.yoctoproject.org/poky.git poky-zeus
+    ~$ git clone -b dunfell git://git.yoctoproject.org/poky.git poky-dunfell
 
 Then the dependency layers under that
 
-    ~$ cd poky-zeus
-    ~/poky-zeus$ git clone -b zeus git://git.openembedded.org/meta-openembedded
-    ~/poky-zeus$ git clone -b zeus https://github.com/meta-qt5/meta-qt5
-    ~/poky-zeus$ git clone -b zeus git://git.yoctoproject.org/meta-raspberrypi
-    ~/poky-zeus$ git clone -b zeus git://git.yoctoproject.org/meta-security.git
+    ~$ cd poky-dunfell
+    ~/poky-dunfell$ git clone -b dunfell git://git.openembedded.org/meta-openembedded
+    ~/poky-dunfell$ git clone -b dunfell https://github.com/meta-qt5/meta-qt5
+    ~/poky-dunfell$ git clone -b dunfell git://git.yoctoproject.org/meta-raspberrypi
+    ~/poky-dunfell$ git clone -b dunfell git://git.yoctoproject.org/meta-security.git
 
 These repositories shouldn't need modifications other then periodic updates and can be reused for different projects or different boards.
 
 My own common meta-layer changing some upstream package defaults and adding a few custom recipes.
 
-    ~/poky-zeus$ git clone -b zeus https://github.com/jumpnow/meta-jumpnow
+    ~/poky-dunfell$ git clone -b dunfell https://github.com/jumpnow/meta-jumpnow
 
 ### Clone the meta-rpi repository
 
@@ -137,7 +125,7 @@ Create a separate sub-directory for the **meta-rpi** repository before cloning. 
 
     ~$ mkdir ~/rpi
     ~$ cd ~/rpi
-    ~/rpi$ git clone -b zeus git://github.com/jumpnow/meta-rpi
+    ~/rpi$ git clone -b dunfell git://github.com/jumpnow/meta-rpi
 
 The `meta-rpi/README.md` file has the last commits from the dependency repositories that I tested. You can always checkout those commits explicitly if you run into problems.
 
@@ -154,7 +142,7 @@ You could manually create the directory structure like this
 
 Or you could use the Yocto environment script **oe-init-build-env** like this passing in the path to the build directory
 
-    ~$ source poky-zeus/oe-init-build-env ~/rpi/build
+    ~$ source poky-dunfell/oe-init-build-env ~/rpi/build
 
 The Yocto environment script will create the build directory if it does not already exist.
 
@@ -181,7 +169,7 @@ In **bblayers.conf** file replace **${HOME}** with the appropriate path to the m
 
 For example, if your directory structure does not look exactly like this, you will need to modify `bblayers.conf`
 
-    ~/poky-zeus/
+    ~/poky-dunfell/
         meta-jumpnow/
         meta-openembedded/
         meta-qt5/
@@ -288,7 +276,7 @@ You can always add or change the password once logged in.
 
 You need to [source][source-script] the Yocto environment into your shell before you can use [bitbake][bitbake]. The **oe-init-build-env** will not overwrite your customized conf files.
 
-    ~$ source poky-zeus/oe-init-build-env ~/rpi/build
+    ~$ source poky-dunfell/oe-init-build-env ~/rpi/build
 
     ### Shell environment set up for builds. ###
 
@@ -402,11 +390,11 @@ This **copy_boot.sh** script needs to know the **TMPDIR** to find the binaries. 
 
 For instance, if I had this in `build/conf/local.conf`
 
-    TMPDIR = "/oe4/rpi/tmp-zeus"
+    TMPDIR = "/oe4/rpi/tmp-dunfell"
 
 Then I would export this environment variable before running `copy_boot.sh`
 
-    ~/rpi/meta-rpi/scripts$ export OETMP=/oe4/rpi/tmp-zeus
+    ~/rpi/meta-rpi/scripts$ export OETMP=/oe4/rpi/tmp-dunfell
 
 If you didn't override the default **TMPDIR** in `local.conf`, then set it to the default **TMPDIR**
 
@@ -457,7 +445,7 @@ Here's a realistic example session where I want to copy already built images to 
 
     ~$ sudo umount /dev/sdb1
     ~$ sudo umount /dev/sdb2
-    ~$ export OETMP=/oe4/rpi/tmp-zeus
+    ~$ export OETMP=/oe4/rpi/tmp-dunfell
     ~$ export MACHINE=raspberrypi2
     ~$ cd rpi/meta-rpi/scripts
     ~/rpi/meta-rpi/scripts$ ./copy_boot.sh sdb
@@ -490,7 +478,7 @@ Check the **README** in the [tspress][tspress] repository for usage.
 
 To display the list of available recipes from the **meta-layers** included in **bblayers.conf**
 
-    ~$ source poky-zeus/oe-init-build-env ~/rpi/build
+    ~$ source poky-dunfell/oe-init-build-env ~/rpi/build
 
     ~/rpi/build$ bitbake -s
 
@@ -657,7 +645,6 @@ A quick test of the camera, flipping the image because of the way I have my came
 [jumpnow-buildroot]: https://jumpnowtek.com/rpi/Raspberry-Pi-Systems-with-Buildroot.html
 [code-qt-io]: http://code.qt.io/cgit/
 [mender-io]: https://mender.io/
-[buildroot]: https://buildroot.org/
 [rpi4-64bit-yocto]: https://jumpnowtek.com/rpi/Raspberry-Pi-4-64bit-Systems-with-Yocto.html
 [wireguard-linux-compat]: https://git.zx2c4.com/wireguard-linux-compat/about/
 

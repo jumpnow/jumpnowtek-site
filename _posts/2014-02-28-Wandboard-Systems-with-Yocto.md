@@ -2,7 +2,7 @@
 layout: post
 title: Building Wandboard Systems with Yocto
 description: "Building customized systems for Wandboards using tools from the Yocto Project"
-date: 2020-05-17 07:00:00
+date: 2020-06-07 07:00:00
 categories: wandboard
 tags: [linux, wandboard, yocto]
 ---
@@ -19,7 +19,7 @@ I have a custom Yocto layer for the wandboards called [meta-wandboard][meta-wand
 
 The Yocto version is **3.1**, the `[dunfell]` branch.
 
-The default kernel is **5.6**. Recipes for a **5.4** LTS kernel is also available.
+The default kernel is **5.7**. Recipes for **5.6** and the **5.4** LTS kernel are also available.
 
 The u-boot version is **2020.01**.
 
@@ -29,7 +29,7 @@ Python **3.8.2** is installed.
 
 gcc/g++ **9.3.0** and associated build tools are installed.
 
-git **2.24.1** is installed.
+git **2.24** is installed.
 
 wireguard is installed, [wireguard-linux-compat][wireguard-linux-compat] is used for kernels before 5.6.
 

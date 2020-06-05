@@ -2,28 +2,28 @@
 layout: post
 title: Building BeagleBone Systems with Yocto
 description: "Building customized systems for the BeagleBones using tools from the Yocto Project"
-date: 2020-04-03 07:45:00
+date: 2020-06-05 07:00:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
 
-Building systems for [BeagleBone Black][bbb] and [BeagleBone Green][bbg] boards using tools from the [Yocto Project][Yocto].
+Building systems for [BeagleBone Black][bbb], [BeagleBone Green][bbg] and [PocketBeagle][pocket] boards using tools from the [Yocto Project][Yocto].
 
 Yocto is a set of tools for building a custom embedded Linux distribution. The systems are usually targeted at particular applications like commercial products.
 
-Yocto uses **meta-layers** to define the configuration for a system build. Within each meta-layer are recipes, classes and configuration files that support the primary build tool, a python framework called **bitbake**.
+Yocto uses **meta-layers** to define the configuration for a system build. Within each meta-layer are recipes, classes and configuration files that support the primary python build tool, **bitbake**.
 
-The [meta-bbb][meta-bbb] layer generates some basic systems with packages that support C, C++, [Qt5][qt], Perl and Python development, the languages and tools I commonly use. Other languages are supported of course.
+The [meta-bbb][meta-bbb] layer generates some basic systems with packages that support C, C++, [Qt5][qt], Perl and Python development, the languages and tools I commonly use. Other languages are supported.
 
 I use this layer as a template when starting new BeagleBone projects.
 
 ### System Info
 
-The Yocto version is **3.0** the `[zeus]` branch.
+The Yocto version is **3.1** the `[dunfell]` branch.
 
-The default kernel is **5.6** Recipes for **4.19** and **5.4** LTS kernels are also available.
+The default kernel is **5.7**. Recipes for **5.6** and the **5.4** LTS kernel are also available.
 
-The [u-boot][uboot] version is **2019.07**.
+The [u-boot][uboot] version is **2020.01**.
 
 These are **sysvinit** systems using [eudev][eudev].
 
@@ -31,17 +31,17 @@ The Qt version is **5.13.2**. There is no *X11* and no desktop installed. [Qt][q
 
 A light-weight **X11** desktop can be added with minimal changes to the build configuration. For instance **X11** is needed to run Java GUI apps or browser kiosk applications.
 
-Python **3.7.5** is installed.
+Python **3.8.2** is installed.
 
-gcc/g++ **9.2.0** and associated build tools are installed.
+gcc/g++ **9.3.0** and associated build tools are installed.
 
-git **2.23.0** is installed.
+git **2.24** is installed.
 
-wireguard is installed, [wireguard-linux-compat][wireguard-linux-compat] is used for kernels before 5.6.
+wireguard is installed, [wireguard-linux-compat][wireguard-linux-compat] is used for kernels older then **5.6**.
 
 ### Ubuntu Setup
 
-I primarily use **18.04** 64-bit servers for builds. Other versions should work.
+I have been using **20.04** and **18.04** Ubuntu 64-bit servers for builds.
 
 You will need at least the following packages installed
 
@@ -53,14 +53,6 @@ You will need at least the following packages installed
     python3-distutils
     texinfo
 
-For **18.04** you also need to install the **python 2.7** package
-
-    python2.7
-
-And then create some links for it in `/usr/bin`
-
-    sudo ln -sf /usr/bin/python2.7 /usr/bin/python2
-
 For all versions of Ubuntu, you should change the default Ubuntu shell from **dash** to **bash** by running this command from a shell
 
     sudo dpkg-reconfigure dash
@@ -69,18 +61,18 @@ Choose **No** to dash when prompted.
 
 ### Clone the repositories
 
-    ~$ git clone -b zeus git://git.yoctoproject.org/poky.git poky-zeus
+    ~$ git clone -b dunfell git://git.yoctoproject.org/poky.git poky-dunfell
 
-    ~$ cd poky-zeus
-    ~/poky-zeus$ git clone -b zeus git://git.openembedded.org/meta-openembedded
-    ~/poky-zeus$ git clone -b zeus https://github.com/meta-qt5/meta-qt5.git
-    ~/poky-zeus$ git clone -b zeus git://git.yoctoproject.org/meta-security.git
+    ~$ cd poky-dunfell
+    ~/poky-dunfell$ git clone -b dunfell git://git.openembedded.org/meta-openembedded
+    ~/poky-dunfell$ git clone -b dunfell https://github.com/meta-qt5/meta-qt5.git
+    ~/poky-dunfell$ git clone -b dunfell git://git.yoctoproject.org/meta-security.git
 
 These repositories shouldn't need modifications other then periodic updates and can be reused for different projects or different boards.
 
 My own common meta-layer changing some upstream package defaults and adding a few custom recipes.
 
-    ~/poky-zeus$ git clone -b zeus https://github.com/jumpnow/meta-jumpnow.git
+    ~/poky-dunfell$ git clone -b dunfell https://github.com/jumpnow/meta-jumpnow.git
 
 ### Clone the meta-bbb repository
 
@@ -88,7 +80,7 @@ Create a sub-directory for the `meta-bbb` repository before cloning
 
     ~$ mkdir ~/bbb
     ~$ cd ~/bbb
-    ~/bbb$ git clone -b zeus git://github.com/jumpnow/meta-bbb
+    ~/bbb$ git clone -b dunfell git://github.com/jumpnow/meta-bbb
 
 The `meta-bbb/README.md` file has the last commits from the dependency repositories that I tested. You can always checkout those commits explicitly if you run into problems.
 
@@ -105,7 +97,7 @@ You could manually create the directory structure like this
 
 Or you could use the *Yocto* environment script `oe-init-build-env` like this passing in the path to the build directory
 
-    ~$ source poky-zeus/oe-init-build-env ~/bbb/build
+    ~$ source poky-dunfell/oe-init-build-env ~/bbb/build
 
 The *Yocto* environment script will create the build directory if it does not already exist.
 
@@ -129,7 +121,7 @@ In `bblayers.conf` file replace **${HOME}** with the appropriate path to the met
 For example, if your directory structure does not look exactly like this, you will need to modify `bblayers.conf`
 
 
-    ~/poky-zeus/
+    ~/poky-dunfell/
          meta-jumpnow/
          meta-openembedded/
          meta-qt5/
@@ -204,7 +196,7 @@ You can always add or change the password once logged in.
 
 You need to [source][source-script] the Yocto environment into your shell before you can use [bitbake][bitbake]. The `oe-init-build-env` will not overwrite your customized conf files.
 
-    ~$ source poky-zeus/oe-init-build-env ~/bbb/build
+    ~$ source poky-dunfell/oe-init-build-env ~/bbb/build
 
     ### Shell environment set up for builds. ###
 
@@ -249,7 +241,7 @@ The *console-image* has a line
 
     inherit core-image
 
-which is `poky-zeus/meta/classes/core-image.bbclass` and pulls in some required base packages.  This is useful to know if you create your own image recipe.
+which is `poky-dunfell/meta/classes/core-image.bbclass` and pulls in some required base packages.  This is useful to know if you create your own image recipe.
 
 #### qt5-image
 
@@ -359,11 +351,11 @@ This *copy_boot.sh* script needs to know the `TMPDIR` to find the binaries. It l
 
 For instance, if I had this in the `local.conf`
 
-    TMPDIR = "/oe7/bbb/tmp-zeus"
+    TMPDIR = "/oe7/bbb/tmp-dunfell"
 
 Then I would export this environment variable before running `copy_boot.sh`
 
-    ~/bbb/meta-bbb/scripts$ export OETMP=/oe7/bbb/tmp-zeus
+    ~/bbb/meta-bbb/scripts$ export OETMP=/oe7/bbb/tmp-dunfell
 
 Then run the `copy_boot.sh` script passing the location of SD card
 
@@ -395,7 +387,7 @@ Here's a realistic example session where I want to copy already built images to 
 
     ~$ sudo umount /dev/sdb1
     ~$ sudo umount /dev/sdb2
-    ~$ export OETMP=/oe7/bbb/tmp-zeus
+    ~$ export OETMP=/oe7/bbb/tmp-dunfell
     ~$ cd bbb/meta-bbb/scripts
     ~/bbb/meta-bbb/scripts$ ./copy_boot.sh sdb
     ~/bbb/meta-bbb/scripts$ ./copy_rootfs.sh sdb console bbb2
@@ -492,16 +484,19 @@ You can edit `/etc/fstab` if you want the bootloader partition mounted all the t
 
 To display the list of available packages from the **meta-** repositories included in **bblayers.conf**
 
-    ~$ source poky-zeus/oe-init-build-env ~/bbb/build
+    ~$ source poky-dunfell/oe-init-build-env ~/bbb/build
     ~/bbb/build$ bitbake -s
 
-Once you have the package name, you can choose to either
+Once you have the package name, you need to get it into the **IMAGE_INSTALL** variable one way or another. 
+
+Some options
 
 1. Add the new package to the **console-image** or **qt5-image**.
 
 2. Create a new image file and either include the **console-image** the way the **qt5-image** does or create a complete new image recipe.
 
-The new package needs to get included directly in the **IMAGE_INSTALL** variable or indirectly through another variable in the image file.
+3. Append the package to the **IMAGE_INSTALL** variable in local.conf 
+
 
 #### Customizing the Kernel
 
@@ -527,9 +522,9 @@ An implementation of this idea is described here [An upgrade strategy for embedd
 
 There is a **emmc-upgrader** package in the **meta-bbb** layer that will add this capability to your systems.
 
-[bbb]: http://www.beagleboard.org/black
-[bbg]: http://www.beagleboard.org/green
-[buildroot-bbb]: https://jumpnowtek.com/beaglebone/BeagleBone-Systems-with-Buildroot.html
+[bbb]: https://www.beagleboard.org/black
+[bbg]: https://www.beagleboard.org/green
+[pocket]: https://www.beagleboard.org/pocket 
 [linux-stable]: https://www.kernel.org/
 [uboot]: http://www.denx.de/wiki/U-Boot/WebHome
 [qt]: http://www.qt.io/
