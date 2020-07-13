@@ -2,10 +2,12 @@
 layout: post
 title: Building Raspberry Pi Systems with Buildroot
 description: "Building customized systems for the Raspberry Pi using Buildroot"
-date: 2018-03-15 06:52:00
+date: 2020-07-13 09:10:00
 categories: rpi
 tags: [linux, rpi, buildroot, rpi3, qt5, pyqt, pyqt5]
 ---
+
+Warning: This is an old post and the repository referenced has not been updated in several years.
 
 This post is about building Linux systems for [Raspberry Pi][rpi] boards using [Buildroot][buildroot].
 
