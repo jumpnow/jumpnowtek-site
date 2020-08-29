@@ -2,14 +2,14 @@
 layout: post
 title: Signing code with OpenSSL
 description: "Digital signing with OpenSSL"
-date: 2020-04-03 11:35:00
+date: 2020-08-29 10:35:00
 categories: security
 tags: [openssl, signing]
 ---
 
-Providing a [cryptographic hash][crypto-hash] like an **md5** or **sha256** checksum for a file you distribute only gives the receiver **integrity** verification, proof the file is not corrupt.
+Providing a [cryptographic hash][crypto-hash] like an **md5** or **sha256** checksum for a file you distribute only gives the receiver **integrity** verification, proof that a file has not been corrupted or tampered with.
 
-Including a [digital signature][digital-sig] with a file provides **authentication** and **non-repuditation** in addition to **integrity** verification.
+Including a [digital signature][digital-sig] adds **authentication** and **non-repuditation**.
 
 [Public key cryptography][pub-key-crypto] is used to generate digital signatures.
 
@@ -33,75 +33,98 @@ Obviously the crypto hash algorithm has to be the same in both signing and verif
 
 So why not just sign the original file?
 
-Public key cryptography is slow and the size of the file you can encrypt with an algorithm like RSA is limited. By hashing the data first, we only need to encrypt a small file.
+Public key cryptography is slow and the size of the file you can encrypt with an algorithm like RSA is limited. By hashing the data first and only **signing** the hash, we only need to encrypt a small file.
 
 The [OpenSSL][openssl] command line utility provides all the tools we need to digitally sign files.
 
     $ openssl version
-    OpenSSL 1.1.1b  26 Feb 2019
+    OpenSSL 1.1.1f  31 Mar 2020
 
-I am using **OpenSSL 1.1.1b** on an Ubuntu 19.04 machine for these examples.
+I am using **OpenSSL 1.1.1f** on an Ubuntu 20.04 machine for these examples.
 
-### Create an RSA public/private key pair with genrsa
+### Create an elliptic-curve public/private key pair with genpkey
 
-Generate a private key with key size of 4096 bits.
+Generate a private key using one of the standard NIST curves **P-384**
 
-    $ openssl genrsa -out private.pem 4096
-    Generating RSA private key, 4096 bit long modulus (2 primes)
-    ...++++
-    ..............................++++
-    e is 65537 (0x010001)
+    $ openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:P-384 -out ec-private.pem
 
-Generate a public key from the private key.
+And now a public key based on the private key
 
-    $ openssl rsa -in private.pem -pubout -out public.pem
-    writing RSA key
+    $ openssl pkey -in ec-private.pem -pubout -out ec-public.pem
 
-The files
+The key sizes are relatively small
 
-    $ ls -l
-    total 8
-    -rw------- 1 scott scott 3243 Sep 28 10:41 private.pem
-    -rw-r--r-- 1 scott scott  800 Sep 28 10:42 public.pem
+    $ ls -l ec-*
+    -rw------- 1 scott scott 306 Aug 29 09:50 ec-private.pem
+    -rw-rw-r-- 1 scott scott 215 Aug 29 09:50 ec-public.pem
 
-The private key **private.pem** should be kept secret.
 
-The public key **public.pem** is meant to be shared.
+The private key **ec-private.pem** should be kept secret.
+
+The public key **ec-public.pem** is meant to be shared.
 
 ### Signing
 
-Openssl can do the signing in a single command, combining the hashing and encryption in one step.
+Openssl can do the signing, both hashing and encrypting, in one command.
 
-Assume the **data** file is some big binary blob, for example a compressed tarball.
+Create a signature file like this
 
-This example explicitly specifies **sha256** as the hashing (digest) algorithm, but this is the default.
+    $ openssl dgst -sign ec-private.pem -out data.sig data
 
-Here is how to create a signature file
-
-    $ openssl dgst -sha256 -sign private.pem -out data.sig data
-
-The signature file **data.sig** is small.
+The signature file is small 
 
     $ ls -l data*
-    -rw-r--r-- 1 scott scott 155385 Sep 28 10:45 data
-    -rw-r--r-- 1 scott scott    512 Sep 28 10:45 data.sig
+    -rw-r--r-- 1 scott scott 415867 Aug 29 10:38 data
+    -rw-rw-r-- 1 scott scott    103 Aug 29 10:40 data.sig
 
 It should be distributed with the **data** file.
+
+### Hash algorithm
+
+The default hashing (digest) algorithm is **sha256**.
+
+You can change this by adding another argument to the signing command.
+
+For instance to use **sha3-512**
+
+    $ openssl dgst -sha3-512 -sign ec-private.pem -out data.sig data
+
+The available hash algorithms are 
+
+    $ openssl list --digest-commands
+    blake2b512        blake2s256        gost              md4               
+    md5               rmd160            sha1              sha224            
+    sha256            sha3-224          sha3-256          sha3-384          
+    sha3-512          sha384            sha512            sha512-224        
+    sha512-256        shake128          shake256          sm3         
+
 
 ### Verifying
 
 Verification requires the public key and knowledge of the hashing algorithm that was used.
 
-    $ openssl dgst -sha256 -verify public.pem -signature data.sig data
+If the default **sha256** was used 
+
+    $ openssl dgst -verify ec-public.pem -signature data.sig data
     Verified OK
 
 A failure looks like this
 
-    $ openssl dgst -sha256 -verify public.pem -signature data.sig modified-data
+    $ openssl dgst -verify ec-public.pem -signature data.sig modified-data
     Verification Failure
 
 
-If shell scripting the verification, the **$?** variable is set to zero on (success) or one on (failure) as you would expect.
+If a different hash algorithm was used, this needs to be specified or the check will fail. 
+
+    $ openssl dgst -sha3-512 -sign ec-private.pem -out data.sig data
+
+    $ openssl dgst -verify ec-public.pem -signature data.sig data
+    Verification Failure
+
+    $ openssl dgst -sha3-512 -verify ec-public.pem -signature data.sig data
+    Verified OK
+
+The shell variable **$?** is set to zero (success) or one (failure) as you would expect.
 
 ### Encrypting the Private Key
 
@@ -109,35 +132,34 @@ For additional protection of the private key, you can encrypt it with a password
 
 The extra **-aes256** argument will encrypt the private key using the [AES][aes] algorithm.
 
-    $ openssl genrsa -aes256 -out private.pem 4096
-    Generating RSA private key, 4096 bit long modulus (2 primes)
-    ..++++
-    ..............++++
-    e is 65537 (0x010001)
-    Enter pass phrase for private.pem:
-    Verifying - Enter pass phrase for private.pem:
-
-See the help for encryption algorithm options [genrsa(1)][genrsa]
+    $ openssl genpkey -aes256 -algorithm EC -pkeyopt ec_paramgen_curve:P-384 -out ec-private.pem
+    Enter PEM pass phrase:
+    Verifying - Enter PEM pass phrase:
 
 Now whenever you use the private key, you will need the password
 
-    $ openssl rsa -in private.pem -pubout -out public.pem
-    Enter pass phrase for private.pem:
-    writing RSA key
+    $ openssl pkey -in ec-private.pem -pubout -out ec-public.pem
+    Enter pass phrase for ec-private.pem:
 
-    $ openssl dgst -sign private.pem -out data.sig data
-    Enter pass phrase for private.pem:
+    $ openssl dgst -sign ec-private.pem -out data.sig data
+    Enter pass phrase for ec-private.pem:
+
+The private key is slightly larger
+
+    $ ls -l ec-*
+    -rw------- 1 scott scott 464 Aug 29 10:59 ec-private.pem
+    -rw-rw-r-- 1 scott scott 215 Aug 29 11:00 ec-public.pem
 
 Prompting for pass phrase is the default, but you can provide the password using other methods with the **-passin** argument
 
 Directly in the command
 
-    $ openssl dgst -sign private.pem -passin pass:the-password -out data.sig data
+    $ openssl dgst -sign ec-private.pem -passin pass:the-password -out data.sig data
 
 Using an environment variable
 
     $ SECRET=the-password
-    $ openssl dgst -sign private.pem -passin env:SECRET -out data.sig data
+    $ openssl dgst -sign ec-private.pem -passin env:SECRET -out data.sig data
 
 Using a **pathname** where the argument can be a file
 
@@ -146,70 +168,41 @@ Using a **pathname** where the argument can be a file
 
 There are other options to provide the password. See the **Pass Phrase** section of the [openssl(1)][openssl-man] man page.
 
-
 A password on the private key does not affect how the public key is used.
 
-### Using elliptic curve keys
+### Using RSA keys
 
-Elliptic curve (EC) keys are an alternative to RSA keys.
+RSA public key cryptography uses larger keys and is more CPU intensive, but can be used in a similar fashion.
 
-The keys are smaller and operations are less CPU intensive, often important for embedded systems.
+Generating a 4096-bit RSA private key
 
-The following command will generate a private key
+    $ openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:4096 -out rsa-private.pem
+    ..........................................++++
+    ...................................................++++
 
-    $ openssl genpkey -algorithm EC \
-        -pkeyopt ec_paramgen_curve:P-256 \
-        -pkeyopt ec_param_enc:named_curve \
-        -out private.pem
+Generating a public key from the private key is the same
 
-And this will generate a public key from the private key
+    $ openssl pkey -in rsa-private.pem -pubout -out rsa-public.pem
 
-    $ openssl pkey -in private.pem -pubout -out public.pem
+The keys are larger
 
+    $ ls -l rsa*
+    -rw------- 1 scott scott 3272 Aug 29 11:10 rsa-private.pem
+    -rw-rw-r-- 1 scott scott  800 Aug 29 11:11 rsa-public.pem
 
-Here you can see the keys are smaller than RSA keys
+Using the RSA keys for signing and verification are the same
 
-    $ ls -l *.pem
-    -rw------- 1 scott scott 241 Sep 29 06:56 private.pem
-    -rw-r--r-- 1 scott scott 178 Sep 29 06:56 public.pem
+    $ openssl dgst -sign rsa-private.pem -out data.sig data
 
+    $ openssl dgst -verify rsa-public.pem -signature data.sig data
 
-Signing operations using openssl are the same.
+The signature is also larger with RSA keys
 
-This creates a signature for a **data** file using the private key (default **-sha256** argument omitted)
+    $ ls -l data*
+    -rw-r--r-- 1 scott scott 415867 Aug 29 10:38 data
+    -rw-rw-r-- 1 scott scott    512 Aug 29 11:25 data.sig
 
-    $ openssl dgst -sign private.pem -out data.sig data
-
-Here is a check of the signature using the public key
-
-    $ openssl dgst -verify public.pem -signature data.sig data
-    Verified OK
-
-And this shows a failed check
-
-    $ openssl dgst -verify public.pem -signature data.sig modified-data
-    Verification Failure
-
-
-As with RSA keys you can have openssl password protect the private key (here **-aes256**)
-
-    $ openssl genpkey -aes256 -algorithm EC \
-        -pkeyopt ec_paramgen_curve:P-256
-        -pkeyopt ec_param_enc:named_curve \
-        -out private.pem
-    Enter PEM pass phrase:
-    Verifying - Enter PEM pass phrase:
-
-And now whenever you use the private key you will have to provide the password
-
-    $ openssl pkey -in private.pem -pubout -out public.pem
-    Enter pass phrase for private.pem:
-
-    $ openssl dgst -sign private.pem -out data.sig data
-    Enter pass phrase for private.pem:
-
-
-Operations using the public key are unchanged.
+The commands for using different hash algorithms and encrypting the private key are the same. 
 
 ### Base64 encoding the Signature File
 
@@ -234,8 +227,6 @@ You could also use the standard [base64(1)][base64-man] utility from the **coreu
 
 * [signify: Securing OpenBSD From Us To You][bsdcan-signify]
 
-* [How, why, and when you should hash check][proprivacy-hash-check]
-
 
 [crypto-hash]: https://en.wikipedia.org/wiki/Cryptographic_hash_function
 [digital-sig]: https://en.wikipedia.org/wiki/Digital_signature
@@ -249,4 +240,3 @@ You could also use the standard [base64(1)][base64-man] utility from the **coreu
 [code-signing]: https://en.wikipedia.org/wiki/Code_signing
 [tedu-signify]: https://flak.tedunangst.com/post/signify
 [bsdcan-signify]: http://www.openbsd.org/papers/bsdcan-signify.html
-[proprivacy-hash-check]: https://proprivacy.com/guides/how-why-and-when-you-should-hash-check
