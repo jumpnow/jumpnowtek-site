@@ -2,7 +2,7 @@
 layout: post
 title: Building Odroid-C2 Systems with Yocto
 description: "Building customized systems for Odroid-C2 using tools from the Yocto Project"
-date: 2020-06-05 07:00:00
+date: 2020-08-31 05:00:00
 categories: odroid
 tags: [linux, odroid-c2, yocto]
 ---
@@ -19,7 +19,7 @@ I have a Yocto layer for the **odroid-c2** called [meta-odroid-c2][meta-odroid-c
 
 The Yocto version is **3.1**, the `[dunfell]` branch.
 
-The default kernel is **5.7**. Recipes for **5.6** and the **5.4** LTS kernel are also available.
+The default kernel is **5.8**. A recipe for the **5.4** LTS kernel is also available.
 
 The only dtb built is **meson-gxbb-odroidc2.dtb**.
 

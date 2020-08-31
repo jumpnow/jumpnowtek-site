@@ -2,7 +2,7 @@
 layout: post
 title: Building BeagleBone Systems with Yocto
 description: "Building customized systems for the BeagleBones using tools from the Yocto Project"
-date: 2020-06-05 07:00:00
+date: 2020-08-31 05:00:00
 categories: beaglebone
 tags: [linux, beaglebone, yocto]
 ---
@@ -21,7 +21,7 @@ I use this layer as a template when starting new BeagleBone projects.
 
 The Yocto version is **3.1** the `[dunfell]` branch.
 
-The default kernel is **5.7**. Recipes for **5.6** and the **5.4** LTS kernel are also available.
+The default kernel is **5.8**. A recipe for the **5.4** LTS kernel is also available.
 
 The [u-boot][uboot] version is **2020.01**.
 
