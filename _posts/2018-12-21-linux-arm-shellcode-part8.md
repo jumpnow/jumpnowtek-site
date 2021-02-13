@@ -2,7 +2,7 @@
 layout: post
 title: Linux ARM Shellcode - Part 8 - Exploiting the Stack
 description: "Linux ARM Shellcode"
-date: 2018-12-19 15:30:00
+date: 2018-12-19 12:12:00
 categories: shellcode
 tags: [linux, arm, shellcode, assembly]
 ---

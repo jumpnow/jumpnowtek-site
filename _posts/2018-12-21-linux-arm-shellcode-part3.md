@@ -2,7 +2,7 @@
 layout: post
 title: Linux ARM Shellcode - Part 3 - Bind and Reverse Shells
 description: "Linux ARM Shellcode"
-date: 2018-12-19 15:30:00
+date: 2018-12-19 12:17:00
 categories: shellcode
 tags: [linux, arm, shellcode, assembly]
 ---

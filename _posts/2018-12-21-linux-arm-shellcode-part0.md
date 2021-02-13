@@ -2,7 +2,7 @@
 layout: post
 title: Linux ARM Shellcode - Part 0 - Credits and References
 description: "Linux ARM Shellcode"
-date: 2018-12-21 12:20:00
+date: 2018-12-19 12:20:00
 categories: shellcode
 tags: [linux, arm, shellcode, assembly]
 ---
