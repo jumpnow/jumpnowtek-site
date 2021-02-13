@@ -2,7 +2,7 @@
 layout: post
 title: Enumerating SSH Algorithms with Nmap
 description: "Using the Nmap ssh2-enum-algos script to check an ssh server"
-date: 2019-12-03 16:07:00
+date: 2020-09-13 14:40:00
 categories: security
 tags: [ssh, nmap, ssh2-enum-algos, encryption, keys, nse]
 ---
@@ -167,15 +167,9 @@ After those changes
     Nmap done: 1 IP address (1 host up) scanned in 2.22 seconds
 
 
-I sent a [patch][nmap-pull] to the Nmap developers, but no feedback yet.
-
-That patch is for the current development branch of Nmap.
-
-To use with released versions of Nmap, switch back to **stdnse.strsplit** instead of the newer **stringaux.strsplit**.
+Update (2020-09-13): This is now fixed in the Nmap [github repo][nmap-repo-fix]
 
 On a related note, [Ncrack][ncrack], the standalone brute-force passsword cracking tool, also fails against Dropbear SSH servers for the same reason. A similar tool [Hydra][thc-hydra] has no problems with Dropbear.
-
-But all is not lost as the Nmap NSE [ssh-brute][ssh-brute] script does work against either Dropbear or OpenSSH.
 
 [ssh]: https://en.wikipedia.org/wiki/Secure_Shell
 [nmap-tls-check]: https://jumpnowtek.com/security/Using-nmap-to-check-certs-and-supported-algos.html
@@ -195,3 +189,4 @@ But all is not lost as the Nmap NSE [ssh-brute][ssh-brute] script does work agai
 [ssh-brute]: https://nmap.org/nsedoc/scripts/ssh-brute.html
 [hostkey-fingerprints]: https://jumpnowtek.com/security/SSH-Hostkey-Fingerprints.html
 [thc-hydra]: https://github.com/vanhauser-thc/thc-hydra
+[nmap-repo-fix]: https://github.com/nmap/nmap/commit/fa6bd3f901f7db831972cf35eec7f7c86c3bba9f
