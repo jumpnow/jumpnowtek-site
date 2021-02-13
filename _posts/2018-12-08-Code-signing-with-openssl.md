@@ -2,11 +2,15 @@
 layout: post
 title: Signing code with OpenSSL
 description: "Digital signing with OpenSSL"
-date: 2020-08-29 10:35:00
+date: 2021-02-13 05:28:00
 categories: security
 tags: [openssl, signing]
 ---
 
+There are dedicated tools for signing code like [minisign][minisign] or [signify][signify].
+
+This is post is about understanding the idea.
+  
 Providing a [cryptographic hash][crypto-hash] like an **md5** or **sha256** checksum for a file you distribute only gives the receiver **integrity** verification, proof that a file has not been corrupted or tampered with.
 
 Including a [digital signature][digital-sig] adds **authentication** and **non-repuditation**.
@@ -71,7 +75,7 @@ Create a signature file like this
 
     $ openssl dgst -sign ec-private.pem -out data.sig data
 
-The signature file is small 
+The signature file is small
 
     $ ls -l data*
     -rw-r--r-- 1 scott scott 415867 Aug 29 10:38 data
@@ -89,21 +93,21 @@ For instance to use **sha3-512**
 
     $ openssl dgst -sha3-512 -sign ec-private.pem -out data.sig data
 
-The available hash algorithms are 
+The available hash algorithms are
 
     $ openssl list --digest-commands
-    blake2b512        blake2s256        gost              md4               
-    md5               rmd160            sha1              sha224            
-    sha256            sha3-224          sha3-256          sha3-384          
-    sha3-512          sha384            sha512            sha512-224        
-    sha512-256        shake128          shake256          sm3         
+    blake2b512        blake2s256        gost              md4
+    md5               rmd160            sha1              sha224
+    sha256            sha3-224          sha3-256          sha3-384
+    sha3-512          sha384            sha512            sha512-224
+    sha512-256        shake128          shake256          sm3
 
 
 ### Verifying
 
 Verification requires the public key and knowledge of the hashing algorithm that was used.
 
-If the default **sha256** was used 
+If the default **sha256** was used
 
     $ openssl dgst -verify ec-public.pem -signature data.sig data
     Verified OK
@@ -114,7 +118,7 @@ A failure looks like this
     Verification Failure
 
 
-If a different hash algorithm was used, this needs to be specified or the check will fail. 
+If a different hash algorithm was used, this needs to be specified or the check will fail.
 
     $ openssl dgst -sha3-512 -sign ec-private.pem -out data.sig data
 
@@ -202,24 +206,7 @@ The signature is also larger with RSA keys
     -rw-r--r-- 1 scott scott 415867 Aug 29 10:38 data
     -rw-rw-r-- 1 scott scott    512 Aug 29 11:25 data.sig
 
-The commands for using different hash algorithms and encrypting the private key are the same. 
-
-### Base64 encoding the Signature File
-
-The signature file is a binary file. If you want to look at signature files, for example with a web browser, you could [base64][base64] encode the file.
-
-Openssl provides a utility.
-
-    $ openssl base64 -in data.sig -out data.sig.b64
-
-    $ file data.sig.b64
-    data.b64: ASCII text
-
-Before using for verification the signature file needs to be decoded into binary again.
-
-    $ openssl base64 -d -in data.sig.b64 -out data.sig
-
-You could also use the standard [base64(1)][base64-man] utility from the **coreutils** package for the encoding and decoding.
+The commands for using different hash algorithms and encrypting the private key are the same.
 
 ### Additional Reading
 
@@ -227,16 +214,16 @@ You could also use the standard [base64(1)][base64-man] utility from the **coreu
 
 * [signify: Securing OpenBSD From Us To You][bsdcan-signify]
 
+* [minisign: A dead simple tool to sign files and verify signatures][minisign]
+
 
 [crypto-hash]: https://en.wikipedia.org/wiki/Cryptographic_hash_function
 [digital-sig]: https://en.wikipedia.org/wiki/Digital_signature
 [pub-key-crypto]: https://en.wikipedia.org/wiki/Public-key_cryptography
 [openssl]: https://www.openssl.org/
-[genrsa]: https://www.openssl.org/docs/manmaster/man1/genrsa.html
 [aes]: https://en.wikipedia.org/wiki/Advanced_Encryption_Standard
-[base64]: https://en.wikipedia.org/wiki/Base64
-[base64-man]: https://linux.die.net/man/1/base64
 [openssl-man]: https://linux.die.net/man/1/openssl
 [code-signing]: https://en.wikipedia.org/wiki/Code_signing
 [tedu-signify]: https://flak.tedunangst.com/post/signify
 [bsdcan-signify]: http://www.openbsd.org/papers/bsdcan-signify.html
+[minisign]: https://jedisct1.github.io/minisign/
