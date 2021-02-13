@@ -16,6 +16,12 @@ title: Jumpnow Technologies
       <li><span>{{ post.date | date_to_string }}</span> &raquo; <a href="{{ post.url }}">{{ post.title }}</a></li>
     {% endfor %}
   </ul>  
+  <h1>ARM Shellcode</h1>
+  <ul class="posts">
+    {% for post in site.categories['shellcode'] %}
+      <li><span>{{ post.date | date_to_string }}</span> &raquo; <a href="{{ post.url }}">{{ post.title }}</a></li>
+    {% endfor %}
+  </ul>
   <h1>Raspberry Pi</h1>
   <ul class="posts">
     {% for post in site.categories['rpi'] %}
@@ -25,12 +31,6 @@ title: Jumpnow Technologies
   <h1>BeagleBone</h1>
   <ul class="posts">
     {% for post in site.categories['beaglebone'] %}
-      <li><span>{{ post.date | date_to_string }}</span> &raquo; <a href="{{ post.url }}">{{ post.title }}</a></li>
-    {% endfor %}
-  </ul>
-  <h1>ARM Shellcode</h1>
-  <ul class="posts">
-    {% for post in site.categories['shellcode'] %}
       <li><span>{{ post.date | date_to_string }}</span> &raquo; <a href="{{ post.url }}">{{ post.title }}</a></li>
     {% endfor %}
   </ul>
