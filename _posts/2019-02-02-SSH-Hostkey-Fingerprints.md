@@ -2,7 +2,7 @@
 layout: post
 title: SSH Hostkey Fingerprints
 description: "Examining ssh hostkey fingerprints"
-date: 2019-02-02 14:55:00
+date: 2021-02-13 11:39:00
 categories: security
 tags: [ssh, hostkey, fingerprints, openssh, putty, nmap, winscp, nse]
 ---
@@ -81,47 +81,37 @@ You can specify if you want to see **md5** fingerprint hashes
 [WinSCP (5.13.7)][winscp] will show you both **md5** and **sha256** fingerprint hashes.
 
 
-[Nmap (7.70)][nmap] and in particular the NSE [ssh-hostkey][nse-ssh-hostkey] script uses **md5** fingerprints
+[Nmap (7.91SVN)][nmap] NSE [ssh-hostkey][nse-ssh-hostkey] script shows **md5** fingerprints by default
 
-    client$ nmap -p22 -n --script ssh-hostkey 192.168.10.240
-    Starting Nmap 7.70 ( https://nmap.org ) at 2019-02-02 12:05 EST
-    Nmap scan report for 192.168.10.240
-    Host is up (0.00059s latency).
-
+    $ nmap --script ssh-hostkey 192.168.10.12
+    Starting Nmap 7.91SVN ( https://nmap.org ) at 2021-02-13 11:35 EST
+    Nmap scan report for fractal.jumpnow (192.168.10.12)
+    Host is up (0.00029s latency).
+    Not shown: 999 closed tcp ports (conn-refused)
     PORT   STATE SERVICE
     22/tcp open  ssh
     | ssh-hostkey:
-    |   2048 c8:fb:66:94:34:44:da:0b:7b:e0:2e:dd:66:74:ec:e1 (RSA)
-    |   256 c7:4d:2d:72:fe:ba:12:3b:bf:39:53:75:ab:a4:96:2e (ECDSA)
-    |_  256 62:c0:0b:df:91:c9:fd:dc:23:28:66:16:62:44:4f:d0 (ED25519)
-    MAC Address: 00:1E:06:33:70:56 (Wibrain)
+    |   3072 38:75:ca:0b:ab:c9:82:eb:d9:90:1d:0e:a6:6d:b1:d0 (RSA)
+    |   256 84:35:7a:6b:71:2b:61:fe:41:b2:e1:ef:9b:5d:da:07 (ECDSA)
+    |_  256 12:de:f5:46:d3:2f:4c:31:25:f5:9d:6d:df:15:40:42 (ED25519)
 
-    Nmap done: 1 IP address (1 host up) scanned in 2.78 seconds
+    Nmap done: 1 IP address (1 host up) scanned in 0.37 seconds
 
-Digging a little deeper, NSE script [ssh-hostkey][nse-ssh-hostkey] uses the NSE library [ssh2][nse-ssh2] and in the **ssh2.fetch\_host\_key()** function called by ssh-hostkey there is no facility for specifying the hashing algorithm.
+but you can provide a script argument to choose **sha256** (note the underscore not dash in the script arg)
 
-    $ cat /usr/share/nmap/nselib/ssh2.lua
-    ...
-    --- Fetch an SSH-2 host key.
-    -- @param host Nmap host table.
-    -- @param port Nmap port table.
-    -- @param key_type key type to fetch.
-    -- @return A table with the following fields: <code>key</code>,
-    -- <code>key_type</code>, <code>fp_input</code>, <code>bits</code>,
-    -- <code>full_key</code>, <code>algorithm</code>, and <code>fingerprint</code>.
-    fetch_host_key = function( host, port, key_type )
-      local socket = nmap.new_socket()
-      local status
-    ...
-      socket:close()
-      return { key=base64.enc(public_host_key),
-               key_type=key_type,
-               fp_input=public_host_key,
-               bits=bits,
-               full_key=('%s %s'):format(key_type,base64.enc(public_host_key)),
-               algorithm=algorithm,
-               fingerprint=openssl.md5(public_host_key) }
-    end
+    $ nmap --script ssh-hostkey 192.168.10.12 --script-args ssh_hostkey=sha256
+    Starting Nmap 7.91SVN ( https://nmap.org ) at 2021-02-13 11:35 EST
+    Nmap scan report for fractal.jumpnow (192.168.10.12)
+    Host is up (0.00099s latency).
+    Not shown: 999 closed tcp ports (conn-refused)
+    PORT   STATE SERVICE
+    22/tcp open  ssh
+    | ssh-hostkey:
+    |   3072 SHA256:Lsn1NiSErYsRTFfp820a0XsDzdmh5Sq5wjNVXzvR6Bc (RSA)
+    |   256 SHA256:GgQjCsLJ7280ta1RAkdbf3WznjHyp0WNYMfSuKnJKNs (ECDSA)
+    |_  256 SHA256:BAq7Db3g71/Wbd5v8M2JTmr16qxgBKJ0sDPj1uQ2qnQ (ED25519)
+
+    Nmap done: 1 IP address (1 host up) scanned in 0.36 seconds
 
 
 Finally, if for some unknown reason you do not have [ssh-keygen][ssh-keygen] available and want to generate fingerprints on the command line, here is a short Linux script that will do it.
