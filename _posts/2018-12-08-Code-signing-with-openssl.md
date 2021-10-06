@@ -2,15 +2,15 @@
 layout: post
 title: Signing code with OpenSSL
 description: "Digital signing with OpenSSL"
-date: 2021-02-13 05:28:00
+date: 2021-10-06 00:00:00
 categories: security
 tags: [openssl, signing]
 ---
 
-There are dedicated tools for signing code like [minisign][minisign] or [signify][signify].
+There are dedicated tools for signing code like [minisign][minisign] or [signify][signify-man].
 
 This is post is about understanding the idea.
-  
+
 Providing a [cryptographic hash][crypto-hash] like an **md5** or **sha256** checksum for a file you distribute only gives the receiver **integrity** verification, proof that a file has not been corrupted or tampered with.
 
 Including a [digital signature][digital-sig] adds **authentication** and **non-repuditation**.
@@ -30,7 +30,7 @@ The general algorithm:
 **To Verify**
 
 1. Generate a hash of the data file
-2. Use the public key to unencrypt the signature file
+2. Use the signer's public key to decrypt the signature file
 3. Check that the two values match
 
 Obviously the crypto hash algorithm has to be the same in both signing and verification.
@@ -226,4 +226,5 @@ The commands for using different hash algorithms and encrypting the private key 
 [code-signing]: https://en.wikipedia.org/wiki/Code_signing
 [tedu-signify]: https://flak.tedunangst.com/post/signify
 [bsdcan-signify]: http://www.openbsd.org/papers/bsdcan-signify.html
+[signify-man]: https://man.openbsd.org/signify
 [minisign]: https://jedisct1.github.io/minisign/
