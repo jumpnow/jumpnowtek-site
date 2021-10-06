@@ -31,7 +31,7 @@ The general algorithm:
 
 1. Generate a hash of the data file
 2. Use the signer's public key to decrypt the signature file
-3. Check that the two values match
+3. Check that the two hash files match
 
 Obviously the crypto hash algorithm has to be the same in both signing and verification.
 
